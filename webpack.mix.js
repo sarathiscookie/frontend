@@ -15,12 +15,11 @@ mix.js('resources/assets/js/app.js', 'public/js')
     .sass('resources/assets/sass/app.scss', 'public/css')
     .version();
 
-/*
 mix.styles([
-    'resources/assets/css/tested.css',
-    'resources/assets/css/test.css'
+    'resources/assets/css/welcome.css',
+    'resources/assets/css/cabins.css'
 ], 'public/css/all.css');
 
 mix.scripts([
-    'resources/assets/js/test.js'
-], 'public/js/all.js');*/
+    'resources/assets/js/welcome.js'
+], 'public/js/all.js');
