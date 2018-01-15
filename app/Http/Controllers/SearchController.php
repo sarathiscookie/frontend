@@ -14,12 +14,7 @@ class SearchController extends Controller
      */
     public function index()
     {
-        $cabins = Cabin::select('name')
-            ->where('is_delete', 0)
-            ->where('other_cabin', "0")
-            ->get();
-
-        dd($cabins);
+        //
     }
 
     /**

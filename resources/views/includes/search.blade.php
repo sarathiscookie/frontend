@@ -9,35 +9,41 @@
 
         <ul class="nav navbar-nav">
 
-            <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Country <span class="caret"></span></a>
-                <ul class="dropdown-menu">
-                    <li><a href="#"><input type="checkbox" aria-label="..."> Action</a></li>
-                    <li><a href="#"><input type="checkbox" aria-label="..."> Another action</a></li>
-                    <li><a href="#"><input type="checkbox" aria-label="..."> Something else here</a></li>
-                </ul>
-            </li>
+            @isset($country)
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Country <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        @foreach($country as $land)
+                            <li><a href="#"><input type="checkbox" aria-label="..."> {{ $land->name }}</a></li>
+                        @endforeach
+                    </ul>
+                </li>
+            @endisset
 
-            <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Region <span class="caret"></span></a>
-                <ul class="dropdown-menu">
-                    <li><a href="#"><input type="checkbox" aria-label="..."> Action</a></li>
-                    <li><a href="#"><input type="checkbox" aria-label="..."> Another action</a></li>
-                    <li><a href="#"><input type="checkbox" aria-label="..."> Something else here</a></li>
-                </ul>
-            </li>
+            @isset($regions)
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Region <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        @foreach($regions as $region)
+                            <li><a href="#"><input type="checkbox" aria-label="..."> {{ $region->name }}</a></li>
+                        @endforeach
+                    </ul>
+                </li>
+            @endisset
+
+            @isset($facilities)
+                <li class="dropdown">
+                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Managed Facility <span class="caret"></span></a>
+                     <ul class="dropdown-menu">
+                         @foreach($facilities as $facility)
+                             <li><a href="#"><input type="checkbox" aria-label="..."> {{ $facility }}</a></li>
+                         @endforeach
+                     </ul>
+                </li>
+            @endisset
 
             <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Cabins to sleep <span class="caret"></span></a>
-                <ul class="dropdown-menu">
-                    <li><a href="#"><input type="checkbox" aria-label="..."> Action</a></li>
-                    <li><a href="#"><input type="checkbox" aria-label="..."> Another action</a></li>
-                    <li><a href="#"><input type="checkbox" aria-label="..."> Something else here</a></li>
-                </ul>
-            </li>
-
-            <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Managed Facility <span class="caret"></span></a>
                 <ul class="dropdown-menu">
                     <li><a href="#"><input type="checkbox" aria-label="..."> Action</a></li>
                     <li><a href="#"><input type="checkbox" aria-label="..."> Another action</a></li>
