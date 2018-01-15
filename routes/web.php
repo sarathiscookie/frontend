@@ -22,3 +22,28 @@ Route::get('/cabins', function () {
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
+
+
+/*
+|--------------------------------------------------------------------------
+| Search
+|--------------------------------------------------------------------------
+|
+| Route for search cabin
+|
+*/
+
+/* Search cabin */
+Route::post('/search', 'SearchController@index')->name('search');
+
+/* Get cabin name when searching cabin name */
+Route::get('/search/cabin/{name}', 'SearchController@cabinName')->name('search.cabin.name');
+
+
+
+
+
+
+
+
+

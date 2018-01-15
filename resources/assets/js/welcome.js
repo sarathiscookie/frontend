@@ -1,5 +1,5 @@
 $(function(){
-    // Add smooth scrolling to all links in navbar + footer link
+    /* Scroll nav bar begin */
     $(".navbar a, footer a[href='#myPage']").on('click', function(event) {
         // Make sure this.hash has a value before overriding default behavior
         if (this.hash !== "") {
@@ -31,4 +31,5 @@ $(function(){
             }
         });
     });
+    /* Scroll nav bar end */
 });

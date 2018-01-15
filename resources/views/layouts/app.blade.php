@@ -13,6 +13,8 @@
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
 
+    {{--<link href="{{ asset('css/plugins.css') }}" rel="stylesheet">--}}
+
     <link href="{{ asset('css/all.css') }}" rel="stylesheet">
 
     @yield('css')
@@ -89,8 +91,10 @@
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}"></script>
 
+    <script src="{{ asset('js/plugins.js') }}"></script>
+    @stack('scripts')
+
     <script src="{{ asset('js/all.js') }}"></script>
 
-    @stack('scripts')
 </body>
 </html>
