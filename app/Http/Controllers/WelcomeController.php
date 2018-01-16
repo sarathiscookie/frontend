@@ -47,7 +47,12 @@ class WelcomeController extends Controller
             'Helicopter land available'                 => __("welcome.interiorHelicopterLand"),
         );
 
-        return view('welcome', ['country' => $country, 'regions' => $regions, 'facilities' => $facilities]);
+        $seasonOpens = array(
+            'Open on winter season'                     => __("welcome.winterSeasonOpen"),
+            'Open on summer season'                     => __("welcome.summerSeasonOpen")
+        );
+
+        return view('welcome', ['country' => $country, 'regions' => $regions, 'facilities' => $facilities, 'seasonOpens' => $seasonOpens]);
     }
 
     /**

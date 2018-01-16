@@ -7,6 +7,7 @@
  */
 
 return [
+    /* Labels for interior */
     'interiorWifi'                           => 'Wlan',
     'interiorShower'                         => 'Dusche vorhanden',
     'interiorMealCard'                       => 'Essen á la carte',
@@ -29,4 +30,8 @@ return [
     'interiorSmokeDetector'                  => 'Rauchmelder',
     'interiorCarbMonoDetector'               => 'Kohlenmonoxid-Detektor',
     'interiorHelicopterLand'                 => 'Hubschrauberlandeplatz vorhanden',
+
+    /* Labels for particularities */
+    'winterSeasonOpen'                       => 'Open on winter season',
+    'summerSeasonOpen'                       => 'Open on summer season',
 ];

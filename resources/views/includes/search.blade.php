@@ -11,10 +11,10 @@
 
             @isset($country)
                 <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Country <span class="caret"></span></a>
-                    <ul class="dropdown-menu">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="checkbox" aria-haspopup="true" aria-expanded="false">Country <span class="caret"></span></a>
+                    <ul class="dropdown-menu drop-height">
                         @foreach($country as $land)
-                            <li><a href="#"><input type="checkbox" aria-label="..."> {{ $land->name }}</a></li>
+                            <li><a href="#"><input type="checkbox" name="country[]"> {{ $land->name }}</a></li>
                         @endforeach
                     </ul>
                 </li>
@@ -22,10 +22,10 @@
 
             @isset($regions)
                 <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Region <span class="caret"></span></a>
-                    <ul class="dropdown-menu">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="checkbox" aria-haspopup="true" aria-expanded="false">Region <span class="caret"></span></a>
+                    <ul class="dropdown-menu drop-height">
                         @foreach($regions as $region)
-                            <li><a href="#"><input type="checkbox" aria-label="..."> {{ $region->name }}</a></li>
+                            <li><a href="#"><input type="checkbox" name="region[]"> {{ $region->name }}</a></li>
                         @endforeach
                     </ul>
                 </li>
@@ -33,32 +33,33 @@
 
             @isset($facilities)
                 <li class="dropdown">
-                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Managed Facility <span class="caret"></span></a>
-                     <ul class="dropdown-menu">
+                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="checkbox" aria-haspopup="true" aria-expanded="false">Facility <span class="caret"></span></a>
+                     <ul class="dropdown-menu drop-height">
                          @foreach($facilities as $facility)
-                             <li><a href="#"><input type="checkbox" aria-label="..."> {{ $facility }}</a></li>
+                             <li><a href="#"><input type="checkbox" name="facility[]"> {{ $facility }}</a></li>
                          @endforeach
                      </ul>
                 </li>
             @endisset
 
             <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Cabins to sleep <span class="caret"></span></a>
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Managed <span class="caret"></span></a>
                 <ul class="dropdown-menu">
-                    <li><a href="#"><input type="checkbox" aria-label="..."> Action</a></li>
-                    <li><a href="#"><input type="checkbox" aria-label="..."> Another action</a></li>
-                    <li><a href="#"><input type="checkbox" aria-label="..."> Something else here</a></li>
+                    <li><a href="#"><input type="checkbox" name="managed[]"> Cabins to sleep</a></li>
+                    <li><a href="#"><input type="checkbox" name="managed[]"> Managed</a></li>
                 </ul>
             </li>
 
-            <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Particularities <span class="caret"></span></a>
-                <ul class="dropdown-menu">
-                    <li><a href="#"><input type="checkbox" aria-label="..."> Action</a></li>
-                    <li><a href="#"><input type="checkbox" aria-label="..."> Another action</a></li>
-                    <li><a href="#"><input type="checkbox" aria-label="..."> Something else here</a></li>
-                </ul>
-            </li>
+            @isset($seasonOpens)
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Seasons <span class="caret"></span></a>
+                    <ul class="dropdown-menu drop-height">
+                        @foreach($seasonOpens as $seasonOpen)
+                            <li><a href="#"><input type="checkbox" name="seasons[]"> {{ $seasonOpen }}</a></li>
+                        @endforeach
+                    </ul>
+                </li>
+            @endisset
 
         </ul>
 
