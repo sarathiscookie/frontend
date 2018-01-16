@@ -40,7 +40,7 @@ class SearchController extends Controller
 
         if(isset($request->facility)){
             foreach ($request->facility as $facility){
-                $cabin->whereIn('interior', $facility);
+                $cabin->whereIn('interior', [$facility]);
             }
             //$cabin->whereIn('interior', [$request->facility]);
         }
