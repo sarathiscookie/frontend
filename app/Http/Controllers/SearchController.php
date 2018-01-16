@@ -74,28 +74,28 @@ class SearchController extends Controller
     public function facility()
     {
         $facilities = array(
-            'Wifi'                                      => __("welcome.interiorWifi"),
-            'shower available'                          => __("welcome.interiorShower"),
-            'Food à la carte'                           => __("welcome.interiorMealCard"),
-            'breakfast'                                 => __("welcome.interiorBreakfast"),
-            'TV available'                              => __("welcome.interiorTv"),
-            'washing machine'                           => __("welcome.interiorWashingMachine"),
-            'drying room'                               => __("welcome.interiorDryingRoom"),
-            'Luggage transport from the valley'         => __("welcome.interiorLuggageTransport"),
-            'Accessible by car'                         => __("welcome.interiorAccessCar"),
-            'dogs allowed'                              => __("welcome.interiorDogsAllowed"),
-            'Suitable for wheelchairs'                  => __("welcome.interiorWheelchairs"),
-            'Public telephone available'                => __("welcome.interiorPublicPhone"),
-            'Mobile phone reception'                    => __("welcome.interiorPhoneReception"),
-            'Power supply for own devices'              => __("welcome.interiorPowerSupply"),
-            'Waste bin'                                 => __("welcome.interiorDustbins"),
-            'Hut shop'                                  => __("welcome.interiorCabinShop"),
-            'Advancement possibilities including time'  => __("welcome.interiorAscentPossibility"),
-            'reachable by phone'                        => __("welcome.interiorAccessibleTelephone"),
-            'Smoking (allowed, forbidden)'              => __("welcome.interiorSmokingAllowed"),
-            'smoke detector'                            => __("welcome.interiorSmokeDetector"),
-            'Carbon monoxide detector'                  => __("welcome.interiorCarbMonoDetector"),
-            'Helicopter land available'                 => __("welcome.interiorHelicopterLand"),
+            'Wifi'                                      => __("search.interiorWifi"),
+            'shower available'                          => __("search.interiorShower"),
+            'Food à la carte'                           => __("search.interiorMealCard"),
+            'breakfast'                                 => __("search.interiorBreakfast"),
+            'TV available'                              => __("search.interiorTv"),
+            'washing machine'                           => __("search.interiorWashingMachine"),
+            'drying room'                               => __("search.interiorDryingRoom"),
+            'Luggage transport from the valley'         => __("search.interiorLuggageTransport"),
+            'Accessible by car'                         => __("search.interiorAccessCar"),
+            'dogs allowed'                              => __("search.interiorDogsAllowed"),
+            'Suitable for wheelchairs'                  => __("search.interiorWheelchairs"),
+            'Public telephone available'                => __("search.interiorPublicPhone"),
+            'Mobile phone reception'                    => __("search.interiorPhoneReception"),
+            'Power supply for own devices'              => __("search.interiorPowerSupply"),
+            'Waste bin'                                 => __("search.interiorDustbins"),
+            'Hut shop'                                  => __("search.interiorCabinShop"),
+            'Advancement possibilities including time'  => __("search.interiorAscentPossibility"),
+            'reachable by phone'                        => __("search.interiorAccessibleTelephone"),
+            'Smoking (allowed, forbidden)'              => __("search.interiorSmokingAllowed"),
+            'smoke detector'                            => __("search.interiorSmokeDetector"),
+            'Carbon monoxide detector'                  => __("search.interiorCarbMonoDetector"),
+            'Helicopter land available'                 => __("search.interiorHelicopterLand"),
         );
 
         return $facilities;
@@ -109,8 +109,8 @@ class SearchController extends Controller
     public function openSeasons()
     {
         $seasonOpens = array(
-            'Open on winter season'                     => __("welcome.winterSeasonOpen"),
-            'Open on summer season'                     => __("welcome.summerSeasonOpen")
+            'Open on winter season'                     => __("search.winterSeasonOpen"),
+            'Open on summer season'                     => __("search.summerSeasonOpen")
         );
 
         return $seasonOpens;

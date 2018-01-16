@@ -4,7 +4,7 @@
         {{ csrf_field() }}
 
         <div class="navbar-form navbar-left form-group " id="prefetch">
-            <input type="text" class="form-control typeahead" id="cabinname" placeholder="Cabin Search">
+            <input type="text" class="form-control typeahead" name="cabinname" id="cabinname" placeholder="Cabin Search">
         </div>
 
         @inject('services', 'App\Http\Controllers\SearchController')
