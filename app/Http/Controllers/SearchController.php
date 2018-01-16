@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Http\Requests\SearchRequest;
 use App\Cabin;
 use App\Country;
 use App\Region;
@@ -12,11 +13,41 @@ class SearchController extends Controller
     /**
      * Display a listing of the resource.
      *
+     * @param  \App\Http\Requests\SearchRequest
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(SearchRequest $request)
     {
-        //
+        $cabin = Cabin::select('name')
+            ->where('is_delete', 0)
+            ->where('other_cabin', "0");
+
+        if(isset($request->cabinname)){
+            $cabin->where('name', $request->cabinname);
+        }
+
+        if(isset($request->country)){
+            foreach ($request->country as $land){
+                $cabin->where('country', $land);
+            }
+        }
+
+        if(isset($request->region)){
+            foreach ($request->region as $region){
+                $cabin->where('region', $region);
+            }
+        }
+
+        if(isset($request->facility)){
+            foreach ($request->facility as $facility){
+                $cabin->whereIn('interior', $facility);
+            }
+            //$cabin->whereIn('interior', [$request->facility]);
+        }
+
+        $cabinSearchResult = $cabin->get();
+
+        dd($cabinSearchResult);
     }
 
     /**

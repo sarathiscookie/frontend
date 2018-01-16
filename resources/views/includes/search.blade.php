@@ -16,7 +16,7 @@
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="checkbox" aria-haspopup="true" aria-expanded="false">Country <span class="caret"></span></a>
                     <ul class="dropdown-menu drop-height">
                         @foreach($services->country() as $land)
-                            <li><a href="#"><input type="checkbox" name="country[]"> {{ $land->name }}</a></li>
+                            <li><a href="#"><input type="checkbox" name="country[]" value="{{ $land->name }}"> {{ $land->name }}</a></li>
                         @endforeach
                     </ul>
                 </li>
@@ -27,7 +27,7 @@
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="checkbox" aria-haspopup="true" aria-expanded="false">Region <span class="caret"></span></a>
                     <ul class="dropdown-menu drop-height">
                         @foreach($services->regions() as $region)
-                            <li><a href="#"><input type="checkbox" name="region[]"> {{ $region->name }}</a></li>
+                            <li><a href="#"><input type="checkbox" name="region[]" value="{{ $region->name }}"> {{ $region->name }}</a></li>
                         @endforeach
                     </ul>
                 </li>
@@ -37,8 +37,8 @@
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="checkbox" aria-haspopup="true" aria-expanded="false">Facility <span class="caret"></span></a>
                     <ul class="dropdown-menu drop-height">
-                        @foreach($services->facility() as $facility)
-                            <li><a href="#"><input type="checkbox" name="facility[]"> {{ $facility }}</a></li>
+                        @foreach($services->facility() as $facilityKey => $facility)
+                            <li><a href="#"><input type="checkbox" name="facility[]" value="{{ $facilityKey }}"> {{ $facility }}</a></li>
                         @endforeach
                     </ul>
                 </li>
@@ -56,8 +56,8 @@
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Seasons <span class="caret"></span></a>
                     <ul class="dropdown-menu drop-height">
-                        @foreach($services->openSeasons() as $seasonOpen)
-                            <li><a href="#"><input type="checkbox" name="seasons[]"> {{ $seasonOpen }}</a></li>
+                        @foreach($services->openSeasons() as $seasonOpenKey => $seasonOpen)
+                            <li><a href="#"><input type="checkbox" name="seasons[]" value="{{ $seasonOpen }}"> {{ $seasonOpen }}</a></li>
                         @endforeach
                     </ul>
                 </li>
@@ -66,7 +66,7 @@
         </ul>
 
         <div class="navbar-form navbar-right form-group">
-            <button type="submit" class="btn btn-default">Search</button>
+            <button type="submit" class="btn btn-default">Filter Cabin</button>
         </div>
 
     </form>

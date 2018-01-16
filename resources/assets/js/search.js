@@ -1,4 +1,8 @@
 $(function(){
+
+    /* Reset the checkbox on page loads */
+    $('input:checkbox').prop('checked', false);
+
     /* Typeahead auto complete begin */
     var cabin_names = new Bloodhound({
         datumTokenizer: function(datum) {
@@ -37,4 +41,5 @@ $(function(){
         });
 
     /* Typeahead auto complete end */
+
 });

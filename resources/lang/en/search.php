@@ -11,7 +11,7 @@ return[
     'interiorWifi'                           => 'Wifi',
     'interiorShower'                         => 'Shower',
     'interiorMealCard'                       => 'Meal via Card',
-    'interiorBreakfast'                      => 'Breakfeast',
+    'interiorBreakfast'                      => 'Breakfast',
     'interiorTv'                             => 'TV',
     'interiorWashingMachine'                 => 'Washing Machine',
     'interiorDryingRoom'                     => 'Drying Room',
