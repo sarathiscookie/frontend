@@ -45,7 +45,7 @@
             @endif
 
             <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Managed <span class="caret"></span></a>
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="checkbox" aria-haspopup="true" aria-expanded="false">Managed <span class="caret"></span></a>
                 <ul class="dropdown-menu">
                     <li><a href="#"><input type="checkbox" name="managed[]"> Cabins to sleep</a></li>
                     <li><a href="#"><input type="checkbox" name="managed[]"> Managed</a></li>
@@ -54,10 +54,10 @@
 
             @if($services->openSeasons())
                 <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Seasons <span class="caret"></span></a>
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="checkbox" aria-haspopup="true" aria-expanded="false">Seasons <span class="caret"></span></a>
                     <ul class="dropdown-menu drop-height">
-                        @foreach($services->openSeasons() as $seasonOpenKey => $seasonOpen)
-                            <li><a href="#"><input type="checkbox" name="seasons[]" value="{{ $seasonOpen }}"> {{ $seasonOpen }}</a></li>
+                        @foreach($services->openSeasons() as $seasonOpen)
+                            <li><a href="#"><input type="checkbox" name="seasons[]" value="open"> {{ $seasonOpen }}</a></li>
                         @endforeach
                     </ul>
                 </li>

@@ -7,6 +7,7 @@ use App\Http\Requests\SearchRequest;
 use App\Cabin;
 use App\Country;
 use App\Region;
+use App\Season;
 
 class SearchController extends Controller
 {
@@ -42,11 +43,21 @@ class SearchController extends Controller
             foreach ($request->facility as $facility){
                 $cabin->whereIn('interior', [$facility]);
             }
-            //$cabin->whereIn('interior', [$request->facility]);
         }
+
+
 
         $cabinSearchResult = $cabin->get();
 
+        if(isset($request->seasons)){
+
+            $comment = Cabin::find('58358510d2ae67d866ec89e6')->cabin/*->where('is_delete', 0)->first()*/;
+
+            dd($comment);
+            foreach ($request->seasons as $seasons){
+                //
+            }
+        }
         dd($cabinSearchResult);
     }
 
