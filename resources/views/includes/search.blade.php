@@ -7,40 +7,42 @@
             <input type="text" class="form-control typeahead" id="cabinname" placeholder="Cabin Search">
         </div>
 
+        @inject('services', 'App\Http\Controllers\SearchController')
+
         <ul class="nav navbar-nav">
 
-            @isset($country)
+            @if($services->country())
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="checkbox" aria-haspopup="true" aria-expanded="false">Country <span class="caret"></span></a>
                     <ul class="dropdown-menu drop-height">
-                        @foreach($country as $land)
+                        @foreach($services->country() as $land)
                             <li><a href="#"><input type="checkbox" name="country[]"> {{ $land->name }}</a></li>
                         @endforeach
                     </ul>
                 </li>
-            @endisset
+            @endif
 
-            @isset($regions)
+            @if($services->regions())
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="checkbox" aria-haspopup="true" aria-expanded="false">Region <span class="caret"></span></a>
                     <ul class="dropdown-menu drop-height">
-                        @foreach($regions as $region)
+                        @foreach($services->regions() as $region)
                             <li><a href="#"><input type="checkbox" name="region[]"> {{ $region->name }}</a></li>
                         @endforeach
                     </ul>
                 </li>
-            @endisset
+            @endif
 
-            @isset($facilities)
+            @if($services->facility())
                 <li class="dropdown">
-                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="checkbox" aria-haspopup="true" aria-expanded="false">Facility <span class="caret"></span></a>
-                     <ul class="dropdown-menu drop-height">
-                         @foreach($facilities as $facility)
-                             <li><a href="#"><input type="checkbox" name="facility[]"> {{ $facility }}</a></li>
-                         @endforeach
-                     </ul>
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="checkbox" aria-haspopup="true" aria-expanded="false">Facility <span class="caret"></span></a>
+                    <ul class="dropdown-menu drop-height">
+                        @foreach($services->facility() as $facility)
+                            <li><a href="#"><input type="checkbox" name="facility[]"> {{ $facility }}</a></li>
+                        @endforeach
+                    </ul>
                 </li>
-            @endisset
+            @endif
 
             <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Managed <span class="caret"></span></a>
@@ -50,16 +52,16 @@
                 </ul>
             </li>
 
-            @isset($seasonOpens)
+            @if($services->openSeasons())
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Seasons <span class="caret"></span></a>
                     <ul class="dropdown-menu drop-height">
-                        @foreach($seasonOpens as $seasonOpen)
+                        @foreach($services->openSeasons() as $seasonOpen)
                             <li><a href="#"><input type="checkbox" name="seasons[]"> {{ $seasonOpen }}</a></li>
                         @endforeach
                     </ul>
                 </li>
-            @endisset
+            @endif
 
         </ul>
 

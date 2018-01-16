@@ -3,8 +3,6 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Country;
-use App\Region;
 
 class WelcomeController extends Controller
 {
@@ -15,44 +13,7 @@ class WelcomeController extends Controller
      */
     public function index()
     {
-        $country       = Country::select('name')
-            ->get();
-
-        $regions       = Region::select('name')
-            ->where('is_delete', 0)
-            ->get();
-
-        $facilities = array(
-            'Wifi'                                      => __("welcome.interiorWifi"),
-            'shower available'                          => __("welcome.interiorShower"),
-            'Food à la carte'                           => __("welcome.interiorMealCard"),
-            'breakfast'                                 => __("welcome.interiorBreakfast"),
-            'TV available'                              => __("welcome.interiorTv"),
-            'washing machine'                           => __("welcome.interiorWashingMachine"),
-            'drying room'                               => __("welcome.interiorDryingRoom"),
-            'Luggage transport from the valley'         => __("welcome.interiorLuggageTransport"),
-            'Accessible by car'                         => __("welcome.interiorAccessCar"),
-            'dogs allowed'                              => __("welcome.interiorDogsAllowed"),
-            'Suitable for wheelchairs'                  => __("welcome.interiorWheelchairs"),
-            'Public telephone available'                => __("welcome.interiorPublicPhone"),
-            'Mobile phone reception'                    => __("welcome.interiorPhoneReception"),
-            'Power supply for own devices'              => __("welcome.interiorPowerSupply"),
-            'Waste bin'                                 => __("welcome.interiorDustbins"),
-            'Hut shop'                                  => __("welcome.interiorCabinShop"),
-            'Advancement possibilities including time'  => __("welcome.interiorAscentPossibility"),
-            'reachable by phone'                        => __("welcome.interiorAccessibleTelephone"),
-            'Smoking (allowed, forbidden)'              => __("welcome.interiorSmokingAllowed"),
-            'smoke detector'                            => __("welcome.interiorSmokeDetector"),
-            'Carbon monoxide detector'                  => __("welcome.interiorCarbMonoDetector"),
-            'Helicopter land available'                 => __("welcome.interiorHelicopterLand"),
-        );
-
-        $seasonOpens = array(
-            'Open on winter season'                     => __("welcome.winterSeasonOpen"),
-            'Open on summer season'                     => __("welcome.summerSeasonOpen")
-        );
-
-        return view('welcome', ['country' => $country, 'regions' => $regions, 'facilities' => $facilities, 'seasonOpens' => $seasonOpens]);
+        return view('welcome');
     }
 
     /**
