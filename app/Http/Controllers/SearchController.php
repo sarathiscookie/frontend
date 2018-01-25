@@ -42,7 +42,6 @@ class SearchController extends Controller
             foreach ($request->facility as $facility){
                 $cabin->whereIn('interior', [$facility]);
             }
-            //$cabin->whereIn('interior', [$request->facility]);
         }
 
         $cabinSearchResult = $cabin->simplePaginate(5);
