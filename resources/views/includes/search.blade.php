@@ -1,6 +1,6 @@
 <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 
-    <form method="POST" action="{{ route('search') }}">
+    <form action="{{ route('search') }}" method="POST">
         {{ csrf_field() }}
 
         <div class="navbar-form navbar-left form-group " id="prefetch">

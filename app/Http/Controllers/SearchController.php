@@ -18,7 +18,7 @@ class SearchController extends Controller
      */
     public function index(SearchRequest $request)
     {
-        $cabin = Cabin::select('name')
+        $cabin = Cabin::select('name', 'region', 'height', 'country')
             ->where('is_delete', 0)
             ->where('other_cabin', "0");
 
@@ -45,9 +45,9 @@ class SearchController extends Controller
             //$cabin->whereIn('interior', [$request->facility]);
         }
 
-        $cabinSearchResult = $cabin->get();
+        $cabinSearchResult = $cabin->simplePaginate(5);
 
-        dd($cabinSearchResult);
+        return view('cabins', ['cabinSearchResult' => $cabinSearchResult]);
     }
 
     /**

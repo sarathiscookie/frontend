@@ -37,265 +37,96 @@
     </div><br><br>
 
     <div class="container-fluid text-center">
-        <div class="panel panel-default text-left">
-            <div class="panel-body">
-                <div class="row content">
-                    <div class="col-sm-2">
-                        <img src="https://placehold.it/150x80?text=IMAGE" class="img-responsive img-thumbnail" style="width:100%" alt="Image">
-                    </div>
-                    <div class="col-sm-7 text-left">
-                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-                        <button type="button" class="btn btn-default btn-sm">More Details</button>
-                        <button type="button" class="btn btn-default btn-sm btn-space pull-right">
-                            <span class="glyphicon glyphicon-home" aria-hidden="true"></span>
-                        </button>
-                        <button type="button" class="btn btn-default btn-sm btn-space pull-right">
-                            <span class="glyphicon glyphicon-print" aria-hidden="true"></span>
-                        </button>
-                        <button type="button" class="btn btn-default btn-sm btn-space pull-right">
-                            <span class="glyphicon glyphicon-music" aria-hidden="true"></span>
-                        </button>
-                        <button type="button" class="btn btn-default btn-sm btn-space pull-right">
-                            <span class="glyphicon glyphicon-glass" aria-hidden="true"></span>
-                        </button>
-                        <button type="button" class="btn btn-default btn-sm btn-space pull-right">
-                            <span class="glyphicon glyphicon-camera" aria-hidden="true"></span>
-                        </button>
-                        <button type="button" class="btn btn-default btn-sm btn-space pull-right">
-                            <span class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span>
-                        </button>
-                        <button type="button" class="btn btn-default btn-sm btn-space pull-right">
-                            <span class="glyphicon glyphicon-credit-card" aria-hidden="true"></span>
-                        </button>
-                    </div>
+        @isset($cabinSearchResult)
+            @foreach($cabinSearchResult as $result)
+                <div class="panel panel-default text-left">
+                    <div class="panel-body">
+                        <div class="row content">
+                            <div class="col-sm-2">
+                                <img src="https://placehold.it/150x80?text=IMAGE" class="img-responsive img-thumbnail" style="width:100%" alt="Image">
+                            </div>
+                            <div class="col-sm-7 text-left">
+                                <h3>{{ $result->name }} - {{$result->region}} - {{$result->country}} ({{$result->height}})</h3>
+                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                                <button type="button" class="btn btn-default btn-sm">More Details</button>
+                                <button type="button" class="btn btn-default btn-sm btn-space pull-right">
+                                    <span class="glyphicon glyphicon-home" aria-hidden="true"></span>
+                                </button>
+                                <button type="button" class="btn btn-default btn-sm btn-space pull-right">
+                                    <span class="glyphicon glyphicon-print" aria-hidden="true"></span>
+                                </button>
+                                <button type="button" class="btn btn-default btn-sm btn-space pull-right">
+                                    <span class="glyphicon glyphicon-music" aria-hidden="true"></span>
+                                </button>
+                                <button type="button" class="btn btn-default btn-sm btn-space pull-right">
+                                    <span class="glyphicon glyphicon-glass" aria-hidden="true"></span>
+                                </button>
+                                <button type="button" class="btn btn-default btn-sm btn-space pull-right">
+                                    <span class="glyphicon glyphicon-camera" aria-hidden="true"></span>
+                                </button>
+                                <button type="button" class="btn btn-default btn-sm btn-space pull-right">
+                                    <span class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span>
+                                </button>
+                                <button type="button" class="btn btn-default btn-sm btn-space pull-right">
+                                    <span class="glyphicon glyphicon-credit-card" aria-hidden="true"></span>
+                                </button>
+                            </div>
 
-                    <div class="col-sm-3">
-                        <div class="panel panel-default">
-                            <div class="panel-body">
-                                <div class="row">
-                                    <div class="col-sm-12">
-                                        <h5>Expected opening timings</h5>
+                            <div class="col-sm-3">
+                                <div class="panel panel-default">
+                                    <div class="panel-body">
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                <h5>Expected opening timings</h5>
 
-                                        <span class="badge">J</span> <span class="badge">F</span> <span class="badge">M</span>
-                                        <span class="badge">A</span> <span class="badge">M</span> <span class="badge">J</span>
-                                        <span class="badge">J</span> <span class="badge">A</span> <span class="badge">S</span>
-                                        <span class="badge">O</span> <span class="badge">N</span> <span class="badge">D</span>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-sm-12">
-                                        <h5>Your journey begins here <span class="glyphicon glyphicon-question-sign"></span></h5>
-                                        <div class="form-group row">
-                                            <div class="col-sm-4">
-                                                <input class="form-control" id="ex1" type="text" placeholder="Arrival">
-                                            </div>
-                                            <div class="col-sm-4">
-                                                <input class="form-control" id="ex2" type="text" placeholder="Departure">
-                                            </div>
-                                            <div class="col-sm-4">
-                                                <select class="form-control">
-                                                    <option>Persons</option>
-                                                    <option>1</option>
-                                                    <option>2</option>
-                                                    <option>3</option>
-                                                    <option>4</option>
-                                                    <option>5</option>
-                                                </select>
+                                                <span class="badge">J</span> <span class="badge">F</span> <span class="badge">M</span>
+                                                <span class="badge">A</span> <span class="badge">M</span> <span class="badge">J</span>
+                                                <span class="badge">J</span> <span class="badge">A</span> <span class="badge">S</span>
+                                                <span class="badge">O</span> <span class="badge">N</span> <span class="badge">D</span>
                                             </div>
                                         </div>
+
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                <h5>Your journey begins here <span class="glyphicon glyphicon-question-sign"></span></h5>
+                                                <div class="form-group row">
+                                                    <div class="col-sm-4">
+                                                        <input class="form-control" id="ex1" type="text" placeholder="Arrival">
+                                                    </div>
+                                                    <div class="col-sm-4">
+                                                        <input class="form-control" id="ex2" type="text" placeholder="Departure">
+                                                    </div>
+                                                    <div class="col-sm-4">
+                                                        <select class="form-control">
+                                                            <option>Persons</option>
+                                                            <option>1</option>
+                                                            <option>2</option>
+                                                            <option>3</option>
+                                                            <option>4</option>
+                                                            <option>5</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                <h4><span class="label label-success pull-left">Sleeping place: Available</span></h4>
+                                                <button type="button" class="btn btn-default btn-sm btn-space pull-right"><span class="glyphicon glyphicon-floppy-save" aria-hidden="true"></span> Booking</button>
+                                            </div>
+                                        </div>
+
                                     </div>
                                 </div>
-
-                                <div class="row">
-                                    <div class="col-sm-12">
-                                        <h4><span class="label label-success pull-left">Sleeping place: Available</span></h4>
-                                        <button type="button" class="btn btn-default btn-sm btn-space pull-right"><span class="glyphicon glyphicon-floppy-save" aria-hidden="true"></span> Booking</button>
-                                    </div>
-                                </div>
-
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
+            @endforeach
+        @endisset
+    </div>
 
-
-        <div class="panel panel-default text-left">
-            <div class="panel-body">
-                <div class="row content">
-                    <div class="col-sm-2">
-                        <img src="https://placehold.it/150x80?text=IMAGE" class="img-responsive img-thumbnail" style="width:100%" alt="Image">
-                    </div>
-                    <div class="col-sm-7 text-left">
-                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-                        <button type="button" class="btn btn-default btn-sm">More Details</button>
-                        <button type="button" class="btn btn-default btn-sm btn-space pull-right">
-                            <span class="glyphicon glyphicon-home" aria-hidden="true"></span>
-                        </button>
-                        <button type="button" class="btn btn-default btn-sm btn-space pull-right">
-                            <span class="glyphicon glyphicon-print" aria-hidden="true"></span>
-                        </button>
-                        <button type="button" class="btn btn-default btn-sm btn-space pull-right">
-                            <span class="glyphicon glyphicon-music" aria-hidden="true"></span>
-                        </button>
-                        <button type="button" class="btn btn-default btn-sm btn-space pull-right">
-                            <span class="glyphicon glyphicon-glass" aria-hidden="true"></span>
-                        </button>
-                        <button type="button" class="btn btn-default btn-sm btn-space pull-right">
-                            <span class="glyphicon glyphicon-camera" aria-hidden="true"></span>
-                        </button>
-                        <button type="button" class="btn btn-default btn-sm btn-space pull-right">
-                            <span class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span>
-                        </button>
-                        <button type="button" class="btn btn-default btn-sm btn-space pull-right">
-                            <span class="glyphicon glyphicon-credit-card" aria-hidden="true"></span>
-                        </button>
-                    </div>
-
-                    <div class="col-sm-3">
-                        <div class="panel panel-default">
-                            <div class="panel-body">
-                                <div class="row">
-                                    <div class="col-sm-12">
-                                        <h5>Expected opening timings</h5>
-
-                                        <span class="badge">J</span> <span class="badge">F</span> <span class="badge">M</span>
-                                        <span class="badge">A</span> <span class="badge">M</span> <span class="badge">J</span>
-                                        <span class="badge">J</span> <span class="badge">A</span> <span class="badge">S</span>
-                                        <span class="badge">O</span> <span class="badge">N</span> <span class="badge">D</span>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-sm-12">
-                                        <h5>Your journey begins here <span class="glyphicon glyphicon-question-sign"></span></h5>
-                                        <div class="form-group row">
-                                            <div class="col-sm-4">
-                                                <input class="form-control" id="ex1" type="text" placeholder="Arrival">
-                                            </div>
-                                            <div class="col-sm-4">
-                                                <input class="form-control" id="ex2" type="text" placeholder="Departure">
-                                            </div>
-                                            <div class="col-sm-4">
-                                                <select class="form-control">
-                                                    <option>Persons</option>
-                                                    <option>1</option>
-                                                    <option>2</option>
-                                                    <option>3</option>
-                                                    <option>4</option>
-                                                    <option>5</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-sm-12">
-                                        <h4><span class="label label-success pull-left">Sleeping place: Available</span></h4>
-                                        <button type="button" class="btn btn-default btn-sm btn-space pull-right"><span class="glyphicon glyphicon-floppy-save" aria-hidden="true"></span> Booking</button>
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="panel panel-default text-left">
-            <div class="panel-body">
-                <div class="row content">
-                    <div class="col-sm-2">
-                        <img src="https://placehold.it/150x80?text=IMAGE" class="img-responsive img-thumbnail" style="width:100%" alt="Image">
-                    </div>
-                    <div class="col-sm-7 text-left">
-                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-                        <button type="button" class="btn btn-default btn-sm">More Details</button>
-                        <button type="button" class="btn btn-default btn-sm btn-space pull-right">
-                            <span class="glyphicon glyphicon-home" aria-hidden="true"></span>
-                        </button>
-                        <button type="button" class="btn btn-default btn-sm btn-space pull-right">
-                            <span class="glyphicon glyphicon-print" aria-hidden="true"></span>
-                        </button>
-                        <button type="button" class="btn btn-default btn-sm btn-space pull-right">
-                            <span class="glyphicon glyphicon-music" aria-hidden="true"></span>
-                        </button>
-                        <button type="button" class="btn btn-default btn-sm btn-space pull-right">
-                            <span class="glyphicon glyphicon-glass" aria-hidden="true"></span>
-                        </button>
-                        <button type="button" class="btn btn-default btn-sm btn-space pull-right">
-                            <span class="glyphicon glyphicon-camera" aria-hidden="true"></span>
-                        </button>
-                        <button type="button" class="btn btn-default btn-sm btn-space pull-right">
-                            <span class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span>
-                        </button>
-                        <button type="button" class="btn btn-default btn-sm btn-space pull-right">
-                            <span class="glyphicon glyphicon-credit-card" aria-hidden="true"></span>
-                        </button>
-                    </div>
-
-                    <div class="col-sm-3">
-                        <div class="panel panel-default">
-                            <div class="panel-body">
-                                <div class="row">
-                                    <div class="col-sm-12">
-                                        <h5>Expected opening timings</h5>
-
-                                        <span class="badge">J</span> <span class="badge">F</span> <span class="badge">M</span>
-                                        <span class="badge">A</span> <span class="badge">M</span> <span class="badge">J</span>
-                                        <span class="badge">J</span> <span class="badge">A</span> <span class="badge">S</span>
-                                        <span class="badge">O</span> <span class="badge">N</span> <span class="badge">D</span>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-sm-12">
-                                        <h5>Your journey begins here <span class="glyphicon glyphicon-question-sign"></span></h5>
-                                        <div class="form-group row">
-                                            <div class="col-sm-4">
-                                                <input class="form-control" id="ex1" type="text" placeholder="Arrival">
-                                            </div>
-                                            <div class="col-sm-4">
-                                                <input class="form-control" id="ex2" type="text" placeholder="Departure">
-                                            </div>
-                                            <div class="col-sm-4">
-                                                <select class="form-control">
-                                                    <option>Persons</option>
-                                                    <option>1</option>
-                                                    <option>2</option>
-                                                    <option>3</option>
-                                                    <option>4</option>
-                                                    <option>5</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-sm-12">
-                                        <h4><span class="label label-success pull-left">Sleeping place: Available</span></h4>
-                                        <button type="button" class="btn btn-default btn-sm btn-space pull-right"><span class="glyphicon glyphicon-floppy-save" aria-hidden="true"></span> Booking</button>
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <nav aria-label="...">
-            <ul class="pager">
-                <li><a href="#">Previous</a></li>
-                <li><a href="#">Next</a></li>
-            </ul>
-        </nav>
-    </div><br><br>
+    {!! $cabinSearchResult->links() !!}
 
 @endsection

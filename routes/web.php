@@ -11,10 +11,6 @@
 |
 */
 
-Route::get('/cabins', function(){
-   return view('cabins');
-});
-
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
@@ -41,10 +37,22 @@ Route::get('/', 'WelcomeController@index');
 */
 
 /* Search cabin */
-Route::post('/search', 'SearchController@index')->name('search');
+Route::match(['get', 'post'], '/search', 'SearchController@index')->name('search');
 
 /* Get cabin name when searching cabin name */
 Route::get('/search/cabin/{name}', 'SearchController@cabinName')->name('search.cabin.name');
+
+/*
+|--------------------------------------------------------------------------
+| Cabin
+|--------------------------------------------------------------------------
+|
+| Route for cabins listing page
+|
+*/
+
+/* List cabin */
+Route::get('/cabins', 'CabinsController@index');
 
 
 
