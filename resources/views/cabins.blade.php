@@ -36,8 +36,8 @@
         </div>
     </div><br><br>
 
-    <div class="container-fluid text-center">
-        @isset($cabinSearchResult)
+    @isset($cabinSearchResult)
+        <div class="container-fluid text-center">
             @foreach($cabinSearchResult as $result)
                 <div class="panel panel-default text-left">
                     <div class="panel-body">
@@ -46,7 +46,7 @@
                                 <img src="https://placehold.it/150x80?text=IMAGE" class="img-responsive img-thumbnail" style="width:100%" alt="Image">
                             </div>
                             <div class="col-sm-7 text-left">
-                                <h3>{{ $result->name }} - {{$result->region}} - {{$result->country}} ({{$result->height}})</h3>
+                                <h3>{{ $result->name }} - {{ $result->region }} - {{ $result->country }} ({{ number_format($result->height, 0, '', '.') }} m)</h3>
                                 <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
                                 <button type="button" class="btn btn-default btn-sm">More Details</button>
                                 <button type="button" class="btn btn-default btn-sm btn-space pull-right">
@@ -124,9 +124,8 @@
                     </div>
                 </div>
             @endforeach
-        @endisset
-    </div>
-
-    {!! $cabinSearchResult->links() !!}
+        </div>
+        {!! $cabinSearchResult->links() !!}
+    @endisset
 
 @endsection
