@@ -26,10 +26,6 @@ class Cabin extends Eloquent
      *
      * @var array
      */
-    protected $guarded = ['_id'];
+    protected $guarded = ['id'];
 
-    public function seasons()
-    {
-        return $this->hasMany('App\Season');
-    }
 }
