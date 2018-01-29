@@ -18,7 +18,7 @@ class SearchController extends Controller
      */
     public function index(SearchRequest $request)
     {
-        $cabin = Cabin::select('name', 'region', 'height', 'country')
+        $cabin = Cabin::select('_id', 'name', 'region', 'height', 'country', 'interior')
             ->where('is_delete', 0)
             ->where('other_cabin', "0");
 

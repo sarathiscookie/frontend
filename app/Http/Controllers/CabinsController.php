@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
+use App\Season;
 class CabinsController extends Controller
 {
     /**
@@ -80,5 +81,17 @@ class CabinsController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    /**
+     * Get the season start and end date when an injection occurs.
+     *
+     * @param  string  $cabinId
+     * @return \Illuminate\Http\Response
+     */
+    public function seasons($cabinId)
+    {
+        $seasons       = Season::where('cabin_id', new \MongoDB\BSON\ObjectID($cabinId))->get();
+        return $seasons;
     }
 }

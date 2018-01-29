@@ -49,27 +49,12 @@
                                 <h3>{{ $result->name }} - {{ $result->region }} - {{ $result->country }} ({{ number_format($result->height, 0, '', '.') }} m)</h3>
                                 <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
                                 <button type="button" class="btn btn-default btn-sm">More Details</button>
-                                <button type="button" class="btn btn-default btn-sm btn-space pull-right">
-                                    <span class="glyphicon glyphicon-home" aria-hidden="true"></span>
-                                </button>
-                                <button type="button" class="btn btn-default btn-sm btn-space pull-right">
-                                    <span class="glyphicon glyphicon-print" aria-hidden="true"></span>
-                                </button>
-                                <button type="button" class="btn btn-default btn-sm btn-space pull-right">
-                                    <span class="glyphicon glyphicon-music" aria-hidden="true"></span>
-                                </button>
-                                <button type="button" class="btn btn-default btn-sm btn-space pull-right">
-                                    <span class="glyphicon glyphicon-glass" aria-hidden="true"></span>
-                                </button>
-                                <button type="button" class="btn btn-default btn-sm btn-space pull-right">
-                                    <span class="glyphicon glyphicon-camera" aria-hidden="true"></span>
-                                </button>
-                                <button type="button" class="btn btn-default btn-sm btn-space pull-right">
-                                    <span class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span>
-                                </button>
-                                <button type="button" class="btn btn-default btn-sm btn-space pull-right">
-                                    <span class="glyphicon glyphicon-credit-card" aria-hidden="true"></span>
-                                </button>
+
+                                @foreach($result->interior as $interior)
+                                    <button type="button" class="btn btn-default btn-sm btn-space pull-right">
+                                        <span @if($interior === 'Food à la carte') class="glyphicon glyphicon-credit-card" @elseif($interior === 'breakfast') class="glyphicon glyphicon-glass" @else class="glyphicon glyphicon-home" @endif aria-hidden="true"></span>
+                                    </button>
+                                @endforeach
                             </div>
 
                             <div class="col-sm-3">
@@ -77,12 +62,35 @@
                                     <div class="panel-body">
                                         <div class="row">
                                             <div class="col-sm-12">
-                                                <h5>Expected opening timings</h5>
-
-                                                <span class="badge">J</span> <span class="badge">F</span> <span class="badge">M</span>
+                                                <h5>Expected opening timings in</h5>
+                                                @inject('cabinServices', 'App\Http\Controllers\CabinsController')
+                                                <?php
+                                                $firstYear = (int)date('Y');
+                                                $lastYear  = (int)date('Y', strtotime('+2 year'));
+                                                for($i = $firstYear; $i <= $lastYear; $i++)
+                                                {
+                                                ?>
+                                                @if($cabinServices->seasons($result->_id))
+                                                    @foreach ($cabinServices->seasons($result->_id) as $season)
+                                                        <h5><span class="badge">{{ $i }}</span></h5>
+                                                        @if($season->summerSeason === 1 && $season->summerSeasonStatus === 'open' && $season->summerSeasonYear === $i)
+                                                            <h5><b>Summer open: </b><small>{{ $season->earliest_summer_open->format('d.m.y') }}</small></h5>
+                                                            <h5><b>Summer close: </b><small>{{ $season->latest_summer_close->format('d.m.y') }}</small></h5>
+                                                        @endif
+                                                        @if($season->winterSeason === 1 && $season->winterSeasonStatus === 'open' && $season->winterSeasonYear === $i)
+                                                            <h5><b>Winter open: </b><small>{{ $season->earliest_winter_open->format('d.m.y') }}</small></h5>
+                                                            <h5><b>Winter close: </b><small>{{ $season->latest_winter_close->format('d.m.y') }}</small></h5>
+                                                        @endif
+                                                        <hr>
+                                                    @endforeach
+                                                @endif
+                                                <?php
+                                                }
+                                                ?>
+                                                {{--<span class="badge">J</span> <span class="badge">F</span> <span class="badge">M</span>
                                                 <span class="badge">A</span> <span class="badge">M</span> <span class="badge">J</span>
                                                 <span class="badge">J</span> <span class="badge">A</span> <span class="badge">S</span>
-                                                <span class="badge">O</span> <span class="badge">N</span> <span class="badge">D</span>
+                                                <span class="badge">O</span> <span class="badge">N</span> <span class="badge">D</span>--}}
                                             </div>
                                         </div>
 
