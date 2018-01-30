@@ -11,92 +11,6 @@ use App\Region;
 class SearchController extends Controller
 {
     /**
-     * Display a listing of the resource.
-     *
-     * @param  \App\Http\Requests\SearchRequest
-     * @return \Illuminate\Http\Response
-     */
-    public function index(SearchRequest $request)
-    {
-        $cabin = Cabin::select('_id', 'name', 'region', 'height', 'country', 'interior')
-            ->where('is_delete', 0)
-            ->where('other_cabin', "0");
-
-        if(isset($request->cabinname)){
-            $cabin->where('name', $request->cabinname);
-        }
-
-        if(isset($request->country)){
-            foreach ($request->country as $land){
-                $cabin->where('country', $land);
-            }
-        }
-
-        if(isset($request->region)){
-            foreach ($request->region as $region){
-                $cabin->where('region', $region);
-            }
-        }
-
-        if(isset($request->facility)){
-            foreach ($request->facility as $facility){
-                $cabin->whereIn('interior', [$facility]);
-            }
-        }
-
-        $cabinSearchResult = $cabin->simplePaginate(5);
-
-        return view('cabins', ['cabinSearchResult' => $cabinSearchResult]);
-    }
-
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function cabinName($name)
-    {
-        $data = Cabin::where('name', 'LIKE', $name.'%')
-            ->where('is_delete', 0)
-            ->where('other_cabin', "0")
-            ->take(10)
-            ->get(array('name'));
-
-        return response()->json($data);
-    }
-
-    /**
-     * Show the countries when an injection occurs.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function country()
-    {
-        $country       = Country::select('name')
-            ->get();
-
-        if(count($country) > 0){
-            return $country;
-        }
-    }
-
-    /**
-     * Show the regions when an injection occurs.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function regions()
-    {
-        $regions       = Region::select('name')
-            ->where('is_delete', 0)
-            ->get();
-
-        if(count($regions) > 0){
-            return $regions;
-        }
-    }
-
-    /**
      * Show the facility array when an injection occurs.
      *
      * @return \Illuminate\Http\Response
@@ -144,6 +58,61 @@ class SearchController extends Controller
         );
 
         return $seasonOpens;
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @param  \App\Http\Requests\SearchRequest
+     * @return \Illuminate\Http\Response
+     */
+    public function index(SearchRequest $request)
+    {
+        $cabin = Cabin::select('_id', 'name', 'region', 'height', 'country', 'interior')
+            ->where('is_delete', 0)
+            ->where('other_cabin', "0");
+
+        if(isset($request->cabinname)){
+            $cabin->where('name', $request->cabinname);
+        }
+
+        if(isset($request->country)){
+            foreach ($request->country as $land){
+                $cabin->where('country', $land);
+            }
+        }
+
+        if(isset($request->region)){
+            foreach ($request->region as $region){
+                $cabin->where('region', $region);
+            }
+        }
+
+        if(isset($request->facility)){
+            foreach ($request->facility as $facility){
+                $cabin->whereIn('interior', [$facility]);
+            }
+        }
+
+        $cabinSearchResult = $cabin->simplePaginate(10);
+
+        return view('cabins', ['cabinSearchResult' => $cabinSearchResult]);
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function cabinName($name)
+    {
+        $data = Cabin::where('name', 'LIKE', $name.'%')
+            ->where('is_delete', 0)
+            ->where('other_cabin', "0")
+            ->take(10)
+            ->get(array('name'));
+
+        return response()->json($data);
     }
 
     /**
@@ -210,5 +179,56 @@ class SearchController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    /**
+     * Show the countries when an injection occurs.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function country()
+    {
+        $country       = Country::select('name')
+            ->where('is_delete', 0)
+            ->get();
+
+        if(count($country) > 0){
+            return $country;
+        }
+    }
+
+    /**
+     * Show the regions when an injection occurs.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function regions()
+    {
+        $regions       = Region::select('name')
+            ->where('is_delete', 0)
+            ->get();
+
+        if(count($regions) > 0){
+            return $regions;
+        }
+    }
+
+    /**
+     * Get the count of cabin region wise when an injection occurs.
+     *
+     * @param  string  $region
+     * @return \Illuminate\Http\Response
+     */
+    public function cabinCount($region)
+    {
+        $cabin = Cabin::where('is_delete', 0)
+            ->where('other_cabin', "0")
+            ->where('region', $region)
+            ->count();
+
+        if($cabin > 0)
+        {
+            return $cabin;
+        }
     }
 }

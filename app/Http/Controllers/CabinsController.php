@@ -92,6 +92,8 @@ class CabinsController extends Controller
     public function seasons($cabinId)
     {
         $seasons       = Season::where('cabin_id', new \MongoDB\BSON\ObjectID($cabinId))->get();
-        return $seasons;
+        if(count($seasons) > 0){
+            return $seasons;
+        }
     }
 }

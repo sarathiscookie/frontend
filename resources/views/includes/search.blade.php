@@ -27,7 +27,7 @@
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="checkbox" aria-haspopup="true" aria-expanded="false">Region <span class="caret"></span></a>
                     <ul class="dropdown-menu drop-height">
                         @foreach($services->regions() as $region)
-                            <li><a href="#"><input type="checkbox" name="region[]" value="{{ $region->name }}"> {{ $region->name }}</a></li>
+                            <li><a href="#"><input type="checkbox" name="region[]" value="{{ $region->name }}"> {{ $region->name }} @if($services->cabinCount($region->name)) <span class="badge">{!! $services->cabinCount($region->name) !!}</span> @endif</a></li>
                         @endforeach
                     </ul>
                 </li>
