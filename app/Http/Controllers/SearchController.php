@@ -8,6 +8,9 @@ use App\Cabin;
 use App\Country;
 use App\Region;
 use App\Season;
+use DateTime;
+use DatePeriod;
+use DateInterval;
 
 class SearchController extends Controller
 {
@@ -59,6 +62,23 @@ class SearchController extends Controller
         );
 
         return $seasonOpens;
+    }
+
+    /**
+     * To generate date between two dates.
+     *
+     * @param  string  $now
+     * @param  string  $end
+     * @return \Illuminate\Http\Response
+     */
+    protected function generateDates($now, $end){
+        $period = new DatePeriod(
+            new DateTime($now),
+            new DateInterval('P1D'),
+            new DateTime($end)
+        );
+
+        return $period;
     }
 
     /**
@@ -180,6 +200,133 @@ class SearchController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    /**
+     * Show the data when page initial loads.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+
+    public function calendar(Request $request)
+    {
+        $monthBegin        = date("Y-m-d");
+        $monthEnd          = date("Y-m-t 23:59:59");
+
+        $holiday_prepare   = [];
+        $disableDates      = [];
+
+        $seasons           = Season::where('cabin_id', new \MongoDB\BSON\ObjectID($request->dataId))->get();
+
+        if($seasons) {
+
+            $generateDates = $this->generateDates($monthBegin, $monthEnd);
+
+            foreach ($generateDates as $generateDate) {
+
+                $dates = $generateDate->format('Y-m-d');
+                $day   = $generateDate->format('D');
+
+                foreach ($seasons as $season) {
+
+                    if (($season->summerSeasonStatus === 'open') && ($season->summerSeason === 1) && ($dates >= ($season->earliest_summer_open)->format('Y-m-d')) && ($dates < ($season->latest_summer_close)->format('Y-m-d'))) {
+                        $holiday_prepare[] = ($season->summer_mon === 1) ? 'Mon' : 0;
+                        $holiday_prepare[] = ($season->summer_tue === 1) ? 'Tue' : 0;
+                        $holiday_prepare[] = ($season->summer_wed === 1) ? 'Wed' : 0;
+                        $holiday_prepare[] = ($season->summer_thu === 1) ? 'Thu' : 0;
+                        $holiday_prepare[] = ($season->summer_fri === 1) ? 'Fri' : 0;
+                        $holiday_prepare[] = ($season->summer_sat === 1) ? 'Sat' : 0;
+                        $holiday_prepare[] = ($season->summer_sun === 1) ? 'Sun' : 0;
+                    } elseif (($season->winterSeasonStatus === 'open') && ($season->winterSeason === 1) && ($dates >= ($season->earliest_winter_open)->format('Y-m-d')) && ($dates < ($season->latest_winter_close)->format('Y-m-d'))) {
+                        $holiday_prepare[] = ($season->winter_mon === 1) ? 'Mon' : 0;
+                        $holiday_prepare[] = ($season->winter_tue === 1) ? 'Tue' : 0;
+                        $holiday_prepare[] = ($season->winter_wed === 1) ? 'Wed' : 0;
+                        $holiday_prepare[] = ($season->winter_thu === 1) ? 'Thu' : 0;
+                        $holiday_prepare[] = ($season->winter_fri === 1) ? 'Fri' : 0;
+                        $holiday_prepare[] = ($season->winter_sat === 1) ? 'Sat' : 0;
+                        $holiday_prepare[] = ($season->winter_sun === 1) ? 'Sun' : 0;
+                    }
+
+                }
+
+                $prepareArray    = [$dates => $day];
+                $array_unique    = array_unique($holiday_prepare);
+                $array_intersect = array_intersect($prepareArray, $array_unique);
+
+                foreach ($array_intersect as $array_intersect_key => $array_intersect_values) {
+                    $disableDates[] = $array_intersect_key;
+                }
+
+            }
+        }
+
+        return response()->json(['disableDates' => $disableDates], 200);
+    }
+
+
+    /**
+     * Search available data.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function calendarAvailability(Request $request)
+    {
+        $holiday_prepare    = [];
+        $disableDates       = [];
+
+        if($request->dateFrom != '') {
+            $monthBegin        = $request->dateFrom;
+            $monthEnd          = date('Y-m-t 23:59:59', strtotime($request->dateFrom));
+            $seasons           = Season::where('cabin_id', new \MongoDB\BSON\ObjectID(session('cabin_id')))->get();
+
+            if($seasons) {
+
+                $generateDates  = $this->generateDates($monthBegin, $monthEnd);
+
+                foreach ($generateDates as $generateDate) {
+
+                    $dates = $generateDate->format('Y-m-d');
+                    $day   = $generateDate->format('D');
+
+                    foreach($seasons as $season) {
+
+                        if( ($season->summerSeasonStatus === 'open') && ($season->summerSeason === 1) && ($dates >= ($season->earliest_summer_open)->format('Y-m-d')) && ($dates < ($season->latest_summer_close)->format('Y-m-d')) ) {
+                            $holiday_prepare[] = ($season->summer_mon === 1) ? 'Mon' : 0;
+                            $holiday_prepare[] = ($season->summer_tue === 1) ? 'Tue' : 0;
+                            $holiday_prepare[] = ($season->summer_wed === 1) ? 'Wed' : 0;
+                            $holiday_prepare[] = ($season->summer_thu === 1) ? 'Thu' : 0;
+                            $holiday_prepare[] = ($season->summer_fri === 1) ? 'Fri' : 0;
+                            $holiday_prepare[] = ($season->summer_sat === 1) ? 'Sat' : 0;
+                            $holiday_prepare[] = ($season->summer_sun === 1) ? 'Sun' : 0;
+                        }
+                        elseif( ($season->winterSeasonStatus === 'open') && ($season->winterSeason === 1) && ($dates >= ($season->earliest_winter_open)->format('Y-m-d')) && ($dates < ($season->latest_winter_close)->format('Y-m-d')) ) {
+                            $holiday_prepare[] = ($season->winter_mon === 1) ? 'Mon' : 0;
+                            $holiday_prepare[] = ($season->winter_tue === 1) ? 'Tue' : 0;
+                            $holiday_prepare[] = ($season->winter_wed === 1) ? 'Wed' : 0;
+                            $holiday_prepare[] = ($season->winter_thu === 1) ? 'Thu' : 0;
+                            $holiday_prepare[] = ($season->winter_fri === 1) ? 'Fri' : 0;
+                            $holiday_prepare[] = ($season->winter_sat === 1) ? 'Sat' : 0;
+                            $holiday_prepare[] = ($season->winter_sun === 1) ? 'Sun' : 0;
+                        }
+
+                    }
+
+                    $prepareArray           = [$dates => $day];
+                    $array_unique           = array_unique($holiday_prepare);
+                    $array_intersect        = array_intersect($prepareArray,$array_unique);
+
+                    foreach ($array_intersect as $array_intersect_key => $array_intersect_values) {
+                        $disableDates[] = $array_intersect_key;
+                    }
+                }
+
+            }
+        }
+
+        return response()->json(['disableDates' => $disableDates], 201);
+
     }
 
     /**

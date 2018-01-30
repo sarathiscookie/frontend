@@ -41,5 +41,4 @@ $(function(){
         });
 
     /* Typeahead auto complete end */
-
 });

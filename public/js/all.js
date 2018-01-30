@@ -76,5 +76,10 @@ $(function(){
         });
 
     /* Typeahead auto complete end */
+});
+$(function(){
+
+
+
 
 });

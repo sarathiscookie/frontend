@@ -26,7 +26,8 @@ mix.styles([
 
 mix.scripts([
     'resources/assets/js/welcome.js',
-    'resources/assets/js/search.js'
+    'resources/assets/js/search.js',
+    'resources/assets/js/searchResult.js'
 ], 'public/js/all.js');
 
 

@@ -111,13 +111,13 @@
                                         <div class="row">
                                             <div class="col-sm-12">
                                                 <h5>Your journey begins here <span class="glyphicon glyphicon-question-sign"></span></h5>
-                                                <div class="form-group row" data-id="{{ $result->_id }}">
+                                                <div class="form-group row calendar" data-id="{{ $result->_id }}">
 
                                                     <div class="col-sm-4">
-                                                        <input type="text" class="form-control" id="dateFrom" name="dateFrom" placeholder="Arrival" readonly>
+                                                        <input type="text" class="form-control dateFrom" id="dateFrom" name="dateFrom" placeholder="Arrival" readonly>
                                                     </div>
                                                     <div class="col-sm-4">
-                                                        <input type="text" class="form-control" id="dateTo" name="dateTo" placeholder="Departure" readonly>
+                                                        <input type="text" class="form-control dateTo" id="dateTo" name="dateTo" placeholder="Departure" readonly>
                                                     </div>
 
                                                     <div class="col-sm-4">
@@ -157,3 +157,42 @@
     @endisset
 
 @endsection
+
+@push('scripts')
+    <script>
+        $(function() {
+
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+
+            $( ".dateFrom" ).on('click', function(){
+
+                var dataId     = $(this).parent().parent().data("id");
+
+                $.ajax({
+                    url: '/calendar',
+                    dataType: 'JSON',
+                    type: 'POST',
+                    data: { dataId: dataId },
+                    success : function(response) {
+                        var array  = response.disableDates;
+                        $('.dateFrom').datepicker({
+                            showAnim: "drop",
+                            dateFormat: "dd.mm.y",
+                            monthNames: ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'],
+                            monthNamesShort: ["Jan", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"],
+                            dayNamesMin: ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"],
+                            beforeShowDay: function (date) {
+                                var string = jQuery.datepicker.formatDate('yy-mm-dd', date);
+                                return [true, array.indexOf(string) == -1]
+                            }
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+@endpush
