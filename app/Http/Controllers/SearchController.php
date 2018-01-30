@@ -7,6 +7,7 @@ use App\Http\Requests\SearchRequest;
 use App\Cabin;
 use App\Country;
 use App\Region;
+use App\Season;
 
 class SearchController extends Controller
 {
@@ -96,7 +97,7 @@ class SearchController extends Controller
 
         $cabinSearchResult = $cabin->simplePaginate(10);
 
-        return view('cabins', ['cabinSearchResult' => $cabinSearchResult]);
+        return view('searchResult', ['cabinSearchResult' => $cabinSearchResult]);
     }
 
     /**
@@ -229,6 +230,20 @@ class SearchController extends Controller
         if($cabin > 0)
         {
             return $cabin;
+        }
+    }
+
+    /**
+     * Get the season start and end date when an injection occurs.
+     *
+     * @param  string  $cabinId
+     * @return \Illuminate\Http\Response
+     */
+    public function seasons($cabinId)
+    {
+        $seasons = Season::where('cabin_id', new \MongoDB\BSON\ObjectID($cabinId))->get();
+        if(count($seasons) > 0){
+            return $seasons;
         }
     }
 }
