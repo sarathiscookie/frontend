@@ -260,7 +260,6 @@ class SearchController extends Controller
 
             }
         }
-
         return response()->json(['disableDates' => $disableDates], 200);
     }
 
@@ -279,7 +278,7 @@ class SearchController extends Controller
         if($request->dateFrom != '') {
             $monthBegin        = $request->dateFrom;
             $monthEnd          = date('Y-m-t 23:59:59', strtotime($request->dateFrom));
-            $seasons           = Season::where('cabin_id', new \MongoDB\BSON\ObjectID(session('cabin_id')))->get();
+            $seasons           = Season::where('cabin_id', new \MongoDB\BSON\ObjectID($request->dataId))->get();
 
             if($seasons) {
 

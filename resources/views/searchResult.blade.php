@@ -2,6 +2,20 @@
 
 @section('title', 'Search results')
 
+@section('styles')
+    <style>
+        .markholiday .ui-state-default
+        {
+            color: red;
+        }
+
+        .markavailable .ui-state-default
+        {
+            color: green;
+        }
+    </style>
+@endsection
+
 @section('content')
     <div class="jumbotron" style="height: 500px;">
         <div class="container text-center">
@@ -114,10 +128,10 @@
                                                 <div class="form-group row calendar" data-id="{{ $result->_id }}">
 
                                                     <div class="col-sm-4">
-                                                        <input type="text" class="form-control dateFrom" id="dateFrom" name="dateFrom" placeholder="Arrival" readonly>
+                                                        <input type="text" class="form-control dateFrom" id="dateFrom_{{ $result->_id }}" name="dateFrom" placeholder="Arrival" readonly>
                                                     </div>
                                                     <div class="col-sm-4">
-                                                        <input type="text" class="form-control dateTo" id="dateTo" name="dateTo" placeholder="Departure" readonly>
+                                                        <input type="text" class="form-control dateTo" id="dateTo_{{ $result->_id }}" name="dateTo" placeholder="Departure" readonly>
                                                     </div>
 
                                                     <div class="col-sm-4">
@@ -161,38 +175,66 @@
 @push('scripts')
     <script>
         $(function() {
-
             $.ajaxSetup({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 }
             });
 
-            $( ".dateFrom" ).on('click', function(){
+            $(".dateFrom").datepicker({
+                showAnim: "drop",
+                dateFormat: "dd.mm.y",
+                monthNames: ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'],
+                monthNamesShort: ["Jan", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"],
+                dayNamesMin: ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"]
 
-                var dataId     = $(this).parent().parent().data("id");
+            });
+
+            $("body").on('mousedown', ".dateFrom", function() {
+                var dataId = $(this).parent().parent().data("id");
+                var $this = $(this);
 
                 $.ajax({
                     url: '/calendar',
                     dataType: 'JSON',
                     type: 'POST',
                     data: { dataId: dataId },
-                    success : function(response) {
+                    success: function(response) {
                         var array  = response.disableDates;
-                        $('.dateFrom').datepicker({
-                            showAnim: "drop",
-                            dateFormat: "dd.mm.y",
-                            monthNames: ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'],
-                            monthNamesShort: ["Jan", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"],
-                            dayNamesMin: ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"],
-                            beforeShowDay: function (date) {
-                                var string = jQuery.datepicker.formatDate('yy-mm-dd', date);
-                                return [true, array.indexOf(string) == -1]
+                        var start_date = '';
+
+                        $this.datepicker("option", "onChangeMonthYear", function(year,month,inst) {
+                            if (year != undefined && month != undefined) {
+                                start_date = year +'-';
+                                start_date += month +'-';
+                                start_date += '01';
                             }
+                            $.ajax({
+                                url: '/calendar/ajax',
+                                dataType: 'JSON',
+                                type: 'POST',
+                                data: { dateFrom: start_date, dataId: dataId },
+                                success: function (response) {
+                                    for (var i = 0; i < response.disableDates.length; i++) {
+                                        array.push(response.disableDates[i]);
+                                    }
+                                    $this.datepicker("refresh");
+                                }
+                            });
                         });
+
+                        $this.datepicker("option", "beforeShowDay", function(date) {
+                            var string = jQuery.datepicker.formatDate('yy-mm-dd', date);
+                            return [true, (array.indexOf(string) == -1) ? "" : "markholiday"];
+                        });
+
+
+                        $this.datepicker("show");
                     }
                 });
+
             });
         });
+
     </script>
 @endpush

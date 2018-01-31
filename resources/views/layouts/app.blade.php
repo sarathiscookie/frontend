@@ -22,7 +22,7 @@
     <!-- Css for all modules -->
     <link href="{{ asset('css/all.css') }}" rel="stylesheet">
 
-    @yield('css')
+    @yield('styles')
 
 </head>
 <body id="myPage" data-spy="scroll" data-target=".navbar" data-offset="60">

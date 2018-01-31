@@ -2,7 +2,7 @@
 
 @section('title', 'Welcome')
 
-@section('css')
+@section('styles')
 @endsection
 
 @section('content')
