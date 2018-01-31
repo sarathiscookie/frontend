@@ -4,14 +4,19 @@
 
 @section('styles')
     <style>
-        .markholiday .ui-state-default
+        .holidayDates .ui-state-default
         {
-            color: red;
+            color: darkred;
         }
 
-        .markavailable .ui-state-default
+        .greenDates .ui-state-default
         {
-            color: green;
+            color: darkgreen;
+        }
+
+        .yellowDates .ui-state-default
+        {
+            color: darkorange;
         }
     </style>
 @endsection
@@ -200,8 +205,10 @@
                     type: 'POST',
                     data: { dataId: dataId },
                     success: function(response) {
-                        var array  = response.disableDates;
-                        var start_date = '';
+                        var holidayDates = response.disableDates;
+                        var greenDates   = response.greenDates;
+                        var yellowDates  = response.yellowDates;
+                        var start_date   = '';
 
                         $this.datepicker("option", "onChangeMonthYear", function(year,month,inst) {
                             if (year != undefined && month != undefined) {
@@ -216,8 +223,18 @@
                                 data: { dateFrom: start_date, dataId: dataId },
                                 success: function (response) {
                                     for (var i = 0; i < response.disableDates.length; i++) {
-                                        array.push(response.disableDates[i]);
+                                        holidayDates.push(response.disableDates[i]);
                                     }
+
+                                    for (var i = 0; i < response.greenDates.length; i++) {
+                                        greenDates.push(response.greenDates[i]);
+                                    }
+
+                                    for (var i = 0; i < response.yellowDates.length; i++) {
+                                        yellowDates.push(response.yellowDates[i]);
+                                        console.log(yellowDates);
+                                    }
+
                                     $this.datepicker("refresh");
                                 }
                             });
@@ -225,9 +242,23 @@
 
                         $this.datepicker("option", "beforeShowDay", function(date) {
                             var string = jQuery.datepicker.formatDate('yy-mm-dd', date);
-                            return [true, (array.indexOf(string) == -1) ? "" : "markholiday"];
-                        });
+                            //console.log(string);
+                            /*return [true, (holidayDates.indexOf(string) == -1) ? "" : "holidayDates"];
+                            return [true, (greenDates.indexOf(string) == -1) ? "" : "greenDates"];*/
+                            /*if(holidayDates.indexOf(string) >=0){
+                                return [true, "holidayDates"];
+                            }
+                            else if(greenDates.indexOf(string) >=0){
+                                return [true, "greenDates"];
+                            }
+                            else if(yellowDates.indexOf(string) >=0){
+                                return [true, "yellowDates"];
+                            }*/
 
+                            //Demo: return [true,$.inArray(theday, datesArray) >=0?"specialDate":($.inArray(theday, datesArray1)>=0?"specialDate1":'')];
+                            return [true, (holidayDates.indexOf(string) >=0) ? "holidayDates" : ( (greenDates.indexOf(string) >=0) ? "greenDates": ( (yellowDates.indexOf(string) >=0) ? "yellowDates": '' ) )];
+
+                        });
 
                         $this.datepicker("show");
                     }

@@ -211,7 +211,7 @@ class SearchController extends Controller
 
     public function calendar(Request $request)
     {
-        $monthBegin        = date("Y-m-d");
+        $monthBegin        = date("2018-01-01");
         $monthEnd          = date("Y-m-t 23:59:59");
 
         $holiday_prepare   = [];
@@ -260,7 +260,12 @@ class SearchController extends Controller
 
             }
         }
-        return response()->json(['disableDates' => $disableDates], 200);
+
+        $greenDates  = ["2018-01-05", "2018-01-08", "2018-01-11"];
+        $yellowDates = ["2018-01-06", "2018-01-09", "2018-01-12"];
+        $redDates    = ["2018-01-07", "2018-01-10", "2018-01-13"];
+
+        return response()->json(['disableDates' => $disableDates, 'greenDates' => $greenDates, 'yellowDates' => $yellowDates, 'redDates' => $redDates], 200);
     }
 
 
@@ -324,8 +329,11 @@ class SearchController extends Controller
             }
         }
 
-        return response()->json(['disableDates' => $disableDates], 201);
+        $greenDates  = ["2018-02-03", "2018-02-04", "2018-02-05"];
+        $yellowDates = ["2018-02-06", "2018-02-09", "2018-02-12"];
+        $redDates    = ["2018-02-07", "2018-02-10", "2018-02-13"];
 
+        return response()->json(['disableDates' => $disableDates, 'greenDates' => $greenDates, 'yellowDates' => $yellowDates, 'redDates' => $redDates], 200);
     }
 
     /**
