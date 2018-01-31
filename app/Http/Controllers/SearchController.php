@@ -211,7 +211,7 @@ class SearchController extends Controller
 
     public function calendar(Request $request)
     {
-        $monthBegin        = date("2018-01-01");
+        $monthBegin        = date("Y-m-d");
         $monthEnd          = date("Y-m-t 23:59:59");
 
         $holiday_prepare   = [];
