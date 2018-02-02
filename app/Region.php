@@ -26,5 +26,5 @@ class Region extends Eloquent
      *
      * @var array
      */
-    protected $guarded = ['_id'];
+    protected $guarded = ['id'];
 }

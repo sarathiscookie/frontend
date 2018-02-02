@@ -8,6 +8,8 @@ use App\Cabin;
 use App\Country;
 use App\Region;
 use App\Season;
+use App\Booking;
+use App\MountSchoolBooking;
 use DateTime;
 use DatePeriod;
 use DateInterval;
@@ -79,6 +81,21 @@ class SearchController extends Controller
         );
 
         return $period;
+    }
+
+    /**
+     * To generate date format as mongo.
+     *
+     * @param  string  $date
+     * @return \Illuminate\Http\Response
+     */
+    protected function getDateUtc($date)
+    {
+        $dateFormatChange = DateTime::createFromFormat("d.m.y", $date)->format('Y-m-d');
+        $dateTime         = new DateTime($dateFormatChange);
+        $timeStamp        = $dateTime->getTimestamp();
+        $utcDateTime      = new \MongoDB\BSON\UTCDateTime($timeStamp * 1000);
+        return $utcDateTime;
     }
 
     /**
@@ -211,23 +228,39 @@ class SearchController extends Controller
 
     public function calendar(Request $request)
     {
-        $monthBegin        = date("Y-m-d");
-        $monthEnd          = date("Y-m-t 23:59:59");
+        $monthBegin           = date("Y-m-d");
+        $monthEnd             = date("Y-m-t 23:59:59");
 
-        $holiday_prepare   = [];
-        $disableDates      = [];
+        /*$monthBegin              = date("2018-02-02");
+        $monthEnd                = date("2018-02-06");*/
 
-        $seasons           = Season::where('cabin_id', new \MongoDB\BSON\ObjectID($request->dataId))->get();
+        $holiday_prepare         = [];
+        $holidayDates            = [];
+        $not_regular_dates       = [];
+        $dates_array             = [];
+        $available_dates         = [];
+        $not_available_dates     = [];
 
-        if($seasons) {
+        $dorms                   = 0;
+        $beds                    = 0;
+        $sleeps                  = 0;
 
-            $generateDates = $this->generateDates($monthBegin, $monthEnd);
+        $msSleeps                = 0;
+        $msBeds                  = 0;
+        $msDorms                 = 0;
 
-            foreach ($generateDates as $generateDate) {
+        $seasons                 = Season::where('cabin_id', new \MongoDB\BSON\ObjectID($request->dataId))->get();
+        $cabin                   = Cabin::findOrFail($request->dataId);
 
-                $dates = $generateDate->format('Y-m-d');
-                $day   = $generateDate->format('D');
+        $generateBookingDates    = $this->generateDates($monthBegin, $monthEnd);
 
+        foreach ($generateBookingDates as $generateBookingDate) {
+
+            $dates         = $generateBookingDate->format('Y-m-d');
+            $day           = $generateBookingDate->format('D');
+
+            /* Checking season begin */
+            if($seasons) {
                 foreach ($seasons as $season) {
 
                     if (($season->summerSeasonStatus === 'open') && ($season->summerSeason === 1) && ($dates >= ($season->earliest_summer_open)->format('Y-m-d')) && ($dates < ($season->latest_summer_close)->format('Y-m-d'))) {
@@ -250,22 +283,129 @@ class SearchController extends Controller
 
                 }
 
-                $prepareArray    = [$dates => $day];
-                $array_unique    = array_unique($holiday_prepare);
-                $array_intersect = array_intersect($prepareArray, $array_unique);
+                $prepareArray       = [$dates => $day];
+                $array_unique       = array_unique($holiday_prepare);
+                $array_intersect    = array_intersect($prepareArray, $array_unique);
 
                 foreach ($array_intersect as $array_intersect_key => $array_intersect_values) {
-                    $disableDates[] = $array_intersect_key;
+                    $holidayDates[] = $array_intersect_key;
+                }
+            }
+            /* Checking season end */
+
+            /* Checking bookings available begins */
+            $session_mon_day     = ($cabin->mon_day === 1) ? 'Mon' : 0;
+            $session_tue_day     = ($cabin->tue_day === 1) ? 'Tue' : 0;
+            $session_wed_day     = ($cabin->wed_day === 1) ? 'Wed' : 0;
+            $session_thu_day     = ($cabin->thu_day === 1) ? 'Thu' : 0;
+            $session_fri_day     = ($cabin->fri_day === 1) ? 'Fri' : 0;
+            $session_sat_day     = ($cabin->sat_day === 1) ? 'Sat' : 0;
+            $session_sun_day     = ($cabin->sun_day === 1) ? 'Sun' : 0;
+
+            /* Getting bookings from booking collection status is 1=>Fix, 4=>Request, 7=>Inquiry */
+            $bookings  = Booking::select('beds', 'dormitory', 'sleeps')
+                ->where('is_delete', 0)
+                ->where('cabinname', $cabin->name)
+                ->whereIn('status', ['1', '4', '7'])
+                ->whereRaw(['checkin_from' => array('$lte' => $this->getDateUtc($generateBookingDate->format('d.m.y')))])
+                ->whereRaw(['reserve_to' => array('$gt' => $this->getDateUtc($generateBookingDate->format('d.m.y')))])
+                ->get();
+
+            /* Getting bookings from mschool collection status is 1=>Fix, 4=>Request, 7=>Inquiry */
+            $msBookings  = MountSchoolBooking::select('beds', 'dormitory', 'sleeps')
+                ->where('is_delete', 0)
+                ->where('cabin_name', $cabin->name)
+                ->whereIn('status', ['1', '4', '7'])
+                ->whereRaw(['check_in' => array('$lte' => $this->getDateUtc($generateBookingDate->format('d.m.y')))])
+                ->whereRaw(['reserve_to' => array('$gt' => $this->getDateUtc($generateBookingDate->format('d.m.y')))])
+                ->get();
+
+            /* Getting count of sleeps, beds and dorms */
+            if(count($bookings) > 0 || count($msBookings) > 0) {
+                $sleeps          = $bookings->sum('sleeps');
+                $beds            = $bookings->sum('beds');
+                $dorms           = $bookings->sum('dormitory');
+                $msSleeps        = $msBookings->sum('sleeps');
+                $msBeds          = $msBookings->sum('beds');
+                $msDorms         = $msBookings->sum('dormitory');
+
+                //print_r(' beds '. $beds .' dorms '. $dorms .' msBeds '. $msBeds .' msDorms '. $msDorms);
+                //print_r(' sleeps '. $sleeps .' msSleeps '. $msSleeps);
+            }
+
+            /* Taking beds, dorms and sleeps depends up on sleeping_place */
+            /* >= 75% are booked Orange, 100% is red, < 75% are green*/
+            if($cabin->sleeping_place != 1) {
+                $totalBeds       = $beds + $msBeds;
+                $totalDorms      = $dorms + $msDorms;
+
+                //print_r(' totalBeds '. $totalBeds .' totalDorms '. $totalDorms);
+
+                /* Calculating beds & dorms of regular and not regular booking */
+                if($cabin->not_regular === 1) {
+                    $not_regular_date_explode = explode(" - ", $cabin->not_regular_date);
+                    $not_regular_date_begin   = DateTime::createFromFormat('d.m.y', $not_regular_date_explode[0])->format('Y-m-d');
+                    $not_regular_date_end     = DateTime::createFromFormat('d.m.y', $not_regular_date_explode[1])->format('Y-m-d 23:59:59'); //To get the end date we need to add time
+                    $generateNotRegularDates  = $this->generateDates($not_regular_date_begin, $not_regular_date_end);
+
+                    foreach($generateNotRegularDates as $generateNotRegularDate) {
+                        $not_regular_dates[]  = $generateNotRegularDate->format('Y-m-d');
+                    }
+
+                    if(in_array($dates, $not_regular_dates)) {
+
+                        $dates_array[] = $dates;
+
+                        if(($totalBeds < $cabin->not_regular_beds) || ($totalDorms < $cabin->not_regular_dorms)) {
+                            $not_regular_beds_diff      = $cabin->not_regular_beds - $totalBeds;
+                            $not_regular_dorms_diff     = $cabin->not_regular_dorms - $totalDorms;
+
+                            $not_regular_beds_avail     = ($not_regular_beds_diff >= 0) ? $not_regular_beds_diff : 0;
+                            $not_regular_dorms_avail    = ($not_regular_dorms_diff >= 0) ? $not_regular_dorms_diff : 0;
+
+                            $not_regular_beds_dorms_sum = $not_regular_beds_avail + $not_regular_dorms_avail;
+
+                            if($not_regular_beds_dorms_sum > 0) {
+                                $available_dates[] = $dates;
+                                //print_r(' available_dates '. $dates);
+                            }
+
+                            /*print_r(' not_rgl_dates: ' . $dates . ' not_regular_beds_diff: '. $not_regular_beds_diff. ' not_regular_beds_avail: '. $not_regular_beds_avail);
+                            print_r( ' not_rgl_dates: ' . $dates . ' not_regular_dorms_diff: '. $not_regular_dorms_diff. ' not_regular_dorms_avail: '. $not_regular_dorms_avail);
+                            print_r( ' not_regular_sum: ' . $not_regular_beds_dorms_sum);*/
+                        }
+                        else {
+                            $not_available_dates[] = $dates;
+                            //print_r(' not_available_dates '. $dates);
+                        }
+                    }
                 }
 
+                if($cabin->regular === 1) {
+                    //print_r(' regular '. $cabin->regular);
+                }
+
+                /* Calculating beds & dorms of normal booking */
             }
+            else {
+                $totalSleeps     = $sleeps + $msSleeps;
+                //print_r(' totalSleeps: '. $totalSleeps);
+            }
+
+
+
+            /* Checking bookings available ends */
         }
 
-        $greenDates  = ["2018-01-05", "2018-01-08", "2018-01-11"];
-        $yellowDates = ["2018-01-06", "2018-01-09", "2018-01-12"];
-        $redDates    = ["2018-01-07", "2018-01-10", "2018-01-13"];
 
-        return response()->json(['disableDates' => $disableDates, 'greenDates' => $greenDates, 'yellowDates' => $yellowDates, 'redDates' => $redDates], 200);
+        /*$greenDates  = ["2018-02-05", "2018-02-08", "2018-02-11"];
+        $yellowDates = ["2018-02-06", "2018-02-09", "2018-02-12"];
+        $redDates    = ["2018-02-07", "2018-02-10", "2018-02-13"];
+
+        return response()->json(['holidayDates' => $holidayDates, 'greenDates' => $greenDates, 'yellowDates' => $yellowDates, 'redDates' => $redDates], 200);*/
+        $yellowDates = ["2018-02-28"];
+        return response()->json(['holidayDates' => $holidayDates, 'greenDates' => $available_dates, 'yellowDates' => $yellowDates, 'redDates' => $not_available_dates], 200);
+
     }
 
 
@@ -278,22 +418,21 @@ class SearchController extends Controller
     public function calendarAvailability(Request $request)
     {
         $holiday_prepare    = [];
-        $disableDates       = [];
+        $holidayDates       = [];
 
         if($request->dateFrom != '') {
             $monthBegin        = $request->dateFrom;
             $monthEnd          = date('Y-m-t 23:59:59', strtotime($request->dateFrom));
             $seasons           = Season::where('cabin_id', new \MongoDB\BSON\ObjectID($request->dataId))->get();
 
-            if($seasons) {
+            $generateDates  = $this->generateDates($monthBegin, $monthEnd);
 
-                $generateDates  = $this->generateDates($monthBegin, $monthEnd);
+            foreach ($generateDates as $generateDate) {
 
-                foreach ($generateDates as $generateDate) {
+                $dates = $generateDate->format('Y-m-d');
+                $day   = $generateDate->format('D');
 
-                    $dates = $generateDate->format('Y-m-d');
-                    $day   = $generateDate->format('D');
-
+                if($seasons) {
                     foreach($seasons as $season) {
 
                         if( ($season->summerSeasonStatus === 'open') && ($season->summerSeason === 1) && ($dates >= ($season->earliest_summer_open)->format('Y-m-d')) && ($dates < ($season->latest_summer_close)->format('Y-m-d')) ) {
@@ -322,18 +461,18 @@ class SearchController extends Controller
                     $array_intersect        = array_intersect($prepareArray,$array_unique);
 
                     foreach ($array_intersect as $array_intersect_key => $array_intersect_values) {
-                        $disableDates[] = $array_intersect_key;
+                        $holidayDates[] = $array_intersect_key;
                     }
                 }
 
             }
         }
 
-        $greenDates  = ["2018-02-03", "2018-02-04", "2018-02-05"];
-        $yellowDates = ["2018-02-06", "2018-02-09", "2018-02-12"];
-        $redDates    = ["2018-02-07", "2018-02-10", "2018-02-13"];
+        $greenDates  = ["2018-03-03", "2018-03-04", "2018-03-05"];
+        $yellowDates = ["2018-03-06", "2018-03-09", "2018-03-12"];
+        $redDates    = ["2018-03-07", "2018-03-10", "2018-03-13"];
 
-        return response()->json(['disableDates' => $disableDates, 'greenDates' => $greenDates, 'yellowDates' => $yellowDates, 'redDates' => $redDates], 200);
+        return response()->json(['holidayDates' => $holidayDates, 'greenDates' => $greenDates, 'yellowDates' => $yellowDates, 'redDates' => $redDates], 200);
     }
 
     /**

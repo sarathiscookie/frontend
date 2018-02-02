@@ -5,14 +5,14 @@ namespace App;
 //use Illuminate\Database\Eloquent\Model;
 use Jenssegers\Mongodb\Eloquent\Model as Eloquent;
 
-class Country extends Eloquent
+class Booking extends Eloquent
 {
     /**
      * The collection associated with the model.
      *
      * @var string
      */
-    protected $collection = 'country';
+    protected $collection = 'booking';
 
     /**
      * Indicates if the model should be timestamped.
@@ -20,10 +20,18 @@ class Country extends Eloquent
      * @var bool
      */
     public $timestamps = false;
+
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
     protected $guarded = ['id'];
+
+    /**
+     * Eloquent allows you to work with Carbon/DateTime objects instead of MongoDate objects.
+     * Internally, these dates will be converted to MongoDate objects when saved to the database.
+     */
+
+    protected $dates = ['bookingdate', 'checkin_from', 'reserve_to'];
 }

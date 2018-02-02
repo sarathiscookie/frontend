@@ -6,17 +6,26 @@
     <style>
         .holidayDates .ui-state-default
         {
-            color: darkred;
+            /*color: #0000F0;*/
+            background-color: darkblue;
         }
 
         .greenDates .ui-state-default
         {
-            color: darkgreen;
+            /*color: darkgreen;*/
+            background-color: darkgreen;
         }
 
         .yellowDates .ui-state-default
         {
-            color: darkorange;
+            /*color: darkorange;*/
+            background-color: darkorange;
+        }
+
+        .redDates .ui-state-default
+        {
+            /*color: red;*/
+            background-color: darkred;
         }
     </style>
 @endsection
@@ -205,9 +214,10 @@
                     type: 'POST',
                     data: { dataId: dataId },
                     success: function(response) {
-                        var holidayDates = response.disableDates;
+                        var holidayDates = response.holidayDates;
                         var greenDates   = response.greenDates;
                         var yellowDates  = response.yellowDates;
+                        var redDates     = response.redDates;
                         var start_date   = '';
 
                         $this.datepicker("option", "onChangeMonthYear", function(year,month,inst) {
@@ -222,8 +232,8 @@
                                 type: 'POST',
                                 data: { dateFrom: start_date, dataId: dataId },
                                 success: function (response) {
-                                    for (var i = 0; i < response.disableDates.length; i++) {
-                                        holidayDates.push(response.disableDates[i]);
+                                    for (var i = 0; i < response.holidayDates.length; i++) {
+                                        holidayDates.push(response.holidayDates[i]);
                                     }
 
                                     for (var i = 0; i < response.greenDates.length; i++) {
@@ -232,7 +242,10 @@
 
                                     for (var i = 0; i < response.yellowDates.length; i++) {
                                         yellowDates.push(response.yellowDates[i]);
-                                        console.log(yellowDates);
+                                    }
+
+                                    for (var i = 0; i < response.redDates.length; i++) {
+                                        redDates.push(response.redDates[i]);
                                     }
 
                                     $this.datepicker("refresh");
@@ -256,7 +269,7 @@
                             }*/
 
                             //Demo: return [true,$.inArray(theday, datesArray) >=0?"specialDate":($.inArray(theday, datesArray1)>=0?"specialDate1":'')];
-                            return [true, (holidayDates.indexOf(string) >=0) ? "holidayDates" : ( (greenDates.indexOf(string) >=0) ? "greenDates": ( (yellowDates.indexOf(string) >=0) ? "yellowDates": '' ) )];
+                            return [true, (holidayDates.indexOf(string) >=0) ? "holidayDates" : ( (greenDates.indexOf(string) >=0) ? "greenDates": ( (yellowDates.indexOf(string) >=0) ? "yellowDates": ( (redDates.indexOf(string) >=0) ? "redDates": '' ) ) )];
 
                         });
 
