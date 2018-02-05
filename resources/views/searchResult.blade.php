@@ -7,25 +7,25 @@
         .holidayDates .ui-state-default
         {
             /*color: #0000F0;*/
-            background-color: darkblue;
+            background-color: #777;
         }
 
         .greenDates .ui-state-default
         {
             /*color: darkgreen;*/
-            background-color: darkgreen;
+            background-color: #5cb85c;
         }
 
-        .yellowDates .ui-state-default
+        .orangeDates .ui-state-default
         {
             /*color: darkorange;*/
-            background-color: darkorange;
+            background-color: #f0ad4e;
         }
 
         .redDates .ui-state-default
         {
             /*color: red;*/
-            background-color: darkred;
+            background-color: #d9534f;
         }
     </style>
 @endsection
@@ -216,7 +216,91 @@
                     success: function(response) {
                         var holidayDates = response.holidayDates;
                         var greenDates   = response.greenDates;
-                        var yellowDates  = response.yellowDates;
+                        var orangeDates  = response.orangeDates;
+                        var redDates     = response.redDates;
+                        var start_date   = '';
+
+                        $this.datepicker("option", "onSelect", function(date) {
+                            /*var dt2       = $('#dateTo_'+dataId);
+                            var startDate = $this.datepicker('getDate');
+                            var minDate   = $this.datepicker('getDate');
+                            $this.datepicker('option', 'minDate', minDate);
+                            dt2.datepicker('setDate', minDate);
+                            startDate.setDate(startDate.getDate() + 60); //sets dt2 maxDate to the last day of 60 days window
+                            minDate.setDate(minDate.getDate() + 1); //sets dt2 minDate to the +1 day of from date
+                            dt2.datepicker('option', 'maxDate', startDate);
+                            dt2.datepicker('option', 'minDate', minDate);*/
+                        });
+
+                        $this.datepicker("option", "onChangeMonthYear", function(year,month,inst) {
+                            if (year != undefined && month != undefined) {
+                                start_date = year +'-';
+                                start_date += month +'-';
+                                start_date += '01';
+                            }
+                            $.ajax({
+                                url: '/calendar/ajax',
+                                dataType: 'JSON',
+                                type: 'POST',
+                                data: { dateFrom: start_date, dataId: dataId },
+                                success: function (response) {
+                                    for (var i = 0; i < response.holidayDates.length; i++) {
+                                        holidayDates.push(response.holidayDates[i]);
+                                    }
+
+                                    for (var i = 0; i < response.greenDates.length; i++) {
+                                        greenDates.push(response.greenDates[i]);
+                                    }
+
+                                    for (var i = 0; i < response.orangeDates.length; i++) {
+                                        orangeDates.push(response.orangeDates[i]);
+                                    }
+
+                                    for (var i = 0; i < response.redDates.length; i++) {
+                                        redDates.push(response.redDates[i]);
+                                    }
+
+                                    $this.datepicker("refresh");
+                                }
+                            });
+                        });
+
+                        $this.datepicker("option", "beforeShowDay", function(date) {
+                            var string = jQuery.datepicker.formatDate('yy-mm-dd', date);
+                            return [true, (holidayDates.indexOf(string) >=0) ? "holidayDates" : ( (greenDates.indexOf(string) >=0) ? "greenDates": ( (orangeDates.indexOf(string) >=0) ? "orangeDates": ( (redDates.indexOf(string) >=0) ? "redDates": '' ) ) )];
+
+                        });
+
+                        $this.datepicker("show");
+                    }
+                });
+
+            });
+
+
+
+            $(".dateTo").datepicker({
+                showAnim: "drop",
+                dateFormat: "dd.mm.y",
+                monthNames: ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'],
+                monthNamesShort: ["Jan", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"],
+                dayNamesMin: ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"]
+
+            });
+
+            $("body").on('mousedown', ".dateTo", function() {
+                var dataId = $(this).parent().parent().data("id");
+                var $this = $(this);
+
+                $.ajax({
+                    url: '/calendar',
+                    dataType: 'JSON',
+                    type: 'POST',
+                    data: { dataId: dataId },
+                    success: function(response) {
+                        var holidayDates = response.holidayDates;
+                        var greenDates   = response.greenDates;
+                        var orangeDates  = response.orangeDates;
                         var redDates     = response.redDates;
                         var start_date   = '';
 
@@ -240,8 +324,8 @@
                                         greenDates.push(response.greenDates[i]);
                                     }
 
-                                    for (var i = 0; i < response.yellowDates.length; i++) {
-                                        yellowDates.push(response.yellowDates[i]);
+                                    for (var i = 0; i < response.orangeDates.length; i++) {
+                                        orangeDates.push(response.orangeDates[i]);
                                     }
 
                                     for (var i = 0; i < response.redDates.length; i++) {
@@ -255,21 +339,7 @@
 
                         $this.datepicker("option", "beforeShowDay", function(date) {
                             var string = jQuery.datepicker.formatDate('yy-mm-dd', date);
-                            //console.log(string);
-                            /*return [true, (holidayDates.indexOf(string) == -1) ? "" : "holidayDates"];
-                            return [true, (greenDates.indexOf(string) == -1) ? "" : "greenDates"];*/
-                            /*if(holidayDates.indexOf(string) >=0){
-                                return [true, "holidayDates"];
-                            }
-                            else if(greenDates.indexOf(string) >=0){
-                                return [true, "greenDates"];
-                            }
-                            else if(yellowDates.indexOf(string) >=0){
-                                return [true, "yellowDates"];
-                            }*/
-
-                            //Demo: return [true,$.inArray(theday, datesArray) >=0?"specialDate":($.inArray(theday, datesArray1)>=0?"specialDate1":'')];
-                            return [true, (holidayDates.indexOf(string) >=0) ? "holidayDates" : ( (greenDates.indexOf(string) >=0) ? "greenDates": ( (yellowDates.indexOf(string) >=0) ? "yellowDates": ( (redDates.indexOf(string) >=0) ? "redDates": '' ) ) )];
+                            return [true, (holidayDates.indexOf(string) >=0) ? "holidayDates" : ( (greenDates.indexOf(string) >=0) ? "greenDates": ( (orangeDates.indexOf(string) >=0) ? "orangeDates": ( (redDates.indexOf(string) >=0) ? "redDates": '' ) ) )];
 
                         });
 
@@ -278,6 +348,7 @@
                 });
 
             });
+
         });
 
     </script>

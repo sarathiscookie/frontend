@@ -228,11 +228,11 @@ class SearchController extends Controller
 
     public function calendar(Request $request)
     {
-        $monthBegin           = date("Y-m-d");
-        $monthEnd             = date("Y-m-t 23:59:59");
+        /*$monthBegin           = date("Y-m-d");
+        $monthEnd             = date("Y-m-t 23:59:59");*/
 
-        /*$monthBegin              = date("2018-02-02");
-        $monthEnd                = date("2018-02-06");*/
+        $monthBegin              = date("2018-02-02");
+        $monthEnd                = date("Y-m-t 23:59:59");
 
         $holiday_prepare         = [];
         $holidayDates            = [];
@@ -294,13 +294,13 @@ class SearchController extends Controller
             /* Checking season end */
 
             /* Checking bookings available begins */
-            $session_mon_day     = ($cabin->mon_day === 1) ? 'Mon' : 0;
-            $session_tue_day     = ($cabin->tue_day === 1) ? 'Tue' : 0;
-            $session_wed_day     = ($cabin->wed_day === 1) ? 'Wed' : 0;
-            $session_thu_day     = ($cabin->thu_day === 1) ? 'Thu' : 0;
-            $session_fri_day     = ($cabin->fri_day === 1) ? 'Fri' : 0;
-            $session_sat_day     = ($cabin->sat_day === 1) ? 'Sat' : 0;
-            $session_sun_day     = ($cabin->sun_day === 1) ? 'Sun' : 0;
+            $mon_day     = ($cabin->mon_day === 1) ? 'Mon' : 0;
+            $tue_day     = ($cabin->tue_day === 1) ? 'Tue' : 0;
+            $wed_day     = ($cabin->wed_day === 1) ? 'Wed' : 0;
+            $thu_day     = ($cabin->thu_day === 1) ? 'Thu' : 0;
+            $fri_day     = ($cabin->fri_day === 1) ? 'Fri' : 0;
+            $sat_day     = ($cabin->sat_day === 1) ? 'Sat' : 0;
+            $sun_day     = ($cabin->sun_day === 1) ? 'Sun' : 0;
 
             /* Getting bookings from booking collection status is 1=>Fix, 4=>Request, 7=>Inquiry */
             $bookings  = Booking::select('beds', 'dormitory', 'sleeps')
@@ -329,8 +329,8 @@ class SearchController extends Controller
                 $msBeds          = $msBookings->sum('beds');
                 $msDorms         = $msBookings->sum('dormitory');
 
-                //print_r(' beds '. $beds .' dorms '. $dorms .' msBeds '. $msBeds .' msDorms '. $msDorms);
-                //print_r(' sleeps '. $sleeps .' msSleeps '. $msSleeps);
+                print_r(' beds '. $beds .' dorms '. $dorms .' msBeds '. $msBeds .' msDorms '. $msDorms);
+                print_r(' sleeps '. $sleeps .' msSleeps '. $msSleeps);
             }
 
             /* Taking beds, dorms and sleeps depends up on sleeping_place */
@@ -339,9 +339,9 @@ class SearchController extends Controller
                 $totalBeds       = $beds + $msBeds;
                 $totalDorms      = $dorms + $msDorms;
 
-                //print_r(' totalBeds '. $totalBeds .' totalDorms '. $totalDorms);
+                print_r(' totalBeds '. $totalBeds .' totalDorms '. $totalDorms);
 
-                /* Calculating beds & dorms of regular and not regular booking */
+                /* Calculating beds & dorms for not regular */
                 if($cabin->not_regular === 1) {
                     $not_regular_date_explode = explode(" - ", $cabin->not_regular_date);
                     $not_regular_date_begin   = DateTime::createFromFormat('d.m.y', $not_regular_date_explode[0])->format('Y-m-d');
@@ -357,35 +357,414 @@ class SearchController extends Controller
                         $dates_array[] = $dates;
 
                         if(($totalBeds < $cabin->not_regular_beds) || ($totalDorms < $cabin->not_regular_dorms)) {
-                            $not_regular_beds_diff      = $cabin->not_regular_beds - $totalBeds;
-                            $not_regular_dorms_diff     = $cabin->not_regular_dorms - $totalDorms;
+                            $not_regular_beds_diff              = $cabin->not_regular_beds - $totalBeds;
+                            $not_regular_dorms_diff             = $cabin->not_regular_dorms - $totalDorms;
 
-                            $not_regular_beds_avail     = ($not_regular_beds_diff >= 0) ? $not_regular_beds_diff : 0;
-                            $not_regular_dorms_avail    = ($not_regular_dorms_diff >= 0) ? $not_regular_dorms_diff : 0;
+                            $not_regular_beds_avail             = ($not_regular_beds_diff >= 0) ? $not_regular_beds_diff : 0;
+                            $not_regular_dorms_avail            = ($not_regular_dorms_diff >= 0) ? $not_regular_dorms_diff : 0;
 
-                            $not_regular_beds_dorms_sum = $not_regular_beds_avail + $not_regular_dorms_avail;
+                            /* Available beds and dorms */
+                            $not_regular_bed_dorms_available    = $not_regular_beds_avail + $not_regular_dorms_avail;
 
-                            if($not_regular_beds_dorms_sum > 0) {
+                            /* Sum of not regular cabins beds and dorms */
+                            $not_regular_cabin_beds_dorms_total = $cabin->not_regular_beds + $cabin->not_regular_dorms;
+
+                            /* Already Filled beds and dorms */
+                            $not_regular_bed_dorms_filled       = $not_regular_cabin_beds_dorms_total - $not_regular_bed_dorms_available;
+
+                            /* Percentage calculation */
+                            $not_regular_percentage             = ($not_regular_bed_dorms_filled / $not_regular_cabin_beds_dorms_total) * 100;
+
+                            if($not_regular_percentage > 75) {
+                                $orangeDates[]     = $dates;
+                                //print_r(' orange_dates '. $dates);
+                            }
+                            else {
                                 $available_dates[] = $dates;
                                 //print_r(' available_dates '. $dates);
                             }
-
-                            /*print_r(' not_rgl_dates: ' . $dates . ' not_regular_beds_diff: '. $not_regular_beds_diff. ' not_regular_beds_avail: '. $not_regular_beds_avail);
+                            print_r('not_regular_data ----');
+                            print_r(' not_rgl_dates: ' . $dates . ' not_regular_beds_diff: '. $not_regular_beds_diff. ' not_regular_beds_avail: '. $not_regular_beds_avail);
                             print_r( ' not_rgl_dates: ' . $dates . ' not_regular_dorms_diff: '. $not_regular_dorms_diff. ' not_regular_dorms_avail: '. $not_regular_dorms_avail);
-                            print_r( ' not_regular_sum: ' . $not_regular_beds_dorms_sum);*/
+                            print_r( ' not_regular_sum: ' . $not_regular_bed_dorms_available);
+                            print_r(' not_regular_bed_dorms_filled = '. $not_regular_bed_dorms_filled .' not_regular_cabin_beds_dorms_total = '. $not_regular_cabin_beds_dorms_total .' result(not_regular_bed_dorms_filled / not_regular_cabin_beds_dorms_total) * 100 = '. $not_regular_percentage);
                         }
                         else {
                             $not_available_dates[] = $dates;
-                            //print_r(' not_available_dates '. $dates);
+                            print_r(' not_available_dates '. $dates);
                         }
                     }
+                    /*beds 29 dorms 0 msBeds 0 msDorms 9 totalBeds 29 totalDorms 9
+                      available_dates 2018-02-10
+                      not_rgl_dates: 2018-02-10 not_regular_beds_diff: 11 not_regular_beds_avail: 11
+                      not_rgl_dates: 2018-02-10 not_regular_dorms_diff: 23 not_regular_dorms_avail: 23
+                      not_regular_sum: 34
+                      not_regular_bed_dorms_available 34 not_regular_bed_dorms_filled 38 not_regular_cabin_beds_dorms_total 72 result 52.777777777778
+                     */
                 }
 
+                /* Calculating beds & dorms for regular */
                 if($cabin->regular === 1) {
-                    //print_r(' regular '. $cabin->regular);
+
+                    if($mon_day === $day) {
+
+                        if(!in_array($dates, $dates_array)) {
+
+                            $dates_array[] = $dates;
+
+                            if(($totalBeds < $cabin->mon_beds) || ($totalDorms < $cabin->mon_dorms)) {
+                                $mon_beds_diff              = $cabin->mon_beds - $totalBeds;
+                                $mon_dorms_diff             = $cabin->mon_dorms - $totalDorms;
+
+                                $mon_beds_avail             = ($mon_beds_diff >= 0) ? $mon_beds_diff : 0;
+                                $mon_dorms_avail            = ($mon_dorms_diff >= 0) ? $mon_dorms_diff : 0;
+
+                                /* Available beds and dorms */
+                                $mon_bed_dorms_available    = $mon_beds_avail + $mon_dorms_avail;
+
+                                /* Sum of normal cabins beds and dorms */
+                                $mon_cabin_beds_dorms_total = $cabin->mon_beds + $cabin->mon_dorms;
+
+                                /* Already Filled beds and dorms */
+                                $mon_bed_dorms_filled       = $mon_cabin_beds_dorms_total - $mon_bed_dorms_available;
+
+                                /* Percentage calculation */
+                                $mon_percentage             = ($mon_bed_dorms_filled / $mon_cabin_beds_dorms_total) * 100;
+
+                                if($mon_percentage > 75) {
+                                    $orangeDates[]          = $dates;
+                                }
+                                else {
+                                    $available_dates[]      = $dates;
+                                }
+                                print_r('mon_regular_data ----');
+                                print_r(' mon_dates: ' . $dates . ' mon_beds_diff: '. $mon_beds_diff. ' mon_beds_avail: '. $mon_beds_avail);
+                                print_r( ' mon_dates: ' . $dates . ' mon_dorms_diff: '. $mon_dorms_diff. ' mon_dorms_avail: '. $mon_dorms_avail);
+                                print_r( ' mon_sum: ' . $mon_bed_dorms_available);
+                                print_r(' mon_bed_dorms_filled = '. $mon_bed_dorms_filled .' mon_cabin_beds_dorms_total = '. $mon_cabin_beds_dorms_total .' result(mon_bed_dorms_filled / mon_cabin_beds_dorms_total) * 100 = '. $mon_percentage);
+                            }
+                            else {
+                                $not_available_dates[] = $dates;
+                                print_r(' not_available_dates '. $dates);
+                            }
+                        }
+                    }
+
+                    if($tue_day === $day) {
+
+                        if(!in_array($dates, $dates_array)) {
+
+                            $dates_array[] = $dates;
+
+                            if(($totalBeds < $cabin->tue_beds) || ($totalDorms < $cabin->tue_dorms)) {
+                                $tue_beds_diff              = $cabin->tue_beds - $totalBeds;
+                                $tue_dorms_diff             = $cabin->tue_dorms - $totalDorms;
+
+                                $tue_beds_avail             = ($tue_beds_diff >= 0) ? $tue_beds_diff : 0;
+                                $tue_dorms_avail            = ($tue_dorms_diff >= 0) ? $tue_dorms_diff : 0;
+
+                                /* Available beds and dorms */
+                                $tue_bed_dorms_available    = $tue_beds_avail + $tue_dorms_avail;
+
+                                /* Sum of normal cabins beds and dorms */
+                                $tue_cabin_beds_dorms_total = $cabin->tue_beds + $cabin->tue_dorms;
+
+                                /* Already Filled beds and dorms */
+                                $tue_bed_dorms_filled       = $tue_cabin_beds_dorms_total - $tue_bed_dorms_available;
+
+                                /* Percentage calculation */
+                                $tue_percentage             = ($tue_bed_dorms_filled / $tue_cabin_beds_dorms_total) * 100;
+
+                                if($tue_percentage > 75) {
+                                    $orangeDates[]          = $dates;
+                                }
+                                else {
+                                    $available_dates[]      = $dates;
+                                }
+                                print_r('tue_regular_data ----');
+                                print_r(' tue_dates: ' . $dates . ' tue_beds_diff: '. $tue_beds_diff. ' tue_beds_avail: '. $tue_beds_avail);
+                                print_r( ' tue_dates: ' . $dates . ' tue_dorms_diff: '. $tue_dorms_diff. ' tue_dorms_avail: '. $tue_dorms_avail);
+                                print_r( ' tue_sum: ' . $tue_bed_dorms_available);
+                                print_r(' tue_bed_dorms_filled = '. $tue_bed_dorms_filled .' tue_cabin_beds_dorms_total = '. $tue_cabin_beds_dorms_total .' result(tue_bed_dorms_filled / tue_cabin_beds_dorms_total) * 100 = '. $tue_percentage);
+                            }
+                            else {
+                                $not_available_dates[] = $dates;
+                                print_r(' not_available_dates '. $dates);
+                            }
+                        }
+                    }
+
+                    if($wed_day === $day) {
+
+                        if(!in_array($dates, $dates_array)) {
+
+                            $dates_array[] = $dates;
+
+                            if(($totalBeds < $cabin->wed_beds) || ($totalDorms < $cabin->wed_dorms)) {
+                                $wed_beds_diff              = $cabin->wed_beds - $totalBeds;
+                                $wed_dorms_diff             = $cabin->wed_dorms - $totalDorms;
+
+                                $wed_beds_avail             = ($wed_beds_diff >= 0) ? $wed_beds_diff : 0;
+                                $wed_dorms_avail            = ($wed_dorms_diff >= 0) ? $wed_dorms_diff : 0;
+
+                                /* Available beds and dorms */
+                                $wed_bed_dorms_available    = $wed_beds_avail + $wed_dorms_avail;
+
+                                /* Sum of normal cabins beds and dorms */
+                                $wed_cabin_beds_dorms_total = $cabin->wed_beds + $cabin->wed_dorms;
+
+                                /* Already Filled beds and dorms */
+                                $wed_bed_dorms_filled       = $wed_cabin_beds_dorms_total - $wed_bed_dorms_available;
+
+                                /* Percentage calculation */
+                                $wed_percentage             = ($wed_bed_dorms_filled / $wed_cabin_beds_dorms_total) * 100;
+
+                                if($wed_percentage > 75) {
+                                    $orangeDates[]          = $dates;
+                                }
+                                else {
+                                    $available_dates[]      = $dates;
+                                }
+                                print_r('wed_regular_data ----');
+                                print_r(' wed_dates: ' . $dates . ' wed_beds_diff: '. $wed_beds_diff. ' wed_beds_avail: '. $wed_beds_avail);
+                                print_r( ' wed_dates: ' . $dates . ' wed_dorms_diff: '. $wed_dorms_diff. ' wed_dorms_avail: '. $wed_dorms_avail);
+                                print_r( ' wed_sum: ' . $wed_bed_dorms_available);
+                                print_r(' wed_bed_dorms_filled = '. $wed_bed_dorms_filled .' wed_cabin_beds_dorms_total = '. $wed_cabin_beds_dorms_total .' result(wed_bed_dorms_filled / wed_cabin_beds_dorms_total) * 100 = '. $wed_percentage);
+                            }
+                            else {
+                                $not_available_dates[] = $dates;
+                                print_r(' not_available_dates '. $dates);
+                            }
+                        }
+                    }
+
+                    if($thu_day === $day) {
+
+                        if(!in_array($dates, $dates_array)) {
+
+                            $dates_array[] = $dates;
+
+                            if(($totalBeds < $cabin->thu_beds) || ($totalDorms < $cabin->thu_dorms)) {
+                                $thu_beds_diff              = $cabin->thu_beds - $totalBeds;
+                                $thu_dorms_diff             = $cabin->thu_dorms - $totalDorms;
+
+                                $thu_beds_avail             = ($thu_beds_diff >= 0) ? $thu_beds_diff : 0;
+                                $thu_dorms_avail            = ($thu_dorms_diff >= 0) ? $thu_dorms_diff : 0;
+
+                                /* Available beds and dorms */
+                                $thu_bed_dorms_available    = $thu_beds_avail + $thu_dorms_avail;
+
+                                /* Sum of normal cabins beds and dorms */
+                                $thu_cabin_beds_dorms_total = $cabin->thu_beds + $cabin->thu_dorms;
+
+                                /* Already Filled beds and dorms */
+                                $thu_bed_dorms_filled       = $thu_cabin_beds_dorms_total - $thu_bed_dorms_available;
+
+                                /* Percentage calculation */
+                                $thu_percentage             = ($thu_bed_dorms_filled / $thu_cabin_beds_dorms_total) * 100;
+
+                                if($thu_percentage > 75) {
+                                    $orangeDates[]          = $dates;
+                                }
+                                else {
+                                    $available_dates[]      = $dates;
+                                }
+                                print_r('thu_regular_data ----');
+                                print_r(' thu_dates: ' . $dates . ' thu_beds_diff: '. $thu_beds_diff. ' thu_beds_avail: '. $thu_beds_avail);
+                                print_r( ' thu_dates: ' . $dates . ' thu_dorms_diff: '. $thu_dorms_diff. ' thu_dorms_avail: '. $thu_dorms_avail);
+                                print_r( ' thu_sum: ' . $thu_bed_dorms_available);
+                                print_r(' thu_bed_dorms_filled = '. $thu_bed_dorms_filled .' thu_cabin_beds_dorms_total = '. $thu_cabin_beds_dorms_total .' result(thu_bed_dorms_filled / thu_cabin_beds_dorms_total) * 100 = '. $thu_percentage);
+                            }
+                            else {
+                                $not_available_dates[] = $dates;
+                                print_r(' not_available_dates '. $dates);
+                            }
+                        }
+                    }
+
+                    if($fri_day === $day) {
+
+                        if(!in_array($dates, $dates_array)) {
+
+                            $dates_array[] = $dates;
+
+                            if(($totalBeds < $cabin->fri_beds) || ($totalDorms < $cabin->fri_dorms)) {
+                                $fri_beds_diff              = $cabin->fri_beds - $totalBeds;
+                                $fri_dorms_diff             = $cabin->fri_dorms - $totalDorms;
+
+                                $fri_beds_avail             = ($fri_beds_diff >= 0) ? $fri_beds_diff : 0;
+                                $fri_dorms_avail            = ($fri_dorms_diff >= 0) ? $fri_dorms_diff : 0;
+
+                                /* Available beds and dorms */
+                                $fri_bed_dorms_available    = $fri_beds_avail + $fri_dorms_avail;
+
+                                /* Sum of normal cabins beds and dorms */
+                                $fri_cabin_beds_dorms_total = $cabin->fri_beds + $cabin->fri_dorms;
+
+                                /* Already Filled beds and dorms */
+                                $fri_bed_dorms_filled       = $fri_cabin_beds_dorms_total - $fri_bed_dorms_available;
+
+                                /* Percentage calculation */
+                                $fri_percentage             = ($fri_bed_dorms_filled / $fri_cabin_beds_dorms_total) * 100;
+
+                                if($fri_percentage > 75) {
+                                    $orangeDates[]          = $dates;
+                                }
+                                else {
+                                    $available_dates[]      = $dates;
+                                }
+                                print_r('fri_regular_data ----');
+                                print_r(' fri_dates: ' . $dates . ' fri_beds_diff: '. $fri_beds_diff. ' fri_beds_avail: '. $fri_beds_avail);
+                                print_r( ' fri_dates: ' . $dates . ' fri_dorms_diff: '. $fri_dorms_diff. ' fri_dorms_avail: '. $fri_dorms_avail);
+                                print_r( ' fri_sum: ' . $fri_bed_dorms_available);
+                                print_r(' fri_bed_dorms_filled = '. $fri_bed_dorms_filled .' fri_cabin_beds_dorms_total = '. $fri_cabin_beds_dorms_total .' result(fri_bed_dorms_filled / fri_cabin_beds_dorms_total) * 100 = '. $fri_percentage);
+                            }
+                            else {
+                                $not_available_dates[] = $dates;
+                                print_r(' not_available_dates '. $dates);
+                            }
+                        }
+                    }
+
+                    if($sat_day === $day) {
+
+                        if(!in_array($dates, $dates_array)) {
+
+                            $dates_array[] = $dates;
+
+                            if(($totalBeds < $cabin->sat_beds) || ($totalDorms < $cabin->sat_dorms)) {
+                                $sat_beds_diff              = $cabin->sat_beds - $totalBeds;
+                                $sat_dorms_diff             = $cabin->sat_dorms - $totalDorms;
+
+                                $sat_beds_avail             = ($sat_beds_diff >= 0) ? $sat_beds_diff : 0;
+                                $sat_dorms_avail            = ($sat_dorms_diff >= 0) ? $sat_dorms_diff : 0;
+
+                                /* Available beds and dorms */
+                                $sat_bed_dorms_available    = $sat_beds_avail + $sat_dorms_avail;
+
+                                /* Sum of normal cabins beds and dorms */
+                                $sat_cabin_beds_dorms_total = $cabin->sat_beds + $cabin->sat_dorms;
+
+                                /* Already Filled beds and dorms */
+                                $sat_bed_dorms_filled       = $sat_cabin_beds_dorms_total - $sat_bed_dorms_available;
+
+                                /* Percentage calculation */
+                                $sat_percentage             = ($sat_bed_dorms_filled / $sat_cabin_beds_dorms_total) * 100;
+
+                                if($sat_percentage > 75) {
+                                    $orangeDates[]          = $dates;
+                                }
+                                else {
+                                    $available_dates[]      = $dates;
+                                }
+                                print_r('sat_regular_data ----');
+                                print_r(' sat_dates: ' . $dates . ' sat_beds_diff: '. $sat_beds_diff. ' sat_beds_avail: '. $sat_beds_avail);
+                                print_r( ' sat_dates: ' . $dates . ' sat_dorms_diff: '. $sat_dorms_diff. ' sat_dorms_avail: '. $sat_dorms_avail);
+                                print_r( ' sat_sum: ' . $sat_bed_dorms_available);
+                                print_r(' sat_bed_dorms_filled = '. $sat_bed_dorms_filled .' sat_cabin_beds_dorms_total = '. $sat_cabin_beds_dorms_total .' result(sat_bed_dorms_filled / sat_cabin_beds_dorms_total) * 100 = '. $sat_percentage);
+                            }
+                            else {
+                                $not_available_dates[] = $dates;
+                                print_r(' not_available_dates '. $dates);
+                            }
+                        }
+                    }
+
+                    if($sun_day === $day) {
+
+                        if(!in_array($dates, $dates_array)) {
+
+                            $dates_array[] = $dates;
+
+                            if(($totalBeds < $cabin->sun_beds) || ($totalDorms < $cabin->sun_dorms)) {
+                                $sun_beds_diff              = $cabin->sun_beds - $totalBeds;
+                                $sun_dorms_diff             = $cabin->sun_dorms - $totalDorms;
+
+                                $sun_beds_avail             = ($sun_beds_diff >= 0) ? $sun_beds_diff : 0;
+                                $sun_dorms_avail            = ($sun_dorms_diff >= 0) ? $sun_dorms_diff : 0;
+
+                                /* Available beds and dorms */
+                                $sun_bed_dorms_available    = $sun_beds_avail + $sun_dorms_avail;
+
+                                /* Sum of normal cabins beds and dorms */
+                                $sun_cabin_beds_dorms_total = $cabin->sun_beds + $cabin->sun_dorms;
+
+                                /* Already Filled beds and dorms */
+                                $sun_bed_dorms_filled       = $sun_cabin_beds_dorms_total - $sun_bed_dorms_available;
+
+                                /* Percentage calculation */
+                                $sun_percentage             = ($sun_bed_dorms_filled / $sun_cabin_beds_dorms_total) * 100;
+
+                                if($sun_percentage > 75) {
+                                    $orangeDates[]          = $dates;
+                                }
+                                else {
+                                    $available_dates[]      = $dates;
+                                }
+                                print_r('sun_regular_data ----');
+                                print_r(' sun_dates: ' . $dates . ' sun_beds_diff: '. $sun_beds_diff. ' sun_beds_avail: '. $sun_beds_avail);
+                                print_r( ' sun_dates: ' . $dates . ' sun_dorms_diff: '. $sun_dorms_diff. ' sun_dorms_avail: '. $sun_dorms_avail);
+                                print_r( ' sun_sum: ' . $sun_bed_dorms_available);
+                                print_r(' sun_bed_dorms_filled = '. $sun_bed_dorms_filled .' sun_cabin_beds_dorms_total = '. $sun_cabin_beds_dorms_total .' result(sun_bed_dorms_filled / sun_cabin_beds_dorms_total) * 100 = '. $sun_percentage);
+                            }
+                            else {
+                                $not_available_dates[] = $dates;
+                                print_r(' not_available_dates '. $dates);
+                            }
+                        }
+                    }
+
                 }
 
-                /* Calculating beds & dorms of normal booking */
+                /* Calculating beds & dorms for normal */
+                if(!in_array($dates, $dates_array)) {
+
+                    if(($totalBeds < $cabin->beds) || ($totalDorms < $cabin->dormitory)) {
+
+                        $normal_beds_diff              = $cabin->beds - $totalBeds;
+                        $normal_dorms_diff             = $cabin->dormitory - $totalDorms;
+
+                        $normal_beds_avail             = ($normal_beds_diff >= 0) ? $normal_beds_diff : 0;
+                        $normal_dorms_avail            = ($normal_dorms_diff >= 0) ? $normal_dorms_diff : 0;
+
+                        /* Available beds and dorms */
+                        $normal_bed_dorms_available    = $normal_beds_avail + $normal_dorms_avail;
+
+                        /* Sum of normal cabins beds and dorms */
+                        $normal_cabin_beds_dorms_total = $cabin->beds + $cabin->dormitory;
+
+                        /* Already Filled beds and dorms */
+                        $normal_bed_dorms_filled       = $normal_cabin_beds_dorms_total - $normal_bed_dorms_available;
+
+                        /* Percentage calculation */
+                        $normal_percentage             = ($normal_bed_dorms_filled / $normal_cabin_beds_dorms_total) * 100;
+
+                        if($normal_percentage > 75) {
+                            $orangeDates[]     = $dates;
+                        }
+                        else {
+                            $available_dates[] = $dates;
+                        }
+                        print_r('normal_data ----');
+                        print_r(' normal_dates: ' . $dates . ' normal_beds_diff: '. $normal_beds_diff. ' normal_beds_avail: '. $normal_beds_avail);
+                        print_r( ' normal_dates: ' . $dates . ' normal_dorms_diff: '. $normal_dorms_diff. ' normal_dorms_avail: '. $normal_dorms_avail);
+                        print_r( ' normal_sum: ' . $normal_bed_dorms_available);
+                        print_r(' normal_bed_dorms_filled = '. $normal_bed_dorms_filled .' normal_cabin_beds_dorms_total = '. $normal_cabin_beds_dorms_total .' result(normal_bed_dorms_filled / normal_cabin_beds_dorms_total) * 100 = '. $normal_percentage);
+
+                    }
+                    else {
+                        $not_available_dates[] = $dates;
+                        print_r(' not_available_dates '. $dates);
+                    }
+
+                    /* beds 38 dorms 1 msBeds 0 msDorms 0 sleeps 39 msSleeps 0 totalBeds 38 totalDorms 1
+                       normal_dates: 2018-02-17 normal_beds_diff: 2 normal_beds_avail: 2
+                       normal_dates: 2018-02-17 normal_dorms_diff: 39 normal_dorms_avail: 39
+                       normal_sum: 41
+                       normal_bed_dorms_filled = 39 normal_cabin_beds_dorms_total = 80 result(normal_bed_dorms_filled / normal_cabin_beds_dorms_total) * 100 = 48.75
+                    */
+                }
+
             }
             else {
                 $totalSleeps     = $sleeps + $msSleeps;
@@ -397,14 +776,7 @@ class SearchController extends Controller
             /* Checking bookings available ends */
         }
 
-
-        /*$greenDates  = ["2018-02-05", "2018-02-08", "2018-02-11"];
-        $yellowDates = ["2018-02-06", "2018-02-09", "2018-02-12"];
-        $redDates    = ["2018-02-07", "2018-02-10", "2018-02-13"];
-
-        return response()->json(['holidayDates' => $holidayDates, 'greenDates' => $greenDates, 'yellowDates' => $yellowDates, 'redDates' => $redDates], 200);*/
-        $yellowDates = ["2018-02-28"];
-        return response()->json(['holidayDates' => $holidayDates, 'greenDates' => $available_dates, 'yellowDates' => $yellowDates, 'redDates' => $not_available_dates], 200);
+        return response()->json(['holidayDates' => $holidayDates, 'greenDates' => $available_dates, 'orangeDates' => $orangeDates, 'redDates' => $not_available_dates], 200);
 
     }
 
