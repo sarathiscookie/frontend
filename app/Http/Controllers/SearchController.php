@@ -240,6 +240,7 @@ class SearchController extends Controller
         $dates_array             = [];
         $available_dates         = [];
         $not_available_dates     = [];
+        $orangeDates             = [];
 
         $dorms                   = 0;
         $beds                    = 0;
