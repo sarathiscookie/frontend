@@ -198,15 +198,19 @@
             $(".dateFrom").datepicker({
                 showAnim: "drop",
                 dateFormat: "dd.mm.y",
+                changeMonth: true,
+                changeYear: true,
                 monthNames: ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'],
                 monthNamesShort: ["Jan", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"],
-                dayNamesMin: ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"]
-
+                dayNamesMin: ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"],
+                minDate: '+1d',
+                yearRange: "0:+2"
             });
 
             $("body").on('mousedown', ".dateFrom", function() {
-                var dataId = $(this).parent().parent().data("id");
-                var $this = $(this);
+                var dataId       = $(this).parent().parent().data("id");
+                var $this        = $(this);
+                var returnResult = [];
 
                 $.ajax({
                     url: '/calendar',
@@ -214,14 +218,15 @@
                     type: 'POST',
                     data: { dataId: dataId },
                     success: function(response) {
-                        var holidayDates = response.holidayDates;
-                        var greenDates   = response.greenDates;
-                        var orangeDates  = response.orangeDates;
-                        var redDates     = response.redDates;
+                        var holidayDates    = response.holidayDates;
+                        var greenDates      = response.greenDates;
+                        var orangeDates     = response.orangeDates;
+                        var redDates        = response.redDates;
+                        var not_season_time = response.not_season_time;
                         var start_date   = '';
 
                         $this.datepicker("option", "onSelect", function(date) {
-                            /*var dt2       = $('#dateTo_'+dataId);
+                            var dt2       = $(".dateTo");
                             var startDate = $this.datepicker('getDate');
                             var minDate   = $this.datepicker('getDate');
                             $this.datepicker('option', 'minDate', minDate);
@@ -229,7 +234,7 @@
                             startDate.setDate(startDate.getDate() + 60); //sets dt2 maxDate to the last day of 60 days window
                             minDate.setDate(minDate.getDate() + 1); //sets dt2 minDate to the +1 day of from date
                             dt2.datepicker('option', 'maxDate', startDate);
-                            dt2.datepicker('option', 'minDate', minDate);*/
+                            dt2.datepicker('option', 'minDate', minDate);
                         });
 
                         $this.datepicker("option", "onChangeMonthYear", function(year,month,inst) {
@@ -260,6 +265,10 @@
                                         redDates.push(response.redDates[i]);
                                     }
 
+                                    for (var i = 0; i < response.not_season_time.length; i++) {
+                                        not_season_time.push(response.not_season_time[i]);
+                                    }
+
                                     $this.datepicker("refresh");
                                 }
                             });
@@ -267,8 +276,22 @@
 
                         $this.datepicker("option", "beforeShowDay", function(date) {
                             var string = jQuery.datepicker.formatDate('yy-mm-dd', date);
-                            return [true, (holidayDates.indexOf(string) >=0) ? "holidayDates" : ( (greenDates.indexOf(string) >=0) ? "greenDates": ( (orangeDates.indexOf(string) >=0) ? "orangeDates": ( (redDates.indexOf(string) >=0) ? "redDates": '' ) ) )];
-
+                            if( greenDates.indexOf(string) >=0 ) {
+                                returnResult = [true, "greenDates", "Available"];
+                            }
+                            if( orangeDates.indexOf(string) >=0 ) {
+                                returnResult = [true, "orangeDates", "Few are available"];
+                            }
+                            if( redDates.indexOf(string) >=0 ) {
+                                returnResult = [true, "redDates", "Not available"];
+                            }
+                            if( holidayDates.indexOf(string) >=0 ) {
+                                returnResult = [false, "", "Holiday"];
+                            }
+                            if( not_season_time.indexOf(string) >=0 ) {
+                                returnResult = [false, "", "Not season time"];
+                            }
+                            return returnResult;
                         });
 
                         $this.datepicker("show");
@@ -282,15 +305,19 @@
             $(".dateTo").datepicker({
                 showAnim: "drop",
                 dateFormat: "dd.mm.y",
+                changeMonth: true,
+                changeYear: true,
                 monthNames: ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'],
                 monthNamesShort: ["Jan", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"],
-                dayNamesMin: ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"]
-
+                dayNamesMin: ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"],
+                minDate: '+2d',
+                yearRange: "0:+2"
             });
 
             $("body").on('mousedown', ".dateTo", function() {
-                var dataId = $(this).parent().parent().data("id");
-                var $this = $(this);
+                var dataId        = $(this).parent().parent().data("id");
+                var $this         = $(this);
+                var returnResults = [];
 
                 $.ajax({
                     url: '/calendar',
@@ -339,7 +366,21 @@
 
                         $this.datepicker("option", "beforeShowDay", function(date) {
                             var string = jQuery.datepicker.formatDate('yy-mm-dd', date);
-                            return [true, (holidayDates.indexOf(string) >=0) ? "holidayDates" : ( (greenDates.indexOf(string) >=0) ? "greenDates": ( (orangeDates.indexOf(string) >=0) ? "orangeDates": ( (redDates.indexOf(string) >=0) ? "redDates": '' ) ) )];
+                            if( greenDates.indexOf(string) >=0 ) {
+                                returnResults = [true, "greenDates", "Available"];
+                            }
+                            if( orangeDates.indexOf(string) >=0 ) {
+                                returnResults = [true, "orangeDates", "Few are available"];
+                            }
+                            if( redDates.indexOf(string) >=0 ) {
+                                returnResults = [true, "redDates", "Not available"];
+                            }
+                            if( holidayDates.indexOf(string) >=0 ) {
+                                returnResults = [false, "", "Holiday"];
+                            }
+                            return returnResults;
+
+                            /*return [true, (holidayDates.indexOf(string) >=0) ? "holidayDates" : ( (greenDates.indexOf(string) >=0) ? "greenDates": ( (orangeDates.indexOf(string) >=0) ? "orangeDates": ( (redDates.indexOf(string) >=0) ? "redDates": '' ) ) )];*/
 
                         });
 

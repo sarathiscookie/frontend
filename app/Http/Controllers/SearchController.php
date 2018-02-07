@@ -228,10 +228,7 @@ class SearchController extends Controller
 
     public function calendar(Request $request)
     {
-        /*$monthBegin           = date("Y-m-d");
-        $monthEnd             = date("Y-m-t 23:59:59");*/
-
-        $monthBegin              = date("2018-02-02");
+        $monthBegin              = date("Y-m-d", strtotime(' +1 day'));
         $monthEnd                = date("Y-m-t 23:59:59");
 
         $holiday_prepare         = [];
@@ -241,6 +238,7 @@ class SearchController extends Controller
         $available_dates         = [];
         $not_available_dates     = [];
         $orangeDates             = [];
+        $not_season_time         = [];
 
         $seasons                 = Season::where('cabin_id', new \MongoDB\BSON\ObjectID($request->dataId))->get();
 
@@ -252,29 +250,38 @@ class SearchController extends Controller
 
             $dates         = $generateBookingDate->format('Y-m-d');
             $day           = $generateBookingDate->format('D');
+            $bookingDateSeasonType = null;
 
             /* Checking season begin */
             if($seasons) {
                 foreach ($seasons as $season) {
 
                     if (($season->summerSeasonStatus === 'open') && ($season->summerSeason === 1) && ($dates >= ($season->earliest_summer_open)->format('Y-m-d')) && ($dates < ($season->latest_summer_close)->format('Y-m-d'))) {
-                        $holiday_prepare[] = ($season->summer_mon === 1) ? 'Mon' : 0;
-                        $holiday_prepare[] = ($season->summer_tue === 1) ? 'Tue' : 0;
-                        $holiday_prepare[] = ($season->summer_wed === 1) ? 'Wed' : 0;
-                        $holiday_prepare[] = ($season->summer_thu === 1) ? 'Thu' : 0;
-                        $holiday_prepare[] = ($season->summer_fri === 1) ? 'Fri' : 0;
-                        $holiday_prepare[] = ($season->summer_sat === 1) ? 'Sat' : 0;
-                        $holiday_prepare[] = ($season->summer_sun === 1) ? 'Sun' : 0;
-                    } elseif (($season->winterSeasonStatus === 'open') && ($season->winterSeason === 1) && ($dates >= ($season->earliest_winter_open)->format('Y-m-d')) && ($dates < ($season->latest_winter_close)->format('Y-m-d'))) {
-                        $holiday_prepare[] = ($season->winter_mon === 1) ? 'Mon' : 0;
-                        $holiday_prepare[] = ($season->winter_tue === 1) ? 'Tue' : 0;
-                        $holiday_prepare[] = ($season->winter_wed === 1) ? 'Wed' : 0;
-                        $holiday_prepare[] = ($season->winter_thu === 1) ? 'Thu' : 0;
-                        $holiday_prepare[] = ($season->winter_fri === 1) ? 'Fri' : 0;
-                        $holiday_prepare[] = ($season->winter_sat === 1) ? 'Sat' : 0;
-                        $holiday_prepare[] = ($season->winter_sun === 1) ? 'Sun' : 0;
+                        $holiday_prepare[]     = ($season->summer_mon === 1) ? 'Mon' : 0;
+                        $holiday_prepare[]     = ($season->summer_tue === 1) ? 'Tue' : 0;
+                        $holiday_prepare[]     = ($season->summer_wed === 1) ? 'Wed' : 0;
+                        $holiday_prepare[]     = ($season->summer_thu === 1) ? 'Thu' : 0;
+                        $holiday_prepare[]     = ($season->summer_fri === 1) ? 'Fri' : 0;
+                        $holiday_prepare[]     = ($season->summer_sat === 1) ? 'Sat' : 0;
+                        $holiday_prepare[]     = ($season->summer_sun === 1) ? 'Sun' : 0;
+                        $bookingDateSeasonType = 'summer';
+                    }
+                    elseif (($season->winterSeasonStatus === 'open') && ($season->winterSeason === 1) && ($dates >= ($season->earliest_winter_open)->format('Y-m-d')) && ($dates < ($season->latest_winter_close)->format('Y-m-d'))) {
+                        $holiday_prepare[]     = ($season->winter_mon === 1) ? 'Mon' : 0;
+                        $holiday_prepare[]     = ($season->winter_tue === 1) ? 'Tue' : 0;
+                        $holiday_prepare[]     = ($season->winter_wed === 1) ? 'Wed' : 0;
+                        $holiday_prepare[]     = ($season->winter_thu === 1) ? 'Thu' : 0;
+                        $holiday_prepare[]     = ($season->winter_fri === 1) ? 'Fri' : 0;
+                        $holiday_prepare[]     = ($season->winter_sat === 1) ? 'Sat' : 0;
+                        $holiday_prepare[]     = ($season->winter_sun === 1) ? 'Sun' : 0;
+                        $bookingDateSeasonType = 'winter';
                     }
 
+                }
+
+                if (!$bookingDateSeasonType)
+                {
+                    $not_season_time[] = $dates;
                 }
 
                 $prepareArray       = [$dates => $day];
@@ -764,19 +771,19 @@ class SearchController extends Controller
                         else {
                             $available_dates[] = $dates;
                         }
-                        print_r(' ----normal_data---- ');
+                        /*print_r(' ----normal_data---- ');
                         print_r(' totalBeds '. $totalBeds .' totalDorms '. $totalDorms);
                         print_r(' beds '. $beds .' dorms '. $dorms .' msBeds '. $msBeds .' msDorms '. $msDorms);
                         print_r(' normal_dates: ' . $dates . ' normal_beds_diff: '. $normal_beds_diff. ' normal_beds_avail: '. $normal_beds_avail);
                         print_r( ' normal_dates: ' . $dates . ' normal_dorms_diff: '. $normal_dorms_diff. ' normal_dorms_avail: '. $normal_dorms_avail);
                         print_r( ' normal_sum: ' . $normal_bed_dorms_available);
-                        print_r(' normal_bed_dorms_filled = '. $normal_bed_dorms_filled .' normal_cabin_beds_dorms_total = '. $normal_cabin_beds_dorms_total .' result(normal_bed_dorms_filled / normal_cabin_beds_dorms_total) * 100 = '. $normal_percentage);
+                        print_r(' normal_bed_dorms_filled = '. $normal_bed_dorms_filled .' normal_cabin_beds_dorms_total = '. $normal_cabin_beds_dorms_total .' result(normal_bed_dorms_filled / normal_cabin_beds_dorms_total) * 100 = '. $normal_percentage);*/
 
                     }
                     else {
                         $not_available_dates[] = $dates;
-                        print_r(' ----normal_data---- ');
-                        print_r(' not_available_dates '. $dates);
+                        /*print_r(' ----normal_data---- ');
+                        print_r(' not_available_dates '. $dates);*/
                     }
                 }
             }
@@ -1126,7 +1133,7 @@ class SearchController extends Controller
             /* Checking bookings available ends */
         }
 
-        return response()->json(['holidayDates' => $holidayDates, 'greenDates' => $available_dates, 'orangeDates' => $orangeDates, 'redDates' => $not_available_dates], 200);
+        return response()->json(['holidayDates' => $holidayDates, 'greenDates' => $available_dates, 'orangeDates' => $orangeDates, 'redDates' => $not_available_dates, 'not_season_time' => $not_season_time], 200);
 
     }
 
@@ -1148,6 +1155,7 @@ class SearchController extends Controller
             $available_dates         = [];
             $not_available_dates     = [];
             $orangeDates             = [];
+            $not_season_time         = [];
 
             $monthBegin              = $request->dateFrom;
 
@@ -1161,31 +1169,40 @@ class SearchController extends Controller
 
             foreach ($generateBookingDates as $generateBookingDate) {
 
-                $dates               = $generateBookingDate->format('Y-m-d');
-                $day                 = $generateBookingDate->format('D');
+                $dates                 = $generateBookingDate->format('Y-m-d');
+                $day                   = $generateBookingDate->format('D');
+                $bookingDateSeasonType = null;
 
                 /* Checking season begin */
                 if($seasons) {
                     foreach ($seasons as $season) {
 
                         if (($season->summerSeasonStatus === 'open') && ($season->summerSeason === 1) && ($dates >= ($season->earliest_summer_open)->format('Y-m-d')) && ($dates < ($season->latest_summer_close)->format('Y-m-d'))) {
-                            $holiday_prepare[] = ($season->summer_mon === 1) ? 'Mon' : 0;
-                            $holiday_prepare[] = ($season->summer_tue === 1) ? 'Tue' : 0;
-                            $holiday_prepare[] = ($season->summer_wed === 1) ? 'Wed' : 0;
-                            $holiday_prepare[] = ($season->summer_thu === 1) ? 'Thu' : 0;
-                            $holiday_prepare[] = ($season->summer_fri === 1) ? 'Fri' : 0;
-                            $holiday_prepare[] = ($season->summer_sat === 1) ? 'Sat' : 0;
-                            $holiday_prepare[] = ($season->summer_sun === 1) ? 'Sun' : 0;
-                        } elseif (($season->winterSeasonStatus === 'open') && ($season->winterSeason === 1) && ($dates >= ($season->earliest_winter_open)->format('Y-m-d')) && ($dates < ($season->latest_winter_close)->format('Y-m-d'))) {
-                            $holiday_prepare[] = ($season->winter_mon === 1) ? 'Mon' : 0;
-                            $holiday_prepare[] = ($season->winter_tue === 1) ? 'Tue' : 0;
-                            $holiday_prepare[] = ($season->winter_wed === 1) ? 'Wed' : 0;
-                            $holiday_prepare[] = ($season->winter_thu === 1) ? 'Thu' : 0;
-                            $holiday_prepare[] = ($season->winter_fri === 1) ? 'Fri' : 0;
-                            $holiday_prepare[] = ($season->winter_sat === 1) ? 'Sat' : 0;
-                            $holiday_prepare[] = ($season->winter_sun === 1) ? 'Sun' : 0;
+                            $holiday_prepare[]     = ($season->summer_mon === 1) ? 'Mon' : 0;
+                            $holiday_prepare[]     = ($season->summer_tue === 1) ? 'Tue' : 0;
+                            $holiday_prepare[]     = ($season->summer_wed === 1) ? 'Wed' : 0;
+                            $holiday_prepare[]     = ($season->summer_thu === 1) ? 'Thu' : 0;
+                            $holiday_prepare[]     = ($season->summer_fri === 1) ? 'Fri' : 0;
+                            $holiday_prepare[]     = ($season->summer_sat === 1) ? 'Sat' : 0;
+                            $holiday_prepare[]     = ($season->summer_sun === 1) ? 'Sun' : 0;
+                            $bookingDateSeasonType = 'summer';
+                        }
+                        elseif (($season->winterSeasonStatus === 'open') && ($season->winterSeason === 1) && ($dates >= ($season->earliest_winter_open)->format('Y-m-d')) && ($dates < ($season->latest_winter_close)->format('Y-m-d'))) {
+                            $holiday_prepare[]     = ($season->winter_mon === 1) ? 'Mon' : 0;
+                            $holiday_prepare[]     = ($season->winter_tue === 1) ? 'Tue' : 0;
+                            $holiday_prepare[]     = ($season->winter_wed === 1) ? 'Wed' : 0;
+                            $holiday_prepare[]     = ($season->winter_thu === 1) ? 'Thu' : 0;
+                            $holiday_prepare[]     = ($season->winter_fri === 1) ? 'Fri' : 0;
+                            $holiday_prepare[]     = ($season->winter_sat === 1) ? 'Sat' : 0;
+                            $holiday_prepare[]     = ($season->winter_sun === 1) ? 'Sun' : 0;
+                            $bookingDateSeasonType = 'winter';
                         }
 
+                    }
+
+                    if (!$bookingDateSeasonType)
+                    {
+                        $not_season_time[] = $dates;
                     }
 
                     $prepareArray       = [$dates => $day];
@@ -2036,7 +2053,7 @@ class SearchController extends Controller
                 /* Checking bookings available ends */
             }
 
-            return response()->json(['holidayDates' => $holidayDates, 'greenDates' => $available_dates, 'orangeDates' => $orangeDates, 'redDates' => $not_available_dates], 200);
+            return response()->json(['holidayDates' => $holidayDates, 'greenDates' => $available_dates, 'orangeDates' => $orangeDates, 'redDates' => $not_available_dates, 'not_season_time' => $not_season_time], 200);
         }
         else {
             abort(404);
