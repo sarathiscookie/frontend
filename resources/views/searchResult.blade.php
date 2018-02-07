@@ -30,6 +30,8 @@
     </style>
 @endsection
 
+@inject('cabinServices', 'App\Http\Controllers\SearchController')
+
 @section('content')
     <div class="jumbotron" style="height: 500px;">
         <div class="container text-center">
@@ -92,7 +94,6 @@
                                         <div class="row">
                                             <div class="col-sm-12">
                                                 <h5 class="text-capitalize">Expected opening timings:</h5>
-                                                @inject('cabinServices', 'App\Http\Controllers\SearchController')
                                                 <?php
                                                 $firstYear = (int)date('Y');
                                                 $lastYear  = (int)date('Y', strtotime('+2 year'));
@@ -166,7 +167,7 @@
 
                                         <div class="row">
                                             <div class="col-xs-6 col-sm-6">
-                                                <h4><span class="label label-success pull-left">Sleeping place: Available</span></h4>
+                                                <h4>{!! $cabinServices->bookingPossibleNextDays($result->_id) !!}</h4>
                                             </div>
                                             <div class="col-xs-6 col-sm-6">
                                                 <button type="button" class="btn btn-default btn-sm btn-space pull-right"><span class="glyphicon glyphicon-floppy-save" aria-hidden="true"></span> Booking</button>

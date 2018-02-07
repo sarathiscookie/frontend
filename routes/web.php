@@ -44,18 +44,18 @@ Route::get('/search/cabin/{name}', 'SearchController@cabinName')->name('search.c
 
 /*
 |--------------------------------------------------------------------------
-| Search result
+| Calendar booking availability
 |--------------------------------------------------------------------------
 |
-| Route for listing result, calendar booking availability
+| Route for calendar booking availability check
 |
 */
 
 /* Get dates when page loads */
-Route::post('/calendar', 'SearchController@calendar')->name('calendar');
+Route::post('/calendar', 'CalendarController@calendar')->name('calendar');
 
 /* Get dates when page loads */
-Route::post('/calendar/ajax', 'SearchController@calendarAvailability')->name('calendar');
+Route::post('/calendar/ajax', 'CalendarController@calendarAvailability')->name('calendar');
 
 
 
