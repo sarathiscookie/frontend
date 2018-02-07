@@ -285,11 +285,11 @@
                             if( redDates.indexOf(string) >=0 ) {
                                 returnResult = [true, "redDates", "Not available"];
                             }
-                            if( holidayDates.indexOf(string) >=0 ) {
-                                returnResult = [false, "", "Holiday"];
-                            }
                             if( not_season_time.indexOf(string) >=0 ) {
                                 returnResult = [false, "", "Not season time"];
+                            }
+                            if( holidayDates.indexOf(string) >=0 ) {
+                                returnResult = [false, "", "Holiday"];
                             }
                             return returnResult;
                         });
@@ -325,11 +325,12 @@
                     type: 'POST',
                     data: { dataId: dataId },
                     success: function(response) {
-                        var holidayDates = response.holidayDates;
-                        var greenDates   = response.greenDates;
-                        var orangeDates  = response.orangeDates;
-                        var redDates     = response.redDates;
-                        var start_date   = '';
+                        var holidayDates    = response.holidayDates;
+                        var greenDates      = response.greenDates;
+                        var orangeDates     = response.orangeDates;
+                        var redDates        = response.redDates;
+                        var not_season_time = response.not_season_time;
+                        var start_date      = '';
 
                         $this.datepicker("option", "onChangeMonthYear", function(year,month,inst) {
                             if (year != undefined && month != undefined) {
@@ -359,6 +360,10 @@
                                         redDates.push(response.redDates[i]);
                                     }
 
+                                    for (var i = 0; i < response.not_season_time.length; i++) {
+                                        not_season_time.push(response.not_season_time[i]);
+                                    }
+
                                     $this.datepicker("refresh");
                                 }
                             });
@@ -374,6 +379,9 @@
                             }
                             if( redDates.indexOf(string) >=0 ) {
                                 returnResults = [true, "redDates", "Not available"];
+                            }
+                            if( not_season_time.indexOf(string) >=0 ) {
+                                returnResults = [false, "", "Not season time"];
                             }
                             if( holidayDates.indexOf(string) >=0 ) {
                                 returnResults = [false, "", "Holiday"];

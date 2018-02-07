@@ -248,8 +248,8 @@ class SearchController extends Controller
 
         foreach ($generateBookingDates as $generateBookingDate) {
 
-            $dates         = $generateBookingDate->format('Y-m-d');
-            $day           = $generateBookingDate->format('D');
+            $dates                 = $generateBookingDate->format('Y-m-d');
+            $day                   = $generateBookingDate->format('D');
             $bookingDateSeasonType = null;
 
             /* Checking season begin */
