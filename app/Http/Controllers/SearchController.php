@@ -140,6 +140,7 @@ class SearchController extends Controller
     /**
      * Display a listing of the resource.
      *
+     * @param  string  $name
      * @return \Illuminate\Http\Response
      */
     public function cabinName($name)
