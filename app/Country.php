@@ -25,5 +25,5 @@ class Country extends Eloquent
      *
      * @var array
      */
-    protected $guarded = ['id'];
+    protected $guarded = ['_id'];
 }

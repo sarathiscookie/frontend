@@ -26,7 +26,7 @@ class Booking extends Eloquent
      *
      * @var array
      */
-    protected $guarded = ['id'];
+    protected $guarded = ['_id'];
 
     /**
      * Eloquent allows you to work with Carbon/DateTime objects instead of MongoDate objects.
