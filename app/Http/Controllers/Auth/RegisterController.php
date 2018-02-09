@@ -48,9 +48,12 @@ class RegisterController extends Controller
     protected function validator(array $data)
     {
         return Validator::make($data, [
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
+            'firstName' => 'required|string|max:255',
+            'lastName' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:user,usrEmail',
             'password' => 'required|string|min:6|confirmed',
+            'dataProtection' => 'required',
+            'termsService' => 'required',
         ]);
     }
 
@@ -58,14 +61,32 @@ class RegisterController extends Controller
      * Create a new user instance after a valid registration.
      *
      * @param  array  $data
-     * @return \App\User
+     * @return \App\Userlist
      */
     protected function create(array $data)
     {
-        return User::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => bcrypt($data['password']),
+        if(isset($data['newsletter'])){
+            $newsletter = (int)$data['newsletter'];
+        }
+        else {
+            $newsletter = 0;
+        }
+
+        $userList =  User::create([
+            'usrFirstname' => $data['firstName'],
+            'usrLastname' => $data['lastName'],
+            'usrEmail' => $data['email'], // later check email capital letter. Store all email in to small letter
+            'usrPassword' =>  md5('aFGQ475SDsdfsaf2342' . $data['password'] . bcrypt($data['password'])),
+            'usrPasswordSalt' => bcrypt($data['password']),
+            'usrActive' => '0',
+            'usrEmailConfirmed' => '0',
+            'usrlId' => 2,
+            'usrDatenschutz' => (int)$data['dataProtection'],
+            'usrTerms' => (int)$data['termsService'],
+            'usrNewsletter' => $newsletter,
+            'is_delete' => 0,
         ]);
+
+        return $userList;
     }
 }

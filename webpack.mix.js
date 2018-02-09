@@ -21,7 +21,8 @@ mix.js('resources/assets/js/app.js', 'public/js')
 mix.styles([
     'resources/assets/css/welcome.css',
     'resources/assets/css/search.css',
-    'resources/assets/css/cabins.css'
+    'resources/assets/css/cabins.css',
+    'resources/assets/css/frontend.css'
 ], 'public/css/all.css');
 
 mix.scripts([

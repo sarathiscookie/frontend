@@ -103,3 +103,7 @@ footer {
 .badge-inverse:hover {
     background-color: #1a1a1a;
 }
+.nounderline{
+    text-decoration: none;
+    cursor: pointer;
+}
