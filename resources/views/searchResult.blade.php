@@ -32,6 +32,8 @@
 
 @inject('cabinServices', 'App\Http\Controllers\SearchController')
 
+@inject('calendarServices', 'App\Http\Controllers\CalendarController')
+
 @section('content')
     <div class="jumbotron" style="height: 500px;">
         <div class="container text-center">
@@ -142,6 +144,16 @@
                                                 <h5>Your journey begins here <span class="glyphicon glyphicon-question-sign"></span></h5>
                                                 <div class="form-group row calendar" data-id="{{ $result->_id }}">
 
+                                                    @php
+                                                    $calendar = $calendarServices->calendar($result->_id)
+                                                    @endphp
+
+                                                    <div class="holiday_{{ $result->_id }}" data-holiday="{{ $calendar[0] }}"></div>
+                                                    <div class="green_{{ $result->_id }}" data-green="{{ $calendar[1] }}"></div>
+                                                    <div class="orange_{{ $result->_id }}" data-orange="{{ $calendar[2] }}"></div>
+                                                    <div class="red_{{ $result->_id }}" data-red="{{ $calendar[3] }}"></div>
+                                                    <div class="notSeasonTime_{{ $result->_id }}" data-notseasontime="{{ $calendar[4] }}"></div>
+
                                                     <div class="col-sm-4">
                                                         <input type="text" class="form-control dateFrom" id="dateFrom_{{ $result->_id }}" name="dateFrom" placeholder="Arrival" readonly>
                                                     </div>
@@ -196,33 +208,33 @@
                 }
             });
 
-            var holidayDates    = {!! json_encode($holidayDates) !!};
-            var greenDates      = {!! json_encode($greenDates) !!};
-            var orangeDates     = {!! json_encode($orangeDates) !!};
-            var redDates        = {!! json_encode($redDates) !!};
-            var not_season_time = {!! json_encode($not_season_time) !!};
-            var start_date      = '';
-
-            $(".dateFrom").datepicker({
-                showAnim: "drop",
-                dateFormat: "dd.mm.y",
-                changeMonth: true,
-                changeYear: true,
-                monthNames: ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'],
-                monthNamesShort: ["Jan", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"],
-                dayNamesMin: ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"],
-                minDate: '+1d',
-                yearRange: "0:+2"
-            });
-
+            /* Calendar availability check begin */
             $("body").on('mousedown', ".dateFrom", function() {
+                var dataId          = $(this).parent().parent().data("id");
+                var $this           = $("#dateFrom_"+dataId);
+                var returnResult    = [];
 
-                var dataId       = $(this).parent().parent().data("id");
-                var $this        = $(this);
-                var returnResult = [];
+                var holidayDates    = $(".holiday_"+dataId).data("holiday");
+                var greenDates      = $(".green_"+dataId).data("green");
+                var orangeDates     = $(".orange_"+dataId).data("orange");
+                var redDates        = $(".red_"+dataId).data("red");
+                var not_season_time = $(".notSeasonTime_"+dataId).data("notseasontime");
+                var start_date      = '';
+
+                $this.datepicker({
+                    showAnim: "drop",
+                    dateFormat: "dd.mm.y",
+                    changeMonth: true,
+                    changeYear: true,
+                    monthNames: ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'],
+                    monthNamesShort: ["Jan", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"],
+                    dayNamesMin: ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"],
+                    minDate: '+1d',
+                    yearRange: "0:+2"
+                });
 
                 $this.datepicker("option", "onSelect", function(date) {
-                    var dt2       = $(".dateTo");
+                    var dt2       = $("#dateTo_"+dataId);
                     var startDate = $this.datepicker('getDate');
                     var minDate   = $this.datepicker('getDate');
                     dt2.datepicker('setDate', minDate);
@@ -293,21 +305,28 @@
             });
 
 
-            $(".dateTo").datepicker({
-                showAnim: "drop",
-                dateFormat: "dd.mm.y",
-                changeMonth: true,
-                changeYear: true,
-                monthNames: ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'],
-                monthNamesShort: ["Jan", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"],
-                dayNamesMin: ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"],
-                yearRange: "0:+2"
-            });
-
             $("body").on('mousedown', ".dateTo", function() {
-                var dataId        = $(this).parent().parent().data("id");
-                var $this         = $(this);
-                var returnResults = [];
+                var dataId          = $(this).parent().parent().data("id");
+                var $this           = $("#dateTo_"+dataId);
+                var returnResults   = [];
+
+                var holidayDates    = $(".holiday_"+dataId).data("holiday");
+                var greenDates      = $(".green_"+dataId).data("green");
+                var orangeDates     = $(".orange_"+dataId).data("orange");
+                var redDates        = $(".red_"+dataId).data("red");
+                var not_season_time = $(".notSeasonTime_"+dataId).data("notseasontime");
+                var start_date      = '';
+
+                $this.datepicker({
+                    showAnim: "drop",
+                    dateFormat: "dd.mm.y",
+                    changeMonth: true,
+                    changeYear: true,
+                    monthNames: ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'],
+                    monthNamesShort: ["Jan", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"],
+                    dayNamesMin: ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"],
+                    yearRange: "0:+2"
+                });
 
                 $this.datepicker("option", "onChangeMonthYear", function(year,month,inst) {
                     if (year != undefined && month != undefined) {
@@ -369,6 +388,7 @@
                 $this.datepicker("show");
 
             });
+            /* Calendar availability check end */
 
         });
 

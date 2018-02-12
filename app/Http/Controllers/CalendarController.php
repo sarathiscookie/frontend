@@ -59,11 +59,11 @@ class CalendarController extends Controller
     /**
      * Show the data when page initial loads.
      *
-     * @param  \App\Http\Requests\CalendarRequest
-     * @return \Illuminate\Http\Response
+     * @param  string  $cabinId
+     * @return array
      */
 
-    public function calendar(CalendarRequest $request)
+    public function calendar($cabinId)
     {
         $monthBegin              = date("Y-m-d", strtotime(' +1 day'));
         $monthEnd                = date("Y-m-t 23:59:59");
@@ -77,9 +77,9 @@ class CalendarController extends Controller
         $orangeDates             = [];
         $not_season_time         = [];
 
-        $seasons                 = Season::where('cabin_id', new \MongoDB\BSON\ObjectID($request->dataId))->get();
+        $seasons                 = Season::where('cabin_id', new \MongoDB\BSON\ObjectID($cabinId))->get();
 
-        $cabin                   = Cabin::findOrFail($request->dataId);
+        $cabin                   = Cabin::findOrFail($cabinId);
 
         $generateBookingDates    = $this->generateDates($monthBegin, $monthEnd);
 
@@ -970,8 +970,7 @@ class CalendarController extends Controller
             /* Checking bookings available ends */
         }
 
-        return response()->json(['holidayDates' => $holidayDates, 'greenDates' => $available_dates, 'orangeDates' => $orangeDates, 'redDates' => $not_available_dates, 'not_season_time' => $not_season_time], 200);
-
+        return array(json_encode($holidayDates), json_encode($available_dates), json_encode($orangeDates), json_encode($not_available_dates), json_encode($not_season_time));
     }
 
     /**

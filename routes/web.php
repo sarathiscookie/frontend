@@ -52,7 +52,7 @@ Route::get('/search/cabin/{name}', 'SearchController@cabinName')->name('search.c
 */
 
 /* Get dates when page loads */
-Route::post('/calendar', 'CalendarController@calendar')->name('calendar');
+/*Route::post('/calendar', 'CalendarController@calendar')->name('calendar');*/
 
 /* Get dates when page loads */
 Route::post('/calendar/ajax', 'CalendarController@calendarAvailability')->name('calendar');
