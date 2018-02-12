@@ -216,15 +216,15 @@
             });
 
             $("body").on('mousedown', ".dateFrom", function() {
-                $(".dateFrom").datepicker("refresh");
+
                 var dataId       = $(this).parent().parent().data("id");
                 var $this        = $(this);
                 var returnResult = [];
+
                 $this.datepicker("option", "onSelect", function(date) {
                     var dt2       = $(".dateTo");
                     var startDate = $this.datepicker('getDate');
                     var minDate   = $this.datepicker('getDate');
-                    $this.datepicker('option', 'minDate', minDate);
                     dt2.datepicker('setDate', minDate);
                     startDate.setDate(startDate.getDate() + 60); //sets dt2 maxDate to the last day of 60 days window
                     minDate.setDate(minDate.getDate() + 1); //sets dt2 minDate to the +1 day of from date
@@ -364,9 +364,6 @@
                         returnResults = [false, "", "Holiday"];
                     }
                     return returnResults;
-
-                    /*return [true, (holidayDates.indexOf(string) >=0) ? "holidayDates" : ( (greenDates.indexOf(string) >=0) ? "greenDates": ( (orangeDates.indexOf(string) >=0) ? "orangeDates": ( (redDates.indexOf(string) >=0) ? "redDates": '' ) ) )];*/
-
                 });
 
                 $this.datepicker("show");
