@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers\Auth;
 
+use Illuminate\Http\Request;
 use App\User;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use App\Rules\Lowercase;
+use Mail;
+use App\Mail\VerifyUserEmail;
 
 class RegisterController extends Controller
 {
@@ -73,7 +76,7 @@ class RegisterController extends Controller
             $newsletter = 0;
         }
 
-        $userList =  User::create([
+        $user =  User::create([
             'usrFirstname' => $data['firstName'],
             'usrLastname' => $data['lastName'],
             'usrEmail' => $data['email'], // later check email capital letter. Store all email in to small letter
@@ -85,9 +88,24 @@ class RegisterController extends Controller
             'usrDatenschutz' => (int)$data['dataProtection'],
             'usrTerms' => (int)$data['termsService'],
             'usrNewsletter' => $newsletter,
+            'token' => str_random(40),
             'is_delete' => 0,
         ]);
 
-        return $userList;
+        Mail::to($data['email'])->send(new VerifyUserEmail($user));
+
+        return $user;
+    }
+
+    /**
+     * Force user to verify email.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    protected function registered(Request $request, $user)
+    {
+        $this->guard()->logout();
+        return redirect('/login')->with('status', 'We sent you an activation code. Check your email and click on the link to verify.');
     }
 }
