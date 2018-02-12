@@ -66,17 +66,6 @@ class User extends Authenticatable
     }
 
     /**
-     * Set the user's email.
-     *
-     * @param  string  $value
-     * @return void
-     */
-    public function setusrEmailAttribute($value)
-    {
-        $this->attributes['usrEmail'] = strtolower($value);
-    }
-
-    /**
      * Eloquent allows you to work with Carbon/DateTime objects instead of MongoDate objects.
      * Internally, these dates will be converted to MongoDate objects when saved to the database.
      */
