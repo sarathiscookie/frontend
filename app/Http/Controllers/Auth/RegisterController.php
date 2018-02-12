@@ -6,6 +6,7 @@ use App\User;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
+use App\Rules\Lowercase;
 
 class RegisterController extends Controller
 {
@@ -50,7 +51,7 @@ class RegisterController extends Controller
         return Validator::make($data, [
             'firstName' => 'required|string|max:255',
             'lastName' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:user,usrEmail',
+            'email' => [ 'required', 'string', 'email', 'max:255', 'unique:user,usrEmail', new Lowercase ],
             'password' => 'required|string|min:6|confirmed',
             'dataProtection' => 'required',
             'termsService' => 'required',
