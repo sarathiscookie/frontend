@@ -24,7 +24,7 @@ Route::get('/home', 'HomeController@index')->name('home');
 |
 */
 
-/* List country */
+/* Welcome */
 Route::get('/', 'WelcomeController@index');
 
 /*
@@ -58,7 +58,17 @@ Route::get('/search/cabin/{name}', 'SearchController@cabinName')->name('search.c
 Route::post('/calendar/ajax', 'CalendarController@calendarAvailability')->name('calendar');
 
 
+/*
+|--------------------------------------------------------------------------
+| User activation
+|--------------------------------------------------------------------------
+|
+| Route for user email verification and account activation
+|
+*/
 
+/* Verify user */
+Route::get('/user/verify/{token}', 'Auth\RegisterController@verifyUser');
 
 
 

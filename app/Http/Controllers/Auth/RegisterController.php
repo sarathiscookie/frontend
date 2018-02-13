@@ -61,6 +61,14 @@ class RegisterController extends Controller
         ]);
     }
 
+    public function generateDynamicSalt() {
+        $dynamicSalt = '';
+        for ($i = 0; $i < 50; $i++) {
+            $dynamicSalt .= chr(rand(33, 126));
+        }
+        return $dynamicSalt = str_ireplace('\\', '@', $dynamicSalt);
+    }
+
     /**
      * Create a new user instance after a valid registration.
      *
@@ -76,19 +84,21 @@ class RegisterController extends Controller
             $newsletter = 0;
         }
 
+        $generateDynamicSalt = $this->generateDynamicSalt();
+
         $user =  User::create([
             'usrFirstname' => $data['firstName'],
             'usrLastname' => $data['lastName'],
             'usrEmail' => $data['email'], // later check email capital letter. Store all email in to small letter
-            'usrPassword' =>  md5('aFGQ475SDsdfsaf2342' . $data['password'] . bcrypt($data['password'])),
-            'usrPasswordSalt' => bcrypt($data['password']),
+            'usrPassword' =>  md5('aFGQ475SDsdfsaf2342'. $data['password'] . $generateDynamicSalt),
+            'usrPasswordSalt' => $generateDynamicSalt,
             'usrActive' => '0',
             'usrEmailConfirmed' => '0',
             'usrlId' => 2,
             'usrDatenschutz' => (int)$data['dataProtection'],
             'usrTerms' => (int)$data['termsService'],
             'usrNewsletter' => $newsletter,
-            'token' => str_random(40),
+            'token' => str_random(60),
             'is_delete' => 0,
         ]);
 
@@ -107,5 +117,33 @@ class RegisterController extends Controller
     {
         $this->guard()->logout();
         return redirect('/login')->with('status', 'We sent you an activation code. Check your email and click on the link to verify.');
+    }
+
+    /**
+     * User email verification and account activation.
+     *
+     * @param  string $token
+     * @return \Illuminate\Http\Response
+     */
+    public function verifyUser($token)
+    {
+        $verifyUser = User::where('token', $token)->first();
+        if(isset($verifyUser)){
+            if($verifyUser->usrEmailConfirmed === '0'){
+                $verifyUser->usrEmailConfirmed  = '1';
+                $verifyUser->usrActive          = '1';
+                $verifyUser->emailConfirmedDate = date('Y-m-d H:i:s');
+                $verifyUser->save();
+                $status = "Your e-mail is verified. You can now login.";
+            }
+            else{
+                $status = "Your e-mail is already verified. You can now login.";
+            }
+        }
+        else{
+            return redirect('/login')->with('warning', "Sorry your email cannot be identified.");
+        }
+
+        return redirect('/login')->with('status', $status);
     }
 }
