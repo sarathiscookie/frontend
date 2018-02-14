@@ -36,6 +36,7 @@ class VerifyUserEmail extends Mailable
      */
     public function build()
     {
-        return $this->view('emails.verifyUserEmail');
+        return $this->view('emails.verifyUserEmail')
+            ->subject('Bitte bestätigen Sie Ihre Anmeldung!');
     }
 }
