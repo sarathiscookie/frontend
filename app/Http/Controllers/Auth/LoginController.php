@@ -52,20 +52,24 @@ class LoginController extends Controller
             ->whereIn('usrlId', [1, 2, 5, 6])
             ->first();
 
-        $password = md5('aFGQ475SDsdfsaf2342'. $request->password. $authUser->usrPasswordSalt);
+        if($authUser) {
+            $password = md5('aFGQ475SDsdfsaf2342'. $request->password. $authUser->usrPasswordSalt);
+            $user     = User::where('usrEmail', $request->email)
+                ->where('usrPassword', $password)
+                ->where('usrActive', '1')
+                ->where('usrEmailConfirmed', '1')
+                ->where('is_delete', 0)
+                ->where('usrlId', 2)
+                ->first();
 
-        $user     = User::where('usrEmail', $request->email)
-            ->where('usrPassword', $password)
-            ->where('usrActive', '1')
-            ->where('usrEmailConfirmed', '1')
-            ->where('is_delete', 0)
-            ->where('usrlId', 2)
-            ->first();
+            if ($user) {
+                $this->guard()->login($user, $request->has('remember'));
 
-        if ($user) {
-            $this->guard()->login($user, $request->has('remember'));
-
-            return true;
+                return true;
+            }
+            else {
+                return false;
+            }
         }
 
         return false;
