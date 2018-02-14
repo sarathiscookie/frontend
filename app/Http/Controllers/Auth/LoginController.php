@@ -48,8 +48,12 @@ class LoginController extends Controller
      */
     protected function attemptLogin(Request $request)
     {
-        $authUser = User::where('usrEmail', $request->email)->first();
+        $authUser = User::where('usrEmail', $request->email)
+            ->whereIn('usrlId', [1, 2, 5, 6])
+            ->first();
+
         $password = md5('aFGQ475SDsdfsaf2342'. $request->password. $authUser->usrPasswordSalt);
+
         $user     = User::where('usrEmail', $request->email)
             ->where('usrPassword', $password)
             ->where('usrActive', '1')

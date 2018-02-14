@@ -10,6 +10,7 @@ use Illuminate\Foundation\Auth\RegistersUsers;
 use App\Rules\Lowercase;
 use Mail;
 use App\Mail\VerifyUserEmail;
+use Illuminate\Validation\Rule;
 
 class RegisterController extends Controller
 {
@@ -54,13 +55,18 @@ class RegisterController extends Controller
         return Validator::make($data, [
             'firstName' => 'required|string|max:255',
             'lastName' => 'required|string|max:255',
-            'email' => [ 'required', 'string', 'email', 'max:255', 'unique:user,usrEmail', new Lowercase ],
+            'email' => [ 'required', 'string', 'email', 'max:255', Rule::unique('user', 'usrEmail')->whereIn('usrlId', [1, 2, 5, 6]), new Lowercase ],
             'password' => 'required|string|min:6|confirmed',
             'dataProtection' => 'required',
             'termsService' => 'required',
         ]);
     }
 
+    /**
+     * Generating dynamic salt.
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function generateDynamicSalt() {
         $dynamicSalt = '';
         for ($i = 0; $i < 50; $i++) {
