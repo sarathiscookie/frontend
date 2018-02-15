@@ -46,7 +46,7 @@
 
                 <div class="row">
                     <div class="col-sm-6">
-                        <a href="/cabins">
+                        <a href="/search">
                             <img src="https://placehold.it/150x80?text=Hüttensuche" class="img-responsive" style="width:100%" alt="Image">
                         </a>
                     </div>

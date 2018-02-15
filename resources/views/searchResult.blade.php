@@ -182,7 +182,12 @@
                                                 <h4>{!! $cabinServices->bookingPossibleNextDays($result->_id) !!}</h4>
                                             </div>
                                             <div class="col-xs-6 col-sm-6">
-                                                <button type="button" class="btn btn-default btn-sm btn-space pull-right"><span class="glyphicon glyphicon-floppy-save" aria-hidden="true"></span> Booking</button>
+                                                <!-- Authentication Links -->
+                                                @guest
+                                                    <a href="{{ route('login') }}" class="btn btn-default btn-sm btn-space pull-right">View Price</a>
+                                                    @else
+                                                        <a href="{{ route('cabin') }}" class="btn btn-default btn-sm btn-space pull-right">View Price</a>
+                                                @endguest
                                             </div>
                                         </div>
 

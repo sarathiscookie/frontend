@@ -13,7 +13,7 @@
 
 Auth::routes();
 
-Route::get('/home', 'HomeController@index')->name('home');
+/*Route::get('/home', 'HomeController@index')->name('home');*/
 
 /*
 |--------------------------------------------------------------------------
@@ -71,6 +71,19 @@ Route::post('/calendar/ajax', 'CalendarController@calendarAvailability')->name('
 Route::get('/user/verify/{token}', 'Auth\RegisterController@verifyUser');
 
 
+Route::group(['middleware' => ['auth']], function () {
+    /*
+    |--------------------------------------------------------------------------
+    | Cabin
+    |--------------------------------------------------------------------------
+    |
+    | Route for cabin individual list
+    |
+    */
+
+    /* Cabin individual list */
+    Route::get('/cabin', 'CabinController@index')->name('cabin');
+});
 
 
 

@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-class CabinsController extends Controller
+class CabinController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -13,7 +13,7 @@ class CabinsController extends Controller
      */
     public function index()
     {
-        return view('cabins');
+        dd('cabin individual');
     }
 
     /**
