@@ -88,7 +88,7 @@
 
         @yield('content')
 
-        <footer class="container-fluid text-center">
+        <footer class="container-fluid text-center" style="position: fixed; right: 0; bottom: 0; left: 0; padding: 1rem; background-color: #efefef; text-align: center;">
             <p>Footer Text</p>
         </footer>
     </div>

@@ -13,7 +13,7 @@ class CabinController extends Controller
      */
     public function index()
     {
-        dd('cabin individual');
+        return view('cabin');
     }
 
     /**
