@@ -17,13 +17,12 @@ class CabinDetailsController extends Controller
     {
         $cabin_id = preg_replace(sprintf('/%s/', env('MD5_Key')), '', base64_decode($id));
 
-        $cabin = Cabin::where('is_delete', 0)
-            /*->where('other_cabin', "0")*/
-            ->first($cabin_id);
+        $cabinDetails = Cabin::select('name', 'region', 'country', 'height')
+            ->where('is_delete', 0)
+            ->where('other_cabin', "0")
+            ->find($cabin_id);
 
-        dd($cabin);
-
-        return view('cabinDetails');
+        return view('cabinDetails', ['cabinDetails' => $cabinDetails]);
     }
 
     /**
