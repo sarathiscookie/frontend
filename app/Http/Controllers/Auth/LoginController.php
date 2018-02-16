@@ -28,7 +28,7 @@ class LoginController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/';
+    protected $redirectTo = '/search';
 
     /**
      * Create a new controller instance.
@@ -63,7 +63,7 @@ class LoginController extends Controller
             ->first();
 
         if($authUser) {
-            $password = md5('aFGQ475SDsdfsaf2342'. $request->password. $authUser->usrPasswordSalt);
+            $password = md5(env('MD5_Key'). $request->password. $authUser->usrPasswordSalt);
             $user     = User::where('usrEmail', $request->email)
                 ->where('usrPassword', $password)
                 ->where('usrActive', '1')

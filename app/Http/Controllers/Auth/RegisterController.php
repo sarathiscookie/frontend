@@ -96,7 +96,7 @@ class RegisterController extends Controller
             'usrFirstname' => $data['firstName'],
             'usrLastname' => $data['lastName'],
             'usrEmail' => $data['email'], // later check email capital letter. Store all email in to small letter
-            'usrPassword' =>  md5('aFGQ475SDsdfsaf2342'. $data['password'] . $generateDynamicSalt),
+            'usrPassword' =>  md5(env('MD5_Key'). $data['password'] . $generateDynamicSalt),
             'usrPasswordSalt' => $generateDynamicSalt,
             'usrActive' => '0',
             'usrEmailConfirmed' => '0',
