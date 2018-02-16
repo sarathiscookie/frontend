@@ -298,6 +298,7 @@ class SearchController extends Controller
         $not_regular_dates       = [];
         $dates_array             = [];
         $bookingDateSeasonType   = null;
+        $result                  = '';
 
         $seasons                 = Season::where('cabin_id', new \MongoDB\BSON\ObjectID($cabin_id))->get();
 
@@ -331,7 +332,7 @@ class SearchController extends Controller
             }
 
             if (!$bookingDateSeasonType) {
-                return '<span class="label label-info pull-left">Tomorrow cabin closed</span>';
+                $result = '<span class="label label-info pull-left">Tomorrow cabin closed</span>';
             }
 
             $prepareArray       = [$dayBegin => $day];
@@ -340,7 +341,7 @@ class SearchController extends Controller
 
             foreach ($array_intersect as $array_intersect_key => $array_intersect_values) {
                 if($dayBegin === $array_intersect_key) {
-                    return '<span class="label label-info pull-left">Tomorrow cabin closed</span>';
+                    $result = '<span class="label label-info pull-left">Tomorrow cabin closed</span>';
                 }
             }
         }
@@ -442,14 +443,14 @@ class SearchController extends Controller
                         $not_regular_percentage             = ($not_regular_bed_dorms_filled / $not_regular_cabin_beds_dorms_total) * 100;
 
                         if($not_regular_percentage > 75) {
-                            return '<span class="label label-warning pull-left">Tomorrow sleeping place limited</span>';
+                            $result = '<span class="label label-warning pull-left">Tomorrow sleeping place limited</span>';
                         }
                         else {
-                            return '<span class="label label-success pull-left">Tomorrow sleeping place available</span>';
+                            $result = '<span class="label label-success pull-left">Tomorrow sleeping place available</span>';
                         }
                     }
                     else {
-                        return '<span class="label label-danger pull-left">Tomorrow sleeping place booked out</span>';
+                        $result = '<span class="label label-danger pull-left">Tomorrow sleeping place booked out</span>';
                     }
                 }
             }
@@ -484,15 +485,15 @@ class SearchController extends Controller
                             $mon_percentage             = ($mon_bed_dorms_filled / $mon_cabin_beds_dorms_total) * 100;
 
                             if($mon_percentage > 75) {
-                                return '<span class="label label-warning pull-left">Tomorrow sleeping place limited</span>';
+                                $result = '<span class="label label-warning pull-left">Tomorrow sleeping place limited</span>';
                             }
                             else {
-                                return '<span class="label label-success pull-left">Tomorrow sleeping place available</span>';
+                                $result = '<span class="label label-success pull-left">Tomorrow sleeping place available</span>';
                             }
 
                         }
                         else {
-                            return '<span class="label label-danger pull-left">Tomorrow sleeping place booked out</span>';
+                            $result = '<span class="label label-danger pull-left">Tomorrow sleeping place booked out</span>';
                         }
                     }
                 }
@@ -523,15 +524,15 @@ class SearchController extends Controller
                             $tue_percentage             = ($tue_bed_dorms_filled / $tue_cabin_beds_dorms_total) * 100;
 
                             if($tue_percentage > 75) {
-                                return '<span class="label label-warning pull-left">Tomorrow sleeping place limited</span>';
+                                $result = '<span class="label label-warning pull-left">Tomorrow sleeping place limited</span>';
                             }
                             else {
-                                return '<span class="label label-success pull-left">Tomorrow sleeping place available</span>';
+                                $result = '<span class="label label-success pull-left">Tomorrow sleeping place available</span>';
                             }
 
                         }
                         else {
-                            return '<span class="label label-danger pull-left">Tomorrow sleeping place booked out</span>';
+                            $result = '<span class="label label-danger pull-left">Tomorrow sleeping place booked out</span>';
                         }
                     }
                 }
@@ -562,14 +563,14 @@ class SearchController extends Controller
                             $wed_percentage             = ($wed_bed_dorms_filled / $wed_cabin_beds_dorms_total) * 100;
 
                             if($wed_percentage > 75) {
-                                return '<span class="label label-warning pull-left">Tomorrow sleeping place limited</span>';
+                                $result = '<span class="label label-warning pull-left">Tomorrow sleeping place limited</span>';
                             }
                             else {
-                                return '<span class="label label-success pull-left">Tomorrow sleeping place available</span>';
+                                $result = '<span class="label label-success pull-left">Tomorrow sleeping place available</span>';
                             }
                         }
                         else {
-                            return '<span class="label label-danger pull-left">Tomorrow sleeping place booked out</span>';
+                            $result = '<span class="label label-danger pull-left">Tomorrow sleeping place booked out</span>';
                         }
                     }
                 }
@@ -600,14 +601,14 @@ class SearchController extends Controller
                             $thu_percentage             = ($thu_bed_dorms_filled / $thu_cabin_beds_dorms_total) * 100;
 
                             if($thu_percentage > 75) {
-                                return '<span class="label label-warning pull-left">Tomorrow sleeping place limited</span>';
+                                $result = '<span class="label label-warning pull-left">Tomorrow sleeping place limited</span>';
                             }
                             else {
-                                return '<span class="label label-success pull-left">Tomorrow sleeping place available</span>';
+                                $result = '<span class="label label-success pull-left">Tomorrow sleeping place available</span>';
                             }
                         }
                         else {
-                            return '<span class="label label-danger pull-left">Tomorrow sleeping place booked out</span>';
+                            $result = '<span class="label label-danger pull-left">Tomorrow sleeping place booked out</span>';
                         }
                     }
                 }
@@ -638,14 +639,14 @@ class SearchController extends Controller
                             $fri_percentage             = ($fri_bed_dorms_filled / $fri_cabin_beds_dorms_total) * 100;
 
                             if($fri_percentage > 75) {
-                                return '<span class="label label-warning pull-left">Tomorrow sleeping place limited</span>';
+                                $result = '<span class="label label-warning pull-left">Tomorrow sleeping place limited</span>';
                             }
                             else {
-                                return '<span class="label label-success pull-left">Tomorrow sleeping place available</span>';
+                                $result = '<span class="label label-success pull-left">Tomorrow sleeping place available</span>';
                             }
                         }
                         else {
-                            return '<span class="label label-danger pull-left">Tomorrow sleeping place booked out</span>';
+                            $result = '<span class="label label-danger pull-left">Tomorrow sleeping place booked out</span>';
                         }
                     }
                 }
@@ -676,14 +677,14 @@ class SearchController extends Controller
                             $sat_percentage             = ($sat_bed_dorms_filled / $sat_cabin_beds_dorms_total) * 100;
 
                             if($sat_percentage > 75) {
-                                return '<span class="label label-warning pull-left">Tomorrow sleeping place limited</span>';
+                                $result = '<span class="label label-warning pull-left">Tomorrow sleeping place limited</span>';
                             }
                             else {
-                                return '<span class="label label-success pull-left">Tomorrow sleeping place available</span>';
+                                $result = '<span class="label label-success pull-left">Tomorrow sleeping place available</span>';
                             }
                         }
                         else {
-                            return '<span class="label label-danger pull-left">Tomorrow sleeping place booked out</span>';
+                            $result = '<span class="label label-danger pull-left">Tomorrow sleeping place booked out</span>';
                         }
                     }
                 }
@@ -714,14 +715,14 @@ class SearchController extends Controller
                             $sun_percentage             = ($sun_bed_dorms_filled / $sun_cabin_beds_dorms_total) * 100;
 
                             if($sun_percentage > 75) {
-                                return '<span class="label label-warning pull-left">Tomorrow sleeping place limited</span>';
+                                $result = '<span class="label label-warning pull-left">Tomorrow sleeping place limited</span>';
                             }
                             else {
-                                return '<span class="label label-success pull-left">Tomorrow sleeping place available</span>';
+                                $result = '<span class="label label-success pull-left">Tomorrow sleeping place available</span>';
                             }
                         }
                         else {
-                            return '<span class="label label-danger pull-left">Tomorrow sleeping place booked out</span>';
+                            $result = '<span class="label label-danger pull-left">Tomorrow sleeping place booked out</span>';
                         }
                     }
                 }
@@ -752,14 +753,14 @@ class SearchController extends Controller
                     $normal_percentage             = ($normal_bed_dorms_filled / $normal_cabin_beds_dorms_total) * 100;
 
                     if($normal_percentage > 75) {
-                        return '<span class="label label-warning pull-left">Tomorrow sleeping place limited</span>';
+                        $result = '<span class="label label-warning pull-left">Tomorrow sleeping place limited</span>';
                     }
                     else {
-                        return '<span class="label label-success pull-left">Tomorrow sleeping place available</span>';
+                        $result = '<span class="label label-success pull-left">Tomorrow sleeping place available</span>';
                     }
                 }
                 else {
-                    return '<span class="label label-danger pull-left">Tomorrow sleeping place booked out</span>';
+                    $result = '<span class="label label-danger pull-left">Tomorrow sleeping place booked out</span>';
                 }
             }
 
@@ -795,14 +796,14 @@ class SearchController extends Controller
                         $not_regular_sleeps_percentage = ($not_regular_sleeps_filled / $cabin->not_regular_sleeps) * 100;
 
                         if($not_regular_sleeps_percentage > 75) {
-                            return '<span class="label label-warning pull-left">Tomorrow sleeping place limited</span>';
+                            $result = '<span class="label label-warning pull-left">Tomorrow sleeping place limited</span>';
                         }
                         else {
-                            return '<span class="label label-success pull-left">Tomorrow sleeping place available</span>';
+                            $result = '<span class="label label-success pull-left">Tomorrow sleeping place available</span>';
                         }
                     }
                     else {
-                        return '<span class="label label-danger pull-left">Tomorrow sleeping place booked out</span>';
+                        $result = '<span class="label label-danger pull-left">Tomorrow sleeping place booked out</span>';
                     }
                 }
             }
@@ -829,14 +830,14 @@ class SearchController extends Controller
                             $mon_sleeps_percentage = ($mon_sleeps_filled / $cabin->mon_sleeps) * 100;
 
                             if($mon_sleeps_percentage > 75) {
-                                return '<span class="label label-warning pull-left">Tomorrow sleeping place limited</span>';
+                                $result = '<span class="label label-warning pull-left">Tomorrow sleeping place limited</span>';
                             }
                             else {
-                                return '<span class="label label-success pull-left">Tomorrow sleeping place available</span>';
+                                $result = '<span class="label label-success pull-left">Tomorrow sleeping place available</span>';
                             }
                         }
                         else {
-                            return '<span class="label label-danger pull-left">Tomorrow sleeping place booked out</span>';
+                            $result = '<span class="label label-danger pull-left">Tomorrow sleeping place booked out</span>';
                         }
                     }
                 }
@@ -860,14 +861,14 @@ class SearchController extends Controller
                             $tue_sleeps_percentage = ($tue_sleeps_filled / $cabin->tue_sleeps) * 100;
 
                             if($tue_sleeps_percentage > 75) {
-                                return '<span class="label label-warning pull-left">Tomorrow sleeping place limited</span>';
+                                $result = '<span class="label label-warning pull-left">Tomorrow sleeping place limited</span>';
                             }
                             else {
-                                return '<span class="label label-success pull-left">Tomorrow sleeping place available</span>';
+                                $result = '<span class="label label-success pull-left">Tomorrow sleeping place available</span>';
                             }
                         }
                         else {
-                            return '<span class="label label-danger pull-left">Tomorrow sleeping place booked out</span>';
+                            $result = '<span class="label label-danger pull-left">Tomorrow sleeping place booked out</span>';
                         }
                     }
                 }
@@ -891,14 +892,14 @@ class SearchController extends Controller
                             $wed_sleeps_percentage = ($wed_sleeps_filled / $cabin->wed_sleeps) * 100;
 
                             if($wed_sleeps_percentage > 75) {
-                                return '<span class="label label-warning pull-left">Tomorrow sleeping place limited</span>';
+                                $result = '<span class="label label-warning pull-left">Tomorrow sleeping place limited</span>';
                             }
                             else {
-                                return '<span class="label label-success pull-left">Tomorrow sleeping place available</span>';
+                                $result = '<span class="label label-success pull-left">Tomorrow sleeping place available</span>';
                             }
                         }
                         else {
-                            return '<span class="label label-danger pull-left">Tomorrow sleeping place booked out</span>';
+                            $result = '<span class="label label-danger pull-left">Tomorrow sleeping place booked out</span>';
                         }
                     }
                 }
@@ -922,14 +923,14 @@ class SearchController extends Controller
                             $thu_sleeps_percentage = ($thu_sleeps_filled / $cabin->thu_sleeps) * 100;
 
                             if($thu_sleeps_percentage > 75) {
-                                return '<span class="label label-warning pull-left">Tomorrow sleeping place limited</span>';
+                                $result = '<span class="label label-warning pull-left">Tomorrow sleeping place limited</span>';
                             }
                             else {
-                                return '<span class="label label-success pull-left">Tomorrow sleeping place available</span>';
+                                $result = '<span class="label label-success pull-left">Tomorrow sleeping place available</span>';
                             }
                         }
                         else {
-                            return '<span class="label label-danger pull-left">Tomorrow sleeping place booked out</span>';
+                            $result = '<span class="label label-danger pull-left">Tomorrow sleeping place booked out</span>';
                         }
                     }
                 }
@@ -953,14 +954,14 @@ class SearchController extends Controller
                             $fri_sleeps_percentage = ($fri_sleeps_filled / $cabin->fri_sleeps) * 100;
 
                             if($fri_sleeps_percentage > 75) {
-                                return '<span class="label label-warning pull-left">Tomorrow sleeping place limited</span>';
+                                $result = '<span class="label label-warning pull-left">Tomorrow sleeping place limited</span>';
                             }
                             else {
-                                return '<span class="label label-success pull-left">Tomorrow sleeping place available</span>';
+                                $result = '<span class="label label-success pull-left">Tomorrow sleeping place available</span>';
                             }
                         }
                         else {
-                            return '<span class="label label-danger pull-left">Tomorrow sleeping place booked out</span>';
+                            $result = '<span class="label label-danger pull-left">Tomorrow sleeping place booked out</span>';
                         }
                     }
                 }
@@ -984,14 +985,14 @@ class SearchController extends Controller
                             $sat_sleeps_percentage = ($sat_sleeps_filled / $cabin->sat_sleeps) * 100;
 
                             if($sat_sleeps_percentage > 75) {
-                                return '<span class="label label-warning pull-left">Tomorrow sleeping place limited</span>';
+                                $result = '<span class="label label-warning pull-left">Tomorrow sleeping place limited</span>';
                             }
                             else {
-                                return '<span class="label label-success pull-left">Tomorrow sleeping place available</span>';
+                                $result = '<span class="label label-success pull-left">Tomorrow sleeping place available</span>';
                             }
                         }
                         else {
-                            return '<span class="label label-danger pull-left">Tomorrow sleeping place booked out</span>';
+                            $result = '<span class="label label-danger pull-left">Tomorrow sleeping place booked out</span>';
                         }
                     }
                 }
@@ -1015,14 +1016,14 @@ class SearchController extends Controller
                             $sun_sleeps_percentage = ($sun_sleeps_filled / $cabin->sun_sleeps) * 100;
 
                             if($sun_sleeps_percentage > 75) {
-                                return '<span class="label label-warning pull-left">Tomorrow sleeping place limited</span>';
+                                $result = '<span class="label label-warning pull-left">Tomorrow sleeping place limited</span>';
                             }
                             else {
-                                return '<span class="label label-success pull-left">Tomorrow sleeping place available</span>';
+                                $result = '<span class="label label-success pull-left">Tomorrow sleeping place available</span>';
                             }
                         }
                         else {
-                            return '<span class="label label-danger pull-left">Tomorrow sleeping place booked out</span>';
+                            $result = '<span class="label label-danger pull-left">Tomorrow sleeping place booked out</span>';
                         }
                     }
                 }
@@ -1046,19 +1047,21 @@ class SearchController extends Controller
                     $normal_sleeps_percentage = ($normal_sleeps_filled / $cabin->sleeps) * 100;
 
                     if($normal_sleeps_percentage > 75) {
-                        return '<span class="label label-warning pull-left">Tomorrow sleeping place limited</span>';
+                        $result = '<span class="label label-warning pull-left">Tomorrow sleeping place limited</span>';
                     }
                     else {
-                        return '<span class="label label-success pull-left">Tomorrow sleeping place available</span>';
+                        $result = '<span class="label label-success pull-left">Tomorrow sleeping place available</span>';
                     }
                 }
                 else {
-                    return '<span class="label label-danger pull-left">Tomorrow sleeping place booked out</span>';
+                    $result = '<span class="label label-danger pull-left">Tomorrow sleeping place booked out</span>';
                 }
 
             }
         }
         /* Checking bookings available end */
+
+        return $result;
     }
 
 }
