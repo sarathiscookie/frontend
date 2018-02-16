@@ -3,6 +3,9 @@
 @section('title', 'Cabin Details')
 
 @section('content')
+
+@inject('userService', 'App\Http\Controllers\CabinDetailsController')
+
     <div class="container-fluid text-center">
         @isset($cabinDetails)
             <div class="row content">
@@ -68,11 +71,17 @@
 
                                     <div class="text-left">
                                         <h3>Info</h3>
-                                        <h5><strong>Test:</strong> Lorem ipsum dolor sit amet</h5>
-                                        <h5><strong>Test:</strong> Lorem ipsum dolor sit amet</h5>
-                                        <h5><strong>Test:</strong> Lorem ipsum dolor sit amet</h5>
-                                        <h5><strong>Test:</strong> Lorem ipsum dolor sit amet</h5>
-                                        <h5><strong>Test:</strong> Lorem ipsum dolor sit amet</h5>
+                                        @if($userService->userDetails($cabinDetails->cabin_owner))<h5><strong>Cabin Owner:</strong> {{ $userService->userDetails($cabinDetails->cabin_owner)->usrFirstname }} {{ $userService->userDetails($cabinDetails->cabin_owner)->usrLastname }}</h5>@endif
+                                        <h5><strong>Club section:</strong> {{ $cabinDetails->club }}</h5>
+                                        @if( $cabinDetails->sleeping_place != 1 )
+                                            <h5><strong>Beds:</strong> {{ $cabinDetails->beds }}</h5>
+                                            <h5><strong>Dorms:</strong> {{ $cabinDetails->dormitory }}</h5>
+                                        @else
+                                            <h5><strong>Sleeping places:</strong> {{ $cabinDetails->sleeps }}</h5>
+                                        @endif
+                                        <h5><strong>Payment:</strong> Lorem ipsum dolor sit amet</h5>
+                                        <h5><strong>Season Times:</strong> Lorem ipsum dolor sit amet</h5>
+                                        <h5><strong>Website:</strong> {{ $cabinDetails->website }}</h5>
                                     </div>
 
                                     <hr>

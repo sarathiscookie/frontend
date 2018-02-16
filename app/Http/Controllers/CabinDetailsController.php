@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Cabin;
+use App\User;
 
 class CabinDetailsController extends Controller
 {
@@ -17,8 +18,7 @@ class CabinDetailsController extends Controller
     {
         $cabin_id = preg_replace(sprintf('/%s/', env('MD5_Key')), '', base64_decode($id));
 
-        $cabinDetails = Cabin::select('name', 'region', 'country', 'height')
-            ->where('is_delete', 0)
+        $cabinDetails = Cabin::where('is_delete', 0)
             ->where('other_cabin', "0")
             ->find($cabin_id);
 
@@ -89,5 +89,21 @@ class CabinDetailsController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    /**
+     * Get the user details when an injection occurs.
+     *
+     * @param  string  $userId
+     * @return \Illuminate\Http\Response
+     */
+    public function userDetails($userId)
+    {
+        $user = User::where('usrActive', '1')
+            ->where('is_delete', 0)
+            ->where('usrlId', 5)
+            ->find($userId);
+
+        return $user;
     }
 }
