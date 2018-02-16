@@ -6,13 +6,6 @@
 @endsection
 
 @section('content')
-    <div class="jumbotron" style="height: 500px;">
-        <div class="container text-center">
-            <h1>Some title</h1>
-            <p>Some text that represents the website.</p>
-        </div>
-    </div>
-
     <div class="container-fluid bg-3 text-center">
         <div class="row content">
             <div class="col-sm-2"></div>

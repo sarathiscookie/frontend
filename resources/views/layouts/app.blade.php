@@ -86,6 +86,13 @@
             </div>
         </nav>
 
+        <div class="jumbotron" style="height: 500px;">
+            <div class="container text-center">
+                <h1>Some title</h1>
+                <p>Some text that represents the website.</p>
+            </div>
+        </div>
+
         @yield('content')
 
         <footer class="container-fluid text-center" style="position: fixed; right: 0; bottom: 0; left: 0; padding: 1rem; background-color: #efefef; text-align: center;">
