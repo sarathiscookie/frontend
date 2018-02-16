@@ -207,7 +207,7 @@
                                         <h4><span class="label label-info pull-left">Tomorrow cabin closed</span></h4>
                                     </div>
                                     <div class="col-xs-6 col-sm-6">
-                                        <a href="/" class="btn btn-default btn-sm btn-space pull-right">View Price</a>
+                                        <a href="/" class="btn btn-default btn-sm btn-space pull-right"><span class="glyphicon glyphicon-shopping-cart"></span> Add Cart</a>
                                     </div>
                                 </div>
 

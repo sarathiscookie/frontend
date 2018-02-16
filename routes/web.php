@@ -13,8 +13,6 @@
 
 Auth::routes();
 
-/*Route::get('/home', 'HomeController@index')->name('home');*/
-
 /*
 |--------------------------------------------------------------------------
 | Welcome
@@ -32,27 +30,24 @@ Route::get('/', 'WelcomeController@index');
 | Search
 |--------------------------------------------------------------------------
 |
-| Route for search cabin
+| Route for search cabins
 |
 */
 
-/* Search cabin */
+/* Search cabins */
 Route::match(['get', 'post'], '/search', 'SearchController@index')->name('search');
 
-/* Get cabin name when searching cabin name */
+/* Get cabin name while searching */
 Route::get('/search/cabin/{name}', 'SearchController@cabinName')->name('search.cabin.name');
 
 /*
 |--------------------------------------------------------------------------
-| Calendar booking availability
+| Calendar
 |--------------------------------------------------------------------------
 |
 | Route for calendar booking availability check
 |
 */
-
-/* Get dates when page loads */
-/*Route::post('/calendar', 'CalendarController@calendar')->name('calendar');*/
 
 /* Get dates when page loads */
 Route::post('/calendar/ajax', 'CalendarController@calendarAvailability')->name('calendar');
@@ -70,19 +65,30 @@ Route::post('/calendar/ajax', 'CalendarController@calendarAvailability')->name('
 /* Verify user */
 Route::get('/user/verify/{token}', 'Auth\RegisterController@verifyUser');
 
-
+/*
+|--------------------------------------------------------------------------
+| Middleware group for authentication
+|--------------------------------------------------------------------------
+|
+| Route for after authentication
+|
+*/
 Route::group(['middleware' => ['auth']], function () {
     /*
-    |--------------------------------------------------------------------------
-    | Cabin
-    |--------------------------------------------------------------------------
-    |
-    | Route for cabin individual list
-    |
-    */
+     |--------------------------------------------------------------------------
+     | Cabin
+     |--------------------------------------------------------------------------
+     |
+     | Route for cabin details
+     |
+     */
 
-    /* Cabin individual list */
-    Route::get('/cabin', 'CabinController@index')->name('cabin');
+    /* Cabin details */
+    Route::get('/cabin/details/{id}', 'CabinDetailsController@index')->name('cabin.details');
+
+
+
+
 });
 
 

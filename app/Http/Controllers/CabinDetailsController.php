@@ -3,17 +3,27 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Cabin;
 
-class CabinController extends Controller
+class CabinDetailsController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
+     * @param  string $id
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index($id)
     {
-        //
+        $cabin_id = preg_replace(sprintf('/%s/', env('MD5_Key')), '', base64_decode($id));
+
+        $cabin = Cabin::where('is_delete', 0)
+            /*->where('other_cabin', "0")*/
+            ->first($cabin_id);
+
+        dd($cabin);
+
+        return view('cabinDetails');
     }
 
     /**

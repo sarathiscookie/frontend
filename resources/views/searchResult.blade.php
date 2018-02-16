@@ -186,7 +186,7 @@
                                                 @guest
                                                     <a href="{{ route('login') }}" class="btn btn-default btn-sm btn-space pull-right">View Price</a>
                                                     @else
-                                                        <a href="{{ route('cabin') }}" class="btn btn-default btn-sm btn-space pull-right">View Price</a>
+                                                        <a href="{{ route('cabin.details', ['id' => base64_encode($result->_id.env('MD5_Key'))]) }}" class="btn btn-default btn-sm btn-space pull-right">View Price</a>
                                                 @endguest
                                             </div>
                                         </div>
@@ -200,6 +200,8 @@
             @endforeach
         </div>
         {!! $cabinSearchResult->links() !!}
+        <br />
+        <br />
     @endisset
 
 @endsection
