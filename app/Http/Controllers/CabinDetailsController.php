@@ -9,6 +9,22 @@ use App\User;
 class CabinDetailsController extends Controller
 {
     /**
+     * Array for payment type.
+     *
+     * @return array
+     */
+    public function paymentType()
+    {
+        $array = array(
+            '0' => __("cabinDetails.cabinBoxLabelPayTypeCash"),
+            '1' => __("cabinDetails.cabinBoxLabelPayTypeDebit"),
+            '2' => __("cabinDetails.cabinBoxLabelPayTypeCredit"),
+        );
+
+        return $array;
+    }
+
+    /**
      * Display a listing of the resource.
      *
      * @param  string $id

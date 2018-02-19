@@ -4,7 +4,7 @@
 
 @section('content')
 
-@inject('userService', 'App\Http\Controllers\CabinDetailsController')
+@inject('service', 'App\Http\Controllers\CabinDetailsController')
 
     <div class="container-fluid text-center">
         @isset($cabinDetails)
@@ -71,7 +71,9 @@
 
                                     <div class="text-left">
                                         <h3>Info</h3>
-                                        @if($userService->userDetails($cabinDetails->cabin_owner))<h5><strong>Cabin Owner:</strong> {{ $userService->userDetails($cabinDetails->cabin_owner)->usrFirstname }} {{ $userService->userDetails($cabinDetails->cabin_owner)->usrLastname }}</h5>@endif
+                                        @if($service->userDetails($cabinDetails->cabin_owner))
+                                            <h5><strong>Cabin Owner:</strong> {{ $service->userDetails($cabinDetails->cabin_owner)->usrFirstname }} {{ $service->userDetails($cabinDetails->cabin_owner)->usrLastname }}</h5>
+                                        @endif
                                         <h5><strong>Club section:</strong> {{ $cabinDetails->club }}</h5>
                                         @if( $cabinDetails->sleeping_place != 1 )
                                             <h5><strong>Beds:</strong> {{ $cabinDetails->beds }}</h5>
@@ -79,7 +81,13 @@
                                         @else
                                             <h5><strong>Sleeping places:</strong> {{ $cabinDetails->sleeps }}</h5>
                                         @endif
-                                        <h5><strong>Payment:</strong> Lorem ipsum dolor sit amet</h5>
+                                        <h5><strong>Payment:</strong>
+                                            @foreach($service->paymentType() as $paymentTypeKey => $paymentType)
+                                                @if(in_array($paymentTypeKey, $cabinDetails->payment_type ))
+                                                    <span class="label label-default">{{ $paymentType }}</span>
+                                                @endif
+                                            @endforeach
+                                        </h5>
                                         <h5><strong>Season Times:</strong> Lorem ipsum dolor sit amet</h5>
                                         <h5><strong>Website:</strong> {{ $cabinDetails->website }}</h5>
                                     </div>
