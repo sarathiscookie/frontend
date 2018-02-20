@@ -57,18 +57,45 @@ class CabinDetailsController extends Controller
     }
 
     /**
-     * Get list of cabin when injection occurs.
+     * An injection occurs interior name will return.
      *
+     * @param  string  $interior
      * @return array
      */
-    public function cabins()
+    public function interiorLabel($interior = null)
     {
-        $neighbourCabins     = Cabin::select('_id', 'name')
-            ->where('is_delete', 0)
-            ->get();
+        $facilities = array(
+            'Wifi'                                      => __("cabinDetails.interiorWifi"),
+            'shower available'                          => __("cabinDetails.interiorShower"),
+            'Food à la carte'                           => __("cabinDetails.interiorMealCard"),
+            'breakfast'                                 => __("cabinDetails.interiorBreakfast"),
+            'TV available'                              => __("cabinDetails.interiorTv"),
+            'washing machine'                           => __("cabinDetails.interiorWashingMachine"),
+            'drying room'                               => __("cabinDetails.interiorDryingRoom"),
+            'Luggage transport from the valley'         => __("cabinDetails.interiorLuggageTransport"),
+            'Accessible by car'                         => __("cabinDetails.interiorAccessCar"),
+            'dogs allowed'                              => __("cabinDetails.interiorDogsAllowed"),
+            'Suitable for wheelchairs'                  => __("cabinDetails.interiorWheelchairs"),
+            'Public telephone available'                => __("cabinDetails.interiorPublicPhone"),
+            'Mobile phone reception'                    => __("cabinDetails.interiorPhoneReception"),
+            'Power supply for own devices'              => __("cabinDetails.interiorPowerSupply"),
+            'Waste bin'                                 => __("cabinDetails.interiorDustbins"),
+            'Hut shop'                                  => __("cabinDetails.interiorCabinShop"),
+            'Advancement possibilities including time'  => __("cabinDetails.interiorAscentPossibility"),
+            'reachable by phone'                        => __("cabinDetails.interiorAccessibleTelephone"),
+            'Smoking (allowed, forbidden)'              => __("cabinDetails.interiorSmokingAllowed"),
+            'smoke detector'                            => __("cabinDetails.interiorSmokeDetector"),
+            'Carbon monoxide detector'                  => __("cabinDetails.interiorCarbMonoDetector"),
+            'Helicopter land available'                 => __("cabinDetails.interiorHelicopterLand")
+        );
 
-        if(count($neighbourCabins) > 0) {
-            return $neighbourCabins;
+        if($interior != null) {
+            if(array_key_exists($interior, $facilities)) {
+                return $facilities[$interior];
+            }
+        }
+        else {
+            return $facilities;
         }
     }
 
@@ -185,6 +212,22 @@ class CabinDetailsController extends Controller
 
         if(count($seasons) > 0){
             return $seasons;
+        }
+    }
+
+    /**
+     * Get list of cabin when injection occurs.
+     *
+     * @return array
+     */
+    public function cabins()
+    {
+        $neighbourCabins     = Cabin::select('_id', 'name')
+            ->where('is_delete', 0)
+            ->get();
+
+        if(count($neighbourCabins) > 0) {
+            return $neighbourCabins;
         }
     }
 }

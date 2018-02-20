@@ -55,14 +55,17 @@
                                     </div>
 
                                     <div class="text-left">
-                                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-                                        <button type="button" class="btn btn-default btn-sm pull-left">More Details</button>
+                                        <div class="more">{{ strip_tags($cabinDetails->other_details) }}</div>
 
-                                        @foreach($cabinDetails->interior as $interior)
-                                            <button type="button" class="btn btn-default btn-sm btn-space pull-right">
-                                                <span @if($interior === 'Food à la carte') class="glyphicon glyphicon-credit-card" @elseif($interior === 'breakfast') class="glyphicon glyphicon-glass" @else class="glyphicon glyphicon-home" @endif aria-hidden="true"></span>
-                                            </button>
-                                        @endforeach
+                                        <div>
+                                            @if($cabinDetails->interior)
+                                                @foreach($cabinDetails->interior as $interior)
+                                                    <button type="button" class="btn btn-default btn-sm btn-space pull-right" data-toggle="tooltip" data-placement="bottom" title="{{ $service->interiorLabel($interior) }}">
+                                                        <span @if($interior === 'Food à la carte') class="glyphicon glyphicon-credit-card" @elseif($interior === 'breakfast') class="glyphicon glyphicon-glass" @else class="glyphicon glyphicon-home" @endif aria-hidden="true"></span>
+                                                    </button>
+                                                @endforeach
+                                            @endif
+                                        </div>
 
                                     </div>
                                     <br>
@@ -70,65 +73,73 @@
                                     <hr>
 
                                     <div class="text-left">
-                                        <h4>Details about the cabin</h4>
+                                        <h4>Info</h4>
                                         @if($service->userDetails($cabinDetails->cabin_owner))
                                             <h5><strong>Cabin Owner: </strong>{{ $service->userDetails($cabinDetails->cabin_owner)->usrFirstname }} {{ $service->userDetails($cabinDetails->cabin_owner)->usrLastname }}</h5>
                                         @endif
+
                                         <h5><strong>Club section: </strong>{{ $cabinDetails->club }}</h5>
-                                        <h5><strong>Website: </strong>{{ $cabinDetails->website }}</h5>
 
-                                        <hr>
-
-                                        <h4>Season time</h4>
-                                        <?php
-                                        $firstYear = (int)date('Y');
-                                        $lastYear  = (int)date('Y', strtotime('+2 year'));
-                                        for($i = $firstYear; $i <= $lastYear; $i++)
-                                        {
-                                        ?>
-                                        @if($service->seasons($cabinDetails->_id))
-                                            @foreach ($service->seasons($cabinDetails->_id) as $season)
-                                                @if($season->summerSeasonYear === $i || $season->winterSeasonYear === $i)
-                                                    <h5><span class="badge">{{ $i }}</span></h5>
-                                                @endif
-
-                                                @if($season->summerSeason === 1 && $season->summerSeasonStatus === 'open' && $season->summerSeasonYear === $i)
-                                                    <div class="row">
-                                                        <div class="col-md-3">
-                                                            <h5><strong>Summer open: </strong><small>{{ $season->earliest_summer_open->format('d.m.y') }}</small></h5>
-                                                        </div>
-                                                        <div class="col-md-3">
-                                                            <h5><strong>Summer close: </strong><small>{{ $season->latest_summer_close->format('d.m.y') }}</small></h5>
-                                                        </div>
-                                                    </div>
-                                                @endif
-
-                                                @if($season->winterSeason === 1 && $season->winterSeasonStatus === 'open' && $season->winterSeasonYear === $i)
-                                                    <div class="row">
-                                                        <div class="col-md-3">
-                                                            <h5><strong>Winter open: </strong><small>{{ $season->earliest_winter_open->format('d.m.y') }}</small></h5>
-                                                        </div>
-                                                        <div class="col-md-3">
-                                                            <h5><strong>Winter close: </strong><small>{{ $season->latest_winter_close->format('d.m.y') }}</small></h5>
-                                                        </div>
-                                                    </div>
-                                                @endif
-
-                                            @endforeach
-                                        @endif
-                                        <?php
-                                        }
-                                        ?>
-
-                                        <hr>
-
-                                        <h4>Sleeping places</h4>
                                         @if( $cabinDetails->sleeping_place != 1 )
                                             <h5><strong>Beds: </strong>{{ $cabinDetails->beds }}</h5>
                                             <h5><strong>Dorms: </strong>{{ $cabinDetails->dormitory }}</h5>
                                         @else
                                             <h5><strong>Sleeping places: </strong>{{ $cabinDetails->sleeps }}</h5>
                                         @endif
+
+                                        <h5>
+                                            <strong>Payment options at the cabin: </strong>
+                                            @foreach($service->paymentType() as $paymentTypeKey => $paymentType)
+                                                @if(in_array($paymentTypeKey, $cabinDetails->payment_type ))
+                                                    <span class="label label-default">{{ $paymentType }}</span>
+                                                @endif
+                                            @endforeach
+                                        </h5>
+
+                                        <h5><strong>Seasontimes: </strong><button class="btn btn-sm toggleSeasonTime" type="button">Click here to see open and closing time of summer and winter seasons</button></h5>
+                                        <div class="seasonTimes" style="display: none;">
+                                            <?php
+                                            $firstYear = (int)date('Y');
+                                            $lastYear  = (int)date('Y', strtotime('+2 year'));
+                                            for($i = $firstYear; $i <= $lastYear; $i++)
+                                            {
+                                            ?>
+                                            @if($service->seasons($cabinDetails->_id))
+                                                @foreach ($service->seasons($cabinDetails->_id) as $season)
+                                                    @if($season->summerSeasonYear === $i || $season->winterSeasonYear === $i)
+                                                        <h5><span class="badge">{{ $i }}</span></h5>
+                                                    @endif
+
+                                                    @if($season->summerSeason === 1 && $season->summerSeasonStatus === 'open' && $season->summerSeasonYear === $i)
+                                                        <div class="row">
+                                                            <div class="col-md-3">
+                                                                <h5><strong>Summer open: </strong><small>{{ $season->earliest_summer_open->format('d.m.y') }}</small></h5>
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                <h5><strong>Summer close: </strong><small>{{ $season->latest_summer_close->format('d.m.y') }}</small></h5>
+                                                            </div>
+                                                        </div>
+                                                    @endif
+
+                                                    @if($season->winterSeason === 1 && $season->winterSeasonStatus === 'open' && $season->winterSeasonYear === $i)
+                                                        <div class="row">
+                                                            <div class="col-md-3">
+                                                                <h5><strong>Winter open: </strong><small>{{ $season->earliest_winter_open->format('d.m.y') }}</small></h5>
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                <h5><strong>Winter close: </strong><small>{{ $season->latest_winter_close->format('d.m.y') }}</small></h5>
+                                                            </div>
+                                                        </div>
+                                                    @endif
+
+                                                @endforeach
+                                            @endif
+                                            <?php
+                                            }
+                                            ?>
+                                        </div>
+
+                                        <h5><strong>Website: </strong>{{ $cabinDetails->website }}</h5>
 
                                         <hr>
 
@@ -141,21 +152,9 @@
 
                                         <hr>
 
-                                        <h4>Payment</h4>
-                                        <h5>
-                                            <strong>Payment options at the cabin: </strong>
-                                            @foreach($service->paymentType() as $paymentTypeKey => $paymentType)
-                                                @if(in_array($paymentTypeKey, $cabinDetails->payment_type ))
-                                                    <span class="label label-default">{{ $paymentType }}</span>
-                                                @endif
-                                            @endforeach
-                                        </h5>
+                                        <h4>Reserve / Cancel</h4>
+
                                         <h5><strong>Deposit: </strong> {{ $cabinDetails->prepayment_amount }} &euro; / Person & Tag</h5>
-
-                                        <hr>
-
-                                        <h4>Booking</h4>
-                                        <h5><strong>Kind of booking: </strong> Lorem ipsum dolor sit amet</h5>
                                         <h5><strong>Cancel booking: </strong>
                                             @foreach($service->reservationCancel() as $key => $type)
                                                 @if($key == $cabinDetails->reservation_cancel)
@@ -163,41 +162,30 @@
                                                 @endif
                                             @endforeach
                                         </h5>
-
-                                        <hr>
-
-                                        <h4>Arrival Time</h4>
                                         <h5><strong>Check In Time: </strong>{{ $cabinDetails->checkin_from }}</h5>
+
                                         <h5><strong>Check Out Time: </strong>{{ $cabinDetails->reservation_to }}</h5>
 
-
-                                        @if($cabinDetails->reachable)
-                                            <hr>
-
-                                            <h4>Arrival</h4>
-                                            <h5><strong>Arrival by car: </strong>{{ $cabinDetails->reachable }}</h5>
-                                            <h5><strong>How to get there?: </strong> Nill </h5>
-                                        @endif
-
                                         <hr>
 
+                                        <h4>Tour</h4>
+                                        @if($cabinDetails->tours)
+                                            <h5><strong>Tour: </strong>{{ $cabinDetails->tours }}</h5>
+                                        @endif
+
+                                        @if($cabinDetails->reachable)
+                                            <h5><strong>Reachable from: </strong>{{ $cabinDetails->reachable }}</h5>
+                                        @endif
+
                                         @if($cabinDetails->neighbour_cabin)
-                                            <h4>Neighbouring Cabins</h4>
                                             <h5>
-                                                <strong>Cabins: </strong>
+                                                <strong>Neighbour Cabins: </strong>
                                                 @foreach($service->cabins() as $neighbour)
                                                     @if(in_array($neighbour->_id, $cabinDetails->neighbour_cabin))
                                                         <span class="label label-default">{{ $neighbour->name }}</span>
                                                     @endif
                                                 @endforeach
                                             </h5>
-                                        @endif
-
-                                        <hr>
-
-                                        @if($cabinDetails->tours)
-                                            <h4>Hikes</h4>
-                                            <h5><strong>Tour: </strong>{{ $cabinDetails->tours }}</h5>
                                         @endif
 
                                     </div>

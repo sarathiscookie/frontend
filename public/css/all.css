@@ -107,3 +107,10 @@ footer {
     text-decoration: none;
     cursor: pointer;
 }
+/* More content section */
+.morecontent span {
+    display: none;
+}
+.morelink {
+    display: block;
+}
