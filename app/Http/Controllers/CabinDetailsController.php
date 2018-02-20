@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Cabin;
 use App\User;
+use App\Season;
 
 class CabinDetailsController extends Controller
 {
@@ -22,6 +23,53 @@ class CabinDetailsController extends Controller
         );
 
         return $array;
+    }
+
+    /**
+     * Array for reservation cancel.
+     *
+     * @return array
+     */
+    public function reservationCancel()
+    {
+        $array = array(
+            '1'  => __("cabinDetails.cancelDeadlineBegin").' 1 '.__("cabinDetails.cancelDeadlineEnd"),
+            '2'  => __("cabinDetails.cancelDeadlineBegin").' 2 '.__("cabinDetails.cancelDeadlineEnd"),
+            '3'  => __("cabinDetails.cancelDeadlineBegin").' 3 '.__("cabinDetails.cancelDeadlineEnd"),
+            '4'  => __("cabinDetails.cancelDeadlineBegin").' 4 '.__("cabinDetails.cancelDeadlineEnd"),
+            '5'  => __("cabinDetails.cancelDeadlineBegin").' 5 '. __("cabinDetails.cancelDeadlineEnd"),
+            '6'  => __("cabinDetails.cancelDeadlineBegin").' 6 '. __("cabinDetails.cancelDeadlineEnd"),
+            '7'  => __("cabinDetails.cancelDeadlineBegin").' 7 '. __("cabinDetails.cancelDeadlineEnd"),
+            '8'  => __("cabinDetails.cancelDeadlineBegin").' 8 '. __("cabinDetails.cancelDeadlineEnd"),
+            '9'  => __("cabinDetails.cancelDeadlineBegin").' 9 '. __("cabinDetails.cancelDeadlineEnd"),
+            '10' => __("cabinDetails.cancelDeadlineBegin").' 10 '. __("cabinDetails.cancelDeadlineEnd"),
+            '14' => __("cabinDetails.cancelDeadlineBegin").' 14 '. __("cabinDetails.cancelDeadlineEnd"),
+            '15' => __("cabinDetails.cancelDeadlineBegin").' 15 '. __("cabinDetails.cancelDeadlineEnd"),
+            '20' => __("cabinDetails.cancelDeadlineBegin").' 20 '. __("cabinDetails.cancelDeadlineEnd"),
+            '30' => __("cabinDetails.cancelDeadlineBegin").' 30 '. __("cabinDetails.cancelDeadlineEnd"),
+            '60' => __("cabinDetails.cancelDeadlineBegin").' 60 '. __("cabinDetails.cancelDeadlineEnd"),
+            '90' => __("cabinDetails.cancelDeadlineBegin").' 90 '. __("cabinDetails.cancelDeadlineEnd"),
+            '180' => __("cabinDetails.cancelDeadlineBegin").' 180 '. __("cabinDetails.cancelDeadlineEnd"),
+            '365' => __("cabinDetails.cancelDeadlineBegin").' 365 '. __("cabinDetails.cancelDeadlineEnd"),
+        );
+
+        return $array;
+    }
+
+    /**
+     * Get list of cabin when injection occurs.
+     *
+     * @return array
+     */
+    public function cabins()
+    {
+        $neighbourCabins     = Cabin::select('_id', 'name')
+            ->where('is_delete', 0)
+            ->get();
+
+        if(count($neighbourCabins) > 0) {
+            return $neighbourCabins;
+        }
     }
 
     /**
@@ -120,6 +168,23 @@ class CabinDetailsController extends Controller
             ->where('usrlId', 5)
             ->find($userId);
 
-        return $user;
+        if(count($user) > 0){
+            return $user;
+        }
+    }
+
+    /**
+     * Get the season start and end date when an injection occurs.
+     *
+     * @param  string  $cabinId
+     * @return \Illuminate\Http\Response
+     */
+    public function seasons($cabinId)
+    {
+        $seasons = Season::where('cabin_id', new \MongoDB\BSON\ObjectID($cabinId))->get();
+
+        if(count($seasons) > 0){
+            return $seasons;
+        }
     }
 }

@@ -17,5 +17,7 @@ return [
 
     'cabinBoxLabelPayTypeCash'               => 'Cash',
     'cabinBoxLabelPayTypeDebit'              => 'Debit Card',
-    'cabinBoxLabelPayTypeCredit'             => 'Credit Card'
+    'cabinBoxLabelPayTypeCredit'             => 'Credit Card',
+    'cancelDeadlineBegin'                    => 'Cancelling in between',
+    'cancelDeadlineEnd'                      => 'days before arrival'
 ];

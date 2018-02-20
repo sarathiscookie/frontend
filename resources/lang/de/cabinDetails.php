@@ -17,5 +17,7 @@ return [
 
     'cabinBoxLabelPayTypeCash'               => 'Bar',
     'cabinBoxLabelPayTypeDebit'              => 'EC-Karte',
-    'cabinBoxLabelPayTypeCredit'             => 'Kreditkarte'
+    'cabinBoxLabelPayTypeCredit'             => 'Kreditkarte',
+    'cancelDeadlineBegin'                    => 'Stornierung bis',
+    'cancelDeadlineEnd'                      => 'Tage vor Anreisedatum'
 ];
