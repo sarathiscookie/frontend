@@ -13,7 +13,7 @@ $(function(){
 
     var content = $(".more").html();
 
-    if(content.length > showChar) {
+    if(content && content.length > showChar) {
 
         var c = content.substr(0, showChar);
         var h = content.substr(showChar, content.length - showChar);
@@ -38,5 +38,5 @@ $(function(){
     });
 
     /* Tool tip on facilities */
-    $('[data-toggle="tooltip"]').tooltip()
+    $('[data-toggle="tooltip"]').tooltip();
 });

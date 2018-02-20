@@ -6,6 +6,10 @@
 
 @inject('service', 'App\Http\Controllers\CabinDetailsController')
 
+@inject('calendarServices', 'App\Http\Controllers\CalendarController')
+
+@inject('nextDayAvailability', 'App\Http\Controllers\SearchController')
+
     <div class="container-fluid text-center">
         @isset($cabinDetails)
             <div class="row content">
@@ -200,23 +204,46 @@
                                     <div class="row">
                                         <div class="col-sm-12">
                                             <h5 class="text-capitalize">Expected opening timings:</h5>
-                                            <h5><span class="badge">2018</span></h5>
-                                            <div class="row">
-                                                <div class="col-sm-6">
-                                                    <h5><b>Summer open: </b><small>01.05.18</small></h5>
-                                                </div>
-                                                <div class="col-sm-6">
-                                                    <h5><b>Summer close: </b><small>10.10.18</small></h5>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-sm-6">
-                                                    <h5><b>Winter open: </b><small>01.05.18</small></h5>
-                                                </div>
-                                                <div class="col-sm-6">
-                                                    <h5><b>Winter close: </b><small>10.04.18</small></h5>
-                                                </div>
-                                            </div>
+                                            <?php
+                                            $firstYear = (int)date('Y');
+                                            $lastYear  = (int)date('Y', strtotime('+2 year'));
+                                            for($i = $firstYear; $i <= $lastYear; $i++)
+                                            {
+                                            ?>
+                                            @if($service->seasons($cabinDetails->_id))
+                                                @foreach ($service->seasons($cabinDetails->_id) as $season)
+                                                    @if($season->summerSeasonYear === $i || $season->winterSeasonYear === $i)
+                                                        <h5><span class="badge">{{ $i }}</span></h5>
+                                                    @endif
+
+                                                    @if($season->summerSeason === 1 && $season->summerSeasonStatus === 'open' && $season->summerSeasonYear === $i)
+                                                        <div class="row">
+                                                            <div class="col-md-6">
+                                                                <h5><strong>Summer open: </strong><small>{{ $season->earliest_summer_open->format('d.m.y') }}</small></h5>
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <h5><strong>Summer close: </strong><small>{{ $season->latest_summer_close->format('d.m.y') }}</small></h5>
+                                                            </div>
+                                                        </div>
+                                                    @endif
+
+                                                    @if($season->winterSeason === 1 && $season->winterSeasonStatus === 'open' && $season->winterSeasonYear === $i)
+                                                        <div class="row">
+                                                            <div class="col-md-6">
+                                                                <h5><strong>Winter open: </strong><small>{{ $season->earliest_winter_open->format('d.m.y') }}</small></h5>
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <h5><strong>Winter close: </strong><small>{{ $season->latest_winter_close->format('d.m.y') }}</small></h5>
+                                                            </div>
+                                                        </div>
+                                                    @endif
+
+                                                @endforeach
+                                            @endif
+                                            <?php
+                                            }
+                                            ?>
+
                                             <hr>
                                         </div>
                                     </div>
@@ -224,12 +251,23 @@
                                     <div class="row">
                                         <div class="col-sm-12">
                                             <h5>Your journey begins here <span class="glyphicon glyphicon-question-sign"></span></h5>
-                                            <div class="form-group row calendar">
+                                            <div class="form-group row calendar" data-id="{{ $cabinDetails->_id }}">
+
+                                                @php
+                                                    $calendar = $calendarServices->calendar($cabinDetails->_id)
+                                                @endphp
+
+                                                <div class="holiday_{{ $cabinDetails->_id }}" data-holiday="{{ $calendar[0] }}"></div>
+                                                <div class="green_{{ $cabinDetails->_id }}" data-green="{{ $calendar[1] }}"></div>
+                                                <div class="orange_{{ $cabinDetails->_id }}" data-orange="{{ $calendar[2] }}"></div>
+                                                <div class="red_{{ $cabinDetails->_id }}" data-red="{{ $calendar[3] }}"></div>
+                                                <div class="notSeasonTime_{{ $cabinDetails->_id }}" data-notseasontime="{{ $calendar[4] }}"></div>
+
                                                 <div class="col-sm-4">
-                                                    <input type="text" class="form-control dateFrom" id="dateFrom" name="dateFrom" placeholder="Arrival" readonly>
+                                                    <input type="text" class="form-control dateFrom" id="dateFrom_{{ $cabinDetails->_id }}" name="dateFrom" placeholder="Arrival" readonly>
                                                 </div>
                                                 <div class="col-sm-4">
-                                                    <input type="text" class="form-control dateTo" id="dateTo" name="dateTo" placeholder="Departure" readonly>
+                                                    <input type="text" class="form-control dateTo" id="dateTo_{{ $cabinDetails->_id }}" name="dateTo" placeholder="Departure" readonly>
                                                 </div>
 
                                                 <div class="col-sm-4">
@@ -250,7 +288,7 @@
 
                                     <div class="row">
                                         <div class="col-xs-6 col-sm-6">
-                                            <h4><span class="label label-info pull-left">Tomorrow cabin closed</span></h4>
+                                            <h4>{!! $nextDayAvailability->bookingPossibleNextDays($cabinDetails->_id) !!}</h4>
                                         </div>
                                         <div class="col-xs-6 col-sm-6">
                                             <a href="/" class="btn btn-default btn-sm btn-space pull-right"><span class="glyphicon glyphicon-shopping-cart"></span> Add Cart</a>
