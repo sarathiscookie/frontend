@@ -33,29 +33,45 @@
 
                             <div class="panel panel-default">
                                 <div class="panel-body">
-
                                     <div class="thumbnail">
-                                        <img src="https://placehold.it/150x80?text=IMAGE" class="img-responsive img-thumbnail" style="width:100%" alt="Image">
-                                        <div class="row">
-                                            <div class="col-md-2">
-                                                <img src="https://placehold.it/150x80?text=IMAGE" class="img-responsive img-thumbnail" style="width:100%" alt="Image">
-                                            </div>
-                                            <div class="col-md-2">
-                                                <img src="https://placehold.it/150x80?text=IMAGE" class="img-responsive img-thumbnail" style="width:100%" alt="Image">
-                                            </div>
-                                            <div class="col-md-2">
-                                                <img src="https://placehold.it/150x80?text=IMAGE" class="img-responsive img-thumbnail" style="width:100%" alt="Image">
-                                            </div>
-                                            <div class="col-md-2">
-                                                <img src="https://placehold.it/150x80?text=IMAGE" class="img-responsive img-thumbnail" style="width:100%" alt="Image">
-                                            </div>
-                                            <div class="col-md-2">
-                                                <img src="https://placehold.it/150x80?text=IMAGE" class="img-responsive img-thumbnail" style="width:100%" alt="Image">
-                                            </div>
-                                            <div class="col-md-2">
-                                                <img src="https://placehold.it/150x80?text=IMAGE" class="img-responsive img-thumbnail" style="width:100%" alt="Image">
-                                            </div>
-                                        </div>
+                                        <ul id="image-gallery" class="gallery list-unstyled cS-hidden">
+                                            <li data-thumb="http://placehold.it/250x180">
+                                                <img src="http://placehold.it/600x400" style="width:100%;" class="img-responsive">
+                                            </li>
+                                            <li data-thumb="http://placehold.it/250x180">
+                                                <img src="http://placehold.it/600x400" style="width:100%;" class="img-responsive">
+                                            </li>
+                                            <li data-thumb="http://placehold.it/250x180">
+                                                <img src="http://placehold.it/600x400" style="width:100%;" class="img-responsive">
+                                            </li>
+                                            <li data-thumb="http://placehold.it/250x180">
+                                                <img src="http://placehold.it/600x400" style="width:100%;" class="img-responsive">
+                                            </li>
+                                            <li data-thumb="http://placehold.it/250x180">
+                                                <img src="http://placehold.it/600x400" style="width:100%;" class="img-responsive">
+                                            </li>
+                                            <li data-thumb="http://placehold.it/250x180">
+                                                <img src="http://placehold.it/600x400" style="width:100%;" class="img-responsive">
+                                            </li>
+                                            <li data-thumb="http://placehold.it/250x180">
+                                                <img src="http://placehold.it/600x400" style="width:100%;" class="img-responsive">
+                                            </li>
+                                            <li data-thumb="http://placehold.it/250x180">
+                                                <img src="http://placehold.it/600x400" style="width:100%;" class="img-responsive">
+                                            </li>
+                                            <li data-thumb="http://placehold.it/250x180">
+                                                <img src="http://placehold.it/600x400" style="width:100%;" class="img-responsive">
+                                            </li>
+                                            <li data-thumb="http://placehold.it/250x180">
+                                                <img src="http://placehold.it/600x400" style="width:100%;" class="img-responsive">
+                                            </li>
+                                            <li data-thumb="http://placehold.it/250x180">
+                                                <img src="http://placehold.it/600x400" style="width:100%;" class="img-responsive">
+                                            </li>
+                                            <li data-thumb="http://placehold.it/250x180">
+                                                <img src="http://placehold.it/600x400" style="width:100%;" class="img-responsive">
+                                            </li>
+                                        </ul>
                                     </div>
 
                                     <div class="text-left">

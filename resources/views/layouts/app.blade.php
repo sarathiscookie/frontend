@@ -17,7 +17,7 @@
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 
     <!-- Css for all plugins -->
-    {{--<link href="{{ asset('css/plugins.css') }}" rel="stylesheet">--}}
+    <link href="{{ asset('css/plugins.css') }}" rel="stylesheet">
 
     <!-- Css for all modules -->
     <link href="{{ asset('css/all.css') }}" rel="stylesheet">

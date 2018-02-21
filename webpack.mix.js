@@ -37,10 +37,11 @@ mix.scripts([
 
 
 /* Js and css for plugins */
-/*mix.styles([
-    'resources/assets/css/plugins/select2.min.css'
-], 'public/css/plugins.css'); */
+mix.styles([
+    'resources/assets/css/plugins/lightslider.css'
+], 'public/css/plugins.css');
 
 mix.scripts([
-    'resources/assets/js/plugins/typeahead.bundle.js'
+    'resources/assets/js/plugins/typeahead.bundle.js',
+    'resources/assets/js/plugins/lightslider.js'
 ], 'public/js/plugins.js');
