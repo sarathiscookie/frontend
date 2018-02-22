@@ -179,7 +179,7 @@
                                                     <tr>
                                                         <td style="font-weight: bold;">{{$guest}}</td>
                                                         @foreach ($cabinDetails->price_type as $each_type)
-                                                            <td>{{$cabinDetails->price[$k]}}</td>
+                                                            <td>{{ money_format('%i', $cabinDetails->price[$k]) }} &euro;</td>
                                                             @php $k++; @endphp
                                                         @endforeach
                                                     </tr>
@@ -187,9 +187,8 @@
                                                 @endforeach
                                                 </tbody>
                                             </table>
+                                            <hr>
                                         @endif
-
-                                        <hr>
 
                                         <h4>Reserve / Cancel</h4>
 
