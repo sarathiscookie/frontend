@@ -220,7 +220,7 @@ class CabinDetailsController extends Controller
      *
      * @return array
      */
-    public function cabins()
+    public function neighbourCabins()
     {
         $neighbourCabins     = Cabin::select('_id', 'name')
             ->where('is_delete', 0)

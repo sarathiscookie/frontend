@@ -132,24 +132,18 @@
 
                                                     @if($season->summerSeason === 1 && $season->summerSeasonStatus === 'open' && $season->summerSeasonYear === $i)
                                                         <div class="row">
-                                                            <div class="col-md-3">
-                                                                <h5><strong>Summer open: </strong><small>{{ $season->earliest_summer_open->format('d.m.y') }}</small></h5>
-                                                            </div>
-                                                            <div class="col-md-3">
-                                                                <h5><strong>Summer close: </strong><small>{{ $season->latest_summer_close->format('d.m.y') }}</small></h5>
+                                                            <div class="col-md-12">
+                                                                <h5><b>Summer Season: </b><small>{{ $season->latest_summer_open->format('d.m.y') }} - {{ $season->earliest_summer_close->format('d.m.y')}}</small>  (Earliest: <small>{{ $season->earliest_summer_open->format('d.m.y') }}</small> - Latest: <small>{{ $season->latest_summer_close->format('d.m.y') }}</small>)</h5>
                                                             </div>
                                                         </div>
                                                     @endif
 
                                                     @if($season->winterSeason === 1 && $season->winterSeasonStatus === 'open' && $season->winterSeasonYear === $i)
-                                                        <div class="row">
-                                                            <div class="col-md-3">
-                                                                <h5><strong>Winter open: </strong><small>{{ $season->earliest_winter_open->format('d.m.y') }}</small></h5>
+                                                            <div class="row">
+                                                                <div class="col-md-12">
+                                                                    <h5><b>Winter Season: </b><small>{{ $season->latest_winter_open->format('d.m.y') }} - {{ $season->earliest_winter_close->format('d.m.y')}}</small>  (Earliest: <small>{{ $season->earliest_winter_open->format('d.m.y') }}</small> - Latest: <small>{{ $season->latest_winter_close->format('d.m.y') }}</small>)</h5>
+                                                                </div>
                                                             </div>
-                                                            <div class="col-md-3">
-                                                                <h5><strong>Winter close: </strong><small>{{ $season->latest_winter_close->format('d.m.y') }}</small></h5>
-                                                            </div>
-                                                        </div>
                                                     @endif
 
                                                 @endforeach
@@ -164,11 +158,37 @@
                                         <hr>
 
                                         <h4>Price List</h4>
-                                        <h5><strong>Test:</strong> Lorem ipsum dolor sit amet</h5>
-                                        <h5><strong>Test:</strong> Lorem ipsum dolor sit amet</h5>
-                                        <h5><strong>Test:</strong> Lorem ipsum dolor sit amet</h5>
-                                        <h5><strong>Test:</strong> Lorem ipsum dolor sit amet</h5>
-                                        <h5><strong>Test:</strong> Lorem ipsum dolor sit amet</h5>
+
+                                        @if(count($cabinDetails->price_type) > 0)
+                                            <table class="table table-bordered table-striped table-hover table-responsive">
+                                                <thead>
+                                                <tr>
+                                                    <th></th>
+                                                    @foreach ($cabinDetails->price_type as $each_type)
+                                                        <th>{{$each_type}}</th>
+                                                    @endforeach
+                                                </tr>
+                                                </thead>
+
+                                                @php
+                                                    $j = 1;
+                                                    $k = 0;
+                                                @endphp
+
+                                                <tbody>
+                                                @foreach ($cabinDetails->guest_type as $guest)
+                                                    <tr>
+                                                        <td style="font-weight: bold;">{{$guest}}</td>
+                                                        @foreach ($cabinDetails->price_type as $each_type)
+                                                            <td>{{$cabinDetails->price[$k]}}</td>
+                                                            @php $k++; @endphp
+                                                        @endforeach
+                                                    </tr>
+                                                    @php $j++; @endphp
+                                                @endforeach
+                                                </tbody>
+                                            </table>
+                                        @endif
 
                                         <hr>
 
@@ -200,7 +220,7 @@
                                         @if($cabinDetails->neighbour_cabin)
                                             <h5>
                                                 <strong>Neighbour Cabins: </strong>
-                                                @foreach($service->cabins() as $neighbour)
+                                                @foreach($service->neighbourCabins() as $neighbour)
                                                     @if(in_array($neighbour->_id, $cabinDetails->neighbour_cabin))
                                                         <span class="label label-default">{{ $neighbour->name }}</span>
                                                     @endif
