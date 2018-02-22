@@ -157,9 +157,8 @@
 
                                         <hr>
 
-                                        <h4>Price List</h4>
-
-                                        @if(count($cabinDetails->price_type) > 0)
+                                        @if(!empty($cabinDetails->price_type) && !empty($cabinDetails->guest_type) && !empty($cabinDetails->price) && count($cabinDetails->price_type) > 0)
+                                            <h4>Price List</h4>
                                             <table class="table table-bordered table-striped table-hover table-responsive">
                                                 <thead>
                                                 <tr>
