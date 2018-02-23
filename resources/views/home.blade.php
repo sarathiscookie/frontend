@@ -2,9 +2,6 @@
 
 @section('title', 'Home')
 
-@section('styles')
-@endsection
-
 @section('content')
 
     @include('includes.search')
@@ -43,12 +40,5 @@
             </div>
         </div><br /><br />
     </main>
-    <div>
-        <div id="mountain"><img src="{{ asset('storage/img/bergsilhouette-grau.png') }}" class="img-responsive" alt="mountain background"></div>
-        <div id="over-footer"></div>
-    </div>
 
 @endsection
-
-@push('scripts')
-@endpush

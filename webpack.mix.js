@@ -22,7 +22,7 @@ mix.styles([
     'resources/assets/css/forAllPages.css',
     'resources/assets/css/welcome.css',
     'resources/assets/css/search.css',
-    'resources/assets/css/cabins.css',
+    'resources/assets/css/searchResult.css',
     'resources/assets/css/frontend.css',
     'resources/assets/css/cabinDetails.css',
     'resources/assets/css/calendar.css'
