@@ -1,0 +1,267 @@
+/*For all*/
+
+a {
+    color:#A2C617;
+}
+a:focus, a:hover {
+    text-decoration:underline;
+    color:#A2C617;
+}
+.h2, h2 {
+    font-size:25px;
+}
+.h5, h5{
+    font-size:16px;
+}
+.h3, h3{
+    font-size:20px;
+}
+p{
+    font-family:Segoe UI;
+    font-size:16px;
+    color:#5F6876;
+}
+body{
+    font-family:Segoe UI;
+    font-size:16px;
+    color:#5F6876;
+    background-color:#fff;
+}
+main{
+    margin-top:30px;
+}
+@media (min-width:1351px) {main {
+    margin-left:10%;
+    margin-right:10%;
+}}
+/*Icons*/
+.glyphicon{
+    position:relative;
+    top:1px;
+    display:inline-block;
+    font-size:20px;
+}
+/*Pictures responsive*/
+.img-responsive{
+    width:100%;
+    max-width:100%;
+    display:block;
+    height:auto;
+}
+/*Burger Buttons*/
+.navbar-toggle{
+    padding-top:11px;
+    padding-bottom:7px;
+}
+.navbar-inverse .navbar-toggle {
+    border-color:#A2C617;
+}
+.navbar-inverse .navbar-toggle:focus, .navbar-inverse .navbar-toggle:hover {
+    background-color:#A2C617;
+}
+.navbar-inverse .navbar-toggle .icon-bar {
+    background-color:#5F6876;
+}
+#button-nav-top {
+    margin-top:5%;
+}
+/*Navigation Top*/
+/*Dropdown Top*/
+.navbar-inverse .navbar-collapse, .navbar-inverse .navbar-form {
+    border-color:#5F6876;
+}
+.dropdown-links{
+    font-family:Segoe UI;
+    font-size:16px;
+    color:#5F6876 !important;
+}
+.dropdown-links:hover{
+    color:#A2C617 !important;
+}
+.navbar-inverse .navbar-nav>.open>a, .navbar-inverse .navbar-nav>.open>a:focus, .navbar-inverse .navbar-nav>.open>a:hover {
+    background-color:#fff;
+    color:#5F6876;
+}
+.dropdown-menu>li>a:focus, .dropdown-menu>li>a:hover{
+    background-color:transparent !important;
+}
+/*Logo in the Navigation*/
+#nav-logo {
+    width:150px;
+    height:auto;
+    padding-top:15px;
+    padding-bottom:15px;
+    padding-right:0;
+}
+
+/*a in Navigation*/
+@media (max-width:767px){.navbar-nav {
+    margin:0;
+}}
+.navbar-inverse .navbar-nav>li>a {
+    color:#5F6876;
+}
+.navbar-inverse .navbar-nav>li>a:focus, .navbar-inverse .navbar-nav>li>a:hover{
+    color:#5F6876;
+}
+@media (max-width:767px){.nav>li>a:focus, .nav>li>a:hover {
+    text-decoration:none;
+    background-color:#eee !important;
+}}
+@media (min-width: 768px){.left-top-nav {
+    padding-bottom:25px !important;
+}}
+@media (max-width:767px){.navbar-inverse .navbar-nav>li>a{
+    color:#5F6876;
+    padding-left:15px !important;
+    padding-right:15px !important;
+    padding-top:10px !important;
+    padding-bottom:10px !important;
+    border-bottom: 1px solid;
+}}
+@media (min-width:768px){.navbar-inverse .navbar-nav>li>a:focus, .navbar-inverse .navbar-nav>li>a:hover {
+    color:#A2C617;
+}}
+.navbar-inverse {
+    background-color:#FFF !important;
+    border:none;
+}
+.navbar {
+    margin-bottom: 0;
+    border-radius: 0;
+}
+/*Navbar always on the top*/
+.navbar-fixed-top{
+    position:absolute !important;
+}
+.navbar-header {
+    margin-left:10% !important;
+}
+@media (min-width: 1031px){ .nav-points{
+    padding-top:42px !important;
+    padding-bottom:0px;
+}}
+@media (max-width:1349px){.navbar-header {
+    margin-left:0 !important;
+}}
+@media (min-width:850px){#last-child {
+    margin-right:35px;
+}}
+@media (min-width:768px){#last-child {
+    margin-right:15px;
+}}
+@media (max-width:1100px){#last-nav-point{
+    padding-right:0;
+}}
+/*small screen nav list we have three different sizes for nav:945px 1510 >1100   */
+@media (max-width: 1030px){ .navbar-header{
+    float:none;
+}}
+@media (max-width: 1349px) and (min-width:768px){ .icons-display{
+    display: none;;
+}}
+@media (max-width: 1030px){ .nav-points{
+    padding-top:5px !important;
+}}
+@media (max-width: 1030px){ .nav-points{
+    padding-top: 10px !important;
+    padding-left:10px !important;
+    padding-bottom:10px !important;
+
+}}
+@media (max-width:8490px){.nav-points-right {
+    padding-right:2px !important;
+}}
+.mobile-menu {
+    float:left;
+    margin-left:25px;
+    margin-bottom:0;
+    margin-top:-4px;
+}
+/*Title picture*/
+.container {
+    margin:0;
+    padding:0;
+    width:100%;
+}
+.jumbotron{
+    height:600px !important;
+}
+.titlepicture{
+    height:552px;
+    object-fit: cover;
+}
+@media (max-width: 767px){ .jumbotron{
+    height:312px !important;
+}}
+@media (max-width: 767px){ .titlepicture{
+    height:282px;
+}}
+/*Text in titlepicture*/
+#headliner{
+    position:absolute;
+    top:180px;
+    margin-left:10%;
+    margin-right:10%;
+    text-align:left;
+    color:white;
+    opacity:0.7;
+    font-size:90px;
+}
+@media (max-width: 1349px){ #headliner{
+    margin-right:0;
+    padding-right:15px;
+}}
+@media (max-width: 767px){ #headliner{
+    margin-right:0;
+    padding-right:15px;
+    top:110px;
+    font-size:50px;
+}}
+/*Over Footer*/
+#over-footer{
+    height:50px;
+    background-color:#A2C617;
+    opacity:0.7;
+}
+@media (max-width:768px){#over-footer{
+    height:30px;
+}}
+#mountain {
+    height:auto;
+    margin-bottom:-50px;
+}
+@media (max-width:768px){#mountain{
+    margin-bottom:-30px;
+}}
+/*Footer*/
+footer {
+    background-color: #5F6876;
+    padding-top: 25px;
+    padding-bottom: 25px;
+}
+@media (max-width:991px){#footerbalcken{
+    padding:0;
+}}
+@media (min-width:992px){.footerabschnitte{
+    float:left;
+    width:20%;
+    margin-right:6%;
+    list-style-type:none;
+}}
+@media (min-width:992px){.footerabschnitte:last-child{
+    margin-right:0;
+}}
+.footerabschnitte{
+    list-style-type:none;
+}
+.footerinhalt{
+    color:white;
+}
+
+/*Headliner Footer*/
+.footer-headliner{
+    border-bottom:2px solid;
+    border-top:2px solid;
+}
+/*end for all*/

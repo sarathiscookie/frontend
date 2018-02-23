@@ -1,74 +1,112 @@
-<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+<div class="container-fluid bg-3 text-center container-fluid-home">
+    <div class="col-md-2 col-md-2-home"></div>
+    <div class="col-md-8 col-md-8-home" id="list-filter-home">
+        <nav class="navbar navbar-default navbar-default-home">
+            <div class="container-fluid container-fluid-home" id="filter-line-home">
+                <!-- Brand and toggle get grouped for better mobile display -->
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" ><!--Mobile Navigation Burger-->
+                        <span class="mobile-menu">Filter</span>
+                        <span class="sr-only"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                </div>
+                <!-- Collect the nav links, forms, and other content for toggling -->
+                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                    <form action="{{ route('search') }}" method="POST" class="navbar-form navbar-left" id="search-nav-home">
 
-    <form action="{{ route('search') }}" method="POST">
-        {{ csrf_field() }}
+                        {{ csrf_field() }}
 
-        <div class="navbar-form navbar-left form-group " id="prefetch">
-            <input type="text" class="form-control typeahead" name="cabinname" id="cabinname" placeholder="Cabin Search">
-        </div>
+                        @inject('services', 'App\Http\Controllers\SearchController')
 
-        @inject('services', 'App\Http\Controllers\SearchController')
+                        <div class="form-group navbar-form navbar-left" id="prefetch">
+                            <input type="text" class="form-control-home typeahead" name="cabinname" id="cabinname" placeholder="Search Cabin">
+                        </div>
 
-        <ul class="nav navbar-nav">
+                        <ul class="nav navbar-nav" id="filter-home">
 
-            @if($services->country())
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="checkbox" aria-haspopup="true" aria-expanded="false">Country <span class="caret"></span></a>
-                    <ul class="dropdown-menu drop-height">
-                        @foreach($services->country() as $land)
-                            <li><a href="#"><input type="checkbox" name="country[]" value="{{ $land->name }}"> {{ $land->name }}</a></li>
-                        @endforeach
-                    </ul>
-                </li>
-            @endif
+                            @if($services->country())
+                                <li class="dropdown">
+                                    <!-- Dropdown in Filter -->
+                                    <a href="#" class="dropdown-toggle dropdown-toggle-home" data-toggle="dropdown">Country <span class="caret"></span></a>
+                                    <ul class="dropdown-menu dropdown-menu-home">
+                                        @foreach($services->country() as $land)
+                                            <li class="check-it-list-home"><input type="checkbox" class="check-it-home" name="country[]" value="{{ $land->name }}"> {{ $land->name }}</li>
+                                        @endforeach
+                                    </ul>
+                                </li>
+                            @endif
 
-            @if($services->regions())
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="checkbox" aria-haspopup="true" aria-expanded="false">Region <span class="caret"></span></a>
-                    <ul class="dropdown-menu drop-height">
-                        @foreach($services->regions() as $region)
-                            <li><a href="#"><input type="checkbox" name="region[]" value="{{ $region->name }}"> {{ $region->name }} @if($services->cabinCount($region->name)) <span class="badge">{!! $services->cabinCount($region->name) !!}</span> @endif</a></li>
-                        @endforeach
-                    </ul>
-                </li>
-            @endif
+                            @if($services->regions())
+                               <li class="dropdown">
+                                   <!-- Dropdown in Filter -->
+                                   <a href="#" class="dropdown-toggle dropdown-toggle-home" data-toggle="dropdown">Region<span class="caret"></span></a>
+                                   <ul class="dropdown-menu dropdown-menu-home drop-height">
+                                       @foreach($services->regions() as $region)
+                                           <li class="check-it-list-home"><input type="checkbox" name="region[]" value="{{ $region->name }}" class="check-it-home"> {{ $region->name }}
+                                               @if($services->cabinCount($region->name))
+                                                   <span class="badge">{!! $services->cabinCount($region->name) !!}</span>
+                                                @endif
+                                           </li>
+                                       @endforeach
+                                   </ul>
+                               </li>
+                            @endif
 
-            @if($services->facility())
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="checkbox" aria-haspopup="true" aria-expanded="false">Facility <span class="caret"></span></a>
-                    <ul class="dropdown-menu drop-height">
-                        @foreach($services->facility() as $facilityKey => $facility)
-                            <li><a href="#"><input type="checkbox" name="facility[]" value="{{ $facilityKey }}"> {{ $facility }}</a></li>
-                        @endforeach
-                    </ul>
-                </li>
-            @endif
+                            @if($services->facility())
+                                <li class="dropdown">
+                                    <!-- Dropdown in Filter -->
+                                    <a href="#" class="dropdown-toggle dropdown-toggle-home" data-toggle="dropdown">Facility<span class="caret"></span></a>
+                                    <ul class="dropdown-menu dropdown-menu-home drop-height">
+                                        @foreach($services->facility() as $facilityKey => $facility)
+                                            <li class="check-it-list-home"><input type="checkbox" name="facility[]" value="{{ $facilityKey }}" class="check-it-home"> {{ $facility }}</li>
+                                        @endforeach
+                                    </ul>
+                                </li>
+                            @endif
 
-            <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="checkbox" aria-haspopup="true" aria-expanded="false">Managed <span class="caret"></span></a>
-                <ul class="dropdown-menu">
-                    <li><a href="#"><input type="checkbox" name="managed[]"> Cabins to sleep</a></li>
-                    <li><a href="#"><input type="checkbox" name="managed[]"> Managed</a></li>
-                </ul>
-            </li>
+                            @if($services->openSeasons())
+                                <li class="dropdown">
+                                    <!-- Dropdown in Filter -->
+                                    <a href="#" class="dropdown-toggle dropdown-toggle-home" data-toggle="dropdown">Opening hours<span class="caret"></span></a>
+                                    <ul class="dropdown-menu dropdown-menu-home">
+                                        @foreach($services->openSeasons() as $seasonOpen)
+                                            <li  class="check-it-list-home"><input type="checkbox" name="seasons[]" value="open" class="check-it-home"> {{ $seasonOpen }}</li>
+                                        @endforeach
+                                    </ul>
+                                </li>
+                            @endif
 
-            @if($services->openSeasons())
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="checkbox" aria-haspopup="true" aria-expanded="false">Seasons <span class="caret"></span></a>
-                    <ul class="dropdown-menu drop-height">
-                        @foreach($services->openSeasons() as $seasonOpen)
-                            <li><a href="#"><input type="checkbox" name="seasons[]" value="open"> {{ $seasonOpen }}</a></li>
-                        @endforeach
-                    </ul>
-                </li>
-            @endif
+                                <li class="dropdown">
+                                    <a href="#" class="dropdown-toggle dropdown-toggle-home" data-toggle="dropdown">Managed <span class="caret"></span></a>
+                                    <ul class="dropdown-menu dropdown-menu-home">
+                                        <li class="check-it-list-home"><input type="checkbox" name="managed[]" class="check-it-home"> Cabins to sleep</li>
+                                        <li class="check-it-list-home"><input type="checkbox" name="managed[]" class="check-it-home"> Managed</li>
+                                    </ul>
+                                </li>
 
-        </ul>
+                        </ul>
 
-        <div class="navbar-form navbar-right form-group">
-            <button type="submit" class="btn btn-default">Filter Cabin</button>
-        </div>
+                        <div class="form-group navbar-form navbar-right" id="navbar-right-filter-home">
+                            <button type="submit" class="btn btn-default-home btn-filter-home">Filter Cabins</button>
+                        </div>
 
-    </form>
+                    </form>
+                </div>
+            </div>
+        </nav>
 
-</div><!-- /.navbar-collapse -->
+    </div>
+    <div class="col-md-2 col-md-2-home"></div>
+</div>
+
+
+
+
+
+
+
+
+

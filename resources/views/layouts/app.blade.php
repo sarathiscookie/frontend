@@ -8,7 +8,7 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>H-H Huetten-Holiday - @yield('title')</title>
+    <title>Huetten-Holiday.de - @yield('title')</title>
 
     <!-- Laravel default css -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
@@ -28,75 +28,95 @@
 <body id="myPage" data-spy="scroll" data-target=".navbar" data-offset="60">
     <div id="app">
         <nav class="navbar navbar-inverse navbar-fixed-top">
-            <div class="container-fluid">
+            <div class="container-fluid container-fluid-home">
                 <div class="navbar-header">
 
                     <!-- Collapsed Hamburger -->
-                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#app-navbar-collapse" aria-expanded="false">
-                        <span class="sr-only">Toggle Navigation</span>
+                    <button type="button" class="navbar-toggle" id="button-nav-top" data-toggle="collapse" data-target="#app-navbar-collapse"><!--Mobile Navigation Burger-->
+                        <span class="mobile-menu">Menu</span>
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
 
                     <!-- Branding Image -->
-                    <a class="navbar-brand" href="{{ url('/') }}">
-                        {{ config('app.name', 'Laravel') }}
+                    <a  href="{{ url('/') }}">
+                        <img src="{{ asset('storage/img/logo.png') }}" class="navbar-brand" id="nav-logo" alt="huetten-holiday logo">
                     </a>
                 </div>
 
                 <div class="collapse navbar-collapse" id="app-navbar-collapse">
-                    <!-- Left Side Of Navbar -->
-                    <ul class="nav navbar-nav">
-                        <li class="active"><a href="#">Home</a></li>
-                        <li><a href="#">About</a></li>
-                        <li><a href="#">Gallery</a></li>
-                        <li><a href="#">Contact</a></li>
+
+                    <ul class="nav navbar-nav ">
+                        <li><a href="#" class="nav-points left-top-nav">Cabins</a></li>
+                        <li><a href="#" class="nav-points left-top-nav">Hikes</a></li>
+                        <li><a href="#" class="nav-points left-top-nav">Regions</a></li>
+                        <li><a href="#" class="nav-points left-top-nav">Shop</a></li>
+                        <li><a href="#" class="nav-points left-top-nav" id="last-nav-point"> <span class="glyphicon glyphicon-shopping-cart"></span>Cabin-Cart</a></li>
+                        <!-- Authentication Links -->
+                        @guest
+                            <li><a href="{{ route('login') }}" class="nav-points left-top-nav"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+                            <li><a href="{{ route('register') }}" class="nav-points left-top-nav">Register</a></li>
+                            @else
+                                <li><a href="#" class="nav-points left-top-nav" data-toggle="dropdown"><span class="glyphicon glyphicon-home"></span> My Huetten-Holiday<span class="caret"></span></a>
+                                    <ul class="dropdown-menu dropdown-menu-home">
+                                        <li class="check-it-list-home"><a href="#" class="dropdown-links"><span class="glyphicon glyphicon-floppy-disk"></span> My Data</a></li>
+                                        <li class="check-it-list-home"><a href="#" class="dropdown-links"><span class="glyphicon glyphicon-bed"></span> My Bookinghistory</a></li>
+                                        <li class="check-it-list-home"><a href="#" class="dropdown-links"><span class="glyphicon glyphicon-log-out"></span> Log-out</a></li>
+                                    </ul>
+                                </li>
+                        @endguest
                     </ul>
 
                     <!-- Right Side Of Navbar -->
-                    <ul class="nav navbar-nav navbar-right">
-                        <!-- Authentication Links -->
-                        @guest
-                            <li><a href="{{ route('login') }}"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
-                            <li><a href="{{ route('register') }}">Register</a></li>
-                        @else
-                            <li class="dropdown">
-                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true">
-                                    {{ Auth::user()->usrFirstname }} {{ Auth::user()->usrLastname }} <span class="caret"></span>
-                                </a>
-
-                                <ul class="dropdown-menu">
-                                    <li>
-                                        <a href="{{ route('logout') }}"
-                                            onclick="event.preventDefault();
-                                                     document.getElementById('logout-form').submit();">
-                                            Logout
-                                        </a>
-
-                                        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                                            {{ csrf_field() }}
-                                        </form>
-                                    </li>
-                                </ul>
-                            </li>
-                        @endguest
+                    <ul class="nav navbar-nav navbar-right" id="right-top-nav">
+                        <li><a href="#" class="nav-points nav-points-right"><span class="glyphicon glyphicon-search" title="Search"></span><span class="icons-display"> Search</span></a></li>
+                        <li><a href="#" class="nav-points nav-points-right"><span class="glyphicon glyphicon-earphone" title="Phone"></span><span class="icons-display"> Phone</span></a></li>
+                        <li><a href="#" class="nav-points nav-points-right" id="last-child"><span class="glyphicon glyphicon-envelope" title="Contact"></span><span class="icons-display"> Contact</span></a></li>
                     </ul>
+
                 </div>
             </div>
         </nav>
 
-        <div class="jumbotron" style="height: 500px;">
+        <div class="jumbotron">
             <div class="container text-center">
-                <h1>Some title</h1>
-                <p>Some text that represents the website.</p>
+                <img src="{{ asset('storage/img/namloser-wetter-spitz.jpg') }}" class="img-responsive titlepicture" alt="Title picture">
+                <h1 id="headliner">Find your<br>favorite Cabin</h1>
             </div>
         </div>
 
         @yield('content')
 
-        <footer class="container-fluid text-center" style="position: fixed; right: 0; bottom: 0; left: 0; padding: 1rem; background-color: #efefef; text-align: center;">
-            <p>Footer Text</p>
+        <footer class="container-fluid container-fluid-home text-center">
+            <ul  id="footerbalcken">
+                <li class="footerabschnitte">
+                    <h3 class="footerinhalt footer-headliner">Huetten-Holiday.de</h3><br />
+                    <a class="footerinhalt">Huetten-Holiday.de GmbH</a><br />
+                    <a class="footerinhalt">Nebelhornstraße 3</a><br />
+                    <a class="footerinhalt">87448 Waltenhofen</a><br />
+                    <a class="footerinhalt">Deutschland</a>
+                </li>
+                <li class="footerabschnitte">
+                    <h3 class="footerinhalt footer-headliner">Information</h3><br />
+                    <a class="footerinhalt" href="">Contact and Help</a><br />
+                    <a class="footerinhalt" href="">About Huetten-Holiday.de</a><br />
+                    <a class="footerinhalt" href="">Jobs</a>
+                </li>
+                <li class="footerabschnitte">
+                    <h3 class="footerinhalt footer-headliner">Media</h3><br />
+                    <a class="footerinhalt" href="https://www.facebook.com/HuettenHoliday">Facebook</a><br />
+                    <a class="footerinhalt" href="https://blog.huetten-holiday.de/wordpress/">Blog</a><br />
+                    <a class="footerinhalt" href="">Media data</a>
+                </li>
+                <li class="footerabschnitte">
+                    <h3 class="footerinhalt footer-headliner">Legal</h3><br />
+                    <a class="footerinhalt" href="">Imprint</a><br />
+                    <a class="footerinhalt" href="">Data protection</a><br />
+                    <a class="footerinhalt" href="">Terms of Service</a><br />
+                    <a class="footerinhalt" href="">Image rights</a>
+                </li>
+            </ul>
         </footer>
     </div>
 

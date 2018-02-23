@@ -1,12 +1,243 @@
-/* Remove the navbar's default margin-bottom and rounded borders */
-.navbar {
-    margin-bottom: 0;
-    border-radius: 0;
-    z-index: 9999;
+/*width for most containers*/
+@media (max-width: 767px){.container-fluid-home {
+    padding-right:5px;
+    padding-left:5px;
+}}
+/*Buttons*/
+.btn-filter-home{
+    font-family:Segoe UI;
+    font-size:17px;
+    background-color:#A2C617;
+    border:none;
+    border-radius:0px;
+    padding:6px 50px;
+}
+/*Checkboxes*/
+.check-it-home{
+    height:17px;
+    width:17px;
+    margin-left:10px !important;
+    white-space:nowrap;
+}
+.check-it-list-home{
+    white-space:nowrap;
+    padding-right:0px;
+    padding-bottom:5px;
+}
+/*boxes*/
+.form-control-home{
+    border-radius:0px;
+    font-size:16px;
+    height:34px !important;
 }
 
-/* Add a gray background color and some padding to the footer */
-footer {
-    background-color: #f2f2f2;
-    padding: 25px;
+/*Filter Navigation*/
+/*a color in Filter*/
+.navbar-default-home .navbar-nav>li>a {
+    color:#5F6876;
 }
+.btn-default-home{
+    color:#fff;
+}
+/*kind of opacity background (the text is not opacity with rgba)*/
+.navbar-default-home{
+    background-color: rgba(161, 197, 24, 0.5);
+    border: none;
+    height:75px;
+}
+/*Correct size of the whole filter in tablet and mobile version*/
+@media (min-width:1511px){#filter-line-home {
+    padding-top:15px;
+}}
+@media (max-width:1510px){.navbar-default-home {
+    height:95px;
+}}
+@media (max-width:767px){.navbar-default-home {
+    height:auto;
+    display: block;
+}}
+@media (max-width:1350px){.col-md-8-home {
+    width:100% !important;
+}}
+@media (min-width: 768px){ #filter-home{
+    position:absolute;
+    padding-left:0;
+    margin-left:0;
+    margin-top:45px;
+}}
+@media (min-width:1511px){ #filter-home{
+    position:relative !important;
+    padding-left:0;
+    margin-left:0;
+    margin-top:0;
+}}
+@media (min-width:1511px){ #navbar-right-filter-home{
+    margin-top:8px !important;
+    margin-left:0;
+    position:relative;
+}}
+@media (max-width:858px){ #search-nav-home{
+    padding-right:0px;
+}}
+@media (max-width:1510px){ .btn-filter-home{
+    height:79px;
+}}
+@media (max-width:767px){ .btn-filter-home{
+    height:auto !important;
+}}
+@media (max-width:858px){ .btn-filter-home{
+    padding-left:10px;
+    padding-right:10px;
+}}
+@media (min-width:768px){ .navbar-form .form-control-home{
+    width:500px;
+    display:inline-block;
+    vertical-align:middle;
+}}
+@media (min-width:1511px){ .navbar-form .form-control-home{
+    width:auto !important;
+    display:inline-block;
+    vertical-align:middle;
+}}
+@media (min-width:1511px){ div .container-fluid-home{
+    padding-left:0px;
+    padding-right:0px;
+    margin:0;
+}}
+@media (min-width:992px){
+    #list-filter-home{
+        width:80%;
+    }}
+#list-filter-home{
+    padding-left:0;
+    padding-right:0;
+}
+.col-md-2-home{
+    width:10% !important
+}
+/*Dropdown menu Filter*/
+.dropdown-menu-home{
+    border:2px solid #5F6876;
+    border-top:none;
+    background-color:white;
+    padding-top:0;
+}
+.navbar-default-home .navbar-nav>.open>a, .navbar-default-home .navbar-nav>.open>a:focus, .navbar-default-home .navbar-nav>.open>a:hover{
+    background-color:white;
+    color:#5F6876;
+}
+.navbar-default-home .navbar-toggle {
+    background-color:white;
+}
+.navbar-default-home .navbar-toggle .icon-bar {
+    background-color:#5F6876;
+}
+@media (min-width:1510px) {.dropdown-toggle-home{
+    padding-bottom:25px !important;
+}}
+/*Dropdown border and width search*/
+.navbar-default-home .navbar-collapse, .navbar-default-home .navbar-form {
+    margin-left:0px;
+    margin-right:0px;
+    border-color:#e7e7e7
+}
+/*Main*/
+@media (max-width:767px) {.col-md-2-home, .col-md-8-home, .col-sm-4-home, .col-sm-8-home{
+    position:relative;
+    min-height:1px;
+    padding-right:0;
+    padding-left:0;
+    margin-right:0;
+    margin-left:0;
+}}
+/*advertising block*/
+@media (max-width:767px) {#advertising-home{
+    display:none;
+}}
+@media (max-width:768px) {#div-advertising-home{
+    width:18%!important;
+}}
+#div-advertising-home {
+    float:right;
+    position:relative;
+    padding-right:0;
+}
+/*correct sizes for mobile etc. (3 images)*/
+.row-home{
+    width:100%;
+}
+@media (max-width:768px) {.row-home{
+    margin:0;
+}}
+.col-sm-8-home {
+    margin-bottom:1%;
+}
+@media (max-width:768px) {.col-sm-4-home{
+    padding-bottom:30px;
+}}
+@media (max-width:768px) {#div-advertising-home{
+    padding-bottom:0px !important;
+}}
+/*Sizes of boxes in main*/
+@media (min-width: 768px){.col-2-home{
+    width:39%;
+    padding-right:0;
+    padding-left:0;
+    margin-right:1%;
+}}
+@media (min-width: 768px){#region-col4-home{
+    margin-right:0;
+}}
+@media (min-width: 768px){#list-col4-home{
+    margin-left:15px;
+}}
+@media (min-width: 768px){.col-sm-8-home{
+    width:79%;
+    padding-right:0;
+    padding-left:0;
+    margin-left:15px;
+}}
+@media (min-width: 768px){#div-advertising-home{
+    width:20%;
+    padding-left:0;
+    padding-right:0;
+}}
+/*Underlines in pictures*/
+.navbar-picture-home{
+    background-color:rgba(161, 197, 24, 0.5);
+    height:75px;
+    position:absolute;
+    z-index:1;
+    bottom:40px;
+    text-align:center;
+    color:rgba(255, 255, 255, 0.9);
+    font-size:300%;
+    width:100%;
+}
+@media (max-width: 991px){.navbar-picture-home{
+    background-color:rgba(161, 197, 24, 0.5);
+    height:55px;
+    position:absolute;
+    z-index:1;
+    bottom:40px;
+    text-align:center;
+    color:rgba(255, 255, 255, 0.9);
+    font-size:225%;
+    width:100%;
+}}
+@media (max-width: 767px){#block_nr_1-home{
+    bottom:10px !important;
+}}
+.col-extra-home{
+    margin-left:30px;
+    margin-right:21%;
+    border-top:2px solid #5F6876;
+    padding-top:30px;
+    margin-top:30px;
+}
+@media (max-width:767px){.col-extra-home{
+    margin-top:0;
+    margin-bottom:0;
+    margin-left:5px;
+    margin-right:5px;
+}}
