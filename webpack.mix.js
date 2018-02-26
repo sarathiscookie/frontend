@@ -19,11 +19,10 @@ mix.js('resources/assets/js/app.js', 'public/js')
 
 /* Js and css for each page */
 mix.styles([
-    'resources/assets/css/forAllPages.css',
+    'resources/assets/css/frontend.css',
     'resources/assets/css/welcome.css',
     'resources/assets/css/search.css',
     'resources/assets/css/searchResult.css',
-    'resources/assets/css/frontend.css',
     'resources/assets/css/cabinDetails.css',
     'resources/assets/css/calendar.css'
 ], 'public/css/all.css');

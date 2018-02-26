@@ -1,4 +1,5 @@
 /*---- Some classes of forAllPages has been updated for search result page ----*/
+/* Main css begin */
 /*Text in titlepicture*/
 #headliner-cabinlist{
     position:absolute;
@@ -413,7 +414,7 @@
 .pages-cabinlist:focus, .pages-cabinlist:hover {
     color:#A2C617 !important;
 }
-
+/* Main css end */
 /* More content section */
 .cabinListMoreContent span {
     display: none;

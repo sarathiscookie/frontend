@@ -1,270 +1,5 @@
-/*For all*/
 
-a {
-    color:#A2C617;
-}
-a:focus, a:hover {
-    text-decoration:underline;
-    color:#A2C617;
-}
-.h2, h2 {
-    font-size:25px;
-}
-.h5, h5{
-    font-size:16px;
-}
-.h3, h3{
-    font-size:20px;
-}
-p{
-    font-family:Segoe UI;
-    font-size:16px;
-    color:#5F6876;
-}
-body{
-    font-family:Segoe UI;
-    font-size:16px;
-    color:#5F6876;
-    background-color:#fff;
-}
-main{
-    margin-top:30px;
-}
-@media (min-width:1350px) {main {
-    margin-left:10%;
-    margin-right:10%;
-}}
-/*Icons*/
-.glyphicon{
-    position:relative;
-    top:1px;
-    display:inline-block;
-    font-size:20px;
-}
-/*Pictures responsive*/
-.img-responsive{
-    width:100%;
-    max-width:100%;
-    display:block;
-    height:auto;
-}
-/*Burger Buttons*/
-.navbar-toggle{
-    padding-top:11px;
-    padding-bottom:7px;
-}
-.navbar-inverse .navbar-toggle {
-    border-color:#A2C617;
-}
-.navbar-inverse .navbar-toggle:focus, .navbar-inverse .navbar-toggle:hover {
-    background-color:#A2C617;
-}
-.navbar-inverse .navbar-toggle .icon-bar {
-    background-color:#5F6876;
-}
-#button-nav-top {
-    margin-top:5%;
-}
-/*Navigation Top*/
-/*Dropdown Top*/
-.navbar-inverse .navbar-collapse, .navbar-inverse .navbar-form {
-    border-color:#5F6876;
-}
-.dropdown-links{
-    font-family:Segoe UI;
-    font-size:16px;
-    color:#5F6876 !important;
-}
-.dropdown-links:hover{
-    color:#A2C617 !important;
-}
-.navbar-inverse .navbar-nav>.open>a, .navbar-inverse .navbar-nav>.open>a:focus, .navbar-inverse .navbar-nav>.open>a:hover {
-    background-color:#fff;
-    color:#5F6876;
-}
-.dropdown-menu>li>a:focus, .dropdown-menu>li>a:hover{
-    background-color:transparent !important;
-}
-/*Logo in the Navigation*/
-#nav-logo {
-    width:150px;
-    height:auto;
-    padding-top:15px;
-    padding-bottom:15px;
-    padding-right:0;
-}
-
-/*a in Navigation*/
-@media (max-width:767px){.navbar-nav {
-    margin:0;
-}}
-.navbar-inverse .navbar-nav>li>a {
-    color:#5F6876;
-}
-.navbar-inverse .navbar-nav>li>a:focus, .navbar-inverse .navbar-nav>li>a:hover{
-    color:#5F6876;
-}
-@media (max-width:767px){.nav>li>a:focus, .nav>li>a:hover {
-    text-decoration:none;
-    background-color:#eee !important;
-}}
-@media (min-width: 768px){.left-top-nav {
-    padding-bottom:25px !important;
-}}
-@media (max-width:767px){.navbar-inverse .navbar-nav>li>a{
-    color:#5F6876;
-    padding-left:15px !important;
-    padding-right:15px !important;
-    padding-top:10px !important;
-    padding-bottom:10px !important;
-    border-bottom: 1px solid;
-}}
-@media (min-width:768px){.navbar-inverse .navbar-nav>li>a:focus, .navbar-inverse .navbar-nav>li>a:hover {
-    color:#A2C617;
-}}
-.navbar-inverse {
-    background-color:#FFF !important;
-    border:none;
-}
-.navbar {
-    margin-bottom: 0;
-    border-radius: 0;
-}
-/*Navbar always on the top*/
-.navbar-fixed-top{
-    position:absolute !important;
-}
-.navbar-header {
-    margin-left:10% !important;
-}
-@media (min-width: 1031px){ .nav-points{
-    padding-top:42px !important;
-    padding-bottom:0px;
-}}
-@media (max-width:1349px){.navbar-header {
-    margin-left:0 !important;
-}}
-@media (min-width:850px){#last-child {
-    margin-right:35px;
-}}
-@media (min-width:768px){#last-child {
-    margin-right:15px;
-}}
-@media (max-width:1100px){#last-nav-point{
-    padding-right:0;
-}}
-/*small screen nav list we have three different sizes for nav:945px 1510 >1100   */
-@media (max-width: 1030px){ .navbar-header{
-    float:none;
-}}
-@media (max-width: 1349px) and (min-width:768px){ .icons-display{
-    display: none;;
-}}
-@media (max-width: 1030px){ .nav-points{
-    padding-top:5px !important;
-}}
-@media (max-width: 1030px){ .nav-points{
-    padding-top: 10px !important;
-    padding-left:10px !important;
-    padding-bottom:10px !important;
-
-}}
-@media (max-width:8490px){.nav-points-right {
-    padding-right:2px !important;
-}}
-.mobile-menu {
-    float:left;
-    margin-left:25px;
-    margin-bottom:0;
-    margin-top:-4px;
-}
-/*Title picture*/
-.container {
-    margin:0;
-    padding:0;
-    width:100%;
-}
-.jumbotron{
-    height:600px !important;
-}
-.titlepicture{
-    height:552px;
-    object-fit: cover;
-}
-@media (max-width: 767px){ .jumbotron{
-    height:312px !important;
-}}
-@media (max-width: 767px){ .titlepicture{
-    height:282px;
-}}
-/*Text in titlepicture*/
-#headliner{
-    position:absolute;
-    top:180px;
-    margin-left:10%;
-    margin-right:10%;
-    text-align:left;
-    color:white;
-    opacity:0.7;
-    font-size:90px;
-}
-@media (max-width: 1349px){ #headliner{
-    margin-right:0;
-    padding-right:15px;
-}}
-@media (max-width: 767px){ #headliner{
-    margin-right:0;
-    padding-right:15px;
-    top:110px;
-    font-size:50px;
-}}
-/*Over Footer*/
-#over-footer{
-    height:50px;
-    background-color:#A2C617;
-    opacity:0.7;
-}
-@media (max-width:768px){#over-footer{
-    height:30px;
-}}
-#mountain {
-    height:auto;
-    margin-bottom:-50px;
-}
-@media (max-width:768px){#mountain{
-    margin-bottom:-30px;
-}}
-/*Footer*/
-footer {
-    background-color: #5F6876;
-    padding-top: 25px;
-    padding-bottom: 25px;
-}
-@media (max-width:991px){#footerbalcken{
-    padding:0;
-}}
-@media (min-width:992px){.footerabschnitte{
-    float:left;
-    width:20%;
-    margin-right:6%;
-    list-style-type:none;
-}}
-@media (min-width:992px){.footerabschnitte:last-child{
-    margin-right:0;
-}}
-.footerabschnitte{
-    list-style-type:none;
-}
-.footerinhalt{
-    color:white;
-}
-
-/*Headliner Footer*/
-.footer-headliner{
-    border-bottom:2px solid;
-    border-top:2px solid;
-}
-/*end for all*/
+/* Main css begin */
 /*width for most containers*/
 @media (max-width: 767px){.container-fluid-home {
     padding-right:5px;
@@ -508,6 +243,7 @@ footer {
     margin-left:5px;
     margin-right:5px;
 }}
+/* Main css end */
 /* Nav bar search box width change */
 #cabinname {
     width:425px !important;
@@ -559,6 +295,7 @@ footer {
     margin: 0;
 }
 /*---- Some classes of forAllPages has been updated for search result page ----*/
+/* Main css begin */
 /*Text in titlepicture*/
 #headliner-cabinlist{
     position:absolute;
@@ -973,7 +710,7 @@ footer {
 .pages-cabinlist:focus, .pages-cabinlist:hover {
     color:#A2C617 !important;
 }
-
+/* Main css end */
 /* More content section */
 .cabinListMoreContent span {
     display: none;
@@ -985,6 +722,274 @@ footer {
     text-decoration: none;
     cursor: pointer;
 }
+
+/*For all*/
+
+a {
+    color:#A2C617;
+}
+a:focus, a:hover {
+    text-decoration:underline;
+    color:#A2C617;
+}
+.h2, h2 {
+    font-size:25px;
+}
+.h5, h5{
+    font-size:16px;
+}
+.h3, h3{
+    font-size:20px;
+}
+p{
+    font-family:Segoe UI;
+    font-size:16px;
+    color:#5F6876;
+}
+body{
+    font-family:Segoe UI;
+    font-size:16px;
+    color:#5F6876;
+    background-color:#fff;
+}
+main{
+    margin-top:30px;
+}
+@media (min-width:1350px) {main {
+    margin-left:10%;
+    margin-right:10%;
+}}
+/*Icons*/
+.glyphicon{
+    position:relative;
+    top:1px;
+    display:inline-block;
+    font-size:20px;
+}
+/*Pictures responsive*/
+.img-responsive{
+    width:100%;
+    max-width:100%;
+    display:block;
+    height:auto;
+}
+/*Burger Buttons*/
+.navbar-toggle{
+    padding-top:11px;
+    padding-bottom:7px;
+}
+.navbar-inverse .navbar-toggle {
+    border-color:#A2C617;
+}
+.navbar-inverse .navbar-toggle:focus, .navbar-inverse .navbar-toggle:hover {
+    background-color:#A2C617;
+}
+.navbar-inverse .navbar-toggle .icon-bar {
+    background-color:#5F6876;
+}
+#button-nav-top {
+    margin-top:5%;
+}
+/*Navigation Top*/
+/*Dropdown Top*/
+.navbar-inverse .navbar-collapse, .navbar-inverse .navbar-form {
+    border-color:#5F6876;
+}
+.dropdown-links{
+    font-family:Segoe UI;
+    font-size:16px;
+    color:#5F6876 !important;
+}
+.dropdown-links:hover{
+    color:#A2C617 !important;
+}
+.navbar-inverse .navbar-nav>.open>a, .navbar-inverse .navbar-nav>.open>a:focus, .navbar-inverse .navbar-nav>.open>a:hover {
+    background-color:#fff;
+    color:#5F6876;
+}
+.dropdown-menu>li>a:focus, .dropdown-menu>li>a:hover{
+    background-color:transparent !important;
+}
+/*Logo in the Navigation*/
+#nav-logo {
+    width:150px;
+    height:auto;
+    padding-top:15px;
+    padding-bottom:15px;
+    padding-right:0;
+}
+
+/*a in Navigation*/
+@media (max-width:767px){.navbar-nav {
+    margin:0;
+}}
+.navbar-inverse .navbar-nav>li>a {
+    color:#5F6876;
+}
+.navbar-inverse .navbar-nav>li>a:focus, .navbar-inverse .navbar-nav>li>a:hover{
+    color:#5F6876;
+}
+@media (max-width:767px){.nav>li>a:focus, .nav>li>a:hover {
+    text-decoration:none;
+    background-color:#eee !important;
+}}
+@media (min-width: 768px){.left-top-nav {
+    padding-bottom:25px !important;
+}}
+@media (max-width:767px){.navbar-inverse .navbar-nav>li>a{
+    color:#5F6876;
+    padding-left:15px !important;
+    padding-right:15px !important;
+    padding-top:10px !important;
+    padding-bottom:10px !important;
+    border-bottom: 1px solid;
+}}
+@media (min-width:768px){.navbar-inverse .navbar-nav>li>a:focus, .navbar-inverse .navbar-nav>li>a:hover {
+    color:#A2C617;
+}}
+.navbar-inverse {
+    background-color:#FFF !important;
+    border:none;
+}
+.navbar {
+    margin-bottom: 0;
+    border-radius: 0;
+}
+/*Navbar always on the top*/
+.navbar-fixed-top{
+    position:absolute !important;
+}
+.navbar-header {
+    margin-left:10% !important;
+}
+@media (min-width: 1031px){ .nav-points{
+    padding-top:42px !important;
+    padding-bottom:0px;
+}}
+@media (max-width:1349px){.navbar-header {
+    margin-left:0 !important;
+}}
+@media (min-width:850px){#last-child {
+    margin-right:35px;
+}}
+@media (min-width:768px){#last-child {
+    margin-right:15px;
+}}
+@media (max-width:1100px){#last-nav-point{
+    padding-right:0;
+}}
+/*small screen nav list we have three different sizes for nav:945px 1510 >1100   */
+@media (max-width: 1030px){ .navbar-header{
+    float:none;
+}}
+@media (max-width: 1349px) and (min-width:768px){ .icons-display{
+    display: none;;
+}}
+@media (max-width: 1030px){ .nav-points{
+    padding-top:5px !important;
+}}
+@media (max-width: 1030px){ .nav-points{
+    padding-top: 10px !important;
+    padding-left:10px !important;
+    padding-bottom:10px !important;
+
+}}
+@media (max-width:8490px){.nav-points-right {
+    padding-right:2px !important;
+}}
+.mobile-menu {
+    float:left;
+    margin-left:25px;
+    margin-bottom:0;
+    margin-top:-4px;
+}
+/*Title picture*/
+.container {
+    margin:0;
+    padding:0;
+    width:100%;
+}
+.jumbotron{
+    height:600px !important;
+}
+.titlepicture{
+    height:552px;
+    object-fit: cover;
+}
+@media (max-width: 767px){ .jumbotron{
+    height:312px !important;
+}}
+@media (max-width: 767px){ .titlepicture{
+    height:282px;
+}}
+/*Text in titlepicture*/
+#headliner{
+    position:absolute;
+    top:180px;
+    margin-left:10%;
+    margin-right:10%;
+    text-align:left;
+    color:white;
+    opacity:0.7;
+    font-size:90px;
+}
+@media (max-width: 1349px){ #headliner{
+    margin-right:0;
+    padding-right:15px;
+}}
+@media (max-width: 767px){ #headliner{
+    margin-right:0;
+    padding-right:15px;
+    top:110px;
+    font-size:50px;
+}}
+/*Over Footer*/
+#over-footer{
+    height:50px;
+    background-color:#A2C617;
+    opacity:0.7;
+}
+@media (max-width:768px){#over-footer{
+    height:30px;
+}}
+#mountain {
+    height:auto;
+    margin-bottom:-50px;
+}
+@media (max-width:768px){#mountain{
+    margin-bottom:-30px;
+}}
+/*Footer*/
+footer {
+    background-color: #5F6876;
+    padding-top: 25px;
+    padding-bottom: 25px;
+}
+@media (max-width:991px){#footerbalcken{
+    padding:0;
+}}
+@media (min-width:992px){.footerabschnitte{
+    float:left;
+    width:20%;
+    margin-right:6%;
+    list-style-type:none;
+}}
+@media (min-width:992px){.footerabschnitte:last-child{
+    margin-right:0;
+}}
+.footerabschnitte{
+    list-style-type:none;
+}
+.footerinhalt{
+    color:white;
+}
+
+/*Headliner Footer*/
+.footer-headliner{
+    border-bottom:2px solid;
+    border-top:2px solid;
+}
+/*end for all*/
 /* More content section */
 .morecontent span {
     display: none;
@@ -992,6 +997,315 @@ footer {
 .morelink {
     display: block;
 }
+
+/* Main css begin */
+/*width for most containers*/
+@media (max-width: 767px){.container-fluid-cabin-details {
+    padding-right:5px;
+    padding-left:5px;
+}}
+/*Checkboxes*/
+.check-it-list-cabin-details{
+    white-space:nowrap;
+    padding-right:10px;
+    padding-bottom:5px;
+}
+.check-it-list-cabin-details:hover {
+    background-color:#EFEFEF;
+}
+/*Headline under titlepicture*/
+/*kind of opacity background (the text is not opacity with rgba)*/
+.navbar-default-cabin-details{
+    background-color: #D1D1D1;
+    border: none;
+    height:75px;
+    text-align:left;
+    padding-left:15px;
+}
+@media (max-width:1349px){.col-md-8-cabin-details {
+    width:100% !important;
+}}
+@media (min-width:1511px){ div .container-fluid-cabin-details{
+    padding-left:0px;
+    padding-right:0px;
+    margin:0;
+}}
+@media (min-width:992px){
+    #list-filter-cabin-details{
+        width:80%;
+    }}
+#list-filter-cabin-details{
+    padding-left:0;
+    padding-right:0;
+}
+.col-md-2-cabin-details{width:10% !important
+}
+@media (max-width:767px){#cabin-head-cabin-details{
+    margin-top:15px !important;
+    font-size:20px;
+}}
+@media (min-width:768px){#cabin-head-br-cabin-details{
+    display:none !important;
+}}
+/*Main*/
+@media (max-width:767px) {.col-md-2-cabin-details, .col-md-8-cabin-details, .col-sm-4-cabin-details {
+    position:relative;
+    min-height:1px;
+    padding-right:0;
+    padding-left:0;
+    margin-right:0;
+    margin-left:0;
+}}
+/*correct sizes for mobile etc. (3 images)*/
+.row-cabin-details{
+    width:100%;
+}
+.row-cabin-details{
+    margin:0;
+}
+@media (max-width:767px) {.col-sm-4-cabin-details{
+    padding-bottom:30px;
+}}
+/*Details*/
+.panel-body-cabin-details{
+    padding:0;
+}
+.panel-cabin-details{
+    border:none;
+    border-radius:0px;
+}
+@media (min-width: 768px){.panel-cabin-details{
+    margin-bottom:20px;
+}}
+@media (max-width: 767px){.panel-cabin-details{
+    background-color:#EFEFEF;
+}}
+@media (min-width: 768px){.panel-default-cabin-details{
+    border:none;
+}}
+/*Images on the left side*/
+.col-sm-7-cabin-details{
+    background-color:#EFEFEF;
+}
+@media (min-width: 768px){.col-sm-7-cabin-details{
+    width:74% !important;
+}}
+@media (max-width: 767px){.col-sm-7-cabin-details{
+    padding-left:5px;
+    padding-right:5px;
+}}
+/*Icons for Facility*/
+.btn-default-cabin-details{
+    background-color:#A2C617;
+    color:#fff;
+}
+@media (max-width: 767px){.facility-btn-cabin-details{
+    margin-top:15px;
+    float:none !important;
+}}
+.details-info-cabin-details{
+    padding-top:20px;
+}
+@media (max-width: 767px){.details-info-cabin-details{
+    display:none;
+}}
+/*Text Details*/
+.details-headline-cabin-details{
+    color:#A2C617;
+}
+@media (max-width: 1010px) and (min-width: 768px){.inh-cabin-details{
+    margin-left:30% !important;
+}}
+@media (max-width: 767px){.inh-cabin-details{
+    margin-left:0 !important;
+}}
+.inh-cabin-details{
+    margin-left:20%;
+}
+.details-underheadline-cabin-details{
+    float:left;
+    width:20%;
+}
+@media (max-width: 767px){.details-underheadline-cabin-details{
+    float:none !important;
+}}
+@media (max-width: 1010px){.details-underheadline-cabin-details{
+    width:30% !important;
+}}
+.detail-points-cabin-details{
+    border-bottom:1px solid #5F6876;
+}
+.detail-points-cabin-details:last-child{
+    border-bottom:none;
+    padding-bottom:20px;
+}
+/*Image Details*/
+.img-cabin-details{
+    float:left;
+    width:25%;
+    transition: transform .3s;
+
+}
+.img-cabin-details:hover  {
+    transform: scale(1.5);
+    border:2px solid #EFEFEF;
+    box-shadow: 0 10px 6px -6px #EFEFEF;
+}
+@media (max-width: 767px){.img-cabin-details{
+    width:50%;
+    border:2px solid #EFEFEF;
+
+}}
+.picture-gallerie-cabin-details{
+    margin-left:-15px;
+    margin-right:-15px;
+    padding-top:20px;
+}
+@media (max-width: 767px){.picture-gallerie-cabin-details{
+    padding-left:10px;
+    padding-right:10px;
+}}
+/*Booking box*/
+.col-sm-3-cabin-details{
+    padding-right:0;
+}
+@media (min-width: 768px){.col-sm-3-cabin-details {
+    width:100%;
+    padding-left:0;
+    padding-bottom:15px;
+}}
+@media (min-width: 1511px){.col-sm-3-cabin-details {
+    width:25%;
+    padding-left:0;
+    padding-top:0;
+    padding-bottom:0px;
+    float:right;
+}}
+@media(max-width:1510px) and (min-width:768px){.booking-box-cabin-details {
+    background-color:#D1D1D1;
+    margin:0;
+    padding-bottom:15px;
+    height:auto;
+}}
+@media(max-width:767px){.booking-box-cabin-details {
+    background-color:#D1D1D1;
+    margin:0;
+    padding-bottom:15px;
+    padding-left:5px;
+    padding-right:5px;
+    height:auto;
+}}
+@media (min-width: 1511px){.booking-box-cabin-details {
+    background-color:#D1D1D1;
+    margin:0;
+    padding-bottom:15px;
+    height:280px;
+}}
+@media (min-width:768px) {.col-sm-12-cabin-details{
+    padding-top:10px;
+}}
+@media (min-width:1511px) {.button-3-bottom-cabin-details{
+    padding-top:30px;
+}}
+/*Arrival Depature and Persons fields*/
+.col-sm-4-cabin-details{
+    padding:0;
+}
+.form-control-cabin-details{
+    border-radius:0px;
+    font-size:16px;
+    height:34px !important;
+}
+@media (min-width:1511px) and (max-width:1811px){.form-control-cabin-details{
+    padding-left:3px!important;
+    padding-right:0px!important;
+}}
+/*Availablety sleeping places*/
+.label-success-cabin-details{
+    background-color:#A2C617;
+}
+.label-cabin-details {
+    border-radius:0px;
+    font-weight:normal;
+    padding-left:10px;
+    padding-right:10px;
+    padding-top:9px;
+    padding-bottom:9px;
+    font-size:16px;
+    height:34px;
+    width:58%;
+}
+@media (max-width:767px) {.label-cabin-details{
+    height:42px;
+    padding-top:13px;
+}}
+@media (max-width:385px) {.label-cabin-details{
+    padding-left:5px;
+    padding-right:5px;
+}}
+@media (max-width:767px) {.badge{
+    padding-left:5px;
+    padding-right:5px;
+    width:auto !important;
+}}
+@media (max-width:1900px) and (min-width:1511px) {.label-cabin-details {
+    height:auto !important;
+}}
+@media (max-width:1510px) {.open-times-break{
+    display:none;
+}}
+.s-p-a-br {
+    display:none;
+}
+@media (max-width:320px) {.label-cabin-details {
+    height:auto !important;
+}}
+@media (max-width:320px) {.s-p-a-br-cabin-details {
+    display:block !important;
+}}
+@media (max-width:1900px) and (min-width:1511px) {.s-p-a-br-cabin-details {
+    display:block !important;
+}}
+/*Booking-Button*/
+.btn-booking-cabin-details{
+    background-color:#A2C617;
+    width:40%;
+    height:34px;
+    padding:0;
+    font-size:16px;
+    font-weight:bold;
+}
+@media (max-width:767px) {.btn-booking-cabin-details{
+    height:42px;
+}}
+.btn-booking-cabin-details:hover{
+    background-color:#e6e6e6;
+}
+/*Expected opening timings*/
+.badge-cabin-details{
+    border-radius:0px;
+    background-color:#A2C617;
+    font-weight:normal;
+    font-size:17px;
+    color:#FFF;
+    width:30px;
+}
+.shine-badge-cabin-details{
+    background-color:rgba(161, 197, 24, 0.5) !important;
+}
+/*advertising*/
+#div-advertising-cabin-details{
+    width:25%;
+    float:right;
+    margin-top:1%;
+}
+@media (max-width:1510px){#div-advertising-cabin-details{
+    margin-top:0 !important;
+}}
+@media (max-width:767px){#div-advertising-cabin-details{
+    display:none;
+}}
+/* Main css end */
 /* Calendar background color */
 .holidayDates .ui-state-default
 {
