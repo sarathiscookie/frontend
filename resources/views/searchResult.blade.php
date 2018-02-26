@@ -34,6 +34,8 @@
 
 @inject('calendarServices', 'App\Http\Controllers\CalendarController')
 
+@inject('service', 'App\Http\Controllers\CabinDetailsController')
+
 @section('content')
 
     @include('includes.search')
@@ -56,7 +58,7 @@
                                     <div class="row">
                                         <div class="col-sm-12 pull-right">
                                             @foreach($result->interior as $interior)
-                                                <button type="button" class="btn btn-default btn-sm btn-space pull-right facility-btn">
+                                                <button type="button" class="btn btn-default btn-sm btn-space pull-right facility-btn" data-toggle="tooltip" data-placement="bottom" title="{{ $service->interiorLabel($interior) }}">
                                                     <span @if($interior === 'Food à la carte') class="glyphicon glyphicon-credit-card" @elseif($interior === 'breakfast') class="glyphicon glyphicon-glass" @else class="glyphicon glyphicon-home" @endif aria-hidden="true"></span>
                                                 </button>
                                             @endforeach
