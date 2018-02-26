@@ -62,7 +62,18 @@
                                     <ul class="dropdown-menu dropdown-menu-home">
                                         <li class="check-it-list-home"><a href="#" class="dropdown-links"><span class="glyphicon glyphicon-floppy-disk"></span> My Data</a></li>
                                         <li class="check-it-list-home"><a href="#" class="dropdown-links"><span class="glyphicon glyphicon-bed"></span> My Bookinghistory</a></li>
-                                        <li class="check-it-list-home"><a href="#" class="dropdown-links"><span class="glyphicon glyphicon-log-out"></span> Log-out</a></li>
+                                        <li class="check-it-list-home">
+                                            <a href="{{ route('logout') }}"
+                                                                          onclick="event.preventDefault();
+                                                                          document.getElementById('logout-form').submit();"
+                                                                          class="dropdown-links"><span class="glyphicon glyphicon-log-out"></span>
+                                                Logout
+                                            </a>
+
+                                            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                                                {{ csrf_field() }}
+                                            </form>
+                                        </li>
                                     </ul>
                                 </li>
                         @endguest
