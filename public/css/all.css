@@ -30,7 +30,7 @@ body{
 main{
     margin-top:30px;
 }
-@media (min-width:1351px) {main {
+@media (min-width:1350px) {main {
     margin-left:10%;
     margin-right:10%;
 }}
@@ -559,11 +559,6 @@ footer {
     margin: 0;
 }
 /*---- Some classes of forAllPages has been updated for search result page ----*/
-@media (min-width:1350px) {main {
-    margin-left:10%;
-    margin-right:10%;
-}}
-
 /*Text in titlepicture*/
 #headliner-cabinlist{
     position:absolute;
