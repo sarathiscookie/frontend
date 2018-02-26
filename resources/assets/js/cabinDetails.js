@@ -1,6 +1,6 @@
 $(function(){
 
-    /* When button click showing being and end season */
+    /* When button click showing begin and end season */
     $(".toggleSeasonTime").on('click', function(){
         $(".seasonTimes").toggle(500);
     });

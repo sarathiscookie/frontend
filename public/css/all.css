@@ -978,6 +978,14 @@ footer {
 .pages-cabinlist:focus, .pages-cabinlist:hover {
     color:#A2C617 !important;
 }
+
+/* More content section */
+.cabinListMoreContent span {
+    display: none;
+}
+.cabinListMoreLink {
+    display: block;
+}
 .nounderline{
     text-decoration: none;
     cursor: pointer;

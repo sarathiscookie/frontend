@@ -38,8 +38,6 @@
 
     @include('includes.search')
 
-
-
     @isset($cabinSearchResult)
         <main>
 
@@ -54,14 +52,16 @@
 
                                 <div class="col-sm-7 text-left">
                                     <h2 class="headliner-cabinname">{{ $result->name }}&nbsp;</h2><h3 class="headliner-cabin">{{ $result->region }} - {{ $result->country }} ({{ number_format($result->height, 0, '', '.') }} m)</h3>
-                                    <p class="details-info">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-                                    <button type="button" class="btn btn-default btn-sm btn-details">More Details</button>
-
-                                    @foreach($result->interior as $interior)
-                                        <button type="button" class="btn btn-default btn-sm btn-space pull-right facility-btn">
-                                            <span @if($interior === 'Food à la carte') class="glyphicon glyphicon-credit-card" @elseif($interior === 'breakfast') class="glyphicon glyphicon-glass" @else class="glyphicon glyphicon-home" @endif aria-hidden="true"></span>
-                                        </button>
-                                    @endforeach
+                                    <div class="cabinListMore">{{ strip_tags(str_replace("&nbsp;", " ", $result->other_details)) }}</div>
+                                    <div class="row">
+                                        <div class="col-sm-12 pull-right">
+                                            @foreach($result->interior as $interior)
+                                                <button type="button" class="btn btn-default btn-sm btn-space pull-right facility-btn">
+                                                    <span @if($interior === 'Food à la carte') class="glyphicon glyphicon-credit-card" @elseif($interior === 'breakfast') class="glyphicon glyphicon-glass" @else class="glyphicon glyphicon-home" @endif aria-hidden="true"></span>
+                                                </button>
+                                            @endforeach
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <div class="col-sm-3">
