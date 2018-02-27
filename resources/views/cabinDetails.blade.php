@@ -119,41 +119,41 @@
                             <div class="col-sm-3 text-left main-cabin-details">
                                 <div class="thumbnail">
                                     <ul id="image-gallery" class="gallery list-unstyled cS-hidden">
-                                        <li data-thumb="http://placehold.it/250x180">
-                                            <img src="http://placehold.it/600x400" style="width:100%;" class="img-responsive">
+                                        <li data-thumb="https://placehold.it/250x180">
+                                            <img src="https://placehold.it/600x400" style="width:100%;" class="img-responsive">
                                         </li>
-                                        <li data-thumb="http://placehold.it/250x180">
-                                            <img src="http://placehold.it/600x400" style="width:100%;" class="img-responsive">
+                                        <li data-thumb="https://placehold.it/250x180">
+                                            <img src="https://placehold.it/600x400" style="width:100%;" class="img-responsive">
                                         </li>
-                                        <li data-thumb="http://placehold.it/250x180">
-                                            <img src="http://placehold.it/600x400" style="width:100%;" class="img-responsive">
+                                        <li data-thumb="https://placehold.it/250x180">
+                                            <img src="https://placehold.it/600x400" style="width:100%;" class="img-responsive">
                                         </li>
-                                        <li data-thumb="http://placehold.it/250x180">
-                                            <img src="http://placehold.it/600x400" style="width:100%;" class="img-responsive">
+                                        <li data-thumb="https://placehold.it/250x180">
+                                            <img src="https://placehold.it/600x400" style="width:100%;" class="img-responsive">
                                         </li>
-                                        <li data-thumb="http://placehold.it/250x180">
-                                            <img src="http://placehold.it/600x400" style="width:100%;" class="img-responsive">
+                                        <li data-thumb="https://placehold.it/250x180">
+                                            <img src="https://placehold.it/600x400" style="width:100%;" class="img-responsive">
                                         </li>
-                                        <li data-thumb="http://placehold.it/250x180">
-                                            <img src="http://placehold.it/600x400" style="width:100%;" class="img-responsive">
+                                        <li data-thumb="https://placehold.it/250x180">
+                                            <img src="https://placehold.it/600x400" style="width:100%;" class="img-responsive">
                                         </li>
-                                        <li data-thumb="http://placehold.it/250x180">
-                                            <img src="http://placehold.it/600x400" style="width:100%;" class="img-responsive">
+                                        <li data-thumb="https://placehold.it/250x180">
+                                            <img src="https://placehold.it/600x400" style="width:100%;" class="img-responsive">
                                         </li>
-                                        <li data-thumb="http://placehold.it/250x180">
-                                            <img src="http://placehold.it/600x400" style="width:100%;" class="img-responsive">
+                                        <li data-thumb="https://placehold.it/250x180">
+                                            <img src="https://placehold.it/600x400" style="width:100%;" class="img-responsive">
                                         </li>
-                                        <li data-thumb="http://placehold.it/250x180">
-                                            <img src="http://placehold.it/600x400" style="width:100%;" class="img-responsive">
+                                        <li data-thumb="https://placehold.it/250x180">
+                                            <img src="https://placehold.it/600x400" style="width:100%;" class="img-responsive">
                                         </li>
-                                        <li data-thumb="http://placehold.it/250x180">
-                                            <img src="http://placehold.it/600x400" style="width:100%;" class="img-responsive">
+                                        <li data-thumb="https://placehold.it/250x180">
+                                            <img src="https://placehold.it/600x400" style="width:100%;" class="img-responsive">
                                         </li>
-                                        <li data-thumb="http://placehold.it/250x180">
-                                            <img src="http://placehold.it/600x400" style="width:100%;" class="img-responsive">
+                                        <li data-thumb="https://placehold.it/250x180">
+                                            <img src="https://placehold.it/600x400" style="width:100%;" class="img-responsive">
                                         </li>
-                                        <li data-thumb="http://placehold.it/250x180">
-                                            <img src="http://placehold.it/600x400" style="width:100%;" class="img-responsive">
+                                        <li data-thumb="https://placehold.it/250x180">
+                                            <img src="https://placehold.it/600x400" style="width:100%;" class="img-responsive">
                                         </li>
                                     </ul>
                                 </div>
@@ -185,7 +185,7 @@
                                         <strong class="details-underheadline-cabin-details">Sleeping places: </strong><p class="inh-cabin-details">{{ $cabinDetails->sleeps }}</p>
                                     @endif
 
-                                    <strong class="details-underheadline-cabin-details">Seasontimes: </strong><button class="btn btn-sm toggleSeasonTime" type="button">Click here to see open and closing time of summer and winter seasons</button> <br>
+                                    <strong class="details-underheadline-cabin-details">Seasontimes: </strong><button class="btn btn-sm toggleSeasonTime" type="button">Click here to see seasons</button> <br>
                                     <div class="seasonTimes" style="display: none;">
                                         <?php
                                         $firstYear = (int)date('Y');
