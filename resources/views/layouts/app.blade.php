@@ -100,7 +100,7 @@
 @yield('content')
 
 <div>
-    <div id="mountain"><img src="{{ asset('storage/img/bergsilhouette-grau.png') }}" class="img-responsive" alt="mountain background"></div>
+    <div id="mountain"><img src="{{ asset('storage/img/Bergsilhouette-grau.png') }}" class="img-responsive" alt="mountain background"></div>
     <div id="over-footer"></div>
 </div>
 

@@ -9,11 +9,11 @@
     <main>
         <div class="container-fluid container-fluid-home bg-3 text-center">
             <div class="col-sm-4 col-sm-4-home" id="div-advertising-home">
-                <a href="#"><img src="{{ asset('storage/img/werbung.jpg') }}" class="img-responsive" id="advertising-home" alt="advertising"></a>
+                <a href="#"><img src="{{ asset('storage/img/Werbung.jpg') }}" class="img-responsive" id="advertising-home" alt="advertising"></a>
             </div>
             <div class="row row-home">
                 <div class="col-sm-8 col-sm-8-home">
-                    <a href="#"><img src="{{ asset('storage/img/waltenbergerhaus.jpg') }}" class="img-responsive" alt="image"></a>
+                    <a href="#"><img src="{{ asset('storage/img/Waltenbergerhaus.jpg') }}" class="img-responsive" alt="image"></a>
                     <div class="navbar-picture-home" id="block_nr_1-home"><strong>Favorite Cabins</strong></div>
                 </div>
                 <br>
