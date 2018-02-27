@@ -1,12 +1,47 @@
-/* More content section */
-.morecontent span {
-    display: none;
-}
-.morelink {
-    display: block;
-}
+/* Cabin details css begin */
 
-/* Main css begin */
+/*Text in titlepicture*/
+#headliner-region{
+    position:absolute;
+    top:180px;
+    margin-left:10%;
+    text-align:left;
+    color:white;
+    opacity:0.7;
+    font-size:50px;
+}
+@media (max-width: 1349px){ #headliner-region{
+    margin-left:0;
+    padding-left:15px;
+}}
+@media (max-width: 767px){ #headliner-region{
+    margin-left:0;
+    padding-left:15px;
+    top:110px;
+    font-size:30px;
+}}
+#headliner-details{
+    position:absolute;
+    top:240px;
+    margin-left:10%;
+    text-align:left;
+    color:white;
+    opacity:0.7;
+    font-size:80px;
+}
+@media (max-width: 1349px){ #headliner-details{
+    margin-left:0;
+    padding-left:15px;
+}}
+@media (max-width: 767px){ #headliner-details{
+    margin-left:0;
+    padding-left:15px;
+    top:140px;
+    font-size:50px;
+}}
+@media (max-width: 325px){ #headliner-details{
+    font-size:40px;
+}}
 /*width for most containers*/
 @media (max-width: 767px){.container-fluid-cabin-details {
     padding-right:5px;
@@ -92,13 +127,13 @@
     border:none;
 }}
 /*Images on the left side*/
-.col-sm-7-cabin-details{
+.main-cabin-details{
     background-color:#EFEFEF;
 }
-@media (min-width: 768px){.col-sm-7-cabin-details{
+@media (min-width: 768px){.main-cabin-details{
     width:74% !important;
 }}
-@media (max-width: 767px){.col-sm-7-cabin-details{
+@media (max-width: 767px){.main-cabin-details{
     padding-left:5px;
     padding-right:5px;
 }}
@@ -176,6 +211,7 @@
 /*Booking box*/
 .col-sm-3-cabin-details{
     padding-right:0;
+    padding-left:0;
 }
 @media (min-width: 768px){.col-sm-3-cabin-details {
     width:100%;
@@ -240,11 +276,10 @@
     padding-top:9px;
     padding-bottom:9px;
     font-size:16px;
-    height:34px;
+    height:auto;
     width:58%;
 }
 @media (max-width:767px) {.label-cabin-details{
-    height:42px;
     padding-top:13px;
 }}
 @media (max-width:385px) {.label-cabin-details{
@@ -256,18 +291,12 @@
     padding-right:5px;
     width:auto !important;
 }}
-@media (max-width:1900px) and (min-width:1511px) {.label-cabin-details {
-    height:auto !important;
-}}
 @media (max-width:1510px) {.open-times-break{
     display:none;
 }}
-.s-p-a-br {
+.s-p-a-br-cabin-details {
     display:none;
 }
-@media (max-width:320px) {.label-cabin-details {
-    height:auto !important;
-}}
 @media (max-width:320px) {.s-p-a-br-cabin-details {
     display:block !important;
 }}
@@ -313,4 +342,13 @@
 @media (max-width:767px){#div-advertising-cabin-details{
     display:none;
 }}
-/* Main css end */
+
+/* Cabin details main css end */
+
+/* More content section */
+.morecontent span {
+    display: none;
+}
+.morelink {
+    display: block;
+}

@@ -42,7 +42,6 @@
 
     @isset($cabinSearchResult)
         <main>
-
             <div class="container-fluid container-fluid-cabinlist text-center">
                 @foreach($cabinSearchResult as $result)
                     <div class="panel panel-default text-left">

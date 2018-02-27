@@ -8,8 +8,6 @@
 
     @inject('calendarServices', 'App\Http\Controllers\CalendarController')
 
-    @inject('nextDayAvailability', 'App\Http\Controllers\SearchController')
-
     @isset($cabinDetails)
         <div class="container-fluid container-fluid-cabin-details bg-3 text-center">
             <div class="col-md-2 col-md-2-cabin-details"></div>
@@ -111,14 +109,14 @@
                                         </div>
                                         <div class="row row-cabin-details">
                                             <div class="col-sm-12 -cabin-details col-sm-12-cabin-details">
-                                                <h4>{!! $nextDayAvailability->bookingPossibleNextDays($cabinDetails->_id) !!}</h4>
+                                                <h4>{!! $service->bookingPossibleNextDays($cabinDetails->_id) !!}</h4>
                                                 <button type="button" class="btn btn-default btn-sm btn-space pull-right btn-booking-cabin-details btn-default-cabin-details">Add To Cart</button>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-sm-7 text-left col-sm-7-cabin-details">
+                            <div class="col-sm-3 text-left main-cabin-details">
                                 <div class="thumbnail">
                                     <ul id="image-gallery" class="gallery list-unstyled cS-hidden">
                                         <li data-thumb="http://placehold.it/250x180">
@@ -304,9 +302,6 @@
                                             @endif
                                         @endforeach
                                     @endif
-
-
-
                                 </div>
 
                             </div>

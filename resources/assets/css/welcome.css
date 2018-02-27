@@ -1,9 +1,31 @@
-/* Main css begin */
+/* Welcome page main css begin */
+/*Text in titlepicture*/
+#headliner-home{
+    position:absolute;
+    top:180px;
+    margin-left:10%;
+    margin-right:10%;
+    text-align:left;
+    opacity:0.7;
+    font-size:90px;
+    color:#fff;
+}
+@media (max-width: 1349px){ #headliner-home{
+    margin-right:0;
+    padding-right:15px;
+}}
+@media (max-width: 767px){ #headliner-home{
+    margin-right:0;
+    padding-right:15px;
+    top:110px;
+    font-size:50px;
+}}
 /*width for most containers*/
 @media (max-width: 767px){.container-fluid-home {
     padding-right:5px;
     padding-left:5px;
 }}
+
 /*Buttons*/
 .btn-filter-home{
     font-family:Segoe UI;
@@ -242,4 +264,4 @@
     margin-left:5px;
     margin-right:5px;
 }}
-/* Main css end */
+/* Welcome page main css end */
