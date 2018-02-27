@@ -92,7 +92,7 @@
 
 <div class="jumbotron">
     <div class="container text-center">
-        <img src="{{ public_path('storage/img/namloser-wetter-spitz.jpg') }}" class="img-responsive titlepicture" alt="Title picture">
+        <img src="{{ asset('storage/img/namloser-wetter-spitz.jpg') }}" class="img-responsive titlepicture" alt="Title picture">
         <h1 id="headliner-home">Find your<br>favorite Cabin</h1>
     </div>
 </div>
