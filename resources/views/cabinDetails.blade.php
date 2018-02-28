@@ -306,7 +306,7 @@
 
                             </div>
                             <div class="col-sm-4 col-sm-4-cabin-details" id="div-advertising-cabin-details">
-                                <a href="#"><img src="{{ asset('storage/img/werbung.jpg') }}" class="img-responsive" id="advertising" alt="advertising"></a>
+                                <a href="#"><img src="{{ asset('storage/img/Werbung.jpg') }}" class="img-responsive" id="advertising" alt="advertising"></a>
                             </div>
                         </div>
                     </div>
