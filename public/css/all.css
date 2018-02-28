@@ -281,6 +281,14 @@ footer {
     border-radius:0px;
     padding:6px 50px;
 }
+
+btn-filter-home:hover. btn-filter-home:focus, btn-filter-home.focus{
+    background-color:#e6e5e5;
+    color: #636b6f;
+    text-decoration:none;
+}
+
+
 /*Checkboxes*/
 .check-it-home{
     height:17px;
@@ -314,9 +322,21 @@ footer {
     border: none;
     height:75px;
 }
+
+#search-nav-home {
+    margin-top:0;
+    margin-bottom:0;
+    width:100%;
+}
+
+#cabinname{
+    border:none;
+    padding-left:15px;
+}
+
 /*Correct size of the whole filter in tablet and mobile version*/
 @media (min-width:1511px){#filter-line-home {
-    padding-top:15px;
+    padding-top:14px;
 }}
 @media (max-width:1510px){.navbar-default-home {
     height:95px;
@@ -572,6 +592,12 @@ footer {
     opacity:0.7;
     font-size:90px;
 }
+
+.hr {
+    margin-top:0;
+    margin-bottom:0;
+}
+
 @media (max-width: 1349px){ #headliner-cabinlist{
     margin-right:0;
     padding-right:15px;
@@ -729,10 +755,14 @@ footer {
 /*correct sizes for mobile etc. (3 images)*/
 .row-cabinlist{
     width:100%;
-}
-.row-cabinlist{
     margin:0;
 }
+
+/*.row-cabinlist div .row .pull-right{
+    position:absolute;
+    bottom:0px;
+}*/
+
 @media (max-width:767px) {.col-sm-4-cabinlist{
     padding-bottom:30px;
 }}
@@ -863,6 +893,11 @@ footer {
 @media (max-width: 385px){.col-sm-3 {
     padding:0 !important;
 }}
+@media(max-width: 767px){.booking-box{
+    background-color: #D1D1D1;
+    margin-bottom:0;
+    padding-bottom:22px;
+}}
 @media (min-width: 768px) and (max-width:1510px){.booking-box {
     background-color:#D1D1D1;
     margin:0;
@@ -875,13 +910,13 @@ footer {
     background-color:#D1D1D1;
     margin:0;
     padding-bottom:15px;
-    height:280px;
+    height:auto;
 }}
 @media (min-width:768px) {.col-sm-12{
     padding-top:10px;
 }}
 @media (min-width:1511px) {.button-3-bottom{
-    padding-top:30px;
+    padding-top:0px;
 }}
 /*Arrival Depature and Persons fields*/
 .col-sm-4-cabinlist{
@@ -910,6 +945,7 @@ footer {
     font-size:16px;
     height:34px;
     width:58%;
+    display:block;
 }
 @media (max-width:767px) {.label-cabinlist{
     height:42px;
@@ -938,14 +974,17 @@ footer {
 }}
 /*Booking-Button*/
 .btn-booking{
-    background-color:#A2C617;
-    width:40%;
+    border-radius:0px;
+    border:none;
+    padding:0px 5px 0px 0px;
+    background-color: #A2C617;
+    width:100%;
     height:34px;
-    padding:0;
-    font-size:16px;
     font-weight:bold;
+    font-size:16px;
 }
 @media (max-width:767px) {.btn-booking{
+    padding-top:8px;
     height:42px;
 }}
 .btn-booking:hover{
@@ -1367,3 +1406,84 @@ footer {
     background-color: #d9534f;
 }
 
+
+/* Login main css begin */
+/*Text in titlepicture*/
+#headliner-log{
+    position:absolute;
+    top:180px;
+    margin-left:10%;
+    margin-right:10%;
+    text-align:left;
+    opacity:0.7;
+    font-size:90px;
+    color:#fff;
+}
+@media (max-width: 1349px){ #headliner-log{
+    margin-right:0;
+    padding-right:15px;
+}}
+@media (max-width: 767px){ #headliner-log{
+    margin-right:0;
+    padding-right:15px;
+    top:110px;
+    font-size:50px;
+}}
+/*Main*/
+.row-log{
+    margin-left:10%;
+    margin-right:10%;
+    width:80%;
+}
+@media (max-width:1350px){.row-log{
+    width:100%;
+    margin-left:0;
+    margin-right:0;
+}}
+.panel-body-log{
+    background-color:#EFEFEF;
+}
+.col-md-8-log{
+    width:100%;
+}
+/*Headliner*/
+.panel-log>.panel-heading{
+    background-color:rgba(161, 197, 24, 0.5);
+    color:#5F6876;
+    font-weight:500;
+    border:none;
+}
+.panel-log{
+    border:none;
+}
+/*Inputs*/
+.form-control-log{
+    border:none;
+    border-radius:0px;
+}
+/*Button*/
+.btn-log{
+    border-radius:0px;
+    background-color:#A2C617;
+    border:none;
+    font-weight:normal;
+    color:#fff;
+    font-size:16px;
+}
+.btn-log:hover, .btn-log:focus:active, .btn-log:focus, .btn-log:active{
+    color:#5F6876;
+    background-color:#A2C617;
+}
+.div-btn-log a{
+    color:#A2C617;
+}
+.div-btn-log a:hover, .div-btn-log a:focus:active, .div-btn-log a:focus, .div-btn-log a:active{
+    color:#A2C617;
+    text-decoration:underline;
+}
+/*Checkboxen*/
+.check-log{
+    height:17px;
+    width:17px;
+}
+/* Login main css end */

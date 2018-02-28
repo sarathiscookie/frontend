@@ -35,6 +35,14 @@
     border-radius:0px;
     padding:6px 50px;
 }
+
+btn-filter-home:hover. btn-filter-home:focus, btn-filter-home.focus{
+    background-color:#e6e5e5;
+    color: #636b6f;
+    text-decoration:none;
+}
+
+
 /*Checkboxes*/
 .check-it-home{
     height:17px;
@@ -68,9 +76,21 @@
     border: none;
     height:75px;
 }
+
+#search-nav-home {
+    margin-top:0;
+    margin-bottom:0;
+    width:100%;
+}
+
+#cabinname{
+    border:none;
+    padding-left:15px;
+}
+
 /*Correct size of the whole filter in tablet and mobile version*/
 @media (min-width:1511px){#filter-line-home {
-    padding-top:15px;
+    padding-top:14px;
 }}
 @media (max-width:1510px){.navbar-default-home {
     height:95px;

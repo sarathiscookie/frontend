@@ -8,8 +8,8 @@ $(function(){
     /* Button click show more details */
     var showChar = 500;
     var ellipsestext = "...";
-    var moretext = "Show more";
-    var lesstext = "Show less";
+    var moretext = "View more";
+    var lesstext = "View less";
 
     var content = $(".more").html();
 

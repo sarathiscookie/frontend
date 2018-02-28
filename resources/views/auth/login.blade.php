@@ -4,10 +4,10 @@
 <div class="container">
     <div class="row">
         <div class="col-md-8 col-md-offset-2">
-            <div class="panel panel-default">
-                <div class="panel-heading">Login</div>
+            <div class="panel panel-log panel-default">
+                <div class="panel-heading">Login</div> <br>
 
-                <div class="panel-body">
+                <div class="panel-body panel-body-log">
                     @if (session('status'))
                         <div class="alert alert-success">
                             {{ session('status') }}
@@ -53,15 +53,15 @@
                             <div class="col-md-6 col-md-offset-4">
                                 <div class="checkbox">
                                     <label>
-                                        <input type="checkbox" name="remember" {{ old('remember') ? 'checked' : '' }}> Remember Me
+                                        <input type="checkbox" class="check-log" name="remember" {{ old('remember') ? 'checked' : '' }}> Remember Me
                                     </label>
                                 </div>
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <div class="col-md-8 col-md-offset-4">
-                                <button type="submit" class="btn btn-primary">
+                            <div class="col-md-8 col-md-offset-4 div-btn-log">
+                                <button type="submit" class="btn btn-primary btn-log">
                                     Login
                                 </button>
 
