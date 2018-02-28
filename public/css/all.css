@@ -1436,6 +1436,33 @@ btn-filter-home:hover. btn-filter-home:focus, btn-filter-home.focus{
     background-color: #d9534f;
 }
 
+/* Calendar UI */
+.ui-datepicker{
+    border-radius:0px;
+    border:none;
+
+}
+.ui-datepicker .ui-datepicker-header{
+    border-radius:0px;
+    border:none;
+    background-color: rgba(161, 197, 24, 0.5);
+}
+.ui-datepicker-month{
+    border-left:none;
+    border-top:none;
+    border-bottom:none;
+    border-right:1px solid #5F6876;
+}
+.ui-datepicker-year{
+    border:none;
+}
+.ui-state-default{
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    border:none;
+}
+.ui-state-default:hover{
+    box-shadow: 0 10px 10px rgba(0, 0, 0, 0.4);
+}
 
 /* Login main css begin */
 /*Text in titlepicture*/
