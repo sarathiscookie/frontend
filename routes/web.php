@@ -67,6 +67,18 @@ Route::get('/user/verify/{token}', 'Auth\RegisterController@verifyUser');
 
 /*
 |--------------------------------------------------------------------------
+| Cabin
+|--------------------------------------------------------------------------
+|
+| Route for cabin details
+|
+*/
+
+/* Cabin details */
+Route::get('/cabin/details/{id}', 'CabinDetailsController@index')->name('cabin.details');
+
+/*
+|--------------------------------------------------------------------------
 | Middleware group for authentication
 |--------------------------------------------------------------------------
 |
@@ -74,20 +86,6 @@ Route::get('/user/verify/{token}', 'Auth\RegisterController@verifyUser');
 |
 */
 Route::group(['middleware' => ['auth']], function () {
-    /*
-     |--------------------------------------------------------------------------
-     | Cabin
-     |--------------------------------------------------------------------------
-     |
-     | Route for cabin details
-     |
-     */
-
-    /* Cabin details */
-    Route::get('/cabin/details/{id}', 'CabinDetailsController@index')->name('cabin.details');
-
-
-
 
 });
 
