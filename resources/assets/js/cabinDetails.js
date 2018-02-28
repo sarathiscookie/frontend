@@ -6,7 +6,7 @@ $(function(){
     });
 
     /* Button click show more details */
-    var showChar = 500;
+    var showChar = 375;
     var ellipsestext = "...";
     var moretext = "View more";
     var lesstext = "View less";

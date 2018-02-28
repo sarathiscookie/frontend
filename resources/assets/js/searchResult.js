@@ -1,6 +1,6 @@
 $(function() {
     // Configure/customize these variables.
-    var cabinListShowChar = 500;  // How many characters are shown by default
+    var cabinListShowChar = 375;  // How many characters are shown by default
     var cabinListEllipsesText = "...";
     var cabinListMoreText = "View more";
     var cabinListLessText = "View less";

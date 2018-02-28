@@ -4,8 +4,8 @@
 <div class="container">
     <div class="row">
         <div class="col-md-8 col-md-offset-2">
-            <div class="panel panel-default">
-                <div class="panel-heading">Register</div>
+            <div class="panel panel-default panel-register">
+                <div class="panel-heading">Register</div> <br>
 
                 <div class="panel-body">
                     <form class="form-horizontal" method="POST" action="{{ route('register') }}">
@@ -76,10 +76,10 @@
                         </div>
 
 
-                        <div class="col-md-4">
+                        <div class="col-md-4 check-register">
                             <div class="checkbox {{ $errors->has('dataProtection') ? ' has-error' : '' }}">
                                 <label for="dataProtection">
-                                    <input type="checkbox" name="dataProtection" id="dataProtection" value="1"> <a style="text-decoration: none; cursor: pointer;">Data protection</a>
+                                    <input type="checkbox" name="dataProtection" id="dataProtection" class="check-it-register" value="1"> <a class="confirm-terms-register" style="text-decoration: none; cursor: pointer;">Data protection</a>
                                 </label>
                                 @if ($errors->has('dataProtection'))
                                     <span class="help-block">
@@ -89,10 +89,10 @@
                             </div>
                         </div>
 
-                        <div class="col-md-4">
+                        <div class="col-md-4 check-register">
                             <div class="checkbox {{ $errors->has('termsService') ? ' has-error' : '' }}">
                                 <label for="termsService">
-                                    <input type="checkbox" name="termsService" id="termsService" value="1"> <a style="text-decoration: none; cursor: pointer;">Terms of service</a>
+                                    <input type="checkbox" name="termsService" id="termsService" class="check-it-register" value="1"> <a class="confirm-terms-register" style="text-decoration: none; cursor: pointer;">Terms of service</a>
                                 </label>
                                 @if ($errors->has('termsService'))
                                     <span class="help-block">
@@ -102,10 +102,10 @@
                             </div>
                         </div>
 
-                        <div class="col-md-4">
+                        <div class="col-md-4 check-register">
                             <div class="checkbox {{ $errors->has('newsletter') ? ' has-error' : '' }}">
                                 <label for="newsletter">
-                                    <input type="checkbox" name="newsletter" id="newsletter" value="1"> I want to sign up for the newsletter
+                                    <input type="checkbox" name="newsletter" id="newsletter" class="check-it-register" value="1"> I want to sign up for the newsletter
                                 </label>
                                 @if ($errors->has('newsletter'))
                                     <span class="help-block">
@@ -116,8 +116,8 @@
                         </div>
 
                         <div class="form-group">
-                            <div class="col-md-6 col-md-offset-4">
-                                <button type="submit" class="btn btn-primary">
+                            <div class="col-md-6 col-md-offset-4 div-btn-register">
+                                <button type="submit" class="btn btn-primary btn-register">
                                     Register
                                 </button>
                             </div>

@@ -22,18 +22,19 @@ mix.styles([
     'resources/assets/css/frontend.css',
     'resources/assets/css/welcome.css',
     'resources/assets/css/search.css',
+    'resources/assets/css/calendar.css',
     'resources/assets/css/searchResult.css',
     'resources/assets/css/cabinDetails.css',
-    'resources/assets/css/calendar.css',
-    'resources/assets/css/login.css'
+    'resources/assets/css/login.css',
+    'resources/assets/css/register.css'
 ], 'public/css/all.css');
 
 mix.scripts([
     'resources/assets/js/welcome.js',
     'resources/assets/js/search.js',
+    'resources/assets/js/calendar.js',
     'resources/assets/js/searchResult.js',
-    'resources/assets/js/cabinDetails.js',
-    'resources/assets/js/calendar.js'
+    'resources/assets/js/cabinDetails.js'
 ], 'public/js/all.js');
 
 /* Js and css for plugins */

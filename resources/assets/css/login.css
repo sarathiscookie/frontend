@@ -1,26 +1,4 @@
 /* Login main css begin */
-/*Text in titlepicture*/
-#headliner-log{
-    position:absolute;
-    top:180px;
-    margin-left:10%;
-    margin-right:10%;
-    text-align:left;
-    opacity:0.7;
-    font-size:90px;
-    color:#fff;
-}
-@media (max-width: 1349px){ #headliner-log{
-    margin-right:0;
-    padding-right:15px;
-}}
-@media (max-width: 767px){ #headliner-log{
-    margin-right:0;
-    padding-right:15px;
-    top:110px;
-    font-size:50px;
-}}
-/*Main*/
 .row-log{
     margin-left:10%;
     margin-right:10%;

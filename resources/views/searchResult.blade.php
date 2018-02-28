@@ -57,7 +57,7 @@
                                         {{ strip_tags(str_replace("&nbsp;", " ", $result->other_details)) }}
                                     </div>
 
-                                    <a href="{{ route('cabin.details', ['id' => base64_encode($result->_id.env('MD5_Key'))]) }}" class="btn btn-default btn-sm btn-details">Click here for more details and price</a>
+                                    <a href="{{ route('cabin.details', ['id' => base64_encode($result->_id.env('MD5_Key'))]) }}" class="btn btn-default btn-sm btn-details">More details and price</a>
 
                                     <div class="row" style="float:none; text-align:right;">
                                         <div class="col-sm-12">
