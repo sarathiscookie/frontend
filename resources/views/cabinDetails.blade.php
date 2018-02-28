@@ -121,50 +121,10 @@
                                 </div>
                             </div>
                             <div class="col-sm-3 text-left main-cabin-details">
-                                <div class="thumbnail">
-                                    <ul id="image-gallery" class="gallery list-unstyled cS-hidden">
-                                        <li data-thumb="https://placehold.it/250x180">
-                                            <img src="https://placehold.it/600x400" style="width:100%;" class="img-responsive">
-                                        </li>
-                                        <li data-thumb="https://placehold.it/250x180">
-                                            <img src="https://placehold.it/600x400" style="width:100%;" class="img-responsive">
-                                        </li>
-                                        <li data-thumb="https://placehold.it/250x180">
-                                            <img src="https://placehold.it/600x400" style="width:100%;" class="img-responsive">
-                                        </li>
-                                        <li data-thumb="https://placehold.it/250x180">
-                                            <img src="https://placehold.it/600x400" style="width:100%;" class="img-responsive">
-                                        </li>
-                                        <li data-thumb="https://placehold.it/250x180">
-                                            <img src="https://placehold.it/600x400" style="width:100%;" class="img-responsive">
-                                        </li>
-                                        <li data-thumb="https://placehold.it/250x180">
-                                            <img src="https://placehold.it/600x400" style="width:100%;" class="img-responsive">
-                                        </li>
-                                        <li data-thumb="https://placehold.it/250x180">
-                                            <img src="https://placehold.it/600x400" style="width:100%;" class="img-responsive">
-                                        </li>
-                                        <li data-thumb="https://placehold.it/250x180">
-                                            <img src="https://placehold.it/600x400" style="width:100%;" class="img-responsive">
-                                        </li>
-                                        <li data-thumb="https://placehold.it/250x180">
-                                            <img src="https://placehold.it/600x400" style="width:100%;" class="img-responsive">
-                                        </li>
-                                        <li data-thumb="https://placehold.it/250x180">
-                                            <img src="https://placehold.it/600x400" style="width:100%;" class="img-responsive">
-                                        </li>
-                                        <li data-thumb="https://placehold.it/250x180">
-                                            <img src="https://placehold.it/600x400" style="width:100%;" class="img-responsive">
-                                        </li>
-                                        <li data-thumb="https://placehold.it/250x180">
-                                            <img src="https://placehold.it/600x400" style="width:100%;" class="img-responsive">
-                                        </li>
-                                    </ul>
-                                </div>
-
+                                <h2 class="details-headline-cabin-details">Info</h2>
                                 <div class="details-info-cabin-details more">{{ strip_tags(str_replace("&nbsp;", " ", $cabinDetails->other_details)) }}</div>
                                 <div class="row">
-                                    <div class="col-sm-12 pull-right">
+                                    <div class="col-sm-12">
                                         @if($cabinDetails->interior)
                                             @foreach($cabinDetails->interior as $interior)
                                                 <button type="button" class="btn btn-default btn-sm btn-space pull-right facility-btn-cabin-details btn-default-cabin-details" data-toggle="tooltip" data-placement="bottom" title="{{ $service->interiorLabel($interior) }}">
@@ -176,7 +136,6 @@
                                 </div>
 
                                 <div class="detail-points-cabin-details">
-                                    <h2 class="details-headline-cabin-details">Info</h2>
                                     @if($service->userDetails($cabinDetails->cabin_owner))
                                         <strong class="details-underheadline-cabin-details">Cabinowner: </strong><p class="inh-cabin-details">{{ $service->userDetails($cabinDetails->cabin_owner)->usrFirstname }} {{ $service->userDetails($cabinDetails->cabin_owner)->usrLastname }}</p></h5>
                                     @endif
@@ -306,6 +265,47 @@
                                             @endif
                                         @endforeach
                                     @endif
+                                </div>
+
+                                <div class="thumbnail">
+                                    <ul id="image-gallery" class="gallery list-unstyled cS-hidden">
+                                        <li data-thumb="https://placehold.it/250x180">
+                                            <img src="https://placehold.it/600x400" style="width:100%;" class="img-responsive">
+                                        </li>
+                                        <li data-thumb="https://placehold.it/250x180">
+                                            <img src="https://placehold.it/600x400" style="width:100%;" class="img-responsive">
+                                        </li>
+                                        <li data-thumb="https://placehold.it/250x180">
+                                            <img src="https://placehold.it/600x400" style="width:100%;" class="img-responsive">
+                                        </li>
+                                        <li data-thumb="https://placehold.it/250x180">
+                                            <img src="https://placehold.it/600x400" style="width:100%;" class="img-responsive">
+                                        </li>
+                                        <li data-thumb="https://placehold.it/250x180">
+                                            <img src="https://placehold.it/600x400" style="width:100%;" class="img-responsive">
+                                        </li>
+                                        <li data-thumb="https://placehold.it/250x180">
+                                            <img src="https://placehold.it/600x400" style="width:100%;" class="img-responsive">
+                                        </li>
+                                        <li data-thumb="https://placehold.it/250x180">
+                                            <img src="https://placehold.it/600x400" style="width:100%;" class="img-responsive">
+                                        </li>
+                                        <li data-thumb="https://placehold.it/250x180">
+                                            <img src="https://placehold.it/600x400" style="width:100%;" class="img-responsive">
+                                        </li>
+                                        <li data-thumb="https://placehold.it/250x180">
+                                            <img src="https://placehold.it/600x400" style="width:100%;" class="img-responsive">
+                                        </li>
+                                        <li data-thumb="https://placehold.it/250x180">
+                                            <img src="https://placehold.it/600x400" style="width:100%;" class="img-responsive">
+                                        </li>
+                                        <li data-thumb="https://placehold.it/250x180">
+                                            <img src="https://placehold.it/600x400" style="width:100%;" class="img-responsive">
+                                        </li>
+                                        <li data-thumb="https://placehold.it/250x180">
+                                            <img src="https://placehold.it/600x400" style="width:100%;" class="img-responsive">
+                                        </li>
+                                    </ul>
                                 </div>
 
                             </div>

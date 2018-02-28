@@ -59,11 +59,11 @@
 
                                     <a href="{{ route('cabin.details', ['id' => base64_encode($result->_id.env('MD5_Key'))]) }}" class="btn btn-default btn-sm btn-details">Click here for more details and price</a>
 
-                                    <div class="row">
-                                        <div class="col-sm-12 pull-right">
+                                    <div class="row" style="float:none; text-align:right;">
+                                        <div class="col-sm-12">
                                             @if($result->interior)
                                                 @foreach($result->interior as $interior)
-                                                    <button type="button" class="btn btn-default btn-sm btn-space pull-right facility-btn" data-toggle="tooltip" data-placement="bottom" title="{{ $service->interiorLabel($interior) }}">
+                                                    <button type="button" class="btn btn-default btn-sm btn-space facility-btn" data-toggle="tooltip" data-placement="bottom" title="{{ $service->interiorLabel($interior) }}">
                                                         <span @if($interior === 'Food à la carte') class="glyphicon glyphicon-credit-card" @elseif($interior === 'breakfast') class="glyphicon glyphicon-glass" @else class="glyphicon glyphicon-home" @endif aria-hidden="true"></span>
                                                     </button>
                                                 @endforeach
@@ -93,10 +93,10 @@
                                                             @if($season->summerSeason === 1 && $season->summerSeasonStatus === 'open' && $season->summerSeasonYear === $i)
                                                                 <div class="row">
                                                                     <div class="col-sm-6">
-                                                                        <h5><b>Summer open: </b><small>{{ $season->earliest_summer_open->format('d.m.y') }}</small></h5>
+                                                                        <h6><b>Summer open: </b><small>{{ $season->earliest_summer_open->format('d.m.y') }}</small></h6>
                                                                     </div>
                                                                     <div class="col-sm-6">
-                                                                        <h5><b>Summer close: </b><small>{{ $season->latest_summer_close->format('d.m.y') }}</small></h5>
+                                                                        <h6><b>Summer close: </b><small>{{ $season->latest_summer_close->format('d.m.y') }}</small></h6>
                                                                     </div>
                                                                 </div>
                                                             @endif
@@ -104,10 +104,10 @@
                                                             @if($season->winterSeason === 1 && $season->winterSeasonStatus === 'open' && $season->winterSeasonYear === $i)
                                                                 <div class="row">
                                                                     <div class="col-sm-6">
-                                                                        <h5><b>Winter open: </b><small>{{ $season->earliest_winter_open->format('d.m.y') }}</small></h5>
+                                                                        <h6><b>Winter open: </b><small>{{ $season->earliest_winter_open->format('d.m.y') }}</small></h6>
                                                                     </div>
                                                                     <div class="col-sm-6">
-                                                                        <h5><b>Winter close: </b><small>{{ $season->latest_winter_close->format('d.m.y') }}</small></h5>
+                                                                        <h6><b>Winter close: </b><small>{{ $season->latest_winter_close->format('d.m.y') }}</small></h6>
                                                                     </div>
                                                                 </div>
                                                             @endif
