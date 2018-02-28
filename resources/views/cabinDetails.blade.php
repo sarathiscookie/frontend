@@ -110,7 +110,11 @@
                                         <div class="row row-cabin-details">
                                             <div class="col-sm-12 -cabin-details col-sm-12-cabin-details">
                                                 <h4>{!! $service->bookingPossibleNextDays($cabinDetails->_id) !!}</h4>
-                                                <button type="button" class="btn btn-default btn-sm btn-space pull-right btn-booking-cabin-details btn-default-cabin-details">Add To Cart</button>
+                                                @guest
+                                                    <a href="{{ route('login') }}" class="btn btn-default btn-sm btn-space pull-right btn-booking">Add To Cart</a>
+                                                    @else
+                                                        <a href="" class="btn btn-default btn-sm btn-space pull-right btn-booking">Add To Cart</a>
+                                                @endguest
                                             </div>
                                         </div>
                                     </div>
