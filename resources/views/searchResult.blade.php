@@ -53,7 +53,12 @@
 
                                 <div class="col-sm-7 text-left">
                                     <h2 class="headliner-cabinname">{{ $result->name }}&nbsp;</h2><h3 class="headliner-cabin">{{ $result->region }} - {{ $result->country }} ({{ number_format($result->height, 0, '', '.') }} m)</h3>
-                                    <div class="cabinListMore">{{ strip_tags(str_replace("&nbsp;", " ", $result->other_details)) }}</div>
+                                    <div class="cabinListMore">
+                                        {{ strip_tags(str_replace("&nbsp;", " ", $result->other_details)) }}
+                                    </div>
+
+                                    <a href="{{ route('cabin.details', ['id' => base64_encode($result->_id.env('MD5_Key'))]) }}" class="btn btn-default btn-sm btn-details">Click here for more details and price</a>
+
                                     <div class="row">
                                         <div class="col-sm-12 pull-right">
                                             @if($result->interior)
@@ -160,9 +165,9 @@
                                                     <h4>{!! $cabinServices->bookingPossibleNextDays($result->_id) !!}</h4>
                                                     <!-- Authentication Links -->
                                                     @guest
-                                                        <a href="{{ route('login') }}" class="btn btn-default btn-sm btn-space pull-right btn-booking">View price</a>
+                                                        <a href="{{ route('login') }}" class="btn btn-default btn-sm btn-space pull-right btn-booking">Add To Cart</a>
                                                         @else
-                                                            <a href="{{ route('cabin.details', ['id' => base64_encode($result->_id.env('MD5_Key'))]) }}" class="btn btn-default btn-sm btn-space pull-right btn-booking">View Price</a>
+                                                            <a href="" class="btn btn-default btn-sm btn-space pull-right btn-booking">Add To Cart</a>
                                                     @endguest
                                                 </div>
                                             </div>
