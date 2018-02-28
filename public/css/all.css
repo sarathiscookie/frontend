@@ -976,7 +976,7 @@ btn-filter-home:hover. btn-filter-home:focus, btn-filter-home.focus{
 .btn-booking{
     border-radius:0px;
     border:none;
-    padding:0px 5px 0px 0px;
+    padding:5px 0px 0px 0px;
     background-color: #A2C617;
     width:100%;
     height:34px;
