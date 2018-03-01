@@ -87,6 +87,16 @@ Route::get('/cabin/details/{id}', 'CabinDetailsController@index')->name('cabin.d
 */
 Route::group(['middleware' => ['auth']], function () {
 
+    /*
+    |--------------------------------------------------------------------------
+    | Middleware group for authentication
+    |--------------------------------------------------------------------------
+    |
+    | Route for after authentication
+    |
+    */
+    /* Cart listing */
+    Route::get('/cart', 'CartController@index')->name('cart');
 });
 
 

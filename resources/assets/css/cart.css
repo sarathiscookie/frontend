@@ -1,0 +1,287 @@
+/* Cart main css begin */
+.glyphicon-remove-booking1{
+    color: #B40404;
+    position:absolute;
+    right:0;
+    top:10px;
+}
+@media (max-width: 767px){.glyphicon-remove-booking1 {
+    top:-350px;
+}}
+/*width for most containers*/
+@media (max-width: 767px){.container-fluid-booking1 {
+    padding-right:5px;
+    padding-left:5px;
+}}
+/*Checkboxes*/
+.dropdown-menu-booking1>li>a{
+    color:#5F6876;
+    font-size:15px;
+}
+/*Checkboxes*/
+.check-it-booking1{
+    height:17px;
+    width:17px;
+    margin-left:10px !important;
+    white-space:nowrap;
+}
+.check-it-list-booking1{
+    white-space:nowrap;
+    padding-right:10px;
+    padding-bottom:5px;
+}
+.check-it-list-booking1:hover {
+    background-color:#EFEFEF;
+}
+/*Headline under titlepicture*/
+/*kind of opacity background (the text is not opacity with rgba)*/
+.navbar-default-booking1{
+    background-color: #D1D1D1;
+    border: none;
+    height:75px;
+    text-align:left;
+    padding-left:15px;
+    padding-right:15px;
+}
+@media (max-width:424px){.navbar-default-booking1{
+    height:105px;
+}}
+@media (max-width:1349px){.col-md-8 {
+    width:100% !important;
+}}
+@media (min-width:1511px){ div .container-fluid-booking1{
+    padding-left:0px;
+    padding-right:0px;
+    margin:0;
+}}
+@media (min-width:992px){#list-filter-booking1{
+    width:80%;
+}}
+#list-filter-booking1{
+    padding-left:0;
+    padding-right:0;
+}
+.col-md-2-booking1{width:10% !important
+}
+.cabin-head-booking1{
+    float:left;
+}
+.cabin-head-booking1:last-child{
+    float:right;
+}
+@media (max-width:424px){.cabin-head-booking1:last-child{
+    float:none;
+}}
+@media (max-width:424px){.cabin-head-booking1{
+    float:none;
+}}
+
+/*Main*/
+/*correct sizes for mobile etc. (3 images)*/
+.row-booking1{
+    width:100%;
+}
+.row-booking1{
+    margin:0;
+}
+@media (max-width:767px) {.col-sm-4-booking1{
+    padding-bottom:30px;
+}}
+/*Arrival Depature and Persons fields*/
+.col-sm-4-booking1{
+    padding-right:10px;
+    margin-bottom:10px;
+    width:50%;
+    padding-left:0;
+}
+@media (max-width:767px){.col-sm-4-booking1{
+    float:left;
+}}
+.form-control-booking1{
+    border-radius:0px;
+    font-size:16px;
+    height:36px;
+}
+@media (min-width:1511px) and (max-width:1811px){.form-control-booking1{
+    padding-left:3px!important;
+    padding-right:0px!important;
+}}
+.col-sm-4-f-booking1 {
+    clear:left;
+}
+.comment-booking1{
+    width:100%;
+}
+.comment-box-booking1{
+    height:105px;
+}
+
+/*List*/
+/*Whole list*/
+.panel-body-booking1{
+    padding:0;
+}
+.panel-booking1{
+    border:none;
+    border-radius:0px;
+}
+@media (min-width: 768px){.panel-booking1{
+    margin-bottom:20px;
+    background-color:#EFEFEF;
+}}
+@media (max-width: 767px){.panel-booking1{
+    background-color:#EFEFEF;
+    margin-bottom:20px;
+}}
+@media (min-width: 768px){.panel-default-booking1{
+    border:none;
+}}
+/*Images on the left side*/
+@media (min-width: 768px){.col-sm-2-booking1{
+    width:35%;
+}}
+@media (max-width: 1510px) and (min-width: 768px){.col-sm-2-booking1{
+    padding-top:15px !important;
+    padding-left:15px !important;
+}}
+@media (max-width: 1680px) and (min-width: 1511px){.col-sm-2-booking1{
+    width:30%
+}}
+@media (min-width: 1681px){.col-sm-2-booking1{
+    width:25%;
+}}
+.img-thumbnail-booking1{
+    padding:0;
+    border:none;
+    border-radius:0px;
+}
+.col-sm-2-booking1{
+    padding:0;
+}
+/*Middle-boxes*/
+@media (min-width: 1680px){.col-sm-7-booking1{
+    width:50% !important;
+}}
+@media (max-width: 1680px) and (min-width: 1511px){.col-sm-7-booking1{
+    width:45% !important;
+}}
+@media (min-width: 768px){.col-sm-7-booking1{
+    width:65%;
+}}
+@media (max-width: 768px){.col-sm-7-booking1{
+    padding-left:15px;
+    padding-right:15px;
+}}
+/*Details box*/
+.col-sm-r-booking1{
+    text-align:left;
+    float:right;
+    margin-bottom:20px;
+}
+@media (max-width: 1510px){.col-sm-r-booking1{
+    margin-left:0px;
+    margin-right:0px;
+    margin-bottom:0px;
+}}
+@media (max-width: 767px){.col-sm-r-booking1{
+    float:none;
+}}
+.col-sm-3-booking1{
+    padding-right:0;
+}
+@media (min-width: 768px){.col-sm-3-booking1 {
+    width:100%;
+    padding-left:0;
+    padding-top:15px;
+    padding-bottom:15px;
+}}
+@media (min-width: 1511px){.col-sm-3-booking1 {
+    width:25%;
+    padding-top:0;
+    padding-bottom:0px;
+}}
+@media (max-width: 767px){.col-sm-3-booking1 {
+    padding:0 !important;
+}}
+#amount_box-booking1{
+    height:auto;
+}
+.bottom-boxes-booking1{
+    margin-left:0 !important;
+    margin-right:0 !important;
+}
+.booking-box-booking1{
+    padding-left:10px;
+    padding-right:10px;
+}
+@media (min-width: 768px) and (max-width:1510px){.booking-box-booking1 {
+    background-color:#D1D1D1;
+    margin:0;
+    padding-bottom:15px;
+    margin-left:15px;
+    margin-right:15px;
+    height:auto;
+}}
+@media (max-width: 767px){.booking-box-booking1 {
+    background-color:#D1D1D1;
+    padding-bottom:15px;
+}}
+@media (min-width: 1511px){.booking-box-booking1 {
+    background-color:#D1D1D1;
+    margin:0;
+    padding-bottom:15px;
+    height:280px;
+}}
+.col-sm-12-booking1{
+    padding-top:10px;
+}
+@media (max-width: 767px){.col-sm-12-booking1{
+    padding-bottom:10px;
+}}
+.col-sm-12-extra-booking1{
+    background-color:#EFEFEF;
+}
+@media (min-width: 1511px){.depsit-booking1{
+    height:117px;
+}}
+.month-opening-booking1{
+    padding-left:0;
+    padding-right:0;
+}
+.info-listing-booking1{
+    float:left;
+}
+.info-listing-price-booking1{
+    text-align:right;
+}
+/*Buttons on the ground*/
+#btn-ground-booking1{
+    float:left;
+}
+#btn-ground-2-booking1{
+    text-align:right;
+}
+.btn-default-booking1{
+    background-color:#A2C617;
+    color:#fff;
+}
+.btn-details-booking1{
+    border-radius:0px;
+    background-color:#A2C617;
+    border:none;
+    font-weight:normal;
+    color:#fff;
+    height:34px;
+    font-size:16px;
+}
+.btn-amount-booking1{
+    float:left;
+}
+#cash-amount-booking1{
+    text-align:right;
+    padding-top:10px;
+    padding-bottom:6px;
+    padding-right:15px;
+    background-color:#EFEFEF;
+}
+/* Cart main css end */

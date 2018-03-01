@@ -25,6 +25,7 @@ mix.styles([
     'resources/assets/css/calendar.css',
     'resources/assets/css/searchResult.css',
     'resources/assets/css/cabinDetails.css',
+    'resources/assets/css/cart.css',
     'resources/assets/css/login.css',
     'resources/assets/css/register.css'
 ], 'public/css/all.css');

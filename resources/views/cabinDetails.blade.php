@@ -113,7 +113,7 @@
                                                 @guest
                                                     <a href="{{ route('login') }}" class="btn btn-default btn-sm btn-space pull-right btn-booking">Add To Cart</a>
                                                     @else
-                                                        <a href="" class="btn btn-default btn-sm btn-space pull-right btn-booking">Add To Cart</a>
+                                                        <a href="/cart" class="btn btn-default btn-sm btn-space pull-right btn-booking">Add To Cart</a>
                                                 @endguest
                                             </div>
                                         </div>
