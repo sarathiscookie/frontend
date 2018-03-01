@@ -66,7 +66,7 @@ class CalendarController extends Controller
     public function calendar($cabinId)
     {
         $monthBegin              = date("Y-m-d", strtotime(' +1 day'));
-        $monthEnd                = date("Y-m-t 23:59:59");
+        $monthEnd                = date("Y-m-t 23:59:59", strtotime($monthBegin));
 
         $holiday_prepare         = [];
         $holidayDates            = [];

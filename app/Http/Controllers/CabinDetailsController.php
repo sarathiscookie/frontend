@@ -6,6 +6,11 @@ use Illuminate\Http\Request;
 use App\Cabin;
 use App\User;
 use App\Season;
+use App\Booking;
+use App\MountSchoolBooking;
+use DateTime;
+use DatePeriod;
+use DateInterval;
 
 class CabinDetailsController extends Controller
 {
@@ -97,6 +102,23 @@ class CabinDetailsController extends Controller
         else {
             return $facilities;
         }
+    }
+
+    /**
+     * To generate date between two dates.
+     *
+     * @param  string  $now
+     * @param  string  $end
+     * @return \Illuminate\Http\Response
+     */
+    protected function generateDates($now, $end){
+        $period = new DatePeriod(
+            new DateTime($now),
+            new DateInterval('P1D'),
+            new DateTime($end)
+        );
+
+        return $period;
     }
 
     /**
