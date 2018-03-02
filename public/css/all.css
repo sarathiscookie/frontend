@@ -626,13 +626,20 @@ btn-filter-home:hover. btn-filter-home:focus, btn-filter-home.focus{
 .ui-datepicker-year{
     border:none;
 }
-.ui-state-default{
+.ui-datepicker-calendar tbody tr td{
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
     border:none;
 }
-.ui-state-default:hover{
+.ui-datepicker-calendar tbody tr td:hover{
     box-shadow: 0 10px 10px rgba(0, 0, 0, 0.4);
 }
+.ui-datepicker-calendar tbody tr .ui-datepicker-other-month{
+    box-shadow: none !important;
+}
+.ui-datepicker-calendar tbody tr .ui-datepicker-other-month:hover{
+    box-shadow: none !important;
+}
+
 
 /* Search result main css begin */
 /*Text in titlepicture*/
@@ -1399,6 +1406,7 @@ hr {
     font-size:16px;
     height:auto;
     width:100%;
+    margin-bottom:10px;
 }
 @media (max-width:767px) {.label-cabin-details{
     padding-top:13px;
