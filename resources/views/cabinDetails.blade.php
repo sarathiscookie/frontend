@@ -141,6 +141,7 @@
                                     @endif
 
                                     <strong class="details-underheadline-cabin-details">Club section: </strong><p class="inh-cabin-details">{{ $cabinDetails->club }}</p>
+
                                     @if( $cabinDetails->sleeping_place != 1 )
                                         <strong class="details-underheadline-cabin-details">Beds: </strong><p class="inh-cabin-details">{{ $cabinDetails->beds }}</p>
                                         <strong class="details-underheadline-cabin-details">Dorms: </strong><p class="inh-cabin-details">{{ $cabinDetails->dormitory }}</p>
@@ -230,10 +231,11 @@
                                 @endif
 
                                 <div class="detail-points-cabin-details">
+
                                     <h2 class="details-headline-cabin-details">Reservation / cancelation</h2>
                                     <strong class="details-underheadline-cabin-details">Deposit: </strong><p class="inh-cabin-details">{{ $cabinDetails->prepayment_amount }} &euro;</p>
 
-                                    <strong class="details-underheadline-cabin-details">Cancelation deadline</strong>
+                                    <strong class="details-underheadline-cabin-details">Cancelation deadline: </strong>
                                     <p class="inh-cabin-details">
                                         @foreach($service->reservationCancel() as $key => $type)
                                             @if($key == $cabinDetails->reservation_cancel)
@@ -242,27 +244,32 @@
                                         @endforeach
                                     </p>
 
-                                    <strong class="details-underheadline-cabin-details">Check-in</strong><p class="inh-cabin-details">{{ $cabinDetails->checkin_from }}</p>
+                                    <strong class="details-underheadline-cabin-details">Check-in: </strong><p class="inh-cabin-details">{{ $cabinDetails->checkin_from }}</p>
 
-                                    <strong class="details-underheadline-cabin-details">Check-out</strong><p class="inh-cabin-details">{{ $cabinDetails->reservation_to }}</p>
+                                    <strong class="details-underheadline-cabin-details">Check-out: </strong><p class="inh-cabin-details">{{ $cabinDetails->reservation_to }}</p>
+
+                                    @if($cabinDetails->halfboard == '1' && $cabinDetails->halfboard_price != '')
+                                        <div>
+                                            <strong class="details-underheadline-cabin-details">Halfboard: </strong>
+                                            <p class="label label-default">{{ $cabinDetails->halfboard_price }} &euro;</p>
+                                        </div>
+                                    @endif
                                 </div>
 
                                 <div class="detail-points-cabin-details">
                                     <h2 class="details-headline-cabin-details">Tour</h2>
                                     @if($cabinDetails->tours)
-                                        <strong class="details-underheadline-cabin-details">Hikes</strong><p class="inh-cabin-details">{{ $cabinDetails->tours }}</p>
+                                        <strong class="details-underheadline-cabin-details">Hikes: </strong><p class="inh-cabin-details">{{ $cabinDetails->tours }}</p>
                                     @endif
 
                                     @if($cabinDetails->reachable)
-                                        <strong class="details-underheadline-cabin-details">Regable from</strong><p class="inh-cabin-details">{{ $cabinDetails->reachable }}</p>
+                                        <strong class="details-underheadline-cabin-details">Regable from: </strong><p class="inh-cabin-details">{{ $cabinDetails->reachable }}</p>
                                     @endif
 
                                     @if($cabinDetails->neighbour_cabin)
                                         <strong class="details-underheadline-cabin-details">Neighbour Cabins: </strong>
-                                        @foreach($service->neighbourCabins() as $neighbour)
-                                            @if(in_array($neighbour->_id, $cabinDetails->neighbour_cabin))
-                                                <span class="label label-default">{{ $neighbour->name }}</span>
-                                            @endif
+                                        @foreach($cabinDetails->neighbour_cabin as $neighbour)
+                                           <span class="label label-default">{{ $service->neighbourCabins($neighbour) }}</span>
                                         @endforeach
                                     @endif
                                 </div>
