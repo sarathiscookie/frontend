@@ -240,16 +240,17 @@ class CabinDetailsController extends Controller
     /**
      * Get list of cabin when injection occurs.
      *
+     * @param  string  $neighbour
      * @return array
      */
-    public function neighbourCabins()
+    public function neighbourCabins($neighbour)
     {
-        $neighbourCabins     = Cabin::select('_id', 'name')
+        $neighbourCabins     = Cabin::select('name')
             ->where('is_delete', 0)
-            ->get();
+            ->find($neighbour);
 
         if(count($neighbourCabins) > 0) {
-            return $neighbourCabins;
+            return $neighbourCabins->name;
         }
     }
 
