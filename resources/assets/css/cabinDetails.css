@@ -287,6 +287,7 @@
     font-size:16px;
     height:auto;
     width:100%;
+    margin-bottom:10px;
 }
 @media (max-width:767px) {.label-cabin-details{
     padding-top:13px;
