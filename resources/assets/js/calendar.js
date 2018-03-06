@@ -1,3 +1,4 @@
+/* Js for calendar module */
 $(function(){
     $.ajaxSetup({
         headers: {
@@ -5,7 +6,7 @@ $(function(){
         }
     });
     /* Calendar availability check begin */
-    $("body").on('mousedown', ".dateFrom", function() {
+    $("body").on("mousedown", ".dateFrom", function() {
         var dataId          = $(this).parent().parent().data("id");
         var $this           = $("#dateFrom_"+dataId);
         var returnResult    = [];
@@ -101,7 +102,7 @@ $(function(){
     });
 
 
-    $("body").on('mousedown', ".dateTo", function() {
+    $("body").on("mousedown", ".dateTo", function() {
         var dataId          = $(this).parent().parent().data("id");
         var $this           = $("#dateTo_"+dataId);
         var returnResults   = [];

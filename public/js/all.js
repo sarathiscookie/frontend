@@ -1,4 +1,5 @@
-
+/* Js for home module */
+/* Js for search module */
 $(function(){
 
     /* Reset the checkbox on page loads */
@@ -43,6 +44,7 @@ $(function(){
 
     /* Typeahead auto complete end */
 });
+/* Js for calendar module */
 $(function(){
     $.ajaxSetup({
         headers: {
@@ -50,7 +52,7 @@ $(function(){
         }
     });
     /* Calendar availability check begin */
-    $("body").on('mousedown', ".dateFrom", function() {
+    $("body").on("mousedown", ".dateFrom", function() {
         var dataId          = $(this).parent().parent().data("id");
         var $this           = $("#dateFrom_"+dataId);
         var returnResult    = [];
@@ -146,7 +148,7 @@ $(function(){
     });
 
 
-    $("body").on('mousedown', ".dateTo", function() {
+    $("body").on("mousedown", ".dateTo", function() {
         var dataId          = $(this).parent().parent().data("id");
         var $this           = $("#dateTo_"+dataId);
         var returnResults   = [];
@@ -231,6 +233,7 @@ $(function(){
     });
     /* Calendar availability check end */
 });
+/* Js for cabin list module */
 $(function() {
     // Configure/customize these variables.
     var cabinListShowChar = 375;  // How many characters are shown by default
@@ -267,6 +270,7 @@ $(function() {
         return false;
     });
 });
+/* Js for cabin details module */
 $(function(){
 
     /* When button click showing begin and end season */
@@ -321,5 +325,47 @@ $(function(){
         onSliderLoad: function() {
             $('#image-gallery').removeClass('cS-hidden');
         }
+    });
+});
+/* Js for cart module */
+$(function(){
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+
+    $("body").on("click", ".addToCart", function(e) {
+        e.preventDefault();
+        var cabin     = $(this).parent().parent().data("cab");
+        var dateFrom  = $("#dateFrom_"+cabin).val();
+        var dateTo    = $("#dateTo_"+cabin).val();
+        var persons   = $("#persons_"+cabin).val();
+        var addToCart = $(this).val();
+        $.ajax({
+            url: '/cart/store',
+            dataType: 'JSON',
+            type: 'POST',
+            data: { dateFrom: dateFrom, dateTo: dateTo, persons: persons, addToCart: addToCart, cabin: cabin }
+        })
+            .done(function( response ) {
+                if(response.status === 'success') {
+                    $( "#errors_"+cabin ).hide();
+                    //$btn.button('reset');
+                }
+            })
+            .fail(function(response, jqxhr, textStatus, error) {
+                /*$btn.button('reset');*/
+                if( response.status === 422 ) {
+                    $( "#errors_"+cabin ).show();
+                    var errors = response.responseJSON.errors;
+                    errorsHtml = '<div class="alert alert-danger"><ul>';
+                    $.each( errors , function( key, value ) {
+                        errorsHtml += '<li>' + value + '</li>';
+                    });
+                    errorsHtml += '</ul></div>';
+                    $( "#errors_"+cabin ).html( errorsHtml );
+                }
+            });
     });
 });

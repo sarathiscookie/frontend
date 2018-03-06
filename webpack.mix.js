@@ -35,7 +35,8 @@ mix.scripts([
     'resources/assets/js/search.js',
     'resources/assets/js/calendar.js',
     'resources/assets/js/searchResult.js',
-    'resources/assets/js/cabinDetails.js'
+    'resources/assets/js/cabinDetails.js',
+    'resources/assets/js/cart.js'
 ], 'public/js/all.js');
 
 /* Js and css for plugins */

@@ -1,3 +1,4 @@
+/* Js for cabin list module */
 $(function() {
     // Configure/customize these variables.
     var cabinListShowChar = 375;  // How many characters are shown by default

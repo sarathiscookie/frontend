@@ -1,3 +1,4 @@
+/* Js for cabin details module */
 $(function(){
 
     /* When button click showing begin and end season */

@@ -1,3 +1,4 @@
+/* Js for search module */
 $(function(){
 
     /* Reset the checkbox on page loads */
