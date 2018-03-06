@@ -193,14 +193,8 @@
 @push('scripts')
     <script>
         $(function() {
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            });
-
             /* Calendar availability check begin */
-            $("body").on("mousedown", ".dateFrom", function() {
+            /*$("body").on("mousedown", ".dateFrom", function() {
                 var dataId          = $(this).parent().parent().data("id");
                 var $this           = $("#dateFrom_"+dataId);
                 var returnResult    = [];
@@ -293,10 +287,10 @@
                 });
 
                 $this.datepicker("show");
-            });
+            });*/
 
 
-            $("body").on("mousedown", ".dateTo", function() {
+            /*$("body").on("mousedown", ".dateTo", function() {
                 var dataId          = $(this).parent().parent().data("id");
                 var $this           = $("#dateTo_"+dataId);
                 var returnResults   = [];
@@ -378,52 +372,8 @@
 
                 $this.datepicker("show");
 
-            });
+            });*/
             /* Calendar availability check end */
-
-            /* Add to cart begin */
-            $("body").on("click", ".addToCart", function(e) {
-                e.preventDefault();
-                var cabin     = $(this).parent().parent().data("cab");
-                var dateFrom  = $("#dateFrom_"+cabin).val();
-                var dateTo    = $("#dateTo_"+cabin).val();
-                var persons   = $("#persons_"+cabin).val();
-                var addToCart = $(this).val();
-                $.ajax({
-                    url: '/cart/store',
-                    dataType: 'JSON',
-                    type: 'POST',
-                    data: { dateFrom: dateFrom, dateTo: dateTo, persons: persons, addToCart: addToCart, cabin: cabin }
-                })
-                    .done(function( response ) {
-                        if(response.status === 'success') {
-                            $( "#errors_"+cabin ).hide();
-                            //$btn.button('reset');
-                        }
-                    })
-                    .fail(function(response, jqxhr, textStatus, error) {
-                        /*$btn.button('reset');*/
-                        if( response.status === 422 ) {
-                            $( "#errors_"+cabin ).show();
-                            var errors = response.responseJSON.errors;
-                            errorsHtml = '<div class="alert alert-danger"><ul>';
-                            $.each( errors , function( key, value ) {
-                                errorsHtml += '<li>' + value + '</li>';
-                            });
-                            errorsHtml += '</ul></div>';
-                            $( "#errors_"+cabin ).html( errorsHtml );
-                        }
-                    });
-            });
-
-        /*<div class="col-sm-4-cabinlist col-sm-4 {{ $errors->has('dateFrom_'.$result->_id) ? ' has-error' : '' }}">
-
-
-            <span class="help-block"><strong>{{ $errors->first('dateFrom_'.$result->_id) }}</strong></span>
-
-            </div>*/
-            /* Add to cart end */
-
         });
 
     </script>
