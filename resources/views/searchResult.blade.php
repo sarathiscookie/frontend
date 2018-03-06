@@ -127,8 +127,10 @@
 
                                                     <div class="form-group row row-cabinlist calendar" data-id="{{ $result->_id }}">
 
+                                                        <div class="col-sm-12" id="errors_{{ $result->_id }}"></div>
+
                                                         @php
-                                                            $calendar = $calendarServices->calendar($result->_id)
+                                                            $calendar = $calendarServices->calendar($result->_id);
                                                         @endphp
 
                                                         <div class="holiday_{{ $result->_id }}" data-holiday="{{ $calendar[0] }}"></div>
@@ -138,41 +140,41 @@
                                                         <div class="notSeasonTime_{{ $result->_id }}" data-notseasontime="{{ $calendar[4] }}"></div>
 
                                                         <div class="col-sm-4-cabinlist col-sm-4">
-                                                            <input type="text" class="form-control form-control-cabinlist dateFrom" id="dateFrom_{{ $result->_id }}" name="dateFrom" placeholder="Arrival" readonly>
-                                                        </div>
-                                                        <div class="col-sm-4-cabinlist col-sm-4">
-                                                            <input type="text" class="form-control form-control-cabinlist dateTo" id="dateTo_{{ $result->_id }}" name="dateTo" placeholder="Departure" readonly>
+                                                            <input type="text" class="form-control form-control-cabinlist dateFrom" id="dateFrom_{{ $result->_id }}" name="dateFrom_{{ $result->_id }}" placeholder="Arrival" value="{{ old('dateFrom_'.$result->_id) }}" readonly>
                                                         </div>
 
                                                         <div class="col-sm-4-cabinlist col-sm-4">
-                                                            <select class="form-control form-control-cabinlist">
-                                                                <option>Persons</option>
-                                                                <option>1</option>
-                                                                <option>2</option>
-                                                                <option>3</option>
-                                                                <option>4</option>
-                                                                <option>5</option>
+                                                            <input type="text" class="form-control form-control-cabinlist dateTo" id="dateTo_{{ $result->_id }}" name="dateTo_{{ $result->_id }}" placeholder="Departure" value="{{ old('dateTo_'.$result->_id) }}" readonly>
+                                                        </div>
+
+                                                        <div class="col-sm-4-cabinlist col-sm-4">
+                                                            <select class="form-control form-control-cabinlist" size="3" id="persons_{{ $result->_id }}" name="persons_{{ $result->_id }}">
+                                                                <option value="0">Persons</option>
+                                                                @for($i = 1; $i <= 30; $i++)
+                                                                    <option value="@if(old('persons_'.$result->_id)) {{ old('persons_'.$result->_id) }} @else {{ $i }}">{{ $i }} @endif</option>
+                                                                @endfor
                                                             </select>
                                                         </div>
+
                                                     </div>
 
                                                     <hr>
                                                 </div>
                                             </div>
 
-                                            <div class="row row-cabinlist">
+                                            <div class="row row-cabinlist" data-cab="{{ $result->_id }}">
                                                 <div class="col-sm-12 button-3-bottom">
                                                     <h4>{!! $cabinServices->bookingPossibleNextDays($result->_id) !!}</h4>
                                                     <!-- Authentication Links -->
                                                     @guest
                                                         <a href="{{ route('login') }}" class="btn btn-default btn-sm btn-space pull-right btn-booking">Add To Cart</a>
                                                         @else
-                                                            <a href="/cart" class="btn btn-default btn-sm btn-space pull-right btn-booking">Add To Cart</a>
-                                                    @endguest
+                                                            <button type="submit" class="btn btn-default btn-sm btn-space pull-right btn-booking addToCart" name="addToCart" value="addToCart">Add To Cart</button>
+                                                            @endguest
                                                 </div>
                                             </div>
-
                                         </div>
+
                                     </div>
                                 </div>
                             </div>
@@ -198,7 +200,7 @@
             });
 
             /* Calendar availability check begin */
-            $("body").on('mousedown', ".dateFrom", function() {
+            $("body").on("mousedown", ".dateFrom", function() {
                 var dataId          = $(this).parent().parent().data("id");
                 var $this           = $("#dateFrom_"+dataId);
                 var returnResult    = [];
@@ -294,7 +296,7 @@
             });
 
 
-            $("body").on('mousedown', ".dateTo", function() {
+            $("body").on("mousedown", ".dateTo", function() {
                 var dataId          = $(this).parent().parent().data("id");
                 var $this           = $("#dateTo_"+dataId);
                 var returnResults   = [];
@@ -378,6 +380,49 @@
 
             });
             /* Calendar availability check end */
+
+            /* Add to cart begin */
+            $("body").on("click", ".addToCart", function(e) {
+                e.preventDefault();
+                var cabin     = $(this).parent().parent().data("cab");
+                var dateFrom  = $("#dateFrom_"+cabin).val();
+                var dateTo    = $("#dateTo_"+cabin).val();
+                var persons   = $("#persons_"+cabin).val();
+                var addToCart = $(this).val();
+                $.ajax({
+                    url: '/cart/store',
+                    dataType: 'JSON',
+                    type: 'POST',
+                    data: { dateFrom: dateFrom, dateTo: dateTo, persons: persons, addToCart: addToCart, cabin: cabin }
+                })
+                    .done(function( response ) {
+                        if(response.status === 'success') {
+                            $( "#errors_"+cabin ).hide();
+                            //$btn.button('reset');
+                        }
+                    })
+                    .fail(function(response, jqxhr, textStatus, error) {
+                        /*$btn.button('reset');*/
+                        if( response.status === 422 ) {
+                            $( "#errors_"+cabin ).show();
+                            var errors = response.responseJSON.errors;
+                            errorsHtml = '<div class="alert alert-danger"><ul>';
+                            $.each( errors , function( key, value ) {
+                                errorsHtml += '<li>' + value + '</li>';
+                            });
+                            errorsHtml += '</ul></div>';
+                            $( "#errors_"+cabin ).html( errorsHtml );
+                        }
+                    });
+            });
+
+        /*<div class="col-sm-4-cabinlist col-sm-4 {{ $errors->has('dateFrom_'.$result->_id) ? ' has-error' : '' }}">
+
+
+            <span class="help-block"><strong>{{ $errors->first('dateFrom_'.$result->_id) }}</strong></span>
+
+            </div>*/
+            /* Add to cart end */
 
         });
 

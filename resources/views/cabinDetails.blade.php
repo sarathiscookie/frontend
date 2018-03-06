@@ -94,13 +94,11 @@
                                                         <input type="text" class="form-control form-control-cabin-details dateTo" id="dateTo_{{ $cabinDetails->_id }}" name="dateTo" placeholder="Departure" readonly>
                                                     </div>
                                                     <div class="col-sm-4 col-sm-4-cabin-details">
-                                                        <select class="form-control form-control-cabin-details">
+                                                        <select class="form-control form-control-cabin-details" size="3">
                                                             <option>Persons</option>
-                                                            <option>1</option>
-                                                            <option>2</option>
-                                                            <option>3</option>
-                                                            <option>4</option>
-                                                            <option>5</option>
+                                                            @for($i = 1; $i <= 30; $i++)
+                                                                <option value="{{ $i }}">{{ $i }}</option>
+                                                            @endfor
                                                         </select>
                                                     </div>
                                                 </div>

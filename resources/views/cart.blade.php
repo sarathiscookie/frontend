@@ -18,7 +18,7 @@
                 <div class="panel-body panel-body-booking1">
                     <div class="row content row-booking1">
                         <div class="col-sm-2 col-sm-2-booking1">
-                            <img src="huette.jpg" class="img-responsive img-thumbnail img-thumbnail-booking1" style="width:100%" alt="Image">
+                            <img src="{{ asset('storage/img/huette.jpg') }}" class="img-responsive img-thumbnail img-thumbnail-booking1" style="width:100%" alt="Image">
                         </div>
                         <div class="col-sm-7 text-left col-sm-7-booking1">
                             <h3 class="headliner-cabinname">Rappenseeh&uuml;tte - Allg&auml;uer Alps<span class="glyphicon glyphicon-question-sign" title="Please check your data and correct if necessary. To edit them, simply double-click on the desired field."></span></h3>
@@ -87,10 +87,10 @@
                 <div class="panel-body panel-body-booking1">
                     <div class="row content row-booking1">
                         <div class="col-sm-2 col-sm-2-booking1">
-                            <img src="huette.jpg" class="img-responsive img-thumbnail img-thumbnail-booking1" style="width:100%" alt="Image">
+                            <img src="{{ asset('storage/img/huette.jpg') }}" class="img-responsive img-thumbnail img-thumbnail-booking1" style="width:100%" alt="Image">
                         </div>
                         <div class="col-sm-7 text-left col-sm-7-booking1">
-                            <h3 class="headliner-cabinname">Rappenseeh&uuml;tte - Allg&auml;uer Alps<span class="glyphicon glyphicon-question-sign" title="Please check your data and correct if necessary. To edit them, simply double-click on the desired field."></span></h3>
+                            <h3 class="headliner-cabinname">Kemptner Hütte - Zillertaler Alpen<span class="glyphicon glyphicon-question-sign" title="Please check your data and correct if necessary. To edit them, simply double-click on the desired field."></span></h3>
                             <div class="row row-booking1">
                                 <div class="col-sm-12 col-sm-12-booking1 month-opening-booking1">
                                     <div class="form-group row row-booking1">
@@ -194,11 +194,8 @@
                 </div>
             </div>
             <div>
-                <div id="btn-ground-booking1">
-                    <button type="button" class="btn btn-default-booking1 btn-default btn-sm btn-details btn-details-booking1">add more Cabins</button>
-                </div>
                 <div id="btn-ground-2-booking1">
-                    <button type="button" class="btn btn-default-booking1 btn-default btn-sm btn-details btn-details-booking1">next step</button>
+                    <button type="button" class="btn btn-default-booking1 btn-default btn-sm btn-details btn-details-booking1">Payment</button>
                 </div>
             </div>
         </div><br><br>

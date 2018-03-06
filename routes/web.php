@@ -96,7 +96,7 @@ Route::group(['middleware' => ['auth']], function () {
     |
     */
     /* Cart listing */
-    Route::get('/cart', 'CartController@index')->name('cart');
+    Route::post('/cart/store', 'CartController@store')->name('cart.store');
 });
 
 

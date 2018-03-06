@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use Validator;
 use Illuminate\Http\Request;
+use App\Http\Requests\CartRequest;
 
 class CartController extends Controller
 {
@@ -13,7 +15,7 @@ class CartController extends Controller
      */
     public function index()
     {
-        return view('cart');
+        //
     }
 
     /**
@@ -34,7 +36,26 @@ class CartController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $messages = [
+            'dateFrom' => 'Arrival date is required',
+            'dateTo'  => 'Departure date is required',
+            'persons'  => 'No of persons required',
+        ];
+
+        $rules    = [
+            'dateFrom'  => 'required',
+            'dateTo'  => 'required',
+            'persons'  => 'required|not_in:0',
+        ];
+
+        $validator = Validator::make($request->all(), $rules, $messages);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+        else {
+            return response()->json(['status' => 'success'], 200);
+        }
     }
 
     /**
