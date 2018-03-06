@@ -342,6 +342,7 @@ $(function(){
         var dateTo    = $("#dateTo_"+cabin).val();
         var persons   = $("#persons_"+cabin).val();
         var addToCart = $(this).val();
+        var errorsHtml= '';
         $.ajax({
             url: '/cart/store',
             dataType: 'JSON',
@@ -352,6 +353,13 @@ $(function(){
                 if(response.status === 'success') {
                     $( "#errors_"+cabin ).hide();
                     //$btn.button('reset');
+                }
+                if(response.status === 'error') {
+                    $( "#errors_"+cabin ).show();
+                    errorsHtml = '<div class="alert alert-danger"><ul>';
+                    errorsHtml += '<li>' + response.message + '</li>';
+                    errorsHtml += '</ul></div>';
+                    $( "#errors_"+cabin ).html( errorsHtml );
                 }
             })
             .fail(function(response, jqxhr, textStatus, error) {

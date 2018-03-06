@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Validator;
 use Illuminate\Http\Request;
 use App\Http\Requests\CartRequest;
+use DateTime;
 
 class CartController extends Controller
 {
@@ -53,9 +54,23 @@ class CartController extends Controller
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
         }
-        else {
-            return response()->json(['status' => 'success'], 200);
+
+        $dateBegin      = DateTime::createFromFormat('d.m.y', $request->dateFrom)->format('Y-m-d');
+        $dateEnd        = DateTime::createFromFormat('d.m.y', $request->dateTo)->format('Y-m-d');
+        $dateDifference = date_diff(date_create($dateBegin), date_create($dateEnd));
+        if($dateBegin >= $dateEnd){
+            return response()->json(['status' => 'error', 'message' => 'Arrival date is not same or greater than departure date.']);
         }
+        else {
+            if($dateDifference->format("%a") <= 60) {
+                return response()->json(['status' => 'success'], 200);
+            }
+            else {
+                return response()->json(['status' => 'error', 'message' => 'Maximum 60 days can book']);
+            }
+        }
+
+        return response()->json(['status' => 'success'], 200);
     }
 
     /**

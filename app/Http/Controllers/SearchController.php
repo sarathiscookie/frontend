@@ -131,7 +131,7 @@ class SearchController extends Controller
             }
         }
 
-        $cabinSearchResult = $cabin->simplePaginate(10);
+        $cabinSearchResult = $cabin->simplePaginate(5);
 
         return view('searchResult', ['cabinSearchResult' => $cabinSearchResult]);
     }
