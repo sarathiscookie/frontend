@@ -159,7 +159,7 @@
                             <div class="row row-booking1">
                                 <div class="col-sm-12 col-sm-12-booking1 month-opening-booking1">
                                     <h5>Your Amount</h5>
-                                    <button type="button" class="btn btn-default btn-default-booking1 btn-amount-booking1 btn-details btn-details-booking1">redeem now!</button>
+                                    <button type="button" class="btn btn-default btn-default-booking1 btn-amount-booking1 btn-details btn-details-booking1">Redeem now!</button>
                                     <h5 id="cash-amount-booking1">20,00€</h5>
                                 </div>
                             </div>
@@ -195,6 +195,7 @@
             </div>
             <div>
                 <div id="btn-ground-2-booking1">
+                    <a href="/search" class="btn btn-default-booking1 btn-default btn-sm btn-details btn-details-booking1">Continue Booking</a>
                     <button type="button" class="btn btn-default-booking1 btn-default btn-sm btn-details btn-details-booking1">Payment</button>
                 </div>
             </div>

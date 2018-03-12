@@ -21,22 +21,26 @@ $(function(){
             data: { dateFrom: dateFrom, dateTo: dateTo, persons: persons, addToCart: addToCart, cabin: cabin }
         })
             .done(function( response ) {
-                if(response.status === 'success') {
-                    $( "#errors_"+cabin ).hide();
-                    //$btn.button('reset');
-                }
                 if(response.status === 'error') {
-                    $( "#errors_"+cabin ).show();
                     errorsHtml = '<div class="alert alert-danger"><ul>';
                     errorsHtml += '<li>' + response.message + '</li>';
                     errorsHtml += '</ul></div>';
                     $( "#errors_"+cabin ).html( errorsHtml );
                 }
+                else if(response.status === 'inquiry') {
+                    errorsHtml = '<div class="alert alert-info"><ul>';
+                    errorsHtml += '<li>' + response.message + '</li>';
+                    errorsHtml += '</ul></div>';
+                    $( "#errors_"+cabin ).html( errorsHtml );
+                }
+                else if(response.status === 'success') {
+                    var redirect_url = '/cart';
+                    $( "#errors_"+cabin ).hide();
+                    window.location.href = redirect_url;
+                }
             })
             .fail(function(response, jqxhr, textStatus, error) {
-                /*$btn.button('reset');*/
                 if( response.status === 422 ) {
-                    $( "#errors_"+cabin ).show();
                     var errors = response.responseJSON.errors;
                     errorsHtml = '<div class="alert alert-danger"><ul>';
                     $.each( errors , function( key, value ) {

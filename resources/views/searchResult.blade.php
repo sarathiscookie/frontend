@@ -169,7 +169,7 @@
                                                     @guest
                                                         <a href="{{ route('login') }}" class="btn btn-default btn-sm btn-space pull-right btn-booking">Add To Cart</a>
                                                         @else
-                                                            <button type="submit" class="btn btn-default btn-sm btn-space pull-right btn-booking addToCart" name="addToCart" value="addToCart">Add To Cart</button>
+                                                            <button type="button" class="btn btn-default btn-sm btn-space pull-right btn-booking addToCart" name="addToCart" value="addToCart">Add To Cart</button>
                                                             @endguest
                                                 </div>
                                             </div>

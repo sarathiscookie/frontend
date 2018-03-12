@@ -95,7 +95,11 @@ Route::group(['middleware' => ['auth']], function () {
     | Route for after authentication
     |
     */
+
     /* Cart listing */
+    Route::get('/cart', 'CartController@index')->name('cart');
+
+    /* Cart Store */
     Route::post('/cart/store', 'CartController@store')->name('cart.store');
 });
 
