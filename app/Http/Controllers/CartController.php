@@ -19,7 +19,7 @@ class CartController extends Controller
      *
      * @param  string  $now
      * @param  string  $end
-     * @return object
+     * @return \Illuminate\Http\Response
      */
     protected function generateDates($now, $end){
         $period = new DatePeriod(
@@ -35,7 +35,7 @@ class CartController extends Controller
      * To generate date format as mongo.
      *
      * @param  string  $date
-     * @return object
+     * @return \Illuminate\Http\Response
      */
     protected function getDateUtc($date)
     {
@@ -88,32 +88,38 @@ class CartController extends Controller
 
         Validator::make($request->all(), $rules, $messages)->validate();
 
-        $cabinId        = $request->cabin;
-        $dateBegin      = DateTime::createFromFormat('d.m.y', $request->dateFrom)->format('Y-m-d');
-        $dateEnd        = DateTime::createFromFormat('d.m.y', $request->dateTo)->format('Y-m-d');
-        $dateDifference = date_diff(date_create($dateBegin), date_create($dateEnd));
+        $monthBegin              = DateTime::createFromFormat('d.m.y', $request->dateFrom)->format('Y-m-d');
+        $monthEnd                = DateTime::createFromFormat('d.m.y', $request->dateTo)->format('Y-m-d');
+        $dateDifference          = date_diff(date_create($monthBegin), date_create($monthEnd));
 
-        if($dateBegin >= $dateEnd){
-            return response()->json(['status' => 'error', 'message' => 'Arrival date is not same or greater than departure date.']);
-        }
-        else {
+        if($monthBegin < $monthEnd) {
             if($dateDifference->format("%a") <= 60) {
-
                 $holiday_prepare         = [];
+                $holidayDates            = [];
                 $not_regular_dates       = [];
                 $dates_array             = [];
-                $seasons                 = Season::where('cabin_id', new \MongoDB\BSON\ObjectID($cabinId))->get();
-                $cabin                   = Cabin::findOrFail($cabinId);
-                $generateBookingDates    = $this->generateDates($dateBegin, $dateEnd);
+                $available_dates         = [];
+                $not_available_dates     = [];
+                $orangeDates             = [];
+                $not_season_time         = [];
+
+                $seasons                 = Season::where('cabin_id', new \MongoDB\BSON\ObjectID($request->cabin))->get();
+
+                $cabin                   = Cabin::findOrFail($request->cabin);
+
+                $generateBookingDates    = $this->generateDates($monthBegin, $monthEnd);
 
                 foreach ($generateBookingDates as $generateBookingDate) {
+
                     $dates                 = $generateBookingDate->format('Y-m-d');
                     $day                   = $generateBookingDate->format('D');
                     $bookingDateSeasonType = null;
 
+                    /* Checking season begin */
                     if($seasons) {
                         foreach ($seasons as $season) {
-                            if (($season->summerSeasonStatus === 'open') && ($season->summerSeason === 1) && ($dates >= $season->earliest_summer_open->format('Y-m-d')) && ($dates < $season->latest_summer_close->format('Y-m-d'))) {
+
+                            if (($season->summerSeasonStatus === 'open') && ($season->summerSeason === 1) && ($dates >= ($season->earliest_summer_open)->format('Y-m-d')) && ($dates < ($season->latest_summer_close)->format('Y-m-d'))) {
                                 $holiday_prepare[]     = ($season->summer_mon === 1) ? 'Mon' : 0;
                                 $holiday_prepare[]     = ($season->summer_tue === 1) ? 'Tue' : 0;
                                 $holiday_prepare[]     = ($season->summer_wed === 1) ? 'Wed' : 0;
@@ -123,7 +129,7 @@ class CartController extends Controller
                                 $holiday_prepare[]     = ($season->summer_sun === 1) ? 'Sun' : 0;
                                 $bookingDateSeasonType = 'summer';
                             }
-                            elseif (($season->winterSeasonStatus === 'open') && ($season->winterSeason === 1) && ($dates >= $season->earliest_winter_open->format('Y-m-d')) && ($dates < $season->latest_winter_close->format('Y-m-d'))) {
+                            elseif (($season->winterSeasonStatus === 'open') && ($season->winterSeason === 1) && ($dates >= ($season->earliest_winter_open)->format('Y-m-d')) && ($dates < ($season->latest_winter_close)->format('Y-m-d'))) {
                                 $holiday_prepare[]     = ($season->winter_mon === 1) ? 'Mon' : 0;
                                 $holiday_prepare[]     = ($season->winter_tue === 1) ? 'Tue' : 0;
                                 $holiday_prepare[]     = ($season->winter_wed === 1) ? 'Wed' : 0;
@@ -133,11 +139,12 @@ class CartController extends Controller
                                 $holiday_prepare[]     = ($season->winter_sun === 1) ? 'Sun' : 0;
                                 $bookingDateSeasonType = 'winter';
                             }
+
                         }
 
                         if (!$bookingDateSeasonType)
                         {
-                            return response()->json(['status' => 'error', 'message' => 'Sorry selected dates are not in season time.']);
+                            return response()->json(['error' => 'Sorry selected dates are not in a season time.'], 422);
                         }
 
                         $prepareArray       = [$dates => $day];
@@ -145,12 +152,12 @@ class CartController extends Controller
                         $array_intersect    = array_intersect($prepareArray, $array_unique);
 
                         foreach ($array_intersect as $array_intersect_key => $array_intersect_values) {
-                            if($dateBegin === $array_intersect_key) {
-                                return response()->json(['status' => 'error', 'message' => $array_intersect_values.' is a holiday.']);
+                            if($monthBegin === $array_intersect_key) {
+                                return response()->json(['error' => $array_intersect_values.' is a holiday.'], 422);
                             }
 
-                            if($array_intersect_key > $dateBegin && $array_intersect_key < $dateEnd) {
-                                return response()->json(['status' => 'error', 'message' => 'Booking not possible because holidays included.']);
+                            if((strtotime($array_intersect_key) > strtotime($monthBegin)) && (strtotime($array_intersect_key) < strtotime($monthEnd))) {
+                                return response()->json(['error' => 'Booking not possible because holidays included.'], 422);
                             }
                         }
                     }
@@ -165,8 +172,7 @@ class CartController extends Controller
                     $sat_day     = ($cabin->sat_day === 1) ? 'Sat' : 0;
                     $sun_day     = ($cabin->sun_day === 1) ? 'Sun' : 0;
 
-                    /* Getting bookings from booking collection status is 1=>Fix, 4=>Request, 5=>Waiting for payment //['1', '3', '4', '5']*/
-                    // 7=>Inquiry, not need to check
+                    /* Getting bookings from booking collection status is 1=>Fix, 4=>Request, 7=>Inquiry */
                     $bookings  = Booking::select('beds', 'dormitory', 'sleeps')
                         ->where('is_delete', 0)
                         ->where('cabinname', $cabin->name)
@@ -175,8 +181,7 @@ class CartController extends Controller
                         ->whereRaw(['reserve_to' => array('$gt' => $this->getDateUtc($generateBookingDate->format('d.m.y')))])
                         ->get();
 
-                    /* Getting bookings from booking collection status is 1=>Fix, 3=>Completed, 4=>Request, 5=>Waiting for payment*/
-                    // 7=>Inquiry, not need to check
+                    /* Getting bookings from mschool collection status is 1=>Fix, 4=>Request, 7=>Inquiry */
                     $msBookings  = MountSchoolBooking::select('beds', 'dormitory', 'sleeps')
                         ->where('is_delete', 0)
                         ->where('cabin_name', $cabin->name)
@@ -212,14 +217,14 @@ class CartController extends Controller
                     /* >= 75% are booked Orange, 100% is red, < 75% are green*/
                     if($cabin->sleeping_place != 1) {
 
-                        $totalBeds       = $beds + $msBeds;
-                        $totalDorms      = $dorms + $msDorms;
+                        $totalBeds     = $beds + $msBeds;
+                        $totalDorms    = $dorms + $msDorms;
 
                         /* Calculating beds & dorms for not regular */
                         if($cabin->not_regular === 1) {
                             $not_regular_date_explode = explode(" - ", $cabin->not_regular_date);
                             $not_regular_date_begin   = DateTime::createFromFormat('d.m.y', $not_regular_date_explode[0])->format('Y-m-d');
-                            $not_regular_date_end     = DateTime::createFromFormat('d.m.y', $not_regular_date_explode[1])->format('Y-m-d 23:59:59'); //For getting end date and time
+                            $not_regular_date_end     = DateTime::createFromFormat('d.m.y', $not_regular_date_explode[1])->format('Y-m-d 23:59:59'); //To get the end date we need to add time
                             $generateNotRegularDates  = $this->generateDates($not_regular_date_begin, $not_regular_date_end);
 
                             foreach($generateNotRegularDates as $generateNotRegularDate) {
@@ -243,314 +248,44 @@ class CartController extends Controller
                                     if($request->persons < $cabin->not_regular_inquiry_guest) {
                                         if($request->persons <= $not_regular_bed_dorms_available) {
                                             // Query to store details in to cart
-                                            return response()->json(['status' => 'success']);
                                         }
                                         else {
-                                            return response()->json(['status' => 'error', 'message' => 'Rooms not available on '.$generateBookingDate->format('jS F')]);
+                                            return response()->json(['error' => 'Rooms not available on '.$generateBookingDate->format('jS F')], 422);
                                         }
                                     }
                                     else {
-                                        return response()->json(['status' => 'inquiry', 'message' => 'No of persons reached maximum '.$cabin->not_regular_inquiry_guest.' for this cabin. Please send an inquiry']);
+                                        return response()->json(['error' => 'No of persons reached maximum '.$cabin->not_regular_inquiry_guest.' for this cabin. Please send an inquiry'], 422);
                                     }
+
+                                    /*print_r(' ----not_regular_data---- ');
+                                    print_r(' totalBeds '. $totalBeds .' totalDorms '. $totalDorms);
+                                    print_r(' beds '. $beds .' dorms '. $dorms .' msBeds '. $msBeds .' msDorms '. $msDorms);
+                                    print_r(' not_rgl_dates: ' . $dates . ' not_regular_beds_diff: '. $not_regular_beds_diff. ' not_regular_beds_avail: '. $not_regular_beds_avail);
+                                    print_r( ' not_rgl_dates: ' . $dates . ' not_regular_dorms_diff: '. $not_regular_dorms_diff. ' not_regular_dorms_avail: '. $not_regular_dorms_avail);
+                                    print_r( ' not_regular_sum: ' . $not_regular_bed_dorms_available);*/
 
                                 }
                                 else {
-                                    return response()->json(['status' => 'error', 'message' => 'Rooms are already filled on '.$generateBookingDate->format('jS F')]);
+                                    /*print_r(' ----not_regular_data---- ');
+                                    print_r(' not_available_dates '. $dates);*/
+                                    return response()->json(['error' => 'Rooms are already filled on '.$generateBookingDate->format('jS F')], 422);
                                 }
-                            }
-
-                        }
-
-                        /* Calculating beds & dorms for regular */
-                        if($cabin->regular === 1) {
-
-                            if($mon_day === $day) {
-                                if(!in_array($dates, $dates_array)) {
-
-                                    $dates_array[] = $dates;
-
-                                    if(($totalBeds < $cabin->mon_beds) || ($totalDorms < $cabin->mon_dorms)) {
-                                        $mon_beds_diff              = $cabin->mon_beds - $totalBeds;
-                                        $mon_dorms_diff             = $cabin->mon_dorms - $totalDorms;
-
-                                        $mon_beds_avail             = ($mon_beds_diff >= 0) ? $mon_beds_diff : 0;
-                                        $mon_dorms_avail            = ($mon_dorms_diff >= 0) ? $mon_dorms_diff : 0;
-
-                                        /* Available beds and dorms */
-                                        $mon_bed_dorms_available    = $mon_beds_avail + $mon_dorms_avail;
-
-                                        if($request->persons < $cabin->mon_inquiry_guest) {
-                                            if($request->persons <= $mon_bed_dorms_available) {
-                                                // Query to store details in to cart
-                                                return response()->json(['status' => 'success']);
-                                            }
-                                            else {
-                                                return response()->json(['status' => 'error', 'message' => 'Rooms not available on '.$generateBookingDate->format('jS F')]);
-                                            }
-                                        }
-                                        else {
-                                            return response()->json(['status' => 'inquiry', 'message' => 'No of persons reached maximum '.$cabin->mon_inquiry_guest.' for this cabin. Please send an inquiry']);
-                                        }
-                                    }
-                                    else {
-                                        return response()->json(['status' => 'error', 'message' => 'Rooms are already filled on '.$generateBookingDate->format('jS F')]);
-                                    }
-                                }
-                            }
-
-                            if($tue_day === $day) {
-
-                                if(!in_array($dates, $dates_array)) {
-
-                                    $dates_array[] = $dates;
-
-                                    if(($totalBeds < $cabin->tue_beds) || ($totalDorms < $cabin->tue_dorms)) {
-                                        $tue_beds_diff              = $cabin->tue_beds - $totalBeds;
-                                        $tue_dorms_diff             = $cabin->tue_dorms - $totalDorms;
-
-                                        $tue_beds_avail             = ($tue_beds_diff >= 0) ? $tue_beds_diff : 0;
-                                        $tue_dorms_avail            = ($tue_dorms_diff >= 0) ? $tue_dorms_diff : 0;
-
-                                        /* Available beds and dorms */
-                                        $tue_bed_dorms_available    = $tue_beds_avail + $tue_dorms_avail;
-
-                                        if($request->persons < $cabin->tue_inquiry_guest) {
-                                            if($request->persons <= $tue_bed_dorms_available) {
-                                                // Query to store details in to cart
-                                                return response()->json(['status' => 'success']);
-                                            }
-                                            else {
-                                                return response()->json(['status' => 'error', 'message' => 'Rooms not available on '.$generateBookingDate->format('jS F')]);
-                                            }
-                                        }
-                                        else {
-                                            return response()->json(['status' => 'inquiry', 'message' => 'No of persons reached maximum '.$cabin->tue_inquiry_guest.' for this cabin. Please send an inquiry']);
-                                        }
-                                    }
-                                    else {
-                                        return response()->json(['status' => 'error', 'message' => 'Rooms are already filled on '.$generateBookingDate->format('jS F')]);
-                                    }
-                                }
-                            }
-
-                            if($wed_day === $day) {
-
-                                if(!in_array($dates, $dates_array)) {
-
-                                    $dates_array[] = $dates;
-
-                                    if(($totalBeds < $cabin->wed_beds) || ($totalDorms < $cabin->wed_dorms)) {
-                                        $wed_beds_diff              = $cabin->wed_beds - $totalBeds;
-                                        $wed_dorms_diff             = $cabin->wed_dorms - $totalDorms;
-
-                                        $wed_beds_avail             = ($wed_beds_diff >= 0) ? $wed_beds_diff : 0;
-                                        $wed_dorms_avail            = ($wed_dorms_diff >= 0) ? $wed_dorms_diff : 0;
-
-                                        /* Available beds and dorms */
-                                        $wed_bed_dorms_available    = $wed_beds_avail + $wed_dorms_avail;
-
-                                        if($request->persons < $cabin->wed_inquiry_guest) {
-                                            if($request->persons <= $wed_bed_dorms_available) {
-                                                // Query to store details in to cart
-                                                return response()->json(['status' => 'success']);
-                                            }
-                                            else {
-                                                return response()->json(['status' => 'error', 'message' => 'Rooms not available on '.$generateBookingDate->format('jS F')]);
-                                            }
-                                        }
-                                        else {
-                                            return response()->json(['status' => 'inquiry', 'message' => 'No of persons reached maximum '.$cabin->wed_inquiry_guest.' for this cabin. Please send an inquiry']);
-                                        }
-                                    }
-                                    else {
-                                        return response()->json(['status' => 'error', 'message' => 'Rooms are already filled on '.$generateBookingDate->format('jS F')]);
-                                    }
-                                }
-                            }
-
-                            if($thu_day === $day) {
-
-                                if(!in_array($dates, $dates_array)) {
-
-                                    $dates_array[] = $dates;
-
-                                    if(($totalBeds < $cabin->thu_beds) || ($totalDorms < $cabin->thu_dorms)) {
-                                        $thu_beds_diff              = $cabin->thu_beds - $totalBeds;
-                                        $thu_dorms_diff             = $cabin->thu_dorms - $totalDorms;
-
-                                        $thu_beds_avail             = ($thu_beds_diff >= 0) ? $thu_beds_diff : 0;
-                                        $thu_dorms_avail            = ($thu_dorms_diff >= 0) ? $thu_dorms_diff : 0;
-
-                                        /* Available beds and dorms */
-                                        $thu_bed_dorms_available    = $thu_beds_avail + $thu_dorms_avail;
-
-                                        if($request->persons < $cabin->thu_inquiry_guest) {
-                                            if($request->persons <= $thu_bed_dorms_available) {
-                                                // Query to store details in to cart
-                                                return response()->json(['status' => 'success']);
-                                            }
-                                            else {
-                                                return response()->json(['status' => 'error', 'message' => 'Rooms not available on '.$generateBookingDate->format('jS F')]);
-                                            }
-                                        }
-                                        else {
-                                            return response()->json(['status' => 'inquiry', 'message' => 'No of persons reached maximum '.$cabin->thu_inquiry_guest.' for this cabin. Please send an inquiry']);
-                                        }
-                                    }
-                                    else {
-                                        return response()->json(['status' => 'error', 'message' => 'Rooms are already filled on '.$generateBookingDate->format('jS F')]);
-                                    }
-                                }
-                            }
-
-                            if($fri_day === $day) {
-
-                                if(!in_array($dates, $dates_array)) {
-
-                                    $dates_array[] = $dates;
-
-                                    if(($totalBeds < $cabin->fri_beds) || ($totalDorms < $cabin->fri_dorms)) {
-                                        $fri_beds_diff              = $cabin->fri_beds - $totalBeds;
-                                        $fri_dorms_diff             = $cabin->fri_dorms - $totalDorms;
-
-                                        $fri_beds_avail             = ($fri_beds_diff >= 0) ? $fri_beds_diff : 0;
-                                        $fri_dorms_avail            = ($fri_dorms_diff >= 0) ? $fri_dorms_diff : 0;
-
-                                        /* Available beds and dorms */
-                                        $fri_bed_dorms_available    = $fri_beds_avail + $fri_dorms_avail;
-
-                                        if($request->persons < $cabin->fri_inquiry_guest) {
-                                            if($request->persons <= $fri_bed_dorms_available) {
-                                                // Query to store details in to cart
-                                                return response()->json(['status' => 'success']);
-                                            }
-                                            else {
-                                                return response()->json(['status' => 'error', 'message' => 'Rooms not available on '.$generateBookingDate->format('jS F')]);
-                                            }
-                                        }
-                                        else {
-                                            return response()->json(['status' => 'inquiry', 'message' => 'No of persons reached maximum '.$cabin->fri_inquiry_guest.' for this cabin. Please send an inquiry']);
-                                        }
-                                    }
-                                    else {
-                                        return response()->json(['status' => 'error', 'message' => 'Rooms are already filled on '.$generateBookingDate->format('jS F')]);
-                                    }
-                                }
-                            }
-
-                            if($sat_day === $day) {
-
-                                if(!in_array($dates, $dates_array)) {
-
-                                    $dates_array[] = $dates;
-
-                                    if(($totalBeds < $cabin->sat_beds) || ($totalDorms < $cabin->sat_dorms)) {
-                                        $sat_beds_diff              = $cabin->sat_beds - $totalBeds;
-                                        $sat_dorms_diff             = $cabin->sat_dorms - $totalDorms;
-
-                                        $sat_beds_avail             = ($sat_beds_diff >= 0) ? $sat_beds_diff : 0;
-                                        $sat_dorms_avail            = ($sat_dorms_diff >= 0) ? $sat_dorms_diff : 0;
-
-                                        /* Available beds and dorms */
-                                        $sat_bed_dorms_available    = $sat_beds_avail + $sat_dorms_avail;
-
-                                        if($request->persons < $cabin->sat_inquiry_guest) {
-                                            if($request->persons <= $sat_bed_dorms_available) {
-                                                // Query to store details in to cart
-                                                return response()->json(['status' => 'success']);
-                                            }
-                                            else {
-                                                return response()->json(['status' => 'error', 'message' => 'Rooms not available on '.$generateBookingDate->format('jS F')]);
-                                            }
-                                        }
-                                        else {
-                                            return response()->json(['status' => 'inquiry', 'message' => 'No of persons reached maximum '.$cabin->sat_inquiry_guest.' for this cabin. Please send an inquiry']);
-                                        }
-                                    }
-                                    else {
-                                        return response()->json(['status' => 'error', 'message' => 'Rooms are already filled on '.$generateBookingDate->format('jS F')]);
-                                    }
-                                }
-                            }
-
-                            if($sun_day === $day) {
-
-                                if(!in_array($dates, $dates_array)) {
-
-                                    $dates_array[] = $dates;
-
-                                    if(($totalBeds < $cabin->sun_beds) || ($totalDorms < $cabin->sun_dorms)) {
-                                        $sun_beds_diff              = $cabin->sun_beds - $totalBeds;
-                                        $sun_dorms_diff             = $cabin->sun_dorms - $totalDorms;
-
-                                        $sun_beds_avail             = ($sun_beds_diff >= 0) ? $sun_beds_diff : 0;
-                                        $sun_dorms_avail            = ($sun_dorms_diff >= 0) ? $sun_dorms_diff : 0;
-
-                                        /* Available beds and dorms */
-                                        $sun_bed_dorms_available    = $sun_beds_avail + $sun_dorms_avail;
-
-                                        if($request->persons < $cabin->sun_inquiry_guest) {
-                                            if($request->persons <= $sun_bed_dorms_available) {
-                                                // Query to store details in to cart
-                                                return response()->json(['status' => 'success']);
-                                            }
-                                            else {
-                                                return response()->json(['status' => 'error', 'message' => 'Rooms not available on '.$generateBookingDate->format('jS F')]);
-                                            }
-                                        }
-                                        else {
-                                            return response()->json(['status' => 'inquiry', 'message' => 'No of persons reached maximum '.$cabin->sun_inquiry_guest.' for this cabin. Please send an inquiry']);
-                                        }
-                                    }
-                                    else {
-                                        return response()->json(['status' => 'error', 'message' => 'Rooms are already filled on '.$generateBookingDate->format('jS F')]);
-                                    }
-                                }
-                            }
-                        }
-
-                        /* Calculating beds & dorms for normal */
-                        if(!in_array($dates, $dates_array)) {
-
-                            if(($totalBeds < $cabin->beds) || ($totalDorms < $cabin->dormitory)) {
-
-                                $normal_beds_diff              = $cabin->beds - $totalBeds;
-                                $normal_dorms_diff             = $cabin->dormitory - $totalDorms;
-
-                                $normal_beds_avail             = ($normal_beds_diff >= 0) ? $normal_beds_diff : 0;
-                                $normal_dorms_avail            = ($normal_dorms_diff >= 0) ? $normal_dorms_diff : 0;
-
-                                /* Available beds and dorms */
-                                $normal_bed_dorms_available    = $normal_beds_avail + $normal_dorms_avail;
-
-                                if($request->persons < $cabin->inquiry_starts) {
-                                    if($request->persons <= $normal_bed_dorms_available) {
-                                        // Query to store details in to cart
-                                        return response()->json(['status' => 'success']);
-                                    }
-                                    else {
-                                        return response()->json(['status' => 'error', 'message' => 'Rooms not available on '.$generateBookingDate->format('jS F')]);
-                                    }
-                                }
-                                else {
-                                    return response()->json(['status' => 'inquiry', 'message' => 'No of persons reached maximum '.$cabin->inquiry_starts.' for this cabin. Please send an inquiry']);
-                                }
-                            }
-                            else {
-                                return response()->json(['status' => 'error', 'message' => 'Rooms are already filled on '.$generateBookingDate->format('jS F')]);
                             }
                         }
                     }
 
-
-
-
+                    /* Checking bookings available ends */
                 }
+                //exit();
             }
             else {
-                return response()->json(['status' => 'error', 'message' => 'Maximum 60 days can book']);
+                return response()->json(['error' => 'Quota exceeded! Maximum 60 days you can book'], 422);
             }
         }
+        else {
+            return response()->json(['error' => 'Arrival date should be less than departure date.'], 422);
+        }
+
     }
 
     /**
