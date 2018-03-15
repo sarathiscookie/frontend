@@ -2,34 +2,6 @@
 
 @section('title', 'Search results')
 
-@section('styles')
-    <style>
-        .holidayDates .ui-state-default
-        {
-            /*color: #0000F0;*/
-            background-color: #777;
-        }
-
-        .greenDates .ui-state-default
-        {
-            /*color: darkgreen;*/
-            background-color: #5cb85c;
-        }
-
-        .orangeDates .ui-state-default
-        {
-            /*color: darkorange;*/
-            background-color: #f0ad4e;
-        }
-
-        .redDates .ui-state-default
-        {
-            /*color: red;*/
-            background-color: #d9534f;
-        }
-    </style>
-@endsection
-
 @inject('cabinServices', 'App\Http\Controllers\SearchController')
 
 @inject('calendarServices', 'App\Http\Controllers\CalendarController')
