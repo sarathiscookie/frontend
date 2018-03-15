@@ -349,34 +349,39 @@ $(function(){
             type: 'POST',
             data: { dateFrom: dateFrom, dateTo: dateTo, persons: persons, addToCart: addToCart, cabin: cabin }
         })
-            .done(function( response ) {
-                if(response.status === 'error') {
-                    errorsHtml = '<div class="alert alert-danger"><ul>';
-                    errorsHtml += '<li>' + response.message + '</li>';
-                    errorsHtml += '</ul></div>';
-                    $( "#errors_"+cabin ).html( errorsHtml );
-                }
-                else if(response.status === 'inquiry') {
-                    errorsHtml = '<div class="alert alert-info"><ul>';
-                    errorsHtml += '<li>' + response.message + '</li>';
-                    errorsHtml += '</ul></div>';
-                    $( "#errors_"+cabin ).html( errorsHtml );
-                }
-                else if(response.status === 'success') {
+            .done(function( data ) {
+                if(data.response === 'success') {
+                    //console.log(data.response);
                     var redirect_url = '/cart';
                     $( "#errors_"+cabin ).hide();
+                    $( "#warning_"+cabin ).hide();
                     window.location.href = redirect_url;
                 }
             })
-            .fail(function(response, jqxhr, textStatus, error) {
-                if( response.status === 422 ) {
-                    var errors = response.responseJSON.errors;
-                    errorsHtml = '<div class="alert alert-danger"><ul>';
-                    $.each( errors , function( key, value ) {
-                        errorsHtml += '<li>' + value + '</li>';
-                    });
-                    errorsHtml += '</ul></div>';
-                    $( "#errors_"+cabin ).html( errorsHtml );
+            .fail(function(data, jqxhr, textStatus, error) {
+                if( data.status === 422 ) {
+                    var errors = data.responseJSON.errors;
+                    if(errors) {
+                        $( "#warning_"+cabin ).hide();
+                        $( "#errors_"+cabin ).show();
+                        errorsHtml = '<div class="alert alert-danger"><ul>';
+                        $.each( errors , function( key, value ) {
+                            errorsHtml += '<li>' + value + '</li>';
+                        });
+                        errorsHtml += '</ul></div>';
+                        $( "#errors_"+cabin ).html( errorsHtml );
+                    }
+                    else {
+                        $( "#errors_"+cabin ).hide();
+                        $( "#warning_"+cabin ).show();
+                        var warning = data.responseJSON;
+                        errorsHtml = '<div class="alert alert-info"><ul>';
+                        $.each( warning , function( key, value ) {
+                            errorsHtml += '<li>' + value + '</li>';
+                        });
+                        errorsHtml += '</ul></div>';
+                        $( "#warning_"+cabin ).html( errorsHtml );
+                    }
                 }
             });
     });

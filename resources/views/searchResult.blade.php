@@ -128,6 +128,7 @@
                                                     <div class="form-group row row-cabinlist calendar" data-id="{{ $result->_id }}">
 
                                                         <div class="col-sm-12" id="errors_{{ $result->_id }}"></div>
+                                                        <div class="col-sm-12" id="warning_{{ $result->_id }}"></div>
 
                                                         @php
                                                             $calendar = $calendarServices->calendar($result->_id);
