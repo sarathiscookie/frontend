@@ -324,6 +324,4 @@
         </main>
     @endisset
 
-
-
 @endsection
