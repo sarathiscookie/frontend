@@ -9,9 +9,11 @@ use App\Season;
 use App\Cabin;
 use App\Booking;
 use App\MountSchoolBooking;
+use App\Cart;
 use DateTime;
 use DatePeriod;
 use DateInterval;
+use Auth;
 
 class CartController extends Controller
 {
@@ -996,7 +998,17 @@ class CartController extends Controller
 
                 if(!in_array('notAvailable', $availableStatus)) {
                     $available = 'success';
-                    // Query to store details in to cart
+
+                    $cart            = new Cart;
+                    $cart->date_from  = $this->getDateUtc($request->dateFrom);
+                    $cart->date_to    = $this->getDateUtc($request->dateTo);
+                    $cart->person    = (int)$request->persons;
+                    $cart->cabin_id  = new \MongoDB\BSON\ObjectID($request->cabin);
+                    $cart->status    = 1; // 0 => Reservation, 1 => Booking, 2 => Inquiry
+                    $cart->user_id   = new \MongoDB\BSON\ObjectID(Auth::user()->_id);
+                    $cart->is_delete = 0;
+                    $cart->save();
+
                 }
             }
             else {

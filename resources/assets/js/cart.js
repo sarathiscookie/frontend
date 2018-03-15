@@ -22,7 +22,6 @@ $(function(){
         })
             .done(function( data ) {
                 if(data.response === 'success') {
-                    //console.log(data.response);
                     var redirect_url = '/cart';
                     $( "#errors_"+cabin ).hide();
                     $( "#warning_"+cabin ).hide();

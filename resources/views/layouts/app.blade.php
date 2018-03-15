@@ -27,6 +27,9 @@
 </head>
 
 <body id="app">
+
+@inject('service', 'App\Http\Controllers\ServiceController')
+
 <nav class="navbar navbar-inverse navbar-fixed-top">
     <div class="container-fluid container-fluid-home">
         <div class="navbar-header">
@@ -48,11 +51,11 @@
         <div class="collapse navbar-collapse" id="app-navbar-collapse">
 
             <ul class="nav navbar-nav ">
-                <li><a href="#" class="nav-points left-top-nav">Cabins</a></li>
+                <li><a href="{{ route('search') }}" class="nav-points left-top-nav">Cabins</a></li>
                 <li><a href="#" class="nav-points left-top-nav">Hikes</a></li>
                 <li><a href="#" class="nav-points left-top-nav">Regions</a></li>
                 <li><a href="#" class="nav-points left-top-nav">Shop</a></li>
-                <li><a href="#" class="nav-points left-top-nav" id="last-nav-point"> <span class="glyphicon glyphicon-shopping-cart"></span>Cabin-Cart</a></li>
+                <li><a href="{{ route('cart') }}" class="nav-points left-top-nav" id="last-nav-point"> <span class="glyphicon glyphicon-shopping-cart"></span>Cabin-Cart <span class="badge">{!! $service->cart() !!}</span></a></li>
                 <!-- Authentication Links -->
                 @guest
                     <li><a href="{{ route('login') }}" class="nav-points left-top-nav"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
