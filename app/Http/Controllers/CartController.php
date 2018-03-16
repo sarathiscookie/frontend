@@ -55,17 +55,24 @@ class CartController extends Controller
      */
     public function index()
     {
-        /*$carts   = Booking::where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
+        $carts   = Booking::where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
             ->where('status', "8")
             ->where('is_delete', 0)
             ->get();
 
-        foreach ($carts as $cart) {
-            $cabin  = Cabin::where('is_delete', 0)
-                ->where('other_cabin', "0")
-                ->get();
-        }*/
-        return view('cart');
+        $cabin   = [];
+        if(count($carts) > 0) {
+            foreach ($carts as $cart) {
+                $cabin[]  = Cabin::select('name')
+                    ->where('is_delete', 0)
+                    ->where('other_cabin', "0")
+                    ->where('name', $cart->cabinname)
+                    ->first();
+            }
+        }
+        dd($cabin);
+        /*
+        return view('cart');*/
     }
 
     /**
@@ -1012,7 +1019,6 @@ class CartController extends Controller
 
                     $booking                   = new Booking;
                     $booking->cabinname        = $cabin->name;
-                    $booking->cabin_id         = new \MongoDB\BSON\ObjectID($cabin->_id);
                     $booking->checkin_from     = $this->getDateUtc($request->dateFrom);
                     $booking->reserve_to       = $this->getDateUtc($request->dateTo);
                     $booking->user             = new \MongoDB\BSON\ObjectID(Auth::user()->_id);
