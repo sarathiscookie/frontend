@@ -55,7 +55,6 @@
                 <li><a href="#" class="nav-points left-top-nav">Hikes</a></li>
                 <li><a href="#" class="nav-points left-top-nav">Regions</a></li>
                 <li><a href="#" class="nav-points left-top-nav">Shop</a></li>
-                <li><a href="{{ route('cart') }}" class="nav-points left-top-nav" id="last-nav-point"> <span class="glyphicon glyphicon-shopping-cart"></span>Cabin-Cart <span class="badge">{!! $service->cart() !!}</span></a></li>
                 <!-- Authentication Links -->
                 @guest
                     <li><a href="{{ route('login') }}" class="nav-points left-top-nav"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
@@ -79,7 +78,8 @@
                                 </li>
                             </ul>
                         </li>
-                        @endguest
+                        <li><a href="{{ route('cart') }}" class="nav-points left-top-nav" id="last-nav-point"> <span class="glyphicon glyphicon-shopping-cart"></span>Cabin-Cart <span class="badge">{!! $service->cart() !!}</span></a></li>
+                @endguest
             </ul>
 
             <!-- Right Side Of Navbar -->

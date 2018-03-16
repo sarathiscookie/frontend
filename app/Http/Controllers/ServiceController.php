@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Cart;
+use App\Booking;
 use Auth;
 
 class ServiceController extends Controller
@@ -15,7 +15,10 @@ class ServiceController extends Controller
      */
     public function cart()
     {
-        $cartCount     = Cart::where('user_id', new \MongoDB\BSON\ObjectID(Auth::user()->_id))->count();
+        $cartCount     = Booking::where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
+            ->where('status', "8")
+            ->where('is_delete', 0)
+            ->count();
         if($cartCount) {
             return $cartCount;
         }

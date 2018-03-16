@@ -9,7 +9,6 @@ use App\Season;
 use App\Cabin;
 use App\Booking;
 use App\MountSchoolBooking;
-use App\Cart;
 use DateTime;
 use DatePeriod;
 use DateInterval;
@@ -158,20 +157,20 @@ class CartController extends Controller
                     $sat_day     = ($cabin->sat_day === 1) ? 'Sat' : 0;
                     $sun_day     = ($cabin->sun_day === 1) ? 'Sun' : 0;
 
-                    /* Getting bookings from booking collection status is 1=>Fix, 4=>Request, 7=>Inquiry */
+                    /* Getting bookings from booking collection status 1=> Fix, 2=> Cancel, 3=> Completed, 4=> Request (Reservation), 5=> Waiting for payment, 6=> Expired, 7=> Inquiry, 8=> Cart */
                     $bookings  = Booking::select('beds', 'dormitory', 'sleeps')
                         ->where('is_delete', 0)
                         ->where('cabinname', $cabin->name)
-                        ->whereIn('status', ['1', '4', '7'])
+                        ->whereIn('status', ['1', '4', '7', '8'])
                         ->whereRaw(['checkin_from' => array('$lte' => $this->getDateUtc($generateBookingDate->format('d.m.y')))])
                         ->whereRaw(['reserve_to' => array('$gt' => $this->getDateUtc($generateBookingDate->format('d.m.y')))])
                         ->get();
 
-                    /* Getting bookings from mschool collection status is 1=>Fix, 4=>Request, 7=>Inquiry */
+                    /* Getting bookings from mschool collection status 1=> Fix, 2=> Cancel, 3=> Completed, 4=> Request (Reservation), 5=> Waiting for payment, 6=> Expired, 7=> Inquiry, 8=> Cart */
                     $msBookings  = MountSchoolBooking::select('beds', 'dormitory', 'sleeps')
                         ->where('is_delete', 0)
                         ->where('cabin_name', $cabin->name)
-                        ->whereIn('status', ['1', '4', '7'])
+                        ->whereIn('status', ['1', '4', '7', '8'])
                         ->whereRaw(['check_in' => array('$lte' => $this->getDateUtc($generateBookingDate->format('d.m.y')))])
                         ->whereRaw(['reserve_to' => array('$gt' => $this->getDateUtc($generateBookingDate->format('d.m.y')))])
                         ->get();
@@ -999,15 +998,20 @@ class CartController extends Controller
                 if(!in_array('notAvailable', $availableStatus)) {
                     $available = 'success';
 
-                    $cart            = new Cart;
-                    $cart->date_from  = $this->getDateUtc($request->dateFrom);
-                    $cart->date_to    = $this->getDateUtc($request->dateTo);
-                    $cart->person    = (int)$request->persons;
-                    $cart->cabin_id  = new \MongoDB\BSON\ObjectID($request->cabin);
-                    $cart->status    = 1; // 0 => Reservation, 1 => Booking, 2 => Inquiry
-                    $cart->user_id   = new \MongoDB\BSON\ObjectID(Auth::user()->_id);
-                    $cart->is_delete = 0;
-                    $cart->save();
+                    $booking                   = new Booking;
+                    $booking->cabinname        = $cabin->name;
+                    $booking->cabin_id         = new \MongoDB\BSON\ObjectID($cabin->_id);
+                    $booking->checkin_from     = $this->getDateUtc($request->dateFrom);
+                    $booking->reserve_to       = $this->getDateUtc($request->dateTo);
+                    $booking->user             = new \MongoDB\BSON\ObjectID(Auth::user()->_id);
+                    $booking->beds             = (int)$request->persons;
+                    $booking->dormitory        = 0;
+                    $booking->sleeps           = (int)$request->persons;
+                    $booking->guests           = (int)$request->persons;
+                    $booking->bookingdate      = date('Y-m-d H:i:s');
+                    $booking->status           = "8"; //1=> Fix, 2=> Cancel, 3=> Completed, 4=> Request (Reservation), 5=> Waiting for payment, 6=> Expired, 7=> Inquiry, 8=> Cart
+                    $booking->is_delete        = 0;
+                    $booking->save();
 
                 }
             }
