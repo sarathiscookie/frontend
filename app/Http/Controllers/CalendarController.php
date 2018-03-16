@@ -79,7 +79,9 @@ class CalendarController extends Controller
 
         $seasons                 = Season::where('cabin_id', new \MongoDB\BSON\ObjectID($cabinId))->get();
 
-        $cabin                   = Cabin::findOrFail($cabinId);
+        $cabin                   = Cabin::where('is_delete', 0)
+            ->where('other_cabin', "0")
+            ->findOrFail($cabinId);
 
         $generateBookingDates    = $this->generateDates($monthBegin, $monthEnd);
 
@@ -998,7 +1000,9 @@ class CalendarController extends Controller
 
             $seasons                 = Season::where('cabin_id', new \MongoDB\BSON\ObjectID($request->dataId))->get();
 
-            $cabin                   = Cabin::findOrFail($request->dataId);
+            $cabin                   = Cabin::where('is_delete', 0)
+                ->where('other_cabin', "0")
+                ->findOrFail($request->dataId);
 
             $generateBookingDates    = $this->generateDates($monthBegin, $monthEnd);
 

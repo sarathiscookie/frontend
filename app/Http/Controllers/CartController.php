@@ -55,6 +55,16 @@ class CartController extends Controller
      */
     public function index()
     {
+        /*$carts   = Booking::where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
+            ->where('status', "8")
+            ->where('is_delete', 0)
+            ->get();
+
+        foreach ($carts as $cart) {
+            $cabin  = Cabin::where('is_delete', 0)
+                ->where('other_cabin', "0")
+                ->get();
+        }*/
         return view('cart');
     }
 
@@ -90,7 +100,9 @@ class CartController extends Controller
 
                 $seasons                 = Season::where('cabin_id', new \MongoDB\BSON\ObjectID($request->cabin))->get();
 
-                $cabin                   = Cabin::findOrFail($request->cabin);
+                $cabin                   = Cabin::where('is_delete', 0)
+                    ->where('other_cabin', "0")
+                    ->findOrFail($request->cabin);
 
                 $generateBookingDates    = $this->generateDates($monthBegin, $monthEnd);
 
