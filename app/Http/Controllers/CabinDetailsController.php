@@ -271,7 +271,9 @@ class CabinDetailsController extends Controller
 
         $seasons                 = Season::where('cabin_id', new \MongoDB\BSON\ObjectID($cabin_id))->get();
 
-        $cabin                   = Cabin::findOrFail($cabin_id);
+        $cabin                   = Cabin::where('is_delete', 0)
+            ->where('other_cabin', "0")
+            ->findOrFail($cabin_id);
 
         /* Checking season begin */
         if($seasons) {
