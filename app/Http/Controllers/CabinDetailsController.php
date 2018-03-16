@@ -325,7 +325,7 @@ class CabinDetailsController extends Controller
         $sat_day     = ($cabin->sat_day === 1) ? 'Sat' : 0;
         $sun_day     = ($cabin->sun_day === 1) ? 'Sun' : 0;
 
-        /* Getting bookings from booking collection status is 1=>Fix, 4=>Request, 7=>Inquiry */
+        /* Getting bookings from booking collection status 1=> Fix, 2=> Cancel, 3=> Completed, 4=> Request (Reservation), 5=> Waiting for payment, 6=> Expired, 7=> Inquiry, 8=> Cart */
         $dateTime    = new DateTime($dayBegin);
         $timeStamp   = $dateTime->getTimestamp();
         $utcDateTime = new \MongoDB\BSON\UTCDateTime($timeStamp * 1000);
@@ -333,16 +333,16 @@ class CabinDetailsController extends Controller
         $bookings    = Booking::select('beds', 'dormitory', 'sleeps')
             ->where('is_delete', 0)
             ->where('cabinname', $cabin->name)
-            ->whereIn('status', ['1', '4', '7'])
+            ->whereIn('status', ['1', '4', '7', '8'])
             ->whereRaw(['checkin_from' => array('$lte' => $utcDateTime)])
             ->whereRaw(['reserve_to' => array('$gt' => $utcDateTime)])
             ->get();
 
-        /* Getting bookings from mschool collection status is 1=>Fix, 4=>Request, 7=>Inquiry */
+        /* Getting bookings from mschool collection status 1=> Fix, 2=> Cancel, 3=> Completed, 4=> Request (Reservation), 5=> Waiting for payment, 6=> Expired, 7=> Inquiry, 8=> Cart */
         $msBookings  = MountSchoolBooking::select('beds', 'dormitory', 'sleeps')
             ->where('is_delete', 0)
             ->where('cabin_name', $cabin->name)
-            ->whereIn('status', ['1', '4', '7'])
+            ->whereIn('status', ['1', '4', '7', '8'])
             ->whereRaw(['check_in' => array('$lte' => $utcDateTime)])
             ->whereRaw(['reserve_to' => array('$gt' => $utcDateTime)])
             ->get();
