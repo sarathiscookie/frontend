@@ -60,21 +60,29 @@ class CartController extends Controller
             ->where('is_delete', 0)
             ->get();
 
-        $cabin   = [];
-        if(count($carts) > 0) {
-            foreach ($carts as $cart) {
-                $cabin[]  = Cabin::select('name')
-                    ->where('is_delete', 0)
-                    ->where('other_cabin', "0")
-                    ->where('name', $cart->cabinname)
-                    ->first();
-            }
-        }
-        dd($cabin);
-        /*
-        return view('cart');*/
+
+        return view('cart', ['carts' => $carts]);
     }
 
+
+    /**
+     * Return cabin details when injection came.
+     *
+     * @param  string  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function cabin($id)
+    {
+        $cabin = '';
+        if($id) {
+            $cabin = Cabin::select('name', 'region', 'prepayment_amount')
+                ->where('is_delete', 0)
+                ->where('other_cabin', "0")
+                ->findOrFail($id);
+        }
+
+        return $cabin;
+    }
     /**
      * Show the form for creating a new resource.
      *
@@ -1019,6 +1027,7 @@ class CartController extends Controller
 
                     $booking                   = new Booking;
                     $booking->cabinname        = $cabin->name;
+                    $booking->cabin_id         = $cabin->_id;
                     $booking->checkin_from     = $this->getDateUtc($request->dateFrom);
                     $booking->reserve_to       = $this->getDateUtc($request->dateTo);
                     $booking->user             = new \MongoDB\BSON\ObjectID(Auth::user()->_id);
