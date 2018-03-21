@@ -9,6 +9,7 @@ use App\Season;
 use App\Cabin;
 use App\Booking;
 use App\MountSchoolBooking;
+use App\Userlist;
 use DateTime;
 use DatePeriod;
 use DateInterval;
@@ -64,9 +65,8 @@ class CartController extends Controller
         return view('cart', ['carts' => $carts]);
     }
 
-
     /**
-     * Return cabin details when injection came.
+     * Return cabin details when injection occur.
      *
      * @param  string  $id
      * @return \Illuminate\Http\Response
@@ -75,7 +75,7 @@ class CartController extends Controller
     {
         $cabin = '';
         if($id) {
-            $cabin = Cabin::select('name', 'region', 'prepayment_amount')
+            $cabin = Cabin::select('name', 'region', 'prepayment_amount', 'sleeping_place', 'halfboard', 'halfboard_price')
                 ->where('is_delete', 0)
                 ->where('other_cabin', "0")
                 ->findOrFail($id);
@@ -83,6 +83,23 @@ class CartController extends Controller
 
         return $cabin;
     }
+
+    /**
+     * Return user details when injection occur.
+     *
+     * @param  string  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function user($id)
+    {
+        $user = Userlist::select('money_balance')
+            ->where('is_delete', 0)
+            ->where('usrlId', 2)
+            ->findOrFail($id);
+
+        return $user;
+    }
+
     /**
      * Show the form for creating a new resource.
      *

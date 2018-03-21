@@ -101,6 +101,9 @@ Route::group(['middleware' => ['auth']], function () {
 
     /* Cart Store */
     Route::post('/cart/store', 'CartController@store')->name('cart.store');
+
+    /* Delete cart */
+    Route::post('/cart/store', 'CartController@store')->name('cart.store');
 });
 
 

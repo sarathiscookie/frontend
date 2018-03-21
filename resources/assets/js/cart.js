@@ -55,4 +55,16 @@ $(function(){
                 }
             });
     });
+
+    // Deduct user money balance amount
+    $(".moneyBalance").click(function(){
+        if($(this).is(":checked")) {
+            $('.moneyBalanceCal').show();
+            $('.normalCalculation').hide();
+        }
+        else {
+            $('.moneyBalanceCal').hide();
+            $('.normalCalculation').show();
+        }
+    });
 });

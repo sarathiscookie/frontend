@@ -19,6 +19,11 @@
     <main>
         <div class="container-fluid container-fluid-booking1 text-center">
             @isset($carts)
+
+                @php
+                    $prepayment_amount = [];
+                @endphp
+
                 @forelse($carts as $key => $cart)
                     <div class="panel panel-default text-left panel-booking1 panel-default-booking1">
                         <div class="panel-body panel-body-booking1">
@@ -35,7 +40,9 @@
                                             <div class="form-group row row-booking1 calendar" data-id="{{ $cart->cabin_id }}">
 
                                                 @php
-                                                    $calendar  = $calendarServices->calendar($cart->cabin_id);
+                                                    $calendar                = $calendarServices->calendar($cart->cabin_id);
+                                                    $amount                  = ($cabinDetails->cabin($cart->cabin_id)->prepayment_amount * round(abs(strtotime($cart->checkin_from->format('Y-m-d'))-strtotime($cart->reserve_to->format('Y-m-d')))/86400)) * $cart->guests;
+                                                    $prepayment_amount[]     = ($cabinDetails->cabin($cart->cabin_id)->prepayment_amount * round(abs(strtotime($cart->checkin_from->format('Y-m-d'))-strtotime($cart->reserve_to->format('Y-m-d')))/86400)) * $cart->guests;
                                                 @endphp
 
                                                 <div class="holiday_{{ $cart->cabin_id }}" data-holiday="{{ $calendar[0] }}"></div>
@@ -50,22 +57,47 @@
                                                 <div class="col-sm-4 col-sm-4-booking1">
                                                     <input type="text" class="form-control form-control-booking1 dateTo" id="dateTo_{{ $cart->cabin_id }}" name="dateTo" value="{{ old('dateTo_'.$cart->_id, $cart->reserve_to->format('d.m.y')) }}"  readonly>
                                                 </div>
-                                                <div class="col-sm-4 col-sm-4-f-booking1 col-sm-4-booking1">
-                                                    <select class="form-control form-control-booking1">
-                                                        <option>Bed(s)</option>
-                                                        @for($i = 1; $i <= 30; $i++)
-                                                            <option value="{{ old('persons_'.$cart->cabin_id, $i) }}" @if($i == $cart->beds) selected="selected" @endif>{{ $i }}</option>
-                                                        @endfor
-                                                    </select>
-                                                </div>
-                                                <div class="col-sm-4 col-sm-4-booking1">
-                                                    <select class="form-control form-control-booking1">
-                                                        <option>Dorm(s)</option>
-                                                        @for($i = 1; $i <= 30; $i++)
-                                                            <option value="{{ $i }}">{{ $i }}</option>
-                                                        @endfor
-                                                    </select>
-                                                </div>
+                                                @if($cabinDetails->cabin($cart->cabin_id)->sleeping_place != 1)
+                                                    <div class="col-sm-4 col-sm-4-f-booking1 col-sm-4-booking1">
+                                                        <select class="form-control form-control-booking1">
+                                                            <option>Choose Bed(s)</option>
+                                                            @for($i = 1; $i <= 30; $i++)
+                                                                <option value="{{ old('persons_'.$cart->cabin_id, $i) }}" @if($i == $cart->beds) selected="selected" @endif>{{ $i }}</option>
+                                                            @endfor
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-sm-4 col-sm-4-booking1">
+                                                        <select class="form-control form-control-booking1">
+                                                            <option>Choose Dorm(s)</option>
+                                                            @for($i = 1; $i <= 30; $i++)
+                                                                <option value="{{ $i }}">{{ $i }}</option>
+                                                            @endfor
+                                                        </select>
+                                                    </div>
+                                                @else
+                                                    <div class="col-sm-4 col-sm-4-booking1">
+                                                        <select class="form-control form-control-booking1">
+                                                            <option>Choose Sleep(s)</option>
+                                                            @for($i = 1; $i <= 30; $i++)
+                                                                <option value="{{ old('persons_'.$cart->cabin_id, $i) }}" @if($i == $cart->sleeps) selected="selected" @endif>{{ $i }}</option>
+                                                            @endfor
+                                                        </select>
+                                                    </div>
+                                                @endif
+
+                                                @if($cabinDetails->cabin($cart->cabin_id)->halfboard == '1' && $cabinDetails->cabin($cart->cabin_id)->halfboard_price != '')
+                                                    <div class="col-sm-4 col-sm-4-booking1">
+                                                        <div class="form-group">
+                                                            <div class="checkbox">
+                                                                <label>
+                                                                    <input type="checkbox" id="halfboard" name="halfboard" value="1">
+                                                                    Half board available
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                @endif
+
                                                 <div class="col-sm-4 col-sm-4-f-booking1 comment-booking1 col-sm-4-booking1">
                                                     <input class="form-control comment-box-booking1 form-control-booking1"  type="text" placeholder="Comment:">
                                                 </div>
@@ -78,7 +110,7 @@
                                         <div class="panel-body panel-body-booking1">
                                             <div class="row row-booking1">
                                                 <div class="col-sm-12 col-sm-12-booking1 month-opening-booking1">
-                                                    <h5>Deposit for Cabin <a href="#"><span class="glyphicon glyphicon-remove-booking1" title="Delete your Booking"></span></a></h5>
+                                                    <h5>Deposit for Cabin <a href="/cart/delete/{{ $cart->cabin_id }}/{{ $cart->_id }}" class="pull-right"><span class="glyphicon glyphicon-trash" title="Delete your Booking"></span></a></h5>
                                                 </div>
                                             </div>
                                             <div class="row row-booking1">
@@ -89,7 +121,7 @@
                                             </div><br />
                                             <div class="row row-booking1">
                                                 <div class="col-sm-12 col-sm-12-booking1 col-sm-12-extra-booking1 depsit-booking1">
-                                                    <p class="info-listing-booking1">Deposit:</p><p class="info-listing-price-booking1">{{ ($cabinDetails->cabin($cart->cabin_id)->prepayment_amount * round(abs(strtotime($cart->checkin_from->format('Y-m-d'))-strtotime($cart->reserve_to->format('Y-m-d')))/86400)) * $cart->guests }}</p>
+                                                    <p class="info-listing-booking1">Deposit:</p><p class="info-listing-price-booking1">{{ number_format($amount, 2, '.', '') }}&euro;</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -100,58 +132,115 @@
                     </div>
 
                 @empty
-                    <p>No users</p>
+                    <p>No data</p>
                 @endforelse
 
-                    <div class="row content row-booking1">
-                        <div class="col-sm-3 col-sm-3-booking1 col-sm-r col-sm-r-booking1">
-                            <div class="panel panel-default booking-box-booking1 bottom-boxes-booking1 panel-booking1 panel-default-booking1" id="amount_box-booking1">
-                                <div class="panel-body panel-body-booking1">
-                                    <div class="row row-booking1">
-                                        <div class="col-sm-12 col-sm-12-booking1 month-opening-booking1">
-                                            <h5>Your Amount</h5>
-                                            <button type="button" class="btn btn-default btn-default-booking1 btn-amount-booking1 btn-details btn-details-booking1">Redeem now!</button>
-                                            <h5 id="cash-amount-booking1">20,00€</h5>
+                <form>
+                    @if(array_sum($prepayment_amount) > 0 )
+
+                        @php
+                            $sumPrepaymentAmount = array_sum($prepayment_amount);
+
+                            if($sumPrepaymentAmount <= 30) {
+                               $serviceTax = env('SERVICE_TAX_ONE');
+                            }
+
+                            if($sumPrepaymentAmount > 30 && $sumPrepaymentAmount <= 100) {
+                               $serviceTax = env('SERVICE_TAX_TWO');
+                            }
+
+                            if($sumPrepaymentAmount > 100) {
+                               $serviceTax = env('SERVICE_TAX_THREE');
+                            }
+
+                            $sumPrepaymentAmountPercentage   = ($serviceTax / 100) * $sumPrepaymentAmount;
+                            $sumPrepaymentAmountServiceTotal = $sumPrepaymentAmount + $sumPrepaymentAmountPercentage;
+                        @endphp
+
+                        @if($cabinDetails->user(Auth::user()->_id)->money_balance > 0)
+
+                            @php
+                                $moneyBalance                    = $cabinDetails->user(Auth::user()->_id)->money_balance;
+                                $moneyBalanceDeduct              = $sumPrepaymentAmount - $moneyBalance;
+                                $moneyBalanceDeductPercentage    = ($serviceTax / 100) * $moneyBalanceDeduct;
+                                $moneyBalanceDeductServiceTotal  = $moneyBalanceDeduct + $moneyBalanceDeductPercentage;
+                            @endphp
+
+                            <div class="row content row-booking1">
+                                <div class="col-sm-3 col-sm-3-booking1 col-sm-r col-sm-r-booking1">
+                                    <div class="panel panel-default booking-box-booking1 bottom-boxes-booking1 panel-booking1 panel-default-booking1" id="amount_box-booking1">
+                                        <div class="panel-body panel-body-booking1">
+                                            <div class="row row-booking1">
+                                                <div class="col-sm-12 col-sm-12-booking1 month-opening-booking1">
+                                                    <h5>Your Amount</h5>
+                                                    <span class="label label-info label-cabinlist"><input type="checkbox" class="moneyBalance" name="moneyBalance" value="1"> Redeem now! {{ number_format($moneyBalance, 2, '.', '') }}&euro;</span>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
 
-                    <div class="row content row-booking1">
-                        <div class="col-sm-3 col-sm-3-booking1 col-sm-r col-sm-r-booking1">
-                            <div class="panel panel-default booking-box-booking1 bottom-boxes-booking1 panel-booking1 panel-default-booking1">
-                                <div class="panel-body panel-body-booking1">
-                                    <div class="row row-booking1">
-                                        <div class="col-sm-12 col-sm-12-booking1 month-opening-booking1">
-                                            <h5>Complete Payment<span class="glyphicon glyphicon-question-sign" title="Here all costs are listed again. The service fee helps us operate Huetten-Holiday and offer services like our live-chat for your trip. It contains sales tax."></span></h5>
+                        @endif
+
+                        <div class="row content row-booking1">
+                            <div class="col-sm-3 col-sm-3-booking1 col-sm-r col-sm-r-booking1">
+                                <div class="panel panel-default booking-box-booking1 bottom-boxes-booking1 panel-booking1 panel-default-booking1">
+                                    <div class="panel-body panel-body-booking1">
+                                        <div class="row row-booking1">
+                                            <div class="col-sm-12 col-sm-12-booking1 month-opening-booking1">
+                                                <h5>Complete Payment<span class="glyphicon glyphicon-question-sign" title="Here all costs are listed again. The service fee helps us operate Huetten-Holiday and offer services like our live-chat for your trip. It contains sales tax."></span></h5>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="row row-booking1">
-                                        <div class="col-sm-12 col-sm-12-booking1 col-sm-12-extra-booking1">
-                                            <p class="info-listing-booking1">Deposit:</p><p class="info-listing-price-booking1">60,00€</p>
-                                            <p class="info-listing-booking1">Amount:</p><p class="info-listing-price-booking1">- 20,00€</p>
-                                            <p class="info-listing-booking1">Deposit netto:</p><p class="info-listing-price-booking1">40,00€</p>
-                                            <p class="info-listing-booking1">Service fee:</p><p class="info-listing-price-booking1">7,50€</p>
+
+                                        <!-- Money balance deduct begin -->
+                                        <div class="moneyBalanceCal" style="display: none;">
+                                            <div class="row row-booking1">
+                                                <div class="col-sm-12 col-sm-12-booking1 col-sm-12-extra-booking1">
+                                                    <p class="info-listing-booking1">Deposit:</p><p class="info-listing-price-booking1">{{ number_format($sumPrepaymentAmount, 2, '.', '') }}&euro;</p>
+                                                    <p class="info-listing-booking1">Applied money balance:</p><p class="info-listing-price-booking1">-{{ number_format($moneyBalance, 2, '.', '') }}&euro;</p>
+                                                    <p class="info-listing-booking1">After deduction:</p><p class="info-listing-price-booking1">{{ number_format($moneyBalanceDeduct, 2, '.', '') }}&euro;</p>
+                                                    <p class="info-listing-booking1">Service fee:</p><p class="info-listing-price-booking1">{{ $serviceTax }}%</p>
+                                                </div>
+                                            </div>
+
+                                            <div class="row row-booking1">
+                                                <div class="col-sm-12 col-sm-12-booking1 col-sm-12-extra-booking1">
+                                                    <h5 class="info-listing-booking1">Payment incl.<br /> Service fee:</h5><h5 class="info-listing-price-booking1">{{ number_format($moneyBalanceDeductServiceTotal, 2, '.', '') }}&euro;</h5>
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="row row-booking1">
-                                        <div class="col-sm-12 col-sm-12-booking1 col-sm-12-extra-booking1">
-                                            <h5 class="info-listing-booking1">Payment incl.<br /> Service fee:</h5><h5 class="info-listing-price-booking1">47,50€</h5>
+                                        <!-- Money balance deduct end -->
+
+                                        <div class="normalCalculation">
+                                            <div class="row row-booking1">
+                                                <div class="col-sm-12 col-sm-12-booking1 col-sm-12-extra-booking1">
+                                                    <p class="info-listing-booking1">Deposit:</p><p class="info-listing-price-booking1">{{ number_format($sumPrepaymentAmount, 2, '.', '') }}&euro;</p>
+                                                    <p class="info-listing-booking1">Service fee:</p><p class="info-listing-price-booking1">{{ $serviceTax }}%</p>
+                                                </div>
+                                            </div>
+
+                                            <div class="row row-booking1">
+                                                <div class="col-sm-12 col-sm-12-booking1 col-sm-12-extra-booking1">
+                                                    <h5 class="info-listing-booking1">Payment incl.<br /> Service fee:</h5><h5 class="info-listing-price-booking1">{{ number_format($sumPrepaymentAmountServiceTotal, 2, '.', '') }}&euro;</h5>
+                                                </div>
+                                            </div>
                                         </div>
+
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div>
-                        <div id="btn-ground-2-booking1">
-                            <a href="/search" class="btn btn-default-booking1 btn-default btn-sm btn-details btn-details-booking1">Continue Booking</a>
-                            <button type="button" class="btn btn-default-booking1 btn-default btn-sm btn-details btn-details-booking1">Payment</button>
+                        <div>
+                            <div id="btn-ground-2-booking1">
+                                <a href="/search" class="btn btn-default-booking1 btn-default btn-sm btn-details btn-details-booking1">Continue Booking</a>
+                                <button type="button" class="btn btn-default-booking1 btn-default btn-sm btn-details btn-details-booking1">Payment</button>
+                            </div>
                         </div>
-                    </div>
+                    @endif
+                </form>
+
             @endisset
 
         </div>
