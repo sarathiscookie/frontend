@@ -13,6 +13,7 @@ class InquiryController extends Controller
      */
     public function index()
     {
+        dd(session()->all());
         return view('inquiry');
     }
 

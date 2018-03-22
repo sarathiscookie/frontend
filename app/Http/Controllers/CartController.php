@@ -286,6 +286,14 @@ class CartController extends Controller
                                     }
                                     else {
                                         $availableStatus[] = 'notAvailable';
+                                        $request->session()->flash('cabin_id', new \MongoDB\BSON\ObjectID($cabin->_id));
+                                        $request->session()->flash('checkin_from', $this->getDateUtc($request->dateFrom));
+                                        $request->session()->flash('reserve_to', $this->getDateUtc($request->dateTo));
+                                        $request->session()->flash('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id));
+                                        $request->session()->flash('beds', (int)$request->persons);
+                                        $request->session()->flash('dormitory', 0);
+                                        $request->session()->flash('sleeps', (int)$request->persons);
+                                        $request->session()->flash('guests', (int)$request->persons);
                                         return response()->json(['error' => 'On '.$generateBookingDate->format("jS F").' booking is possible if no of persons is less than '.$cabin->not_regular_inquiry_guest.'. But you can send enquiry. Please '.$clickHere.' for inquiry'], 422);
                                     }
 
@@ -336,6 +344,14 @@ class CartController extends Controller
                                         }
                                         else {
                                             $availableStatus[] = 'notAvailable';
+                                            $request->session()->flash('cabin_id', new \MongoDB\BSON\ObjectID($cabin->_id));
+                                            $request->session()->flash('checkin_from', $this->getDateUtc($request->dateFrom));
+                                            $request->session()->flash('reserve_to', $this->getDateUtc($request->dateTo));
+                                            $request->session()->flash('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id));
+                                            $request->session()->flash('beds', (int)$request->persons);
+                                            $request->session()->flash('dormitory', 0);
+                                            $request->session()->flash('sleeps', (int)$request->persons);
+                                            $request->session()->flash('guests', (int)$request->persons);
                                             return response()->json(['error' => 'On '.$generateBookingDate->format("jS F").' booking is possible if no of persons is less than '.$cabin->mon_inquiry_guest.'. But you can send enquiry. Please '.$clickHere.' for inquiry'], 422);
                                         }
 
@@ -383,6 +399,14 @@ class CartController extends Controller
                                         }
                                         else {
                                             $availableStatus[] = 'notAvailable';
+                                            $request->session()->flash('cabin_id', new \MongoDB\BSON\ObjectID($cabin->_id));
+                                            $request->session()->flash('checkin_from', $this->getDateUtc($request->dateFrom));
+                                            $request->session()->flash('reserve_to', $this->getDateUtc($request->dateTo));
+                                            $request->session()->flash('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id));
+                                            $request->session()->flash('beds', (int)$request->persons);
+                                            $request->session()->flash('dormitory', 0);
+                                            $request->session()->flash('sleeps', (int)$request->persons);
+                                            $request->session()->flash('guests', (int)$request->persons);
                                             return response()->json(['error' => 'On '.$generateBookingDate->format("jS F").' booking is possible if no of persons is less than '.$cabin->tue_inquiry_guest.'. But you can send enquiry. Please '.$clickHere.' for inquiry'], 422);
                                         }
 
@@ -429,6 +453,14 @@ class CartController extends Controller
                                         }
                                         else {
                                             $availableStatus[] = 'notAvailable';
+                                            $request->session()->flash('cabin_id', new \MongoDB\BSON\ObjectID($cabin->_id));
+                                            $request->session()->flash('checkin_from', $this->getDateUtc($request->dateFrom));
+                                            $request->session()->flash('reserve_to', $this->getDateUtc($request->dateTo));
+                                            $request->session()->flash('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id));
+                                            $request->session()->flash('beds', (int)$request->persons);
+                                            $request->session()->flash('dormitory', 0);
+                                            $request->session()->flash('sleeps', (int)$request->persons);
+                                            $request->session()->flash('guests', (int)$request->persons);
                                             return response()->json(['error' => 'On '.$generateBookingDate->format("jS F").' booking is possible if no of persons is less than '.$cabin->wed_inquiry_guest.'. But you can send enquiry. Please '.$clickHere.' for inquiry'], 422);
                                         }
 
@@ -475,6 +507,14 @@ class CartController extends Controller
                                         }
                                         else {
                                             $availableStatus[] = 'notAvailable';
+                                            $request->session()->flash('cabin_id', new \MongoDB\BSON\ObjectID($cabin->_id));
+                                            $request->session()->flash('checkin_from', $this->getDateUtc($request->dateFrom));
+                                            $request->session()->flash('reserve_to', $this->getDateUtc($request->dateTo));
+                                            $request->session()->flash('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id));
+                                            $request->session()->flash('beds', (int)$request->persons);
+                                            $request->session()->flash('dormitory', 0);
+                                            $request->session()->flash('sleeps', (int)$request->persons);
+                                            $request->session()->flash('guests', (int)$request->persons);
                                             return response()->json(['error' => 'On '.$generateBookingDate->format("jS F").' booking is possible if no of persons is less than '.$cabin->thu_inquiry_guest.'. But you can send enquiry. Please '.$clickHere.' for inquiry'], 422);
                                         }
 
@@ -521,6 +561,14 @@ class CartController extends Controller
                                         }
                                         else {
                                             $availableStatus[] = 'notAvailable';
+                                            $request->session()->flash('cabin_id', new \MongoDB\BSON\ObjectID($cabin->_id));
+                                            $request->session()->flash('checkin_from', $this->getDateUtc($request->dateFrom));
+                                            $request->session()->flash('reserve_to', $this->getDateUtc($request->dateTo));
+                                            $request->session()->flash('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id));
+                                            $request->session()->flash('beds', (int)$request->persons);
+                                            $request->session()->flash('dormitory', 0);
+                                            $request->session()->flash('sleeps', (int)$request->persons);
+                                            $request->session()->flash('guests', (int)$request->persons);
                                             return response()->json(['error' => 'On '.$generateBookingDate->format("jS F").' booking is possible if no of persons is less than '.$cabin->fri_inquiry_guest.'. But you can send enquiry. Please '.$clickHere.' for inquiry'], 422);
                                         }
 
@@ -568,6 +616,14 @@ class CartController extends Controller
                                         }
                                         else {
                                             $availableStatus[] = 'notAvailable';
+                                            $request->session()->flash('cabin_id', new \MongoDB\BSON\ObjectID($cabin->_id));
+                                            $request->session()->flash('checkin_from', $this->getDateUtc($request->dateFrom));
+                                            $request->session()->flash('reserve_to', $this->getDateUtc($request->dateTo));
+                                            $request->session()->flash('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id));
+                                            $request->session()->flash('beds', (int)$request->persons);
+                                            $request->session()->flash('dormitory', 0);
+                                            $request->session()->flash('sleeps', (int)$request->persons);
+                                            $request->session()->flash('guests', (int)$request->persons);
                                             return response()->json(['error' => 'On '.$generateBookingDate->format("jS F").' booking is possible if no of persons is less than '.$cabin->sat_inquiry_guest.'. But you can send enquiry. Please '.$clickHere.' for inquiry'], 422);
                                         }
 
@@ -614,6 +670,14 @@ class CartController extends Controller
                                         }
                                         else {
                                             $availableStatus[] = 'notAvailable';
+                                            $request->session()->flash('cabin_id', new \MongoDB\BSON\ObjectID($cabin->_id));
+                                            $request->session()->flash('checkin_from', $this->getDateUtc($request->dateFrom));
+                                            $request->session()->flash('reserve_to', $this->getDateUtc($request->dateTo));
+                                            $request->session()->flash('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id));
+                                            $request->session()->flash('beds', (int)$request->persons);
+                                            $request->session()->flash('dormitory', 0);
+                                            $request->session()->flash('sleeps', (int)$request->persons);
+                                            $request->session()->flash('guests', (int)$request->persons);
                                             return response()->json(['error' => 'On '.$generateBookingDate->format("jS F").' booking is possible if no of persons is less than '.$cabin->sun_inquiry_guest.'. But you can send enquiry. Please '.$clickHere.' for inquiry'], 422);
                                         }
 
@@ -659,6 +723,14 @@ class CartController extends Controller
                                 }
                                 else {
                                     $availableStatus[] = 'notAvailable';
+                                    $request->session()->flash('cabin_id', new \MongoDB\BSON\ObjectID($cabin->_id));
+                                    $request->session()->flash('checkin_from', $this->getDateUtc($request->dateFrom));
+                                    $request->session()->flash('reserve_to', $this->getDateUtc($request->dateTo));
+                                    $request->session()->flash('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id));
+                                    $request->session()->flash('beds', (int)$request->persons);
+                                    $request->session()->flash('dormitory', 0);
+                                    $request->session()->flash('sleeps', (int)$request->persons);
+                                    $request->session()->flash('guests', (int)$request->persons);
                                     return response()->json(['error' => 'On '.$generateBookingDate->format("jS F").' booking is possible if no of persons is less than '.$cabin->inquiry_starts.'. But you can send enquiry. Please '.$clickHere.' for inquiry'], 422);
                                 }
 
@@ -714,6 +786,14 @@ class CartController extends Controller
                                     }
                                     else {
                                         $availableStatus[] = 'notAvailable';
+                                        $request->session()->flash('cabin_id', new \MongoDB\BSON\ObjectID($cabin->_id));
+                                        $request->session()->flash('checkin_from', $this->getDateUtc($request->dateFrom));
+                                        $request->session()->flash('reserve_to', $this->getDateUtc($request->dateTo));
+                                        $request->session()->flash('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id));
+                                        $request->session()->flash('beds', (int)$request->persons);
+                                        $request->session()->flash('dormitory', 0);
+                                        $request->session()->flash('sleeps', (int)$request->persons);
+                                        $request->session()->flash('guests', (int)$request->persons);
                                         return response()->json(['error' => 'On '.$generateBookingDate->format("jS F").' booking is possible if no of persons is less than '.$cabin->not_regular_inquiry_guest.'. But you can send enquiry. Please '.$clickHere.' for inquiry'], 422);
                                     }
 
@@ -755,6 +835,14 @@ class CartController extends Controller
                                         }
                                         else {
                                             $availableStatus[] = 'notAvailable';
+                                            $request->session()->flash('cabin_id', new \MongoDB\BSON\ObjectID($cabin->_id));
+                                            $request->session()->flash('checkin_from', $this->getDateUtc($request->dateFrom));
+                                            $request->session()->flash('reserve_to', $this->getDateUtc($request->dateTo));
+                                            $request->session()->flash('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id));
+                                            $request->session()->flash('beds', (int)$request->persons);
+                                            $request->session()->flash('dormitory', 0);
+                                            $request->session()->flash('sleeps', (int)$request->persons);
+                                            $request->session()->flash('guests', (int)$request->persons);
                                             return response()->json(['error' => 'On '.$generateBookingDate->format("jS F").' booking is possible if no of persons is less than '.$cabin->mon_inquiry_guest.'. But you can send enquiry. Please '.$clickHere.' for inquiry'], 422);
                                         }
                                         /*print_r(' ----mon_regular_data---- ');
@@ -793,6 +881,14 @@ class CartController extends Controller
                                         }
                                         else {
                                             $availableStatus[] = 'notAvailable';
+                                            $request->session()->flash('cabin_id', new \MongoDB\BSON\ObjectID($cabin->_id));
+                                            $request->session()->flash('checkin_from', $this->getDateUtc($request->dateFrom));
+                                            $request->session()->flash('reserve_to', $this->getDateUtc($request->dateTo));
+                                            $request->session()->flash('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id));
+                                            $request->session()->flash('beds', (int)$request->persons);
+                                            $request->session()->flash('dormitory', 0);
+                                            $request->session()->flash('sleeps', (int)$request->persons);
+                                            $request->session()->flash('guests', (int)$request->persons);
                                             return response()->json(['error' => 'On '.$generateBookingDate->format("jS F").' booking is possible if no of persons is less than '.$cabin->tue_inquiry_guest.'. But you can send enquiry. Please '.$clickHere.' for inquiry'], 422);
                                         }
                                         /*print_r(' ----tue_regular_data---- ');
@@ -831,6 +927,14 @@ class CartController extends Controller
                                         }
                                         else {
                                             $availableStatus[] = 'notAvailable';
+                                            $request->session()->flash('cabin_id', new \MongoDB\BSON\ObjectID($cabin->_id));
+                                            $request->session()->flash('checkin_from', $this->getDateUtc($request->dateFrom));
+                                            $request->session()->flash('reserve_to', $this->getDateUtc($request->dateTo));
+                                            $request->session()->flash('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id));
+                                            $request->session()->flash('beds', (int)$request->persons);
+                                            $request->session()->flash('dormitory', 0);
+                                            $request->session()->flash('sleeps', (int)$request->persons);
+                                            $request->session()->flash('guests', (int)$request->persons);
                                             return response()->json(['error' => 'On '.$generateBookingDate->format("jS F").' booking is possible if no of persons is less than '.$cabin->wed_inquiry_guest.'. But you can send enquiry. Please '.$clickHere.' for inquiry'], 422);
                                         }
                                         /*print_r(' ----wed_regular_data---- ');
@@ -869,6 +973,14 @@ class CartController extends Controller
                                         }
                                         else {
                                             $availableStatus[] = 'notAvailable';
+                                            $request->session()->flash('cabin_id', new \MongoDB\BSON\ObjectID($cabin->_id));
+                                            $request->session()->flash('checkin_from', $this->getDateUtc($request->dateFrom));
+                                            $request->session()->flash('reserve_to', $this->getDateUtc($request->dateTo));
+                                            $request->session()->flash('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id));
+                                            $request->session()->flash('beds', (int)$request->persons);
+                                            $request->session()->flash('dormitory', 0);
+                                            $request->session()->flash('sleeps', (int)$request->persons);
+                                            $request->session()->flash('guests', (int)$request->persons);
                                             return response()->json(['error' => 'On '.$generateBookingDate->format("jS F").' booking is possible if no of persons is less than '.$cabin->thu_inquiry_guest.'. But you can send enquiry. Please '.$clickHere.' for inquiry'], 422);
                                         }
                                         /*print_r(' ----thu_regular_data---- ');
@@ -907,6 +1019,14 @@ class CartController extends Controller
                                         }
                                         else {
                                             $availableStatus[] = 'notAvailable';
+                                            $request->session()->flash('cabin_id', new \MongoDB\BSON\ObjectID($cabin->_id));
+                                            $request->session()->flash('checkin_from', $this->getDateUtc($request->dateFrom));
+                                            $request->session()->flash('reserve_to', $this->getDateUtc($request->dateTo));
+                                            $request->session()->flash('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id));
+                                            $request->session()->flash('beds', (int)$request->persons);
+                                            $request->session()->flash('dormitory', 0);
+                                            $request->session()->flash('sleeps', (int)$request->persons);
+                                            $request->session()->flash('guests', (int)$request->persons);
                                             return response()->json(['error' => 'On '.$generateBookingDate->format("jS F").' booking is possible if no of persons is less than '.$cabin->fri_inquiry_guest.'. But you can send enquiry. Please '.$clickHere.' for inquiry'], 422);
                                         }
                                         /*print_r(' ----fri_regular_data---- ');
@@ -945,6 +1065,14 @@ class CartController extends Controller
                                         }
                                         else {
                                             $availableStatus[] = 'notAvailable';
+                                            $request->session()->flash('cabin_id', new \MongoDB\BSON\ObjectID($cabin->_id));
+                                            $request->session()->flash('checkin_from', $this->getDateUtc($request->dateFrom));
+                                            $request->session()->flash('reserve_to', $this->getDateUtc($request->dateTo));
+                                            $request->session()->flash('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id));
+                                            $request->session()->flash('beds', (int)$request->persons);
+                                            $request->session()->flash('dormitory', 0);
+                                            $request->session()->flash('sleeps', (int)$request->persons);
+                                            $request->session()->flash('guests', (int)$request->persons);
                                             return response()->json(['error' => 'On '.$generateBookingDate->format("jS F").' booking is possible if no of persons is less than '.$cabin->sat_inquiry_guest.'. But you can send enquiry. Please '.$clickHere.' for inquiry'], 422);
                                         }
                                         /*print_r(' ----sat_regular_data---- ');
@@ -983,6 +1111,14 @@ class CartController extends Controller
                                         }
                                         else {
                                             $availableStatus[] = 'notAvailable';
+                                            $request->session()->flash('cabin_id', new \MongoDB\BSON\ObjectID($cabin->_id));
+                                            $request->session()->flash('checkin_from', $this->getDateUtc($request->dateFrom));
+                                            $request->session()->flash('reserve_to', $this->getDateUtc($request->dateTo));
+                                            $request->session()->flash('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id));
+                                            $request->session()->flash('beds', (int)$request->persons);
+                                            $request->session()->flash('dormitory', 0);
+                                            $request->session()->flash('sleeps', (int)$request->persons);
+                                            $request->session()->flash('guests', (int)$request->persons);
                                             return response()->json(['error' => 'On '.$generateBookingDate->format("jS F").' booking is possible if no of persons is less than '.$cabin->sun_inquiry_guest.'. But you can send enquiry. Please '.$clickHere.' for inquiry'], 422);
                                         }
                                         /*print_r(' ----sun_regular_data---- ');
@@ -1019,6 +1155,14 @@ class CartController extends Controller
                                 }
                                 else {
                                     $availableStatus[] = 'notAvailable';
+                                    $request->session()->flash('cabin_id', new \MongoDB\BSON\ObjectID($cabin->_id));
+                                    $request->session()->flash('checkin_from', $this->getDateUtc($request->dateFrom));
+                                    $request->session()->flash('reserve_to', $this->getDateUtc($request->dateTo));
+                                    $request->session()->flash('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id));
+                                    $request->session()->flash('beds', (int)$request->persons);
+                                    $request->session()->flash('dormitory', 0);
+                                    $request->session()->flash('sleeps', (int)$request->persons);
+                                    $request->session()->flash('guests', (int)$request->persons);
                                     return response()->json(['error' => 'On '.$generateBookingDate->format("jS F").' booking is possible if no of persons is less than '.$cabin->inquiry_starts.'. But you can send enquiry. Please '.$clickHere.' for inquiry'], 422);
                                 }
 
