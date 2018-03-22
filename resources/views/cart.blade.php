@@ -149,6 +149,11 @@
                     @if(array_sum($prepayment_amount) > 0 )
 
                         @php
+                            $moneyBalance                   = 0;
+                            $moneyBalanceDeduct             = 0;
+                            $moneyBalanceDeductPercentage   = 0;
+                            $moneyBalanceDeductServiceTotal = 0;
+
                             $sumPrepaymentAmount = array_sum($prepayment_amount);
 
                             if($sumPrepaymentAmount <= 30) {
@@ -167,31 +172,33 @@
                             $sumPrepaymentAmountServiceTotal = $sumPrepaymentAmount + $sumPrepaymentAmountPercentage;
                         @endphp
 
-                        @if($cabinDetails->user(Auth::user()->_id)->money_balance > 0)
 
-                            @php
-                                $moneyBalance                    = $cabinDetails->user(Auth::user()->_id)->money_balance;
-                                $moneyBalanceDeduct              = $sumPrepaymentAmount - $moneyBalance;
-                                $moneyBalanceDeductPercentage    = ($serviceTax / 100) * $moneyBalanceDeduct;
-                                $moneyBalanceDeductServiceTotal  = $moneyBalanceDeduct + $moneyBalanceDeductPercentage;
-                            @endphp
+                            @if($cabinDetails->user(Auth::user()->_id)->money_balance > 0)
 
-                            <div class="row content row-booking1">
-                                <div class="col-sm-3 col-sm-3-booking1 col-sm-r col-sm-r-booking1">
-                                    <div class="panel panel-default booking-box-booking1 bottom-boxes-booking1 panel-booking1 panel-default-booking1" id="amount_box-booking1">
-                                        <div class="panel-body panel-body-booking1">
-                                            <div class="row row-booking1">
-                                                <div class="col-sm-12 col-sm-12-booking1 month-opening-booking1">
-                                                    <h5>Your Amount</h5>
-                                                    <span class="label label-info label-cabinlist"><input type="checkbox" class="moneyBalance" name="moneyBalance" value="1"> Redeem now! {{ number_format($moneyBalance, 2, '.', '') }}&euro;</span>
+                                @php
+                                    $moneyBalance                    = $cabinDetails->user(Auth::user()->_id)->money_balance;
+                                    $moneyBalanceDeduct              = $sumPrepaymentAmount - $moneyBalance;
+                                    $moneyBalanceDeductPercentage    = ($serviceTax / 100) * $moneyBalanceDeduct;
+                                    $moneyBalanceDeductServiceTotal  = $moneyBalanceDeduct + $moneyBalanceDeductPercentage;
+                                @endphp
+
+                                <div class="row content row-booking1">
+                                    <div class="col-sm-3 col-sm-3-booking1 col-sm-r col-sm-r-booking1">
+                                        <div class="panel panel-default booking-box-booking1 bottom-boxes-booking1 panel-booking1 panel-default-booking1" id="amount_box-booking1">
+                                            <div class="panel-body panel-body-booking1">
+                                                <div class="row row-booking1">
+                                                    <div class="col-sm-12 col-sm-12-booking1 month-opening-booking1">
+                                                        <h5>Your Amount</h5>
+                                                        <span class="label label-info label-cabinlist"><input type="checkbox" class="moneyBalance" name="moneyBalance" value="1"> Redeem now! {{ number_format($moneyBalance, 2, '.', '') }}&euro;</span>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
 
-                        @endif
+                            @endif
+
 
                         <div class="row content row-booking1">
                             <div class="col-sm-3 col-sm-3-booking1 col-sm-r col-sm-r-booking1">

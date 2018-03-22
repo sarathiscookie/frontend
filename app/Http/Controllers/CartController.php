@@ -118,6 +118,7 @@ class CartController extends Controller
      */
     public function store(CartRequest $request)
     {
+        $clickHere               = '<a href="/inquiry">click here</a>';
         $monthBegin              = DateTime::createFromFormat('d.m.y', $request->dateFrom)->format('Y-m-d');
         $monthEnd                = DateTime::createFromFormat('d.m.y', $request->dateTo)->format('Y-m-d');
         $dateDifference          = date_diff(date_create($monthBegin), date_create($monthEnd));
@@ -285,7 +286,7 @@ class CartController extends Controller
                                     }
                                     else {
                                         $availableStatus[] = 'notAvailable';
-                                        return response()->json(['error' => 'On '.$generateBookingDate->format("jS F").' booking is possible if no of persons is less than '.$cabin->not_regular_inquiry_guest.'. But you can send enquiry. Please click here for inquiry'], 422);
+                                        return response()->json(['error' => 'On '.$generateBookingDate->format("jS F").' booking is possible if no of persons is less than '.$cabin->not_regular_inquiry_guest.'. But you can send enquiry. Please '.$clickHere.' for inquiry'], 422);
                                     }
 
                                     /*print_r(' ----not_regular_data---- ');
@@ -335,7 +336,7 @@ class CartController extends Controller
                                         }
                                         else {
                                             $availableStatus[] = 'notAvailable';
-                                            return response()->json(['error' => 'On '.$generateBookingDate->format("jS F").' booking is possible if no of persons is less than '.$cabin->mon_inquiry_guest.'. But you can send enquiry. Please click here for inquiry'], 422);
+                                            return response()->json(['error' => 'On '.$generateBookingDate->format("jS F").' booking is possible if no of persons is less than '.$cabin->mon_inquiry_guest.'. But you can send enquiry. Please '.$clickHere.' for inquiry'], 422);
                                         }
 
                                         /*print_r(' ----mon_regular_data---- ');
@@ -382,7 +383,7 @@ class CartController extends Controller
                                         }
                                         else {
                                             $availableStatus[] = 'notAvailable';
-                                            return response()->json(['error' => 'On '.$generateBookingDate->format("jS F").' booking is possible if no of persons is less than '.$cabin->tue_inquiry_guest.'. But you can send enquiry. Please click here for inquiry'], 422);
+                                            return response()->json(['error' => 'On '.$generateBookingDate->format("jS F").' booking is possible if no of persons is less than '.$cabin->tue_inquiry_guest.'. But you can send enquiry. Please '.$clickHere.' for inquiry'], 422);
                                         }
 
                                         /*print_r(' ----tue_regular_data---- ');
@@ -428,7 +429,7 @@ class CartController extends Controller
                                         }
                                         else {
                                             $availableStatus[] = 'notAvailable';
-                                            return response()->json(['error' => 'On '.$generateBookingDate->format("jS F").' booking is possible if no of persons is less than '.$cabin->wed_inquiry_guest.'. But you can send enquiry. Please click here for inquiry'], 422);
+                                            return response()->json(['error' => 'On '.$generateBookingDate->format("jS F").' booking is possible if no of persons is less than '.$cabin->wed_inquiry_guest.'. But you can send enquiry. Please '.$clickHere.' for inquiry'], 422);
                                         }
 
                                         /*print_r(' ----wed_regular_data---- ');
@@ -474,7 +475,7 @@ class CartController extends Controller
                                         }
                                         else {
                                             $availableStatus[] = 'notAvailable';
-                                            return response()->json(['error' => 'On '.$generateBookingDate->format("jS F").' booking is possible if no of persons is less than '.$cabin->thu_inquiry_guest.'. But you can send enquiry. Please click here for inquiry'], 422);
+                                            return response()->json(['error' => 'On '.$generateBookingDate->format("jS F").' booking is possible if no of persons is less than '.$cabin->thu_inquiry_guest.'. But you can send enquiry. Please '.$clickHere.' for inquiry'], 422);
                                         }
 
                                         /*print_r(' ----thu_regular_data---- ');
@@ -520,7 +521,7 @@ class CartController extends Controller
                                         }
                                         else {
                                             $availableStatus[] = 'notAvailable';
-                                            return response()->json(['error' => 'On '.$generateBookingDate->format("jS F").' booking is possible if no of persons is less than '.$cabin->fri_inquiry_guest.'. But you can send enquiry. Please click here for inquiry'], 422);
+                                            return response()->json(['error' => 'On '.$generateBookingDate->format("jS F").' booking is possible if no of persons is less than '.$cabin->fri_inquiry_guest.'. But you can send enquiry. Please '.$clickHere.' for inquiry'], 422);
                                         }
 
                                         /*print_r(' ----fri_regular_data---- ');
@@ -567,7 +568,7 @@ class CartController extends Controller
                                         }
                                         else {
                                             $availableStatus[] = 'notAvailable';
-                                            return response()->json(['error' => 'On '.$generateBookingDate->format("jS F").' booking is possible if no of persons is less than '.$cabin->sat_inquiry_guest.'. But you can send enquiry. Please click here for inquiry'], 422);
+                                            return response()->json(['error' => 'On '.$generateBookingDate->format("jS F").' booking is possible if no of persons is less than '.$cabin->sat_inquiry_guest.'. But you can send enquiry. Please '.$clickHere.' for inquiry'], 422);
                                         }
 
                                         /*print_r(' ----sat_regular_data---- ');
@@ -613,7 +614,7 @@ class CartController extends Controller
                                         }
                                         else {
                                             $availableStatus[] = 'notAvailable';
-                                            return response()->json(['error' => 'On '.$generateBookingDate->format("jS F").' booking is possible if no of persons is less than '.$cabin->sun_inquiry_guest.'. But you can send enquiry. Please click here for inquiry'], 422);
+                                            return response()->json(['error' => 'On '.$generateBookingDate->format("jS F").' booking is possible if no of persons is less than '.$cabin->sun_inquiry_guest.'. But you can send enquiry. Please '.$clickHere.' for inquiry'], 422);
                                         }
 
                                         /*print_r(' ----sun_regular_data---- ');
@@ -658,7 +659,7 @@ class CartController extends Controller
                                 }
                                 else {
                                     $availableStatus[] = 'notAvailable';
-                                    return response()->json(['error' => 'On '.$generateBookingDate->format("jS F").' booking is possible if no of persons is less than '.$cabin->inquiry_starts.'. But you can send enquiry. Please click here for inquiry'], 422);
+                                    return response()->json(['error' => 'On '.$generateBookingDate->format("jS F").' booking is possible if no of persons is less than '.$cabin->inquiry_starts.'. But you can send enquiry. Please '.$clickHere.' for inquiry'], 422);
                                 }
 
                                 /*print_r(' ----normal_data---- ');
@@ -713,7 +714,7 @@ class CartController extends Controller
                                     }
                                     else {
                                         $availableStatus[] = 'notAvailable';
-                                        return response()->json(['error' => 'On '.$generateBookingDate->format("jS F").' booking is possible if no of persons is less than '.$cabin->not_regular_inquiry_guest.'. But you can send enquiry. Please click here for inquiry'], 422);
+                                        return response()->json(['error' => 'On '.$generateBookingDate->format("jS F").' booking is possible if no of persons is less than '.$cabin->not_regular_inquiry_guest.'. But you can send enquiry. Please '.$clickHere.' for inquiry'], 422);
                                     }
 
                                     /*print_r(' ----not_regular_data---- ');
@@ -754,7 +755,7 @@ class CartController extends Controller
                                         }
                                         else {
                                             $availableStatus[] = 'notAvailable';
-                                            return response()->json(['error' => 'On '.$generateBookingDate->format("jS F").' booking is possible if no of persons is less than '.$cabin->mon_inquiry_guest.'. But you can send enquiry. Please click here for inquiry'], 422);
+                                            return response()->json(['error' => 'On '.$generateBookingDate->format("jS F").' booking is possible if no of persons is less than '.$cabin->mon_inquiry_guest.'. But you can send enquiry. Please '.$clickHere.' for inquiry'], 422);
                                         }
                                         /*print_r(' ----mon_regular_data---- ');
                                         print_r(' mon_dates: ' . $dates . ' mon_sleeps_avail: '. $mon_sleeps_avail);
@@ -792,7 +793,7 @@ class CartController extends Controller
                                         }
                                         else {
                                             $availableStatus[] = 'notAvailable';
-                                            return response()->json(['error' => 'On '.$generateBookingDate->format("jS F").' booking is possible if no of persons is less than '.$cabin->tue_inquiry_guest.'. But you can send enquiry. Please click here for inquiry'], 422);
+                                            return response()->json(['error' => 'On '.$generateBookingDate->format("jS F").' booking is possible if no of persons is less than '.$cabin->tue_inquiry_guest.'. But you can send enquiry. Please '.$clickHere.' for inquiry'], 422);
                                         }
                                         /*print_r(' ----tue_regular_data---- ');
                                         print_r(' tue_dates: ' . $dates . ' tue_sleeps_avail: '. $tue_sleeps_avail);
@@ -830,7 +831,7 @@ class CartController extends Controller
                                         }
                                         else {
                                             $availableStatus[] = 'notAvailable';
-                                            return response()->json(['error' => 'On '.$generateBookingDate->format("jS F").' booking is possible if no of persons is less than '.$cabin->wed_inquiry_guest.'. But you can send enquiry. Please click here for inquiry'], 422);
+                                            return response()->json(['error' => 'On '.$generateBookingDate->format("jS F").' booking is possible if no of persons is less than '.$cabin->wed_inquiry_guest.'. But you can send enquiry. Please '.$clickHere.' for inquiry'], 422);
                                         }
                                         /*print_r(' ----wed_regular_data---- ');
                                         print_r(' wed_dates: ' . $dates . ' wed_sleeps_avail: '. $wed_sleeps_avail);
@@ -868,7 +869,7 @@ class CartController extends Controller
                                         }
                                         else {
                                             $availableStatus[] = 'notAvailable';
-                                            return response()->json(['error' => 'On '.$generateBookingDate->format("jS F").' booking is possible if no of persons is less than '.$cabin->thu_inquiry_guest.'. But you can send enquiry. Please click here for inquiry'], 422);
+                                            return response()->json(['error' => 'On '.$generateBookingDate->format("jS F").' booking is possible if no of persons is less than '.$cabin->thu_inquiry_guest.'. But you can send enquiry. Please '.$clickHere.' for inquiry'], 422);
                                         }
                                         /*print_r(' ----thu_regular_data---- ');
                                         print_r(' thu_dates: ' . $dates . ' thu_sleeps_avail: '. $thu_sleeps_avail);
@@ -906,7 +907,7 @@ class CartController extends Controller
                                         }
                                         else {
                                             $availableStatus[] = 'notAvailable';
-                                            return response()->json(['error' => 'On '.$generateBookingDate->format("jS F").' booking is possible if no of persons is less than '.$cabin->fri_inquiry_guest.'. But you can send enquiry. Please click here for inquiry'], 422);
+                                            return response()->json(['error' => 'On '.$generateBookingDate->format("jS F").' booking is possible if no of persons is less than '.$cabin->fri_inquiry_guest.'. But you can send enquiry. Please '.$clickHere.' for inquiry'], 422);
                                         }
                                         /*print_r(' ----fri_regular_data---- ');
                                         print_r(' fri_dates: ' . $dates . ' fri_sleeps_avail: '. $fri_sleeps_avail);
@@ -944,7 +945,7 @@ class CartController extends Controller
                                         }
                                         else {
                                             $availableStatus[] = 'notAvailable';
-                                            return response()->json(['error' => 'On '.$generateBookingDate->format("jS F").' booking is possible if no of persons is less than '.$cabin->sat_inquiry_guest.'. But you can send enquiry. Please click here for inquiry'], 422);
+                                            return response()->json(['error' => 'On '.$generateBookingDate->format("jS F").' booking is possible if no of persons is less than '.$cabin->sat_inquiry_guest.'. But you can send enquiry. Please '.$clickHere.' for inquiry'], 422);
                                         }
                                         /*print_r(' ----sat_regular_data---- ');
                                         print_r(' sat_dates: ' . $dates . ' sat_sleeps_avail: '. $sat_sleeps_avail);
@@ -982,7 +983,7 @@ class CartController extends Controller
                                         }
                                         else {
                                             $availableStatus[] = 'notAvailable';
-                                            return response()->json(['error' => 'On '.$generateBookingDate->format("jS F").' booking is possible if no of persons is less than '.$cabin->sun_inquiry_guest.'. But you can send enquiry. Please click here for inquiry'], 422);
+                                            return response()->json(['error' => 'On '.$generateBookingDate->format("jS F").' booking is possible if no of persons is less than '.$cabin->sun_inquiry_guest.'. But you can send enquiry. Please '.$clickHere.' for inquiry'], 422);
                                         }
                                         /*print_r(' ----sun_regular_data---- ');
                                         print_r(' sun_dates: ' . $dates . ' sun_sleeps_avail: '. $sun_sleeps_avail);
@@ -1018,7 +1019,7 @@ class CartController extends Controller
                                 }
                                 else {
                                     $availableStatus[] = 'notAvailable';
-                                    return response()->json(['error' => 'On '.$generateBookingDate->format("jS F").' booking is possible if no of persons is less than '.$cabin->inquiry_starts.'. But you can send enquiry. Please click here for inquiry'], 422);
+                                    return response()->json(['error' => 'On '.$generateBookingDate->format("jS F").' booking is possible if no of persons is less than '.$cabin->inquiry_starts.'. But you can send enquiry. Please '.$clickHere.' for inquiry'], 422);
                                 }
 
                                 /*print_r(' ----normal_regular_data---- ');

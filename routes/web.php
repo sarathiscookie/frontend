@@ -89,10 +89,10 @@ Route::group(['middleware' => ['auth']], function () {
 
     /*
     |--------------------------------------------------------------------------
-    | Middleware group for authentication
+    | Cart
     |--------------------------------------------------------------------------
     |
-    | Route for after authentication
+    | Route for list, store, delete cart
     |
     */
 
@@ -104,6 +104,17 @@ Route::group(['middleware' => ['auth']], function () {
 
     /* Delete cart */
     Route::get('/cart/delete/{cabinId}/{cartId}', 'CartController@destroy')->name('cart.destroy');
+
+    /*
+    |--------------------------------------------------------------------------
+    | Inquiry
+    |--------------------------------------------------------------------------
+    |
+    | Route for send inquiry
+    |
+    */
+    /* view inquiry page */
+    Route::get('/inquiry', 'InquiryController@index')->name('inquiry');
 });
 
 
