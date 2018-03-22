@@ -16,8 +16,18 @@
         </div>
         <div class="col-md-2 col-md-2-booking1"></div>
     </div>
+
     <main>
         <div class="container-fluid container-fluid-booking1 text-center">
+            @if (session()->has('deletedBooking'))
+                <div id="flash" class="alert alert-success">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    {{ session()->get('deletedBooking') }}
+                </div>
+            @endif
+
             @isset($carts)
 
                 @php
@@ -132,7 +142,7 @@
                     </div>
 
                 @empty
-                    <p>No data</p>
+                    <p>No bookings in your cart</p>
                 @endforelse
 
                 <form>

@@ -1044,7 +1044,7 @@ class CartController extends Controller
 
                     $booking                   = new Booking;
                     $booking->cabinname        = $cabin->name;
-                    $booking->cabin_id         = $cabin->_id;
+                    $booking->cabin_id         = new \MongoDB\BSON\ObjectID($cabin->_id);
                     $booking->checkin_from     = $this->getDateUtc($request->dateFrom);
                     $booking->reserve_to       = $this->getDateUtc($request->dateTo);
                     $booking->user             = new \MongoDB\BSON\ObjectID(Auth::user()->_id);
@@ -1108,11 +1108,20 @@ class CartController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param  string  $cabinId
+     * @param  string  $cartId
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($cabinId, $cartId)
     {
-        //
+        $booking = Booking::where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
+            ->where('cabin_id', new \MongoDB\BSON\ObjectID($cabinId))
+            ->where('status', "8")
+            ->where('is_delete', 0)
+            ->findOrFail($cartId);
+
+        $booking->delete();
+
+        return redirect()->back()->with('deletedBooking', 'Booking deleted from your cart');
     }
 }
