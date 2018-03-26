@@ -26,6 +26,7 @@ mix.styles([
     'resources/assets/css/searchResult.css',
     'resources/assets/css/cabinDetails.css',
     'resources/assets/css/cart.css',
+    'resources/assets/css/inquiry.css',
     'resources/assets/css/login.css',
     'resources/assets/css/register.css'
 ], 'public/css/all.css');
@@ -36,7 +37,8 @@ mix.scripts([
     'resources/assets/js/calendar.js',
     'resources/assets/js/searchResult.js',
     'resources/assets/js/cabinDetails.js',
-    'resources/assets/js/cart.js'
+    'resources/assets/js/cart.js',
+    'resources/assets/js/inquiry.js'
 ], 'public/js/all.js');
 
 /* Js and css for plugins */

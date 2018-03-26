@@ -72,7 +72,7 @@
                                                         <select class="form-control form-control-booking1">
                                                             <option>Choose Bed(s)</option>
                                                             @for($i = 1; $i <= 30; $i++)
-                                                                <option value="{{ old('persons_'.$cart->cabin_id, $i) }}" @if($i == $cart->beds) selected="selected" @endif>{{ $i }}</option>
+                                                                <option value="{{ $i }}" @if($i == $cart->beds) selected="selected" @endif>{{ $i }}</option>
                                                             @endfor
                                                         </select>
                                                     </div>
@@ -89,7 +89,7 @@
                                                         <select class="form-control form-control-booking1">
                                                             <option>Choose Sleep(s)</option>
                                                             @for($i = 1; $i <= 30; $i++)
-                                                                <option value="{{ old('persons_'.$cart->cabin_id, $i) }}" @if($i == $cart->sleeps) selected="selected" @endif>{{ $i }}</option>
+                                                                <option value="{{ $i }}" @if($i == $cart->sleeps) selected="selected" @endif>{{ $i }}</option>
                                                             @endfor
                                                         </select>
                                                     </div>

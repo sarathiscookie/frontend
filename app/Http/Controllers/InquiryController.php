@@ -3,9 +3,30 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Cabin;
+use DateTime;
+use DatePeriod;
+use DateInterval;
+use Auth;
 
 class InquiryController extends Controller
 {
+
+    /**
+     * To generate date format as mongo.
+     *
+     * @param  string  $date
+     * @return object
+     */
+    public function getDateUtc($date)
+    {
+        $dateFormatChange = DateTime::createFromFormat("d.m.y", $date)->format('Y-m-d');
+        $dateTime         = new DateTime($dateFormatChange);
+        $timeStamp        = $dateTime->getTimestamp();
+        $utcDateTime      = new \MongoDB\BSON\UTCDateTime($timeStamp * 1000);
+        return $utcDateTime;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -13,8 +34,12 @@ class InquiryController extends Controller
      */
     public function index()
     {
-        dd(session()->all());
-        return view('inquiry');
+        $cabinDetails      = Cabin::select('name', 'region', 'prepayment_amount', 'sleeping_place', 'halfboard', 'halfboard_price')
+            ->where('is_delete', 0)
+            ->where('other_cabin', "0")
+            ->findOrFail(session()->get('cabin_id'));
+
+        return view('inquiry', ['cabinDetails' => $cabinDetails]);
     }
 
     /**

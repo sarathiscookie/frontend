@@ -1772,6 +1772,9 @@ hr {
     background-color:#EFEFEF;
 }
 /* Cart main css end */
+.required{
+    color:red;
+}
 /* Login main css begin */
 .row-log{
     margin-left:10%;
