@@ -115,6 +115,10 @@ Route::group(['middleware' => ['auth']], function () {
     */
     /* view inquiry page */
     Route::get('/inquiry', 'InquiryController@index')->name('inquiry');
+
+    /* send and store inquiry */
+    Route::post('/inquiry/send', 'InquiryController@store')->name('inquiry.store');
+
 });
 
 

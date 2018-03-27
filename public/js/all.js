@@ -398,7 +398,13 @@ $(function(){
     });
 });
 
+/* Js for inquiry module */
 $(function(){
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
 
     /* Character limit for comments begin */
     var text_max = 300;

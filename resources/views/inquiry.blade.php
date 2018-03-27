@@ -24,6 +24,9 @@
                     $amount                  = ($cabinDetails->prepayment_amount * round(abs(strtotime(session()->get('checkin_from')) - strtotime(session()->get('reserve_to')))/86400)) * session()->get('guests');
                     $prepayment_amount[]     = ($cabinDetails->prepayment_amount * round(abs(strtotime(session()->get('checkin_from')) - strtotime(session()->get('reserve_to')))/86400)) * session()->get('guests');
                 @endphp
+            <form action="{{ route('inquiry.store') }}" method="post">
+
+                {{ csrf_field() }}
 
                 <div class="panel panel-default text-left panel-booking1 panel-default-booking1">
                     <div class="panel-body panel-body-booking1">
@@ -102,90 +105,15 @@
                                         </div>
 
                                         <div class="row row-booking1">
-                                            <div class="col-sm-4 col-sm-4-booking1">
-                                                <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#inquiryModal">
-                                                    Check here your personal information are filled and correct?
-                                                </button>
-
-                                                <!-- Modal -->
-                                                <div class="modal fade" id="inquiryModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-                                                    <div class="modal-dialog" role="document">
-                                                        <div class="modal-content">
-                                                            <div class="modal-header">
-                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                                                <h4 class="modal-title" id="myModalLabel">Contact Information</h4>
-                                                            </div>
-                                                            <div class="modal-body">
-                                                                <div class="row">
-                                                                    <div class="col-sm-6">
-                                                                        <div class="form-group">
-                                                                            <label> Street <span class="required">*</span></label>
-                                                                            <input type="text" class="form-control" name="street">
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="col-sm-6">
-                                                                        <div class="form-group">
-                                                                            <label> City <span class="required">*</span></label>
-                                                                            <input type="text" class="form-control" name="city">
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-
-                                                                <div class="row">
-                                                                    <div class="col-sm-6">
-                                                                        <div class="form-group">
-                                                                            <label> Country <span class="required">*</span></label>
-                                                                            <input type="text" class="form-control" name="country">
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="col-sm-6">
-                                                                        <div class="form-group">
-                                                                            <label> Zipcode <span class="required">*</span></label>
-                                                                            <input type="text" class="form-control" name="zipcode">
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-
-                                                                <div class="row">
-                                                                    <div class="col-sm-6">
-                                                                        <div class="form-group">
-                                                                            <label> Email <span class="required">*</span></label>
-                                                                            <input type="text" class="form-control" name="email">
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="col-sm-6">
-                                                                        <div class="form-group">
-                                                                            <label> Mobile <span class="required">*</span></label>
-                                                                            <input type="text" class="form-control" name="mobile">
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-
-                                                                <div class="row">
-                                                                    <div class="col-sm-6">
-                                                                        <div class="form-group">
-                                                                            <label> Phone <span class="required">*</span></label>
-                                                                            <input type="text" class="form-control" name="phone">
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-
-                                                            </div>
-                                                            <div class="modal-footer">
-                                                                <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Close</button>
-                                                                <button type="button" class="btn btn-default btn-sm">Save changes</button>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                            </div>
-                                        </div>
-
-                                        <div class="row row-booking1">
                                             <div class="col-sm-4 col-sm-4-f-booking1 comment-booking1 col-sm-4-booking1">
-                                                <textarea id="comments" class="form-control" rows="3" maxlength="300" placeholder="Comment..."></textarea>
-                                                <div id="textarea_feedback"></div>
+                                                <div class="form-group {{ $errors->has('comments') ? ' has-error' : '' }}">
+                                                    <textarea id="comments" name="comments" class="form-control" rows="3" maxlength="300" placeholder="Comment...">{{ old('comments') }}</textarea>
+
+                                                    @if ($errors->has('comments'))
+                                                        <span class="help-block"><strong>{{ $errors->first('comments') }}</strong></span>
+                                                    @endif
+                                                    <div id="textarea_feedback"></div>
+                                                </div>
                                             </div>
                                         </div>
 
@@ -218,67 +146,152 @@
                     </div>
                 </div>
 
-                <form>
-                    @if(array_sum($prepayment_amount) > 0 )
+                @if(array_sum($prepayment_amount) > 0 )
 
-                        @php
-                            $sumPrepaymentAmount = array_sum($prepayment_amount);
+                    @php
+                        $sumPrepaymentAmount = array_sum($prepayment_amount);
 
-                            if($sumPrepaymentAmount <= 30) {
-                               $serviceTax = env('SERVICE_TAX_ONE');
-                            }
+                        if($sumPrepaymentAmount <= 30) {
+                           $serviceTax = env('SERVICE_TAX_ONE');
+                        }
 
-                            if($sumPrepaymentAmount > 30 && $sumPrepaymentAmount <= 100) {
-                               $serviceTax = env('SERVICE_TAX_TWO');
-                            }
+                        if($sumPrepaymentAmount > 30 && $sumPrepaymentAmount <= 100) {
+                           $serviceTax = env('SERVICE_TAX_TWO');
+                        }
 
-                            if($sumPrepaymentAmount > 100) {
-                               $serviceTax = env('SERVICE_TAX_THREE');
-                            }
+                        if($sumPrepaymentAmount > 100) {
+                           $serviceTax = env('SERVICE_TAX_THREE');
+                        }
 
-                            $sumPrepaymentAmountPercentage   = ($serviceTax / 100) * $sumPrepaymentAmount;
-                            $sumPrepaymentAmountServiceTotal = $sumPrepaymentAmount + $sumPrepaymentAmountPercentage;
-                        @endphp
+                        $sumPrepaymentAmountPercentage   = ($serviceTax / 100) * $sumPrepaymentAmount;
+                        $sumPrepaymentAmountServiceTotal = $sumPrepaymentAmount + $sumPrepaymentAmountPercentage;
+                    @endphp
 
-                        <div class="row content row-booking1">
-                            <div class="col-sm-3 col-sm-3-booking1 col-sm-r col-sm-r-booking1">
-                                <div class="panel panel-default booking-box-booking1 bottom-boxes-booking1 panel-booking1 panel-default-booking1">
-                                    <div class="panel-body panel-body-booking1">
-                                        <div class="row row-booking1">
-                                            <div class="col-sm-12 col-sm-12-booking1 month-opening-booking1">
-                                                <h5>Complete Payment<span class="glyphicon glyphicon-question-sign" title="Here all costs are listed again. The service fee helps us operate Huetten-Holiday and offer services like our live-chat for your trip. It contains sales tax."></span></h5>
-                                            </div>
+                    <div class="row content">
+                        <div class="col-sm-9">
+                            <div class="panel panel-default booking-box-booking1 panel-default-booking1 text-left">
+                                <div class="panel-body panel-body-booking1">
+                                    <div class="row row-booking1">
+                                        <div class="col-sm-12">
+                                            <h5>Contact Information</h5>
                                         </div>
+                                        <div class="col-sm-12 col-sm-12-booking1 col-sm-12-extra-booking1">
+                                            <div class="row">
+                                                <div class="col-sm-6">
+                                                    <div class="form-group {{ $errors->has('street') ? ' has-error' : '' }}">
+                                                        <label> Street <span class="required">*</span></label>
+                                                        <input type="text" class="form-control" id="street" name="street" placeholder="Enter street" maxlength="255" value="{{ old('street', Auth::user()->usrAddress) }}">
 
-                                        <div class="normalCalculation">
-                                            <div class="row row-booking1">
-                                                <div class="col-sm-12 col-sm-12-booking1 col-sm-12-extra-booking1">
-                                                    <p class="info-listing-booking1">Deposit:</p><p class="info-listing-price-booking1">{{ number_format($sumPrepaymentAmount, 2, '.', '') }}&euro;</p>
-                                                    <p class="info-listing-booking1">Service fee:</p><p class="info-listing-price-booking1">{{ $serviceTax }}%</p>
+                                                        @if ($errors->has('street'))
+                                                            <span class="help-block"><strong>{{ $errors->first('street') }}</strong></span>
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                    <div class="form-group {{ $errors->has('city') ? ' has-error' : '' }}">
+                                                        <label> City <span class="required">*</span></label>
+                                                        <input type="text" class="form-control" id="city" name="city" placeholder="Enter city" maxlength="255" value="{{ old('city', Auth::user()->usrCity) }}">
+
+                                                        @if ($errors->has('city'))
+                                                            <span class="help-block"><strong>{{ $errors->first('city') }}</strong></span>
+                                                        @endif
+                                                    </div>
                                                 </div>
                                             </div>
 
-                                            <div class="row row-booking1">
-                                                <div class="col-sm-12 col-sm-12-booking1 col-sm-12-extra-booking1">
-                                                    <h5 class="info-listing-booking1">Payment incl.<br /> Service fee:</h5><h5 class="info-listing-price-booking1">{{ number_format($sumPrepaymentAmountServiceTotal, 2, '.', '') }}&euro;</h5>
+                                            <div class="row">
+                                                <div class="col-sm-6">
+                                                    <div class="form-group {{ $errors->has('country') ? ' has-error' : '' }}">
+                                                        <label> Country <span class="required">*</span></label>
+                                                        <select class="form-control" id="country" name="country">
+                                                            <option value="0"> Choose Country </option>
+                                                            @foreach($country as $land)
+                                                                <option value="{{ $land->name }}" @if($land->name == Auth::user()->usrCountry || old('country') == $land->name) selected="selected" @endif>{{ $land->name }}</option>
+                                                            @endforeach
+                                                        </select>
+
+                                                        @if ($errors->has('country'))
+                                                            <span class="help-block"><strong>{{ $errors->first('country') }}</strong></span>
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                    <div class="form-group {{ $errors->has('zipcode') ? ' has-error' : '' }}">
+                                                        <label> Zipcode <span class="required">*</span></label>
+                                                        <input type="text" class="form-control" id="zipcode" name="zipcode" placeholder="Enter zip code" maxlength="25" value="{{ old('zipcode', Auth::user()->usrZip) }}">
+
+                                                        @if ($errors->has('zipcode'))
+                                                            <span class="help-block"><strong>{{ $errors->first('zipcode') }}</strong></span>
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col-sm-6">
+                                                    <div class="form-group {{ $errors->has('mobile') ? ' has-error' : '' }}">
+                                                        <label> Mobile <span class="required">*</span></label>
+                                                        <input type="text" class="form-control" id="mobile" name="mobile" placeholder="Enter mobile" maxlength="20" value="{{ old('mobile', Auth::user()->usrMobile) }}">
+
+                                                        @if ($errors->has('mobile'))
+                                                            <span class="help-block"><strong>{{ $errors->first('mobile') }}</strong></span>
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                    <div class="form-group {{ $errors->has('phone') ? ' has-error' : '' }}">
+                                                        <label> Phone <span class="required">*</span></label>
+                                                        <input type="text" class="form-control" id="phone" name="phone" placeholder="Enter phone" maxlength="20" value="{{ old('phone', Auth::user()->usrTelephone) }}">
+
+                                                        @if ($errors->has('phone'))
+                                                            <span class="help-block"><strong>{{ $errors->first('phone') }}</strong></span>
+                                                        @endif
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div>
-                            <div id="btn-ground-2-booking1">
-                                <button type="button" class="btn btn-default-booking1 btn-default btn-sm btn-details btn-details-booking1">Send Inquiry</button>
+                        <div class="col-sm-3 col-sm-3-booking1 col-sm-r col-sm-r-booking1">
+                            <div class="panel panel-default booking-box-booking1 bottom-boxes-booking1 panel-booking1 panel-default-booking1">
+                                <div class="panel-body panel-body-booking1">
+                                    <div class="row row-booking1">
+                                        <div class="col-sm-12 col-sm-12-booking1 month-opening-booking1">
+                                            <h5>Complete Payment<span class="glyphicon glyphicon-question-sign" title="Here all costs are listed again. The service fee helps us operate Huetten-Holiday and offer services like our live-chat for your trip. It contains sales tax."></span></h5>
+                                        </div>
+                                    </div>
+
+                                    <div class="normalCalculation">
+                                        <div class="row row-booking1">
+                                            <div class="col-sm-12 col-sm-12-booking1 col-sm-12-extra-booking1">
+                                                <p class="info-listing-booking1">Deposit:</p><p class="info-listing-price-booking1">{{ number_format($sumPrepaymentAmount, 2, '.', '') }}&euro;</p>
+                                                <p class="info-listing-booking1">Service fee:</p><p class="info-listing-price-booking1">{{ $serviceTax }}%</p>
+                                            </div>
+                                        </div>
+
+                                        <div class="row row-booking1">
+                                            <div class="col-sm-12 col-sm-12-booking1 col-sm-12-extra-booking1">
+                                                <h5 class="info-listing-booking1">Payment incl.<br /> Service fee:</h5><h5 class="info-listing-price-booking1">{{ number_format($sumPrepaymentAmountServiceTotal, 2, '.', '') }}&euro;</h5>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
                             </div>
                         </div>
+                    </div>
 
-                    @endif
+                    <div class="row content row-booking1">
+                        <div id="btn-ground-2-booking1">
+                            <button type="submit" class="btn-default-booking1 btn-sm btn-details-booking1"><span class="glyphicon glyphicon-envelope" style="font-size: 16px;" aria-hidden="true"></span>  Send Inquiry</button>
+                        </div>
+                    </div>
+                @endif
+            </form>
 
-                </form>
             @endisset
 
         </div>
