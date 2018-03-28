@@ -704,7 +704,8 @@ class InquiryController extends Controller
                                         }
                                         else {
                                             $availableStatus[] = 'notAvailable';
-                                            return response()->json(['error' => 'Sleeps not available on '.$generateBookingDate->format("jS F")], 422);
+                                            //return response()->json(['error' => 'Sleeps not available on '.$generateBookingDate->format("jS F")], 422);
+                                            return redirect()->back()->with('error', $request->sleeps.' sleeps are not available on '.$generateBookingDate->format("jS F"). ' try other digits');
                                         }
                                         /*print_r(' ----mon_regular_data---- ');
                                         print_r(' mon_dates: ' . $dates . ' mon_sleeps_avail: '. $mon_sleeps_avail);
@@ -712,9 +713,10 @@ class InquiryController extends Controller
                                     }
                                     else {
                                         $availableStatus[] = 'notAvailable';
-                                        return response()->json(['error' => 'Rooms are already filled on '.$generateBookingDate->format("jS F")], 422);
                                         /*print_r(' ----mon_regular_data---- ');
                                         print_r(' not_available_dates '. $dates);*/
+                                        //return response()->json(['error' => 'Rooms are already filled on '.$generateBookingDate->format("jS F")], 422);
+                                        return redirect()->back()->with('error', 'Sorry! Rooms are already filled on '.$generateBookingDate->format("jS F"));
                                     }
                                 }
                             }
@@ -736,7 +738,8 @@ class InquiryController extends Controller
                                         }
                                         else {
                                             $availableStatus[] = 'notAvailable';
-                                            return response()->json(['error' => 'Sleeps not available on '.$generateBookingDate->format("jS F")], 422);
+                                            //return response()->json(['error' => 'Sleeps not available on '.$generateBookingDate->format("jS F")], 422);
+                                            return redirect()->back()->with('error', $request->sleeps.' sleeps are not available on '.$generateBookingDate->format("jS F"). ' try other digits');
                                         }
                                         /*print_r(' ----tue_regular_data---- ');
                                         print_r(' tue_dates: ' . $dates . ' tue_sleeps_avail: '. $tue_sleeps_avail);
@@ -744,7 +747,8 @@ class InquiryController extends Controller
                                     }
                                     else {
                                         $availableStatus[] = 'notAvailable';
-                                        return response()->json(['error' => 'Rooms are already filled on '.$generateBookingDate->format("jS F")], 422);
+                                        //return response()->json(['error' => 'Rooms are already filled on '.$generateBookingDate->format("jS F")], 422);
+                                        return redirect()->back()->with('error', 'Sorry! Rooms are already filled on '.$generateBookingDate->format("jS F"));
                                         /*print_r(' ----tue_regular_data---- ');
                                         print_r(' not_available_dates '. $dates);*/
                                     }
@@ -768,7 +772,8 @@ class InquiryController extends Controller
                                         }
                                         else {
                                             $availableStatus[] = 'notAvailable';
-                                            return response()->json(['error' => 'Sleeps not available on '.$generateBookingDate->format("jS F")], 422);
+                                            //return response()->json(['error' => 'Sleeps not available on '.$generateBookingDate->format("jS F")], 422);
+                                            return redirect()->back()->with('error', $request->sleeps.' sleeps are not available on '.$generateBookingDate->format("jS F"). ' try other digits');
                                         }
                                         /*print_r(' ----wed_regular_data---- ');
                                         print_r(' wed_dates: ' . $dates . ' wed_sleeps_avail: '. $wed_sleeps_avail);
@@ -776,9 +781,11 @@ class InquiryController extends Controller
                                     }
                                     else {
                                         $availableStatus[] = 'notAvailable';
-                                        return response()->json(['error' => 'Rooms are already filled on '.$generateBookingDate->format("jS F")], 422);
                                         /*print_r(' ----wed_regular_data---- ');
-                                        print_r(' not_available_dates '. $dates);*/
+                                       print_r(' not_available_dates '. $dates);*/
+                                        //return response()->json(['error' => 'Rooms are already filled on '.$generateBookingDate->format("jS F")], 422);
+                                        return redirect()->back()->with('error', 'Sorry! Rooms are already filled on '.$generateBookingDate->format("jS F"));
+
                                     }
                                 }
                             }
@@ -800,7 +807,8 @@ class InquiryController extends Controller
                                         }
                                         else {
                                             $availableStatus[] = 'notAvailable';
-                                            return response()->json(['error' => 'Sleeps not available on '.$generateBookingDate->format("jS F")], 422);
+                                            //return response()->json(['error' => 'Sleeps not available on '.$generateBookingDate->format("jS F")], 422);
+                                            return redirect()->back()->with('error', $request->sleeps.' sleeps are not available on '.$generateBookingDate->format("jS F"). ' try other digits');
                                         }
                                         /*print_r(' ----thu_regular_data---- ');
                                         print_r(' thu_dates: ' . $dates . ' thu_sleeps_avail: '. $thu_sleeps_avail);
@@ -808,9 +816,11 @@ class InquiryController extends Controller
                                     }
                                     else {
                                         $availableStatus[] = 'notAvailable';
-                                        return response()->json(['error' => 'Rooms are already filled on '.$generateBookingDate->format("jS F")], 422);
                                         /*print_r(' ----thu_regular_data---- ');
                                         print_r(' not_available_dates '. $dates);*/
+                                        //return response()->json(['error' => 'Rooms are already filled on '.$generateBookingDate->format("jS F")], 422);
+                                        return redirect()->back()->with('error', 'Sorry! Rooms are already filled on '.$generateBookingDate->format("jS F"));
+
                                     }
                                 }
                             }
@@ -832,7 +842,8 @@ class InquiryController extends Controller
                                         }
                                         else {
                                             $availableStatus[] = 'notAvailable';
-                                            return response()->json(['error' => 'Sleeps not available on '.$generateBookingDate->format("jS F")], 422);
+                                            //return response()->json(['error' => 'Sleeps not available on '.$generateBookingDate->format("jS F")], 422);
+                                            return redirect()->back()->with('error', $request->sleeps.' sleeps are not available on '.$generateBookingDate->format("jS F"). ' try other digits');
                                         }
                                         /*print_r(' ----fri_regular_data---- ');
                                         print_r(' fri_dates: ' . $dates . ' fri_sleeps_avail: '. $fri_sleeps_avail);
@@ -840,9 +851,11 @@ class InquiryController extends Controller
                                     }
                                     else {
                                         $availableStatus[] = 'notAvailable';
-                                        return response()->json(['error' => 'Rooms are already filled on '.$generateBookingDate->format("jS F")], 422);
                                         /*print_r(' ----fri_regular_data---- ');
                                         print_r(' not_available_dates '. $dates);*/
+                                        //return response()->json(['error' => 'Rooms are already filled on '.$generateBookingDate->format("jS F")], 422);
+                                        return redirect()->back()->with('error', 'Sorry! Rooms are already filled on '.$generateBookingDate->format("jS F"));
+
                                     }
                                 }
                             }
@@ -864,7 +877,8 @@ class InquiryController extends Controller
                                         }
                                         else {
                                             $availableStatus[] = 'notAvailable';
-                                            return response()->json(['error' => 'Sleeps not available on '.$generateBookingDate->format("jS F")], 422);
+                                            //return response()->json(['error' => 'Sleeps not available on '.$generateBookingDate->format("jS F")], 422);
+                                            return redirect()->back()->with('error', $request->sleeps.' sleeps are not available on '.$generateBookingDate->format("jS F"). ' try other digits');
                                         }
                                         /*print_r(' ----sat_regular_data---- ');
                                         print_r(' sat_dates: ' . $dates . ' sat_sleeps_avail: '. $sat_sleeps_avail);
@@ -872,9 +886,11 @@ class InquiryController extends Controller
                                     }
                                     else {
                                         $availableStatus[] = 'notAvailable';
-                                        return response()->json(['error' => 'Rooms are already filled on '.$generateBookingDate->format("jS F")], 422);
                                         /*print_r(' ----sat_regular_data---- ');
                                         print_r(' not_available_dates '. $dates);*/
+                                        //return response()->json(['error' => 'Rooms are already filled on '.$generateBookingDate->format("jS F")], 422);
+                                        return redirect()->back()->with('error', 'Sorry! Rooms are already filled on '.$generateBookingDate->format("jS F"));
+
                                     }
                                 }
                             }
@@ -896,7 +912,8 @@ class InquiryController extends Controller
                                         }
                                         else {
                                             $availableStatus[] = 'notAvailable';
-                                            return response()->json(['error' => 'Sleeps not available on '.$generateBookingDate->format("jS F")], 422);
+                                            //return response()->json(['error' => 'Sleeps not available on '.$generateBookingDate->format("jS F")], 422);
+                                            return redirect()->back()->with('error', $request->sleeps.' sleeps are not available on '.$generateBookingDate->format("jS F"). ' try other digits');
                                         }
                                         /*print_r(' ----sun_regular_data---- ');
                                         print_r(' sun_dates: ' . $dates . ' sun_sleeps_avail: '. $sun_sleeps_avail);
@@ -904,9 +921,11 @@ class InquiryController extends Controller
                                     }
                                     else {
                                         $availableStatus[] = 'notAvailable';
-                                        return response()->json(['error' => 'Rooms are already filled on '.$generateBookingDate->format("jS F")], 422);
                                         /*print_r(' ----sun_regular_data---- ');
-                                        print_r(' not_available_dates '. $dates);*/
+                                       print_r(' not_available_dates '. $dates);*/
+                                        //return response()->json(['error' => 'Rooms are already filled on '.$generateBookingDate->format("jS F")], 422);
+                                        return redirect()->back()->with('error', 'Sorry! Rooms are already filled on '.$generateBookingDate->format("jS F"));
+
                                     }
                                 }
                             }
@@ -926,7 +945,8 @@ class InquiryController extends Controller
                                 }
                                 else {
                                     $availableStatus[] = 'notAvailable';
-                                    return response()->json(['error' => 'Sleeps not available on '.$generateBookingDate->format("jS F")], 422);
+                                    //return response()->json(['error' => 'Sleeps not available on '.$generateBookingDate->format("jS F")], 422);
+                                    return redirect()->back()->with('error', $request->sleeps.' sleeps are not available on '.$generateBookingDate->format("jS F"). ' try other digits');
                                 }
 
                                 /*print_r(' ----normal_regular_data---- ');
@@ -935,9 +955,10 @@ class InquiryController extends Controller
                             }
                             else {
                                 $availableStatus[] = 'notAvailable';
-                                return response()->json(['error' => 'Rooms are already filled on '.$generateBookingDate->format("jS F")], 422);
                                 /*print_r(' ----normal_regular_data---- ');
                                 print_r(' not_available_dates '. $dates);*/
+                                //return response()->json(['error' => 'Rooms are already filled on '.$generateBookingDate->format("jS F")], 422);
+                                return redirect()->back()->with('error', 'Sorry! Rooms are already filled on '.$generateBookingDate->format("jS F"));
                             }
 
                         }
