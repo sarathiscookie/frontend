@@ -121,11 +121,13 @@ class CartController extends Controller
         $clickHere               = '<a href="/inquiry">click here</a>';
         $monthBegin              = DateTime::createFromFormat('d.m.y', $request->dateFrom)->format('Y-m-d');
         $monthEnd                = DateTime::createFromFormat('d.m.y', $request->dateTo)->format('Y-m-d');
-        $dateDifference          = date_diff(date_create($monthBegin), date_create($monthEnd));
+        $d1                      = new DateTime($monthBegin);
+        $d2                      = new DateTime($monthEnd);
+        $dateDifference          = $d2->diff($d1);
         $available               = 'failure';
 
         if($monthBegin < $monthEnd) {
-            if($dateDifference->format("%a") <= 60) {
+            if($dateDifference->days <= 60) {
                 $holiday_prepare         = [];
                 $not_regular_dates       = [];
                 $dates_array             = [];
@@ -781,7 +783,7 @@ class CartController extends Controller
                                 if(($totalSleeps < $cabin->not_regular_sleeps)) {
                                     $not_regular_sleeps_diff       = $cabin->not_regular_sleeps - $totalSleeps;
 
-                                    /* Available beds and dorms */
+                                    /* Available sleeps */
                                     $not_regular_sleeps_avail      = ($not_regular_sleeps_diff >= 0) ? $not_regular_sleeps_diff : 0;
 
                                     if($request->persons < $cabin->not_regular_inquiry_guest) {
@@ -831,7 +833,7 @@ class CartController extends Controller
                                     if(($totalSleeps < $cabin->mon_sleeps)) {
                                         $mon_sleeps_diff       = $cabin->mon_sleeps - $totalSleeps;
 
-                                        /* Available beds and dorms */
+                                        /* Available sleeps */
                                         $mon_sleeps_avail      = ($mon_sleeps_diff >= 0) ? $mon_sleeps_diff : 0;
 
                                         if($request->persons < $cabin->mon_inquiry_guest) {
@@ -878,7 +880,7 @@ class CartController extends Controller
                                     if(($totalSleeps < $cabin->tue_sleeps)) {
                                         $tue_sleeps_diff       = $cabin->tue_sleeps - $totalSleeps;
 
-                                        /* Available beds and dorms */
+                                        /* Available sleeps */
                                         $tue_sleeps_avail      = ($tue_sleeps_diff >= 0) ? $tue_sleeps_diff : 0;
 
                                         if($request->persons < $cabin->tue_inquiry_guest) {
@@ -925,7 +927,7 @@ class CartController extends Controller
                                     if(($totalSleeps < $cabin->wed_sleeps)) {
                                         $wed_sleeps_diff       = $cabin->wed_sleeps - $totalSleeps;
 
-                                        /* Available beds and dorms */
+                                        /* Available sleeps */
                                         $wed_sleeps_avail      = ($wed_sleeps_diff >= 0) ? $wed_sleeps_diff : 0;
 
                                         if($request->persons < $cabin->wed_inquiry_guest) {
@@ -972,7 +974,7 @@ class CartController extends Controller
                                     if(($totalSleeps < $cabin->thu_sleeps)) {
                                         $thu_sleeps_diff       = $cabin->thu_sleeps - $totalSleeps;
 
-                                        /* Available beds and dorms */
+                                        /* Available sleeps */
                                         $thu_sleeps_avail      = ($thu_sleeps_diff >= 0) ? $thu_sleeps_diff : 0;
 
                                         if($request->persons < $cabin->thu_inquiry_guest) {
@@ -1019,7 +1021,7 @@ class CartController extends Controller
                                     if(($totalSleeps < $cabin->fri_sleeps)) {
                                         $fri_sleeps_diff       = $cabin->fri_sleeps - $totalSleeps;
 
-                                        /* Available beds and dorms */
+                                        /* Available sleeps */
                                         $fri_sleeps_avail      = ($fri_sleeps_diff >= 0) ? $fri_sleeps_diff : 0;
 
                                         if($request->persons < $cabin->fri_inquiry_guest) {
@@ -1066,7 +1068,7 @@ class CartController extends Controller
                                     if(($totalSleeps < $cabin->sat_sleeps)) {
                                         $sat_sleeps_diff       = $cabin->sat_sleeps - $totalSleeps;
 
-                                        /* Available beds and dorms */
+                                        /* Available sleeps */
                                         $sat_sleeps_avail      = ($sat_sleeps_diff >= 0) ? $sat_sleeps_diff : 0;
 
                                         if($request->persons < $cabin->sat_inquiry_guest) {
@@ -1113,7 +1115,7 @@ class CartController extends Controller
                                     if(($totalSleeps < $cabin->sun_sleeps)) {
                                         $sun_sleeps_diff       = $cabin->sun_sleeps - $totalSleeps;
 
-                                        /* Available beds and dorms */
+                                        /* Available sleeps */
                                         $sun_sleeps_avail      = ($sun_sleeps_diff >= 0) ? $sun_sleeps_diff : 0;
 
                                         if($request->persons < $cabin->sun_inquiry_guest) {
@@ -1158,7 +1160,7 @@ class CartController extends Controller
                             if(($totalSleeps < $cabin->sleeps)) {
                                 $normal_sleeps_diff       = $cabin->sleeps - $totalSleeps;
 
-                                /* Available beds and dorms */
+                                /* Available sleeps */
                                 $normal_sleeps_avail      = ($normal_sleeps_diff >= 0) ? $normal_sleeps_diff : 0;
 
                                 if($request->persons < $cabin->inquiry_starts) {

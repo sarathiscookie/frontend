@@ -51,8 +51,8 @@
 
                                                 @php
                                                     $calendar                = $calendarServices->calendar($cart->cabin_id);
-                                                    $amount                  = ($cabinDetails->cabin($cart->cabin_id)->prepayment_amount * round(abs(strtotime($cart->checkin_from->format('Y-m-d'))-strtotime($cart->reserve_to->format('Y-m-d')))/86400)) * $cart->guests;
-                                                    $prepayment_amount[]     = ($cabinDetails->cabin($cart->cabin_id)->prepayment_amount * round(abs(strtotime($cart->checkin_from->format('Y-m-d'))-strtotime($cart->reserve_to->format('Y-m-d')))/86400)) * $cart->guests;
+                                                    $amount                  = ($cabinDetails->cabin($cart->cabin_id)->prepayment_amount * round(abs(strtotime($cart->checkin_from->format('Y-m-d')) - strtotime($cart->reserve_to->format('Y-m-d')))/86400)) * $cart->guests;
+                                                    $prepayment_amount[]     = ($cabinDetails->cabin($cart->cabin_id)->prepayment_amount * round(abs(strtotime($cart->checkin_from->format('Y-m-d')) - strtotime($cart->reserve_to->format('Y-m-d')))/86400)) * $cart->guests;
                                                 @endphp
 
                                                 <div class="holiday_{{ $cart->cabin_id }}" data-holiday="{{ $calendar[0] }}"></div>

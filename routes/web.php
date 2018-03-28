@@ -110,7 +110,7 @@ Route::group(['middleware' => ['auth']], function () {
     | Inquiry
     |--------------------------------------------------------------------------
     |
-    | Route for send inquiry
+    | Route for view and send inquiry
     |
     */
     /* view inquiry page */
@@ -119,6 +119,16 @@ Route::group(['middleware' => ['auth']], function () {
     /* send and store inquiry */
     Route::post('/inquiry/send', 'InquiryController@store')->name('inquiry.store');
 
+    /*
+    |--------------------------------------------------------------------------
+    | Booking History
+    |--------------------------------------------------------------------------
+    |
+    | Route for view booking history
+    |
+    */
+    /* view booking history */
+    Route::get('/booking/history', 'BookingHistoryController@index')->name('booking.history');
 });
 
 

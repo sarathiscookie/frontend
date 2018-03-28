@@ -19,10 +19,13 @@
         <div class="container-fluid container-fluid-booking1 text-center">
 
             @isset($cabinDetails)
-
                 @php
-                    $amount                  = ($cabinDetails->prepayment_amount * round(abs(strtotime(session()->get('checkin_from')) - strtotime(session()->get('reserve_to')))/86400)) * session()->get('guests');
-                    $prepayment_amount[]     = ($cabinDetails->prepayment_amount * round(abs(strtotime(session()->get('checkin_from')) - strtotime(session()->get('reserve_to')))/86400)) * session()->get('guests');
+                    $monthBegin              = DateTime::createFromFormat('d.m.y', session()->get('checkin_from'))->format('Y-m-d');
+                    $monthEnd                = DateTime::createFromFormat('d.m.y', session()->get('reserve_to'))->format('Y-m-d');
+                    $d1                      = new DateTime($monthBegin);
+                    $d2                      = new DateTime($monthEnd);
+                    $dateDifference          = $d2->diff($d1);
+                    $amount                  = ($cabinDetails->prepayment_amount * $dateDifference->days) * session()->get('guests');
                 @endphp
             <form action="{{ route('inquiry.store') }}" method="post">
 
@@ -39,19 +42,27 @@
                                 <h3 class="headliner-cabinname">{{ $cabinDetails->name }} - {{ $cabinDetails->region }}<span class="glyphicon glyphicon-question-sign" title="Please check your data and correct if necessary. To edit them, simply double-click on the desired field."></span></h3>
 
                                 <div class="row row-booking1">
+
+                                    @if (session()->has('error'))
+                                        <div class="alert alert-warning alert-dismissible" role="alert">
+                                            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                            <strong>Oops!</strong> {{ session()->get('error') }}
+                                        </div>
+                                    @endif
+
                                     <div class="col-sm-12 col-sm-12-booking1 month-opening-booking1">
                                         <div class="row row-booking1">
                                             <div class="col-sm-4 col-sm-4-booking1">
                                                 <div class="form-group">
                                                     <label>From</label>
-                                                    <input type="text" class="form-control form-control-booking1 dateFrom" value="{{ session()->get('checkin_from') }}"  readonly>
+                                                    <input type="text" class="form-control form-control-booking1 dateFrom" name="dateFrom" value="{{ session()->get('checkin_from') }}" readonly>
                                                 </div>
                                             </div>
 
                                             <div class="col-sm-4 col-sm-4-booking1">
                                                 <div class="form-group">
                                                     <label>To</label>
-                                                    <input type="text" class="form-control form-control-booking1 dateTo" value="{{ session()->get('reserve_to') }}"  readonly>
+                                                    <input type="text" class="form-control form-control-booking1 dateTo" name="dateTo" value="{{ session()->get('reserve_to') }}" readonly>
                                                 </div>
                                             </div>
                                         </div>
@@ -59,32 +70,50 @@
                                         <div class="row row-booking1">
                                             @if($cabinDetails->sleeping_place != 1)
                                                 <div class="col-sm-4 col-sm-4-f-booking1 col-sm-4-booking1">
-                                                    <label>Bed(s)</label>
-                                                    <select class="form-control form-control-booking1">
-                                                        <option>Choose Bed(s)</option>
-                                                        @for($i = 1; $i <= 30; $i++)
-                                                            <option value="{{ old(session()->get('beds'), $i) }}" @if($i == session()->get('beds')) selected="selected" @endif>{{ $i }}</option>
-                                                        @endfor
-                                                    </select>
+                                                    <div class="form-group {{ $errors->has('beds') ? ' has-error' : '' }}">
+                                                        <label>Bed(s)</label>
+                                                        <select class="form-control form-control-booking1" name="beds">
+                                                            <option value="0">Choose Bed(s)</option>
+                                                            @for($i = 1; $i <= 30; $i++)
+                                                                <option value="{{ $i }}" @if($i == session()->get('beds')) selected="selected" @endif>{{ $i }}</option>
+                                                            @endfor
+                                                        </select>
+
+                                                        @if ($errors->has('beds'))
+                                                            <span class="help-block"><strong>{{ $errors->first('beds') }}</strong></span>
+                                                        @endif
+                                                    </div>
                                                 </div>
                                                 <div class="col-sm-4 col-sm-4-booking1">
-                                                    <label>Dorm(s)</label>
-                                                    <select class="form-control form-control-booking1">
-                                                        <option>Choose Dorm(s)</option>
-                                                        @for($i = 1; $i <= 30; $i++)
-                                                            <option value="{{ $i }}">{{ $i }}</option>
-                                                        @endfor
-                                                    </select>
+                                                    <div class="form-group {{ $errors->has('dormitory') ? ' has-error' : '' }}">
+                                                        <label>Dorm(s)</label>
+                                                        <select class="form-control form-control-booking1" name="dormitory">
+                                                            <option value="0">Choose Dorm(s)</option>
+                                                            @for($i = 1; $i <= 30; $i++)
+                                                                <option value="{{ $i }}">{{ $i }}</option>
+                                                            @endfor
+                                                        </select>
+
+                                                        @if ($errors->has('dormitory'))
+                                                            <span class="help-block"><strong>{{ $errors->first('dormitory') }}</strong></span>
+                                                        @endif
+                                                    </div>
                                                 </div>
                                             @else
                                                 <div class="col-sm-4 col-sm-4-booking1">
-                                                    <label>Sleep(s)</label>
-                                                    <select class="form-control form-control-booking1">
-                                                        <option>Choose Sleep(s)</option>
-                                                        @for($i = 1; $i <= 30; $i++)
-                                                            <option value="{{ old(session()->get('sleeps'), $i) }}" @if($i == session()->get('sleeps')) selected="selected" @endif>{{ $i }}</option>
-                                                        @endfor
-                                                    </select>
+                                                    <div class="form-group {{ $errors->has('sleeps') ? ' has-error' : '' }}">
+                                                        <label>Sleep(s)</label>
+                                                        <select class="form-control form-control-booking1" name="sleeps">
+                                                            <option value="0">Choose Sleep(s)</option>
+                                                            @for($i = 1; $i <= 30; $i++)
+                                                                <option value="{{ $i }}" @if($i == session()->get('sleeps')) selected="selected" @endif>{{ $i }}</option>
+                                                            @endfor
+                                                        </select>
+
+                                                        @if ($errors->has('sleeps'))
+                                                            <span class="help-block"><strong>{{ $errors->first('sleeps') }}</strong></span>
+                                                        @endif
+                                                    </div>
                                                 </div>
                                             @endif
                                         </div>
@@ -131,7 +160,7 @@
                                         <div class="row row-booking1">
                                             <div class="col-sm-12 col-sm-12-booking1 col-sm-12-extra-booking1">
                                                 <p class="info-listing-booking1">Guest(s):</p><p class="info-listing-price-booking1">{{ session()->get('guests') }}</p>
-                                                <p class="info-listing-booking1">Number night(s):</p><p class="info-listing-price-booking1">{{ date_diff(date_create(session()->get('checkin_from')), date_create(session()->get('reserve_to')))->format('%R%a days') }}</p>
+                                                <p class="info-listing-booking1">Number night(s):</p><p class="info-listing-price-booking1">{{ $dateDifference->days }}</p>
                                             </div>
                                         </div><br />
                                         <div class="row row-booking1">
@@ -146,10 +175,10 @@
                     </div>
                 </div>
 
-                @if(array_sum($prepayment_amount) > 0 )
+                @if($amount > 0 )
 
                     @php
-                        $sumPrepaymentAmount = array_sum($prepayment_amount);
+                        $sumPrepaymentAmount = $amount;
 
                         if($sumPrepaymentAmount <= 30) {
                            $serviceTax = env('SERVICE_TAX_ONE');
@@ -167,7 +196,7 @@
                         $sumPrepaymentAmountServiceTotal = $sumPrepaymentAmount + $sumPrepaymentAmountPercentage;
                     @endphp
 
-                    <div class="row content">
+                    {{--<div class="row content row-booking1">
                         <div class="col-sm-9">
                             <div class="panel panel-default booking-box-booking1 panel-default-booking1 text-left">
                                 <div class="panel-body panel-body-booking1">
@@ -282,7 +311,7 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div>--}}
 
                     <div class="row content row-booking1">
                         <div id="btn-ground-2-booking1">
