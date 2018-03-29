@@ -113,18 +113,18 @@
                                                         <div class="notSeasonTime_{{ $result->_id }}" data-notseasontime="{{ $calendar[4] }}"></div>
 
                                                         <div class="col-sm-4-cabinlist col-sm-4">
-                                                            <input type="text" class="form-control form-control-cabinlist dateFrom" id="dateFrom_{{ $result->_id }}" name="dateFrom_{{ $result->_id }}" placeholder="Arrival" value="{{ old('dateFrom_'.$result->_id) }}" readonly>
+                                                            <input type="text" class="form-control form-control-cabinlist backButtonDateFrom dateFrom" id="dateFrom_{{ $result->_id }}" name="dateFrom_{{ $result->_id }}" placeholder="Arrival" value="" readonly autocomplete="off">
                                                         </div>
 
                                                         <div class="col-sm-4-cabinlist col-sm-4">
-                                                            <input type="text" class="form-control form-control-cabinlist dateTo" id="dateTo_{{ $result->_id }}" name="dateTo_{{ $result->_id }}" placeholder="Departure" value="{{ old('dateTo_'.$result->_id) }}" readonly>
+                                                            <input type="text" class="form-control form-control-cabinlist backButtonDateTo dateTo" id="dateTo_{{ $result->_id }}" name="dateTo_{{ $result->_id }}" placeholder="Departure" value="" readonly autocomplete="off">
                                                         </div>
 
                                                         <div class="col-sm-4-cabinlist col-sm-4">
                                                             <select class="form-control form-control-cabinlist" size="3" id="persons_{{ $result->_id }}" name="persons_{{ $result->_id }}">
                                                                 <option value="0">Persons</option>
                                                                 @for($i = 1; $i <= 30; $i++)
-                                                                    <option value="@if(old('persons_'.$result->_id)) {{ old('persons_'.$result->_id) }} @else {{ $i }}">{{ $i }} @endif</option>
+                                                                    <option value="{{ $i }}">{{ $i }}</option>
                                                                 @endfor
                                                             </select>
                                                         </div>
