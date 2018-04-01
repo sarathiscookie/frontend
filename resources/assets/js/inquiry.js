@@ -19,7 +19,7 @@ $(function(){
     });
     /* Character limit for comments end */
 
-    /* Calculations */
+    /* Amount calc of sleeps or beds & dorms */
     // Create our number formatter.
     var formatter = new Intl.NumberFormat('de-DE', {
         style: 'currency',
@@ -27,7 +27,7 @@ $(function(){
         minimumFractionDigits: 2
     });
 
-
+    // Sleeps
     $('.jsCalSleep').change(function() {
         var amountDays    = $('.amountDays').data('amountdays');
         var sleeps        = $(this).val();
@@ -35,4 +35,16 @@ $(function(){
         $( '.replaceInquiryGuest' ).html(sleeps);
         $( '.replaceInquiryDeposit' ).html(formatter.format(total));
     });
+
+    // Beds & dorms
+    $('.jsCalBed').change(function() {
+        var amountDays    = $('.amountDays').data('amountdays');
+        var beds          = $(this).val();
+        var dorms         = $('.jsCalDorm').val();
+        var total         = (beds + dorms) * amountDays;
+        console.log(total);
+        /*$( '.replaceInquiryGuest' ).html(beds + dorms);
+        $( '.replaceInquiryDeposit' ).html(formatter.format(total));*/
+    });
+
 });

@@ -77,7 +77,7 @@
                                                 <div class="col-sm-4 col-sm-4-f-booking1 col-sm-4-booking1">
                                                     <div class="form-group {{ $errors->has('beds') ? ' has-error' : '' }}">
                                                         <label>Bed(s)</label>
-                                                        <select class="form-control form-control-booking1" name="beds">
+                                                        <select class="form-control form-control-booking1 jsCalBed" name="beds">
                                                             <option value="0">Choose Bed(s)</option>
                                                             @for($i = 1; $i <= 30; $i++)
                                                                 <option value="{{ $i }}" @if($i == session()->get('beds')) selected="selected" @endif>{{ $i }}</option>
@@ -92,7 +92,7 @@
                                                 <div class="col-sm-4 col-sm-4-booking1">
                                                     <div class="form-group {{ $errors->has('dormitory') ? ' has-error' : '' }}">
                                                         <label>Dorm(s)</label>
-                                                        <select class="form-control form-control-booking1" name="dormitory">
+                                                        <select class="form-control form-control-booking1 jsCalDorm" name="dormitory">
                                                             <option value="0">Choose Dorm(s)</option>
                                                             @for($i = 1; $i <= 30; $i++)
                                                                 <option value="{{ $i }}">{{ $i }}</option>
