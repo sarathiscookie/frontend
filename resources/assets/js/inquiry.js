@@ -19,4 +19,20 @@ $(function(){
     });
     /* Character limit for comments end */
 
+    /* Calculations */
+    // Create our number formatter.
+    var formatter = new Intl.NumberFormat('de-DE', {
+        style: 'currency',
+        currency: 'EUR',
+        minimumFractionDigits: 2
+    });
+
+
+    $('.jsCalSleep').change(function() {
+        var amountDays    = $('.amountDays').data('amountdays');
+        var sleeps        = $(this).val();
+        var total         = amountDays * sleeps;
+        $( '.replaceInquiryGuest' ).html(sleeps);
+        $( '.replaceInquiryDeposit' ).html(formatter.format(total));
+    });
 });

@@ -26,10 +26,15 @@
                     $d2                      = new DateTime($monthEnd);
                     $dateDifference          = $d2->diff($d1);
                     $amount                  = ($cabinDetails->prepayment_amount * $dateDifference->days) * session()->get('guests');
+
+                    /* For javascript cal */
+                    $amountDays              = $cabinDetails->prepayment_amount * $dateDifference->days;
                 @endphp
             <form action="{{ route('inquiry.store') }}" method="post">
 
                 {{ csrf_field() }}
+
+                <div class="amountDays" data-amountdays="{{ $amountDays }}"></div>
 
                 <div class="panel panel-default text-left panel-booking1 panel-default-booking1">
                     <div class="panel-body panel-body-booking1">
@@ -103,7 +108,7 @@
                                                 <div class="col-sm-4 col-sm-4-booking1">
                                                     <div class="form-group {{ $errors->has('sleeps') ? ' has-error' : '' }}">
                                                         <label>Sleep(s)</label>
-                                                        <select class="form-control form-control-booking1" name="sleeps">
+                                                        <select class="form-control form-control-booking1 jsCalSleep" name="sleeps">
                                                             <option value="0">Choose Sleep(s)</option>
                                                             @for($i = 1; $i <= 30; $i++)
                                                                 <option value="{{ $i }}" @if($i == session()->get('sleeps')) selected="selected" @endif>{{ $i }}</option>
@@ -159,13 +164,13 @@
                                         </div>
                                         <div class="row row-booking1">
                                             <div class="col-sm-12 col-sm-12-booking1 col-sm-12-extra-booking1">
-                                                <p class="info-listing-booking1">Guest(s):</p><p class="info-listing-price-booking1">{{ session()->get('guests') }}</p>
+                                                <p class="info-listing-booking1">Guest(s):</p><p class="info-listing-price-booking1 replaceInquiryGuest">{{ session()->get('guests') }}</p>
                                                 <p class="info-listing-booking1">Number night(s):</p><p class="info-listing-price-booking1">{{ $dateDifference->days }}</p>
                                             </div>
                                         </div><br />
                                         <div class="row row-booking1">
                                             <div class="col-sm-12 col-sm-12-booking1 col-sm-12-extra-booking1 depsit-booking1">
-                                                <p class="info-listing-booking1">Deposit:</p><p class="info-listing-price-booking1">{{ number_format($amount, 2, '.', '') }}&euro;</p>
+                                                <p class="info-listing-booking1">Deposit:</p><p class="info-listing-price-booking1 replaceInquiryDeposit">{{ number_format($amount, 2, ',', '') }}&euro;</p>
                                             </div>
                                         </div>
                                     </div>
