@@ -184,11 +184,7 @@ class CartController extends Controller
                         $array_intersect    = array_intersect($prepareArray, $array_unique);
 
                         foreach ($array_intersect as $array_intersect_key => $array_intersect_values) {
-                            if($monthBegin === $array_intersect_key) {
-                                return response()->json(['error' => $array_intersect_values.' is a holiday.'], 422);
-                            }
-
-                            if((strtotime($array_intersect_key) > strtotime($monthBegin)) && (strtotime($array_intersect_key) < strtotime($monthEnd))) {
+                            if((strtotime($array_intersect_key) >= strtotime($monthBegin)) && (strtotime($array_intersect_key) < strtotime($monthEnd))) {
                                 return response()->json(['error' => 'Booking not possible because holidays included.'], 422);
                             }
                         }

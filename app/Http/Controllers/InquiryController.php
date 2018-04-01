@@ -124,6 +124,7 @@ class InquiryController extends Controller
                 $dates_array             = [];
                 $availableStatus         = [];
 
+                $seasons                 = Season::where('cabin_id', new \MongoDB\BSON\ObjectID(session()->get('cabin_id')))->get();
                 $cabin                   = Cabin::where('is_delete', 0)
                     ->where('other_cabin', "0")
                     ->findOrFail(session()->get('cabin_id'));
@@ -135,6 +136,50 @@ class InquiryController extends Controller
                     $dates                 = $generateBookingDate->format('Y-m-d');
                     $day                   = $generateBookingDate->format('D');
                     $bookingDateSeasonType = null;
+
+                    /* Checking season begin */
+                    if($seasons) {
+                        foreach ($seasons as $season) {
+
+                            if (($season->summerSeasonStatus === 'open') && ($season->summerSeason === 1) && ($dates >= ($season->earliest_summer_open)->format('Y-m-d')) && ($dates < ($season->latest_summer_close)->format('Y-m-d'))) {
+                                $holiday_prepare[]     = ($season->summer_mon === 1) ? 'Mon' : 0;
+                                $holiday_prepare[]     = ($season->summer_tue === 1) ? 'Tue' : 0;
+                                $holiday_prepare[]     = ($season->summer_wed === 1) ? 'Wed' : 0;
+                                $holiday_prepare[]     = ($season->summer_thu === 1) ? 'Thu' : 0;
+                                $holiday_prepare[]     = ($season->summer_fri === 1) ? 'Fri' : 0;
+                                $holiday_prepare[]     = ($season->summer_sat === 1) ? 'Sat' : 0;
+                                $holiday_prepare[]     = ($season->summer_sun === 1) ? 'Sun' : 0;
+                                $bookingDateSeasonType = 'summer';
+                            }
+                            elseif (($season->winterSeasonStatus === 'open') && ($season->winterSeason === 1) && ($dates >= ($season->earliest_winter_open)->format('Y-m-d')) && ($dates < ($season->latest_winter_close)->format('Y-m-d'))) {
+                                $holiday_prepare[]     = ($season->winter_mon === 1) ? 'Mon' : 0;
+                                $holiday_prepare[]     = ($season->winter_tue === 1) ? 'Tue' : 0;
+                                $holiday_prepare[]     = ($season->winter_wed === 1) ? 'Wed' : 0;
+                                $holiday_prepare[]     = ($season->winter_thu === 1) ? 'Thu' : 0;
+                                $holiday_prepare[]     = ($season->winter_fri === 1) ? 'Fri' : 0;
+                                $holiday_prepare[]     = ($season->winter_sat === 1) ? 'Sat' : 0;
+                                $holiday_prepare[]     = ($season->winter_sun === 1) ? 'Sun' : 0;
+                                $bookingDateSeasonType = 'winter';
+                            }
+
+                        }
+
+                        if (!$bookingDateSeasonType)
+                        {
+                            return redirect()->back()->with('error', 'Sorry selected dates are not in a season time.');
+                        }
+
+                        $prepareArray       = [$dates => $day];
+                        $array_unique       = array_unique($holiday_prepare);
+                        $array_intersect    = array_intersect($prepareArray, $array_unique);
+
+                        foreach ($array_intersect as $array_intersect_key => $array_intersect_values) {
+                            if((strtotime($array_intersect_key) >= strtotime($monthBegin)) && (strtotime($array_intersect_key) < strtotime($monthEnd))) {
+                                return redirect()->back()->with('error', 'Booking not possible because holidays included.');
+                            }
+                        }
+                    }
+                    /* Checking season end */
 
                     /* Checking bookings available begins */
                     $mon_day     = ($cabin->mon_day === 1) ? 'Mon' : 0;
