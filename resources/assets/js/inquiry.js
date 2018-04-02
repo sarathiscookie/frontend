@@ -27,15 +27,15 @@ $(function(){
         minimumFractionDigits: 2
     });
 
-    // Helping object for env variables
-    var env = {
-        tax_one: window.environment.service_tax_one,
-        tax_two: window.environment.service_tax_two,
-        tax_three: window.environment.service_tax_three
-    };
-
     // Sleeps calculation
     $('.jsCalSleep').change(function() {
+        // Helping object for env variables
+        var env = {
+            tax_one: window.environment.service_tax_one,
+            tax_two: window.environment.service_tax_two,
+            tax_three: window.environment.service_tax_three
+        };
+
         // Days multiply with prepayment_amount
         var amountDays    = $('.amountDays').data('amountdays');
 
@@ -73,6 +73,12 @@ $(function(){
 
     // Beds calculation
     $('.jsCalBed').change(function() {
+        // Helping object for env variables
+        var env = {
+            tax_one: window.environment.service_tax_one,
+            tax_two: window.environment.service_tax_two,
+            tax_three: window.environment.service_tax_three
+        };
 
         // Days multiply with prepayment_amount
         var amountDays = $('.amountDays').data('amountdays');
@@ -116,6 +122,12 @@ $(function(){
 
     // Dorms calculation
     $('.jsCalDorm').change(function() {
+        // Helping object for env variables
+        var env = {
+            tax_one: window.environment.service_tax_one,
+            tax_two: window.environment.service_tax_two,
+            tax_three: window.environment.service_tax_three
+        };
 
         // Days multiply with prepayment_amount
         var amountDays = $('.amountDays').data('amountdays');
