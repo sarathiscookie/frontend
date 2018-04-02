@@ -62,10 +62,10 @@
                                                 <div class="notSeasonTime_{{ $cart->cabin_id }}" data-notseasontime="{{ $calendar[4] }}"></div>
 
                                                 <div class="col-sm-4 col-sm-4-booking1">
-                                                    <input type="text" class="form-control form-control-booking1 dateFrom" id="dateFrom_{{ $cart->cabin_id }}" name="dateFrom" value="{{ old('dateFrom_'.$cart->_id, $cart->checkin_from->format('d.m.y')) }}"  readonly>
+                                                    <input type="text" class="form-control form-control-booking1 dateFrom" id="dateFrom_{{ $cart->cabin_id }}" name="dateFrom" value="{{  $cart->checkin_from->format('d.m.y') }}"  readonly>
                                                 </div>
                                                 <div class="col-sm-4 col-sm-4-booking1">
-                                                    <input type="text" class="form-control form-control-booking1 dateTo" id="dateTo_{{ $cart->cabin_id }}" name="dateTo" value="{{ old('dateTo_'.$cart->_id, $cart->reserve_to->format('d.m.y')) }}"  readonly>
+                                                    <input type="text" class="form-control form-control-booking1 dateTo" id="dateTo_{{ $cart->cabin_id }}" name="dateTo" value="{{ $cart->reserve_to->format('d.m.y') }}"  readonly>
                                                 </div>
                                                 @if($cabinDetails->cabin($cart->cabin_id)->sleeping_place != 1)
                                                     <div class="col-sm-4 col-sm-4-f-booking1 col-sm-4-booking1">
@@ -86,7 +86,7 @@
                                                     </div>
                                                 @else
                                                     <div class="col-sm-4 col-sm-4-booking1">
-                                                        <select class="form-control form-control-booking1">
+                                                        <select class="form-control form-control-booking1 jsBookCalSleep" name="sleeps">
                                                             <option>Choose Sleep(s)</option>
                                                             @for($i = 1; $i <= 30; $i++)
                                                                 <option value="{{ $i }}" @if($i == $cart->sleeps) selected="selected" @endif>{{ $i }}</option>
@@ -125,7 +125,7 @@
                                             </div>
                                             <div class="row row-booking1">
                                                 <div class="col-sm-12 col-sm-12-booking1 col-sm-12-extra-booking1">
-                                                    <p class="info-listing-booking1">Guest(s):</p><p class="info-listing-price-booking1">{{ $cart->guests }}</p>
+                                                    <p class="info-listing-booking1">Guest(s):</p><p class="info-listing-price-booking1 replaceBookingGuest">{{ $cart->guests }}</p>
                                                     <p class="info-listing-booking1">Number night(s):</p><p class="info-listing-price-booking1">{{ date_diff(date_create($cart->checkin_from->format('Y-m-d')), date_create($cart->reserve_to->format('Y-m-d')))->format('%R%a days') }}</p>
                                                 </div>
                                             </div><br />
@@ -201,6 +201,93 @@
 
 
                         <div class="row content row-booking1">
+                            <div class="col-sm-9">
+                                <div class="panel panel-default booking-box-booking1 panel-default-booking1 text-left">
+                                    <div class="panel-body panel-body-booking1">
+                                        <div class="row row-booking1">
+                                            <div class="col-sm-12">
+                                                <h5>Contact Information</h5>
+                                            </div>
+                                            <div class="col-sm-12 col-sm-12-booking1 col-sm-12-extra-booking1">
+                                                <div class="row">
+                                                    <div class="col-sm-6">
+                                                        <div class="form-group {{ $errors->has('street') ? ' has-error' : '' }}">
+                                                            <label> Street <span class="required">*</span></label>
+                                                            <input type="text" class="form-control" id="street" name="street" placeholder="Enter street" maxlength="255" value="{{ old('street', Auth::user()->usrAddress) }}">
+
+                                                            @if ($errors->has('street'))
+                                                                <span class="help-block"><strong>{{ $errors->first('street') }}</strong></span>
+                                                            @endif
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-6">
+                                                        <div class="form-group {{ $errors->has('city') ? ' has-error' : '' }}">
+                                                            <label> City <span class="required">*</span></label>
+                                                            <input type="text" class="form-control" id="city" name="city" placeholder="Enter city" maxlength="255" value="{{ old('city', Auth::user()->usrCity) }}">
+
+                                                            @if ($errors->has('city'))
+                                                                <span class="help-block"><strong>{{ $errors->first('city') }}</strong></span>
+                                                            @endif
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row">
+                                                    <div class="col-sm-6">
+                                                        <div class="form-group {{ $errors->has('country') ? ' has-error' : '' }}">
+                                                            <label> Country <span class="required">*</span></label>
+                                                            <select class="form-control" id="country" name="country">
+                                                                <option value="0"> Choose Country </option>
+                                                                @foreach($country as $land)
+                                                                    <option value="{{ $land->name }}" @if($land->name == Auth::user()->usrCountry || old('country') == $land->name) selected="selected" @endif>{{ $land->name }}</option>
+                                                                @endforeach
+                                                            </select>
+
+                                                            @if ($errors->has('country'))
+                                                                <span class="help-block"><strong>{{ $errors->first('country') }}</strong></span>
+                                                            @endif
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-6">
+                                                        <div class="form-group {{ $errors->has('zipcode') ? ' has-error' : '' }}">
+                                                            <label> Zipcode <span class="required">*</span></label>
+                                                            <input type="text" class="form-control" id="zipcode" name="zipcode" placeholder="Enter zip code" maxlength="25" value="{{ old('zipcode', Auth::user()->usrZip) }}">
+
+                                                            @if ($errors->has('zipcode'))
+                                                                <span class="help-block"><strong>{{ $errors->first('zipcode') }}</strong></span>
+                                                            @endif
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row">
+                                                    <div class="col-sm-6">
+                                                        <div class="form-group {{ $errors->has('mobile') ? ' has-error' : '' }}">
+                                                            <label> Mobile <span class="required">*</span></label>
+                                                            <input type="text" class="form-control" id="mobile" name="mobile" placeholder="Enter mobile" maxlength="20" value="{{ old('mobile', Auth::user()->usrMobile) }}">
+
+                                                            @if ($errors->has('mobile'))
+                                                                <span class="help-block"><strong>{{ $errors->first('mobile') }}</strong></span>
+                                                            @endif
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-6">
+                                                        <div class="form-group {{ $errors->has('phone') ? ' has-error' : '' }}">
+                                                            <label> Phone <span class="required">*</span></label>
+                                                            <input type="text" class="form-control" id="phone" name="phone" placeholder="Enter phone" maxlength="20" value="{{ old('phone', Auth::user()->usrTelephone) }}">
+
+                                                            @if ($errors->has('phone'))
+                                                                <span class="help-block"><strong>{{ $errors->first('phone') }}</strong></span>
+                                                            @endif
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                             <div class="col-sm-3 col-sm-3-booking1 col-sm-r col-sm-r-booking1">
                                 <div class="panel panel-default booking-box-booking1 bottom-boxes-booking1 panel-booking1 panel-default-booking1">
                                     <div class="panel-body panel-body-booking1">
@@ -263,3 +350,13 @@
         </div>
     </main>
 @endsection
+
+@push('scripts')
+    <script>
+        window.environment = {
+            service_tax_one: '{{ env('SERVICE_TAX_ONE') }}',
+            service_tax_two: '{{ env('SERVICE_TAX_TWO') }}',
+            service_tax_three: '{{ env('SERVICE_TAX_THREE') }}'
+        }
+    </script>
+@endpush
