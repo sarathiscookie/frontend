@@ -78,9 +78,9 @@
                                                     <div class="form-group {{ $errors->has('beds') ? ' has-error' : '' }}">
                                                         <label>Bed(s)</label>
                                                         <select class="form-control form-control-booking1 jsCalBed" name="beds">
-                                                            <option value="0">Choose Bed(s)</option>
+                                                            <option value="">Choose Bed(s)</option>
                                                             @for($i = 1; $i <= 30; $i++)
-                                                                <option value="{{ $i }}" @if($i == session()->get('beds')) selected="selected" @endif>{{ $i }}</option>
+                                                                <option value="{{ $i }}" @if(session()->get('beds') == $i || old('beds') == $i) selected @endif>{{ $i }}</option>
                                                             @endfor
                                                         </select>
 
@@ -93,9 +93,9 @@
                                                     <div class="form-group {{ $errors->has('dormitory') ? ' has-error' : '' }}">
                                                         <label>Dorm(s)</label>
                                                         <select class="form-control form-control-booking1 jsCalDorm" name="dormitory">
-                                                            <option value="0">Choose Dorm(s)</option>
+                                                            <option value="">Choose Dorm(s)</option>
                                                             @for($i = 1; $i <= 30; $i++)
-                                                                <option value="{{ $i }}">{{ $i }}</option>
+                                                                <option value="{{ $i }}" @if(old('dormitory') == $i) selected @endif>{{ $i }}</option>
                                                             @endfor
                                                         </select>
 
@@ -109,9 +109,9 @@
                                                     <div class="form-group {{ $errors->has('sleeps') ? ' has-error' : '' }}">
                                                         <label>Sleep(s)</label>
                                                         <select class="form-control form-control-booking1 jsCalSleep" name="sleeps">
-                                                            <option value="0">Choose Sleep(s)</option>
+                                                            <option value="">Choose Sleep(s)</option>
                                                             @for($i = 1; $i <= 30; $i++)
-                                                                <option value="{{ $i }}" @if($i == session()->get('sleeps')) selected="selected" @endif>{{ $i }}</option>
+                                                                <option value="{{ $i }}" @if(session()->get('sleeps') == $i || old('sleeps') == $i) selected @endif>{{ $i }}</option>
                                                             @endfor
                                                         </select>
 
@@ -201,7 +201,7 @@
                         $sumPrepaymentAmountServiceTotal = $sumPrepaymentAmount + $sumPrepaymentAmountPercentage;
                     @endphp
 
-                    {{--<div class="row content row-booking1">
+                    <div class="row content row-booking1">
                         <div class="col-sm-9">
                             <div class="panel panel-default booking-box-booking1 panel-default-booking1 text-left">
                                 <div class="panel-body panel-body-booking1">
@@ -301,14 +301,14 @@
                                     <div class="normalCalculation">
                                         <div class="row row-booking1">
                                             <div class="col-sm-12 col-sm-12-booking1 col-sm-12-extra-booking1">
-                                                <p class="info-listing-booking1">Deposit:</p><p class="info-listing-price-booking1">{{ number_format($sumPrepaymentAmount, 2, '.', '') }}&euro;</p>
-                                                <p class="info-listing-booking1">Service fee:</p><p class="info-listing-price-booking1">{{ $serviceTax }}%</p>
+                                                <p class="info-listing-booking1">Deposit:</p><p class="info-listing-price-booking1 replaceInquiryCompleteDeposit">{{ number_format($sumPrepaymentAmount, 2, '.', '') }}&euro;</p>
+                                                <p class="info-listing-booking1">Service fee:</p><p class="info-listing-price-booking1 replaceInquiryServiceFee">{{ $serviceTax }}%</p>
                                             </div>
                                         </div>
 
                                         <div class="row row-booking1">
                                             <div class="col-sm-12 col-sm-12-booking1 col-sm-12-extra-booking1">
-                                                <h5 class="info-listing-booking1">Payment incl.<br /> Service fee:</h5><h5 class="info-listing-price-booking1">{{ number_format($sumPrepaymentAmountServiceTotal, 2, '.', '') }}&euro;</h5>
+                                                <h5 class="info-listing-booking1">Payment incl.<br /> Service fee:</h5><h5 class="info-listing-price-booking1 replaceInquiryCompletePayment">{{ number_format($sumPrepaymentAmountServiceTotal, 2, '.', '') }}&euro;</h5>
                                             </div>
                                         </div>
                                     </div>
@@ -316,10 +316,11 @@
                                 </div>
                             </div>
                         </div>
-                    </div>--}}
+                    </div>
 
                     <div class="row content row-booking1">
                         <div id="btn-ground-2-booking1">
+                            <input type="hidden" name="sleeping_place" value="{{ $cabinDetails->sleeping_place }}">
                             <button type="submit" class="btn-default-booking1 btn-sm btn-details-booking1"><span class="glyphicon glyphicon-envelope" style="font-size: 16px;" aria-hidden="true"></span>  Send Inquiry</button>
                         </div>
                     </div>
@@ -331,3 +332,13 @@
         </div>
     </main>
 @endsection
+
+@push('scripts')
+    <script>
+        window.environment = {
+            service_tax_one: '{{ env('SERVICE_TAX_ONE') }}',
+            service_tax_two: '{{ env('SERVICE_TAX_TWO') }}',
+            service_tax_three: '{{ env('SERVICE_TAX_THREE') }}'
+        }
+    </script>
+@endpush

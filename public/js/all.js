@@ -235,13 +235,11 @@ $(function(){
 });
 /* Js for cabin list module */
 $(function() {
-    // Configure/customize these variables.
+
     var cabinListShowChar = 375;  // How many characters are shown by default
     var cabinListEllipsesText = "...";
-    var cabinListMoreText = "View more";
-    var cabinListLessText = "View less";
 
-
+    /* Limiting the characters */
     $('.cabinListMore').each(function() {
         var content = $(this).html();
 
@@ -250,24 +248,11 @@ $(function() {
             var c = content.substr(0, cabinListShowChar);
             var h = content.substr(cabinListShowChar, content.length - cabinListShowChar);
 
-            var html = c + '<span class="cabinListMoreEllipses">' + cabinListEllipsesText+ '&nbsp;</span><span class="cabinListMoreContent"><span>' + h + '</span>&nbsp;&nbsp; <!--<button type="button" class="btn btn-default btn-sm btn-details cabinListMoreLink">' + cabinListMoreText + '</button> --></span>';
+            var html = c + '<span class="cabinListMoreEllipses">' + cabinListEllipsesText+ '&nbsp;</span><span class="cabinListMoreContent"><span>' + h + '</span>&nbsp;&nbsp;</span>';
 
             $(this).html(html);
         }
 
-    });
-
-    $(".cabinListMoreLink").click(function(){
-        if($(this).hasClass("cabinListLess")) {
-            $(this).removeClass("cabinListLess");
-            $(this).html(cabinListMoreText);
-        } else {
-            $(this).addClass("cabinListLess");
-            $(this).html(cabinListLessText);
-        }
-        $(this).parent().prev().toggle();
-        $(this).prev().toggle();
-        return false;
     });
 });
 /* Js for cabin details module */
@@ -419,4 +404,141 @@ $(function(){
     });
     /* Character limit for comments end */
 
+    /* Amount calc of sleeps, beds & dorms */
+    // Create our number formatter.
+    var formatter = new Intl.NumberFormat('de-DE', {
+        style: 'currency',
+        currency: 'EUR',
+        minimumFractionDigits: 2
+    });
+
+    // Helping object for env variables
+    var env = {
+        tax_one: window.environment.service_tax_one,
+        tax_two: window.environment.service_tax_two,
+        tax_three: window.environment.service_tax_three
+    };
+
+    // Sleeps calculation
+    $('.jsCalSleep').change(function() {
+        // Days multiply with prepayment_amount
+        var amountDays    = $('.amountDays').data('amountdays');
+
+        var serviceTax    = '';
+
+        // Sleeps select box value is null for validation purpose. So value is set as 0
+        var sleeps        = 0;
+
+        if($(this).val() !== ''){
+            sleeps    = $(this).val()
+        }
+
+        var total     = amountDays * sleeps;
+        $( '.replaceInquiryGuest' ).html(sleeps);
+        $( '.replaceInquiryDeposit' ).html(formatter.format(total));
+        if(total <= 30) {
+            serviceTax = env.tax_one;
+        }
+
+        if(total > 30 && total <= 100) {
+            serviceTax = env.tax_two;
+        }
+
+        if(total > 100) {
+            serviceTax = env.tax_three;
+        }
+
+        var sumPrepaymentAmountPercentage   = (serviceTax / 100) * total;
+        var sumPrepaymentAmountServiceTotal = total + sumPrepaymentAmountPercentage;
+
+        $( '.replaceInquiryCompleteDeposit' ).html(formatter.format(total));
+        $( '.replaceInquiryServiceFee' ).html(serviceTax+' %');
+        $( '.replaceInquiryCompletePayment' ).html(formatter.format(sumPrepaymentAmountServiceTotal));
+    });
+
+    // Beds calculation
+    $('.jsCalBed').change(function() {
+
+        // Days multiply with prepayment_amount
+        var amountDays = $('.amountDays').data('amountdays');
+
+        var serviceTax = '';
+
+        // Beds & Dorms select box value is null for validation purpose. So value is set as 0
+        var dorms      = 0;
+        var beds       = 0;
+        if($(this).val() !== ''){
+            beds       = $(this).val();
+        }
+
+        if($('.jsCalDorm').val() !== ''){
+            dorms      = $('.jsCalDorm').val();
+        }
+        var guest      = parseInt(beds) + parseInt(dorms);
+        var total      = (parseInt(beds) + parseInt(dorms)) * amountDays;
+        console.log(beds+'-----'+dorms);
+        $( '.replaceInquiryGuest' ).html(guest);
+        $( '.replaceInquiryDeposit' ).html(formatter.format(total));
+        if(total <= 30) {
+            serviceTax = env.tax_one;
+        }
+
+        if(total > 30 && total <= 100) {
+            serviceTax = env.tax_two;
+        }
+
+        if(total > 100) {
+            serviceTax = env.tax_three;
+        }
+
+        var sumPrepaymentAmountPercentage   = (serviceTax / 100) * total;
+        var sumPrepaymentAmountServiceTotal = total + sumPrepaymentAmountPercentage;
+
+        $( '.replaceInquiryCompleteDeposit' ).html(formatter.format(total));
+        $( '.replaceInquiryServiceFee' ).html(serviceTax+' %');
+        $( '.replaceInquiryCompletePayment' ).html(formatter.format(sumPrepaymentAmountServiceTotal));
+    });
+
+    // Dorms calculation
+    $('.jsCalDorm').change(function() {
+
+        // Days multiply with prepayment_amount
+        var amountDays = $('.amountDays').data('amountdays');
+
+        var serviceTax = '';
+
+        // Beds & Dorms select box value is null for validation purpose. So value is set as 0
+        var dorms      = 0;
+        var beds       = 0;
+        if($(this).val() !== ''){
+            dorms      = $(this).val();
+        }
+
+        if($('.jsCalBed').val() !== ''){
+            beds       = $('.jsCalBed').val();
+        }
+
+        var guest      = parseInt(dorms) + parseInt(beds);
+        var total      = (parseInt(dorms) + parseInt(beds)) * amountDays;
+        $( '.replaceInquiryGuest' ).html(guest);
+        $( '.replaceInquiryDeposit' ).html(formatter.format(total));
+        if(total <= 30) {
+            serviceTax = env.tax_one;
+        }
+
+        if(total > 30 && total <= 100) {
+            serviceTax = env.tax_two;
+        }
+
+        if(total > 100) {
+            serviceTax = env.tax_three;
+        }
+
+        var sumPrepaymentAmountPercentage   = (serviceTax / 100) * total;
+        var sumPrepaymentAmountServiceTotal = total + sumPrepaymentAmountPercentage;
+
+        $( '.replaceInquiryCompleteDeposit' ).html(formatter.format(total));
+        $( '.replaceInquiryServiceFee' ).html(serviceTax+' %');
+        $( '.replaceInquiryCompletePayment' ).html(formatter.format(sumPrepaymentAmountServiceTotal));
+    });
 });

@@ -286,6 +286,7 @@ class CartController extends Controller
                                         $availableStatus[] = 'notAvailable';
                                         $request->session()->put('cabin_id', new \MongoDB\BSON\ObjectID($cabin->_id));
                                         $request->session()->put('cabin_name', $cabin->name);
+                                        $request->session()->put('sleeping_place', $cabin->sleeping_place);
                                         $request->session()->put('checkin_from', $request->dateFrom);
                                         $request->session()->put('reserve_to', $request->dateTo);
                                         $request->session()->put('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id));
@@ -345,6 +346,7 @@ class CartController extends Controller
                                             $availableStatus[] = 'notAvailable';
                                             $request->session()->put('cabin_id', new \MongoDB\BSON\ObjectID($cabin->_id));
                                             $request->session()->put('cabin_name', $cabin->name);
+                                            $request->session()->put('sleeping_place', $cabin->sleeping_place);
                                             $request->session()->put('checkin_from', $request->dateFrom);
                                             $request->session()->put('reserve_to', $request->dateTo);
                                             $request->session()->put('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id));
@@ -401,6 +403,7 @@ class CartController extends Controller
                                             $availableStatus[] = 'notAvailable';
                                             $request->session()->put('cabin_id', new \MongoDB\BSON\ObjectID($cabin->_id));
                                             $request->session()->put('cabin_name', $cabin->name);
+                                            $request->session()->put('sleeping_place', $cabin->sleeping_place);
                                             $request->session()->put('checkin_from', $request->dateFrom);
                                             $request->session()->put('reserve_to', $request->dateTo);
                                             $request->session()->put('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id));
@@ -456,6 +459,7 @@ class CartController extends Controller
                                             $availableStatus[] = 'notAvailable';
                                             $request->session()->put('cabin_id', new \MongoDB\BSON\ObjectID($cabin->_id));
                                             $request->session()->put('cabin_name', $cabin->name);
+                                            $request->session()->put('sleeping_place', $cabin->sleeping_place);
                                             $request->session()->put('checkin_from', $request->dateFrom);
                                             $request->session()->put('reserve_to', $request->dateTo);
                                             $request->session()->put('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id));
@@ -511,6 +515,7 @@ class CartController extends Controller
                                             $availableStatus[] = 'notAvailable';
                                             $request->session()->put('cabin_id', new \MongoDB\BSON\ObjectID($cabin->_id));
                                             $request->session()->put('cabin_name', $cabin->name);
+                                            $request->session()->put('sleeping_place', $cabin->sleeping_place);
                                             $request->session()->put('checkin_from', $request->dateFrom);
                                             $request->session()->put('reserve_to', $request->dateTo);
                                             $request->session()->put('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id));
@@ -566,6 +571,7 @@ class CartController extends Controller
                                             $availableStatus[] = 'notAvailable';
                                             $request->session()->put('cabin_id', new \MongoDB\BSON\ObjectID($cabin->_id));
                                             $request->session()->put('cabin_name', $cabin->name);
+                                            $request->session()->put('sleeping_place', $cabin->sleeping_place);
                                             $request->session()->put('checkin_from', $request->dateFrom);
                                             $request->session()->put('reserve_to', $request->dateTo);
                                             $request->session()->put('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id));
@@ -622,6 +628,7 @@ class CartController extends Controller
                                             $availableStatus[] = 'notAvailable';
                                             $request->session()->put('cabin_id', new \MongoDB\BSON\ObjectID($cabin->_id));
                                             $request->session()->put('cabin_name', $cabin->name);
+                                            $request->session()->put('sleeping_place', $cabin->sleeping_place);
                                             $request->session()->put('checkin_from', $request->dateFrom);
                                             $request->session()->put('reserve_to', $request->dateTo);
                                             $request->session()->put('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id));
@@ -677,6 +684,7 @@ class CartController extends Controller
                                             $availableStatus[] = 'notAvailable';
                                             $request->session()->put('cabin_id', new \MongoDB\BSON\ObjectID($cabin->_id));
                                             $request->session()->put('cabin_name', $cabin->name);
+                                            $request->session()->put('sleeping_place', $cabin->sleeping_place);
                                             $request->session()->put('checkin_from', $request->dateFrom);
                                             $request->session()->put('reserve_to', $request->dateTo);
                                             $request->session()->put('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id));
@@ -731,6 +739,7 @@ class CartController extends Controller
                                     $availableStatus[] = 'notAvailable';
                                     $request->session()->put('cabin_id', new \MongoDB\BSON\ObjectID($cabin->_id));
                                     $request->session()->put('cabin_name', $cabin->name);
+                                    $request->session()->put('sleeping_place', $cabin->sleeping_place);
                                     $request->session()->put('checkin_from', $request->dateFrom);
                                     $request->session()->put('reserve_to', $request->dateTo);
                                     $request->session()->put('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id));
@@ -795,6 +804,7 @@ class CartController extends Controller
                                         $availableStatus[] = 'notAvailable';
                                         $request->session()->put('cabin_id', new \MongoDB\BSON\ObjectID($cabin->_id));
                                         $request->session()->put('cabin_name', $cabin->name);
+                                        $request->session()->put('sleeping_place', $cabin->sleeping_place);
                                         $request->session()->put('checkin_from', $request->dateFrom);
                                         $request->session()->put('reserve_to', $request->dateTo);
                                         $request->session()->put('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id));
@@ -845,6 +855,7 @@ class CartController extends Controller
                                             $availableStatus[] = 'notAvailable';
                                             $request->session()->put('cabin_id', new \MongoDB\BSON\ObjectID($cabin->_id));
                                             $request->session()->put('cabin_name', $cabin->name);
+                                            $request->session()->put('sleeping_place', $cabin->sleeping_place);
                                             $request->session()->put('checkin_from', $request->dateFrom);
                                             $request->session()->put('reserve_to', $request->dateTo);
                                             $request->session()->put('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id));
@@ -892,6 +903,7 @@ class CartController extends Controller
                                             $availableStatus[] = 'notAvailable';
                                             $request->session()->put('cabin_id', new \MongoDB\BSON\ObjectID($cabin->_id));
                                             $request->session()->put('cabin_name', $cabin->name);
+                                            $request->session()->put('sleeping_place', $cabin->sleeping_place);
                                             $request->session()->put('checkin_from', $request->dateFrom);
                                             $request->session()->put('reserve_to', $request->dateTo);
                                             $request->session()->put('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id));
@@ -939,6 +951,7 @@ class CartController extends Controller
                                             $availableStatus[] = 'notAvailable';
                                             $request->session()->put('cabin_id', new \MongoDB\BSON\ObjectID($cabin->_id));
                                             $request->session()->put('cabin_name', $cabin->name);
+                                            $request->session()->put('sleeping_place', $cabin->sleeping_place);
                                             $request->session()->put('checkin_from', $request->dateFrom);
                                             $request->session()->put('reserve_to', $request->dateTo);
                                             $request->session()->put('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id));
@@ -986,6 +999,7 @@ class CartController extends Controller
                                             $availableStatus[] = 'notAvailable';
                                             $request->session()->put('cabin_id', new \MongoDB\BSON\ObjectID($cabin->_id));
                                             $request->session()->put('cabin_name', $cabin->name);
+                                            $request->session()->put('sleeping_place', $cabin->sleeping_place);
                                             $request->session()->put('checkin_from', $request->dateFrom);
                                             $request->session()->put('reserve_to', $request->dateTo);
                                             $request->session()->put('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id));
@@ -1033,6 +1047,7 @@ class CartController extends Controller
                                             $availableStatus[] = 'notAvailable';
                                             $request->session()->put('cabin_id', new \MongoDB\BSON\ObjectID($cabin->_id));
                                             $request->session()->put('cabin_name', $cabin->name);
+                                            $request->session()->put('sleeping_place', $cabin->sleeping_place);
                                             $request->session()->put('checkin_from', $request->dateFrom);
                                             $request->session()->put('reserve_to', $request->dateTo);
                                             $request->session()->put('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id));
@@ -1080,6 +1095,7 @@ class CartController extends Controller
                                             $availableStatus[] = 'notAvailable';
                                             $request->session()->put('cabin_id', new \MongoDB\BSON\ObjectID($cabin->_id));
                                             $request->session()->put('cabin_name', $cabin->name);
+                                            $request->session()->put('sleeping_place', $cabin->sleeping_place);
                                             $request->session()->put('checkin_from', $request->dateFrom);
                                             $request->session()->put('reserve_to', $request->dateTo);
                                             $request->session()->put('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id));
@@ -1127,6 +1143,7 @@ class CartController extends Controller
                                             $availableStatus[] = 'notAvailable';
                                             $request->session()->put('cabin_id', new \MongoDB\BSON\ObjectID($cabin->_id));
                                             $request->session()->put('cabin_name', $cabin->name);
+                                            $request->session()->put('sleeping_place', $cabin->sleeping_place);
                                             $request->session()->put('checkin_from', $request->dateFrom);
                                             $request->session()->put('reserve_to', $request->dateTo);
                                             $request->session()->put('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id));
@@ -1172,6 +1189,7 @@ class CartController extends Controller
                                     $availableStatus[] = 'notAvailable';
                                     $request->session()->put('cabin_id', new \MongoDB\BSON\ObjectID($cabin->_id));
                                     $request->session()->put('cabin_name', $cabin->name);
+                                    $request->session()->put('sleeping_place', $cabin->sleeping_place);
                                     $request->session()->put('checkin_from', $request->dateFrom);
                                     $request->session()->put('reserve_to', $request->dateTo);
                                     $request->session()->put('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id));

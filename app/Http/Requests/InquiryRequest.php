@@ -23,36 +23,32 @@ class InquiryRequest extends FormRequest
      */
     public function rules()
     {
-        $rules =  [
-            /*'street'        => 'required|max:255',
-            'city'          => 'required|max:255',
-            'country'       => 'required|not_in:0',
-            'zipcode'       => 'required|max:25',
-            'mobile'        => 'required|max:20',
-            'phone'         => 'required|max:20',
-            'comments'      => 'max:300'*/
-        ];
-
-        // write rules for beds dorms sleeps
-
-
-        /*if(session('sleeping_place') != 1)
-        {
-            $this->validate($request, [
-                'dateFrom' => 'required',
-                'dateTo' => 'required',
-                'beds' => 'required_without:dorms',
-                'dorms' => 'required_without:beds',
-            ]);
+        // Rules for contact information, beds, dorms & sleeps
+        if(session()->get('sleeping_place') === 1) {
+            $rules =  [
+                'street'        => 'required|max:255',
+                'city'          => 'required|max:255',
+                'country'       => 'required|not_in:0',
+                'zipcode'       => 'required|max:25',
+                'mobile'        => 'required|max:20',
+                'phone'         => 'required|max:20',
+                'comments'      => 'max:300',
+                'sleeps'        => 'required|not_in:0'
+            ];
         }
         else {
-            $this->validate($request, [
-                'dateFrom' => 'required',
-                'dateTo' => 'required',
-                'sleeps' => 'required|not_in:0',
-            ]);
-        }*/
-
+            $rules =  [
+                'street'        => 'required|max:255',
+                'city'          => 'required|max:255',
+                'country'       => 'required|not_in:0',
+                'zipcode'       => 'required|max:25',
+                'mobile'        => 'required|max:20',
+                'phone'         => 'required|max:20',
+                'comments'      => 'max:300',
+                'beds'          => 'required_without:dormitory',
+                'dormitory'     => 'required_without:beds'
+            ];
+        }
         return $rules;
     }
 }
