@@ -24,23 +24,8 @@ class CartRequest extends FormRequest
     public function rules()
     {
         return [
-            'dateFrom' => 'required',
-            'dateTo'   => 'required',
-            'persons'  => 'required|not_in:0',
+            //
         ];
     }
 
-    /**
-     * Get the error messages for the defined validation rules.
-     *
-     * @return array
-     */
-    public function messages()
-    {
-        return [
-            'dateFrom.required' => 'Arrival date is required',
-            'dateTo.required'   => 'Departure date is required',
-            'persons.required'  => 'No of persons required',
-        ];
-    }
 }
