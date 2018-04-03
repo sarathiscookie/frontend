@@ -95,11 +95,13 @@ $(function(){
         if($('.jsCalDorm').val() !== ''){
             dorms      = $('.jsCalDorm').val();
         }
+
         var guest      = parseInt(beds) + parseInt(dorms);
         var total      = (parseInt(beds) + parseInt(dorms)) * amountDays;
-        console.log(beds+'-----'+dorms);
+
         $( '.replaceInquiryGuest' ).html(guest);
         $( '.replaceInquiryDeposit' ).html(formatter.format(total));
+
         if(total <= 30) {
             serviceTax = env.tax_one;
         }
@@ -147,8 +149,10 @@ $(function(){
 
         var guest      = parseInt(dorms) + parseInt(beds);
         var total      = (parseInt(dorms) + parseInt(beds)) * amountDays;
+
         $( '.replaceInquiryGuest' ).html(guest);
         $( '.replaceInquiryDeposit' ).html(formatter.format(total));
+
         if(total <= 30) {
             serviceTax = env.tax_one;
         }

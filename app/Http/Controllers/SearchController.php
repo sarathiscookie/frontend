@@ -1276,6 +1276,7 @@ class SearchController extends Controller
                 if(!in_array('notAvailable', $availableStatus)) {
                     $available = 'success';
 
+                    // here we need to write a query to check cabin id is already saved for particular customer.
                     $booking                   = new Booking;
                     $booking->cabinname        = $cabin->name;
                     $booking->cabin_id         = new \MongoDB\BSON\ObjectID($cabin->_id);
