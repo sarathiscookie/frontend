@@ -48,32 +48,34 @@ $(function(){
         $( '.replaceBookingGuest_'+cartIdBook ).html(sleepsBook);
         $( '.replaceBookingDeposit_'+cartIdBook ).html(formatter.format(totalBook));
 
-        var totalBooking   = 0;
+        var totalBookingCompleteDeposit = 0;
 
         $('p.bookingDeposit').each(function(){
-            totalBooking += Number($(this).text().replace(/[^0-9\.-]+/g,""));
+            totalBookingCompleteDeposit += Number($(this).text().replace(/[^0-9\.-]+/g,"")); // Replace special char and euro symbol
         });
 
-        if(isNaN(totalBooking)) {
-            totalBooking = 0;
-        }
+        var convertToStringCompleteDeposit      = totalBookingCompleteDeposit.toString(); // Convert total deposit in to string to add dot before last two number
+        var twoDecimalPointAddedCompleteDeposit = convertToStringCompleteDeposit.substring(0, convertToStringCompleteDeposit.length-2)+"."+convertToStringCompleteDeposit.substring(convertToStringCompleteDeposit.length-2); // Adding dot before last two number
+        var euroFormatCompleteDeposit           = formatter.format(Number(twoDecimalPointAddedCompleteDeposit));
 
-        var convertToStringCompleteDeposit      = totalBooking.toString();
-        var twoDecimalPointAddedCompleteDeposit = convertToStringCompleteDeposit.substring(0, convertToStringCompleteDeposit.length-2)+"."+convertToStringCompleteDeposit.substring(convertToStringCompleteDeposit.length-2);
-        var euroFormatCompleteDeposit           = Number(twoDecimalPointAddedCompleteDeposit).toLocaleString('de-DE', { style: 'currency', currency: 'EUR' });
-        $( '.replaceBookingCompleteDeposit' ).html(euroFormatCompleteDeposit);
-
-        if(totalBook <= 30) {
+        if(Number(twoDecimalPointAddedCompleteDeposit) <= 30) {
             serviceTaxBook = envBook.tax_one;
         }
 
-        if(totalBook > 30 && totalBook <= 100) {
+        if(Number(twoDecimalPointAddedCompleteDeposit) > 30 && totalBook <= 100) {
             serviceTaxBook = envBook.tax_two;
         }
 
-        if(totalBook > 100) {
+        if(Number(twoDecimalPointAddedCompleteDeposit) > 100) {
             serviceTaxBook = envBook.tax_three;
         }
+
+        var sumPrepaymentAmountPercentage       = (serviceTaxBook / 100) * Number(twoDecimalPointAddedCompleteDeposit);
+        var sumPrepaymentAmountServiceTotal     = Number(twoDecimalPointAddedCompleteDeposit) + sumPrepaymentAmountPercentage;
+
+        $( '.replaceBookingCompleteDeposit' ).html(euroFormatCompleteDeposit);
+        $( '.replaceBookingServiceFee' ).html(serviceTaxBook+' %');
+        $( '.replaceBookingCompletePayment' ).html(formatter.format(sumPrepaymentAmountServiceTotal));
 
     });
 
@@ -106,32 +108,34 @@ $(function(){
         $( '.replaceBookingGuest_'+cartIdBook ).html(guestBook);
         $( '.replaceBookingDeposit_'+cartIdBook ).html(formatter.format(totalBook));
 
-        var totalBooking   = 0;
+        var totalBookingCompleteDeposit = 0;
 
         $('p.bookingDeposit').each(function(){
-            totalBooking += Number($(this).text().replace(/[^0-9\.-]+/g,""));
+            totalBookingCompleteDeposit += Number($(this).text().replace(/[^0-9\.-]+/g,"")); // Replace special char and euro symbol
         });
 
-        if(isNaN(totalBooking)) {
-            totalBooking = 0;
-        }
+        var convertToStringCompleteDeposit      = totalBookingCompleteDeposit.toString(); // Convert total deposit in to string to add dot before last two number
+        var twoDecimalPointAddedCompleteDeposit = convertToStringCompleteDeposit.substring(0, convertToStringCompleteDeposit.length-2)+"."+convertToStringCompleteDeposit.substring(convertToStringCompleteDeposit.length-2); // Adding dot before last two number
+        var euroFormatCompleteDeposit           = formatter.format(Number(twoDecimalPointAddedCompleteDeposit));
 
-        var convertToStringCompleteDeposit      = totalBooking.toString();
-        var twoDecimalPointAddedCompleteDeposit = convertToStringCompleteDeposit.substring(0, convertToStringCompleteDeposit.length-2)+"."+convertToStringCompleteDeposit.substring(convertToStringCompleteDeposit.length-2);
-        var euroFormatCompleteDeposit           = Number(twoDecimalPointAddedCompleteDeposit).toLocaleString('de-DE', { style: 'currency', currency: 'EUR' });
-        $( '.replaceBookingCompleteDeposit' ).html(euroFormatCompleteDeposit);
-
-        if(totalBook <= 30) {
+        if(Number(twoDecimalPointAddedCompleteDeposit) <= 30) {
             serviceTaxBook = envBook.tax_one;
         }
 
-        if(totalBook > 30 && totalBook <= 100) {
+        if(Number(twoDecimalPointAddedCompleteDeposit) > 30 && totalBook <= 100) {
             serviceTaxBook = envBook.tax_two;
         }
 
-        if(totalBook > 100) {
+        if(Number(twoDecimalPointAddedCompleteDeposit) > 100) {
             serviceTaxBook = envBook.tax_three;
         }
+
+        var sumPrepaymentAmountPercentage       = (serviceTaxBook / 100) * Number(twoDecimalPointAddedCompleteDeposit);
+        var sumPrepaymentAmountServiceTotal     = Number(twoDecimalPointAddedCompleteDeposit) + sumPrepaymentAmountPercentage;
+
+        $( '.replaceBookingCompleteDeposit' ).html(euroFormatCompleteDeposit);
+        $( '.replaceBookingServiceFee' ).html(serviceTaxBook+' %');
+        $( '.replaceBookingCompletePayment' ).html(formatter.format(sumPrepaymentAmountServiceTotal));
 
     });
 
@@ -164,32 +168,34 @@ $(function(){
         $( '.replaceBookingGuest_'+cartIdBook ).html(guestBook);
         $( '.replaceBookingDeposit_'+cartIdBook ).html(formatter.format(totalBook));
 
-        var totalBooking   = 0;
+        var totalBookingCompleteDeposit = 0;
 
         $('p.bookingDeposit').each(function(){
-            totalBooking += Number($(this).text().replace(/[^0-9\.-]+/g,"")); // Replace special char and euro symbol
+            totalBookingCompleteDeposit += Number($(this).text().replace(/[^0-9\.-]+/g,"")); // Replace special char and euro symbol
         });
 
-        if(isNaN(totalBooking)) {
-            totalBooking = 0;
-        }
+        var convertToStringCompleteDeposit      = totalBookingCompleteDeposit.toString(); // Convert total deposit in to string to add dot before last two number
+        var twoDecimalPointAddedCompleteDeposit = convertToStringCompleteDeposit.substring(0, convertToStringCompleteDeposit.length-2)+"."+convertToStringCompleteDeposit.substring(convertToStringCompleteDeposit.length-2); // Adding dot before last two number
+        var euroFormatCompleteDeposit           = formatter.format(Number(twoDecimalPointAddedCompleteDeposit));
 
-        var convertToStringCompleteDeposit      = totalBooking.toString();
-        var twoDecimalPointAddedCompleteDeposit = convertToStringCompleteDeposit.substring(0, convertToStringCompleteDeposit.length-2)+"."+convertToStringCompleteDeposit.substring(convertToStringCompleteDeposit.length-2);
-        var euroFormatCompleteDeposit           = Number(twoDecimalPointAddedCompleteDeposit).toLocaleString('de-DE', { style: 'currency', currency: 'EUR' });
-        $( '.replaceBookingCompleteDeposit' ).html(euroFormatCompleteDeposit);
-
-        if(totalBook <= 30) {
+        if(Number(twoDecimalPointAddedCompleteDeposit) <= 30) {
             serviceTaxBook = envBook.tax_one;
         }
 
-        if(totalBook > 30 && totalBook <= 100) {
+        if(Number(twoDecimalPointAddedCompleteDeposit) > 30 && totalBook <= 100) {
             serviceTaxBook = envBook.tax_two;
         }
 
-        if(totalBook > 100) {
+        if(Number(twoDecimalPointAddedCompleteDeposit) > 100) {
             serviceTaxBook = envBook.tax_three;
         }
+
+        var sumPrepaymentAmountPercentage       = (serviceTaxBook / 100) * Number(twoDecimalPointAddedCompleteDeposit);
+        var sumPrepaymentAmountServiceTotal     = Number(twoDecimalPointAddedCompleteDeposit) + sumPrepaymentAmountPercentage;
+
+        $( '.replaceBookingCompleteDeposit' ).html(euroFormatCompleteDeposit);
+        $( '.replaceBookingServiceFee' ).html(serviceTaxBook+' %');
+        $( '.replaceBookingCompletePayment' ).html(formatter.format(sumPrepaymentAmountServiceTotal));
 
     });
 
