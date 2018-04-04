@@ -419,17 +419,20 @@ $(function(){
         $( '.replaceBookingGuest_'+cartIdBook ).html(sleepsBook);
         $( '.replaceBookingDeposit_'+cartIdBook ).html(formatter.format(totalBook));
 
-        var totalBookingString = "";
+        var totalBooking   = 0;
 
         $('p.bookingDeposit').each(function(){
-            totalBookingString += Number($(this).text().replace(/[^0-9\.-]+/g,""));
+            totalBooking += Number($(this).text().replace(/[^0-9\.-]+/g,""));
         });
 
-        if(isNaN(totalBookingString)) {
-            totalBookingString = 0;
+        if(isNaN(totalBooking)) {
+            totalBooking = 0;
         }
 
-        console.log(totalBookingString);
+        var convertToStringCompleteDeposit      = totalBooking.toString();
+        var twoDecimalPointAddedCompleteDeposit = convertToStringCompleteDeposit.substring(0, convertToStringCompleteDeposit.length-2)+"."+convertToStringCompleteDeposit.substring(convertToStringCompleteDeposit.length-2);
+        var euroFormatCompleteDeposit           = Number(twoDecimalPointAddedCompleteDeposit).toLocaleString('de-DE', { style: 'currency', currency: 'EUR' });
+        $( '.replaceBookingCompleteDeposit' ).html(euroFormatCompleteDeposit);
 
         if(totalBook <= 30) {
             serviceTaxBook = envBook.tax_one;
@@ -474,17 +477,20 @@ $(function(){
         $( '.replaceBookingGuest_'+cartIdBook ).html(guestBook);
         $( '.replaceBookingDeposit_'+cartIdBook ).html(formatter.format(totalBook));
 
-        var totalBookingString = "";
+        var totalBooking   = 0;
 
         $('p.bookingDeposit').each(function(){
-            totalBookingString += Number($(this).text().replace(/[^0-9\.-]+/g,""));
+            totalBooking += Number($(this).text().replace(/[^0-9\.-]+/g,""));
         });
 
-        if(isNaN(totalBookingString)) {
-            totalBookingString = 0;
+        if(isNaN(totalBooking)) {
+            totalBooking = 0;
         }
 
-        console.log(totalBookingString);
+        var convertToStringCompleteDeposit      = totalBooking.toString();
+        var twoDecimalPointAddedCompleteDeposit = convertToStringCompleteDeposit.substring(0, convertToStringCompleteDeposit.length-2)+"."+convertToStringCompleteDeposit.substring(convertToStringCompleteDeposit.length-2);
+        var euroFormatCompleteDeposit           = Number(twoDecimalPointAddedCompleteDeposit).toLocaleString('de-DE', { style: 'currency', currency: 'EUR' });
+        $( '.replaceBookingCompleteDeposit' ).html(euroFormatCompleteDeposit);
 
         if(totalBook <= 30) {
             serviceTaxBook = envBook.tax_one;
@@ -529,17 +535,20 @@ $(function(){
         $( '.replaceBookingGuest_'+cartIdBook ).html(guestBook);
         $( '.replaceBookingDeposit_'+cartIdBook ).html(formatter.format(totalBook));
 
-        var totalBookingString = "";
+        var totalBooking   = 0;
 
         $('p.bookingDeposit').each(function(){
-            totalBookingString += Number($(this).text().replace(/[^0-9\.-]+/g,""));
+            totalBooking += Number($(this).text().replace(/[^0-9\.-]+/g,"")); // Replace special char and euro symbol
         });
 
-        if(isNaN(totalBookingString)) {
-            totalBookingString = 0;
+        if(isNaN(totalBooking)) {
+            totalBooking = 0;
         }
 
-        console.log(totalBookingString);
+        var convertToStringCompleteDeposit      = totalBooking.toString();
+        var twoDecimalPointAddedCompleteDeposit = convertToStringCompleteDeposit.substring(0, convertToStringCompleteDeposit.length-2)+"."+convertToStringCompleteDeposit.substring(convertToStringCompleteDeposit.length-2);
+        var euroFormatCompleteDeposit           = Number(twoDecimalPointAddedCompleteDeposit).toLocaleString('de-DE', { style: 'currency', currency: 'EUR' });
+        $( '.replaceBookingCompleteDeposit' ).html(euroFormatCompleteDeposit);
 
         if(totalBook <= 30) {
             serviceTaxBook = envBook.tax_one;
@@ -556,7 +565,6 @@ $(function(){
     });
 
 });
-
 /* Js for inquiry module */
 $(function(){
     $.ajaxSetup({

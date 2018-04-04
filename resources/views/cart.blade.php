@@ -318,7 +318,7 @@
                                         <div class="normalCalculation">
                                             <div class="row row-booking1">
                                                 <div class="col-sm-12 col-sm-12-booking1 col-sm-12-extra-booking1">
-                                                    <p class="info-listing-booking1">Deposit:</p><p class="info-listing-price-booking1">{{ number_format($sumPrepaymentAmount, 2, ',', '') }}&euro;</p>
+                                                    <p class="info-listing-booking1">Deposit:</p><p class="info-listing-price-booking1 replaceBookingCompleteDeposit">{{ number_format($sumPrepaymentAmount, 2, ',', '') }}&euro;</p>
                                                     <p class="info-listing-booking1">Service fee:</p><p class="info-listing-price-booking1">{{ $serviceTax }}%</p>
                                                 </div>
                                             </div>
