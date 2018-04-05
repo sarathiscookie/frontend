@@ -88,22 +88,6 @@ class CartController extends Controller
     }
 
     /**
-     * Return user details when injection occur.
-     *
-     * @param  string  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function user($id)
-    {
-        $user = Userlist::select('money_balance')
-            ->where('is_delete', 0)
-            ->where('usrlId', 2)
-            ->findOrFail($id);
-
-        return $user;
-    }
-
-    /**
      * Show the form for creating a new resource.
      *
      * @return \Illuminate\Http\Response

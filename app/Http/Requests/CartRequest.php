@@ -24,7 +24,7 @@ class CartRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'guest.*.sleeps' => 'required|not_in:0'
         ];
     }
 
