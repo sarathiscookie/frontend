@@ -71,7 +71,7 @@
                                                         <div class="col-sm-4 col-sm-4-booking1">
                                                             <div class="form-group">
                                                                 <label>From</label>
-                                                                <input type="text" class="form-control form-control-booking1" value="{{  $cart->checkin_from->format('d.m.y') }}"  readonly>
+                                                                <input type="text" class="form-control form-control-booking1" value="{{ $cart->checkin_from->format('d.m.y') }}"  readonly>
                                                             </div>
                                                         </div>
                                                         <div class="col-sm-4 col-sm-4-booking1">
@@ -141,7 +141,7 @@
 
                                                         <div class="col-sm-4 col-sm-4-f-booking1 comment-booking1 col-sm-4-booking1">
                                                             <div class="form-group {{ $errors->has($inputComments) ? ' has-error' : '' }}">
-                                                                <textarea id="comments_{{ $cart->_id }}" name="guest[{{ $cart->_id }}][comments]" class="form-control" rows="3" maxlength="300" placeholder="Comment..."></textarea>
+                                                                <textarea id="comments_{{ $cart->_id }}" name="guest[{{ $cart->_id }}][comments]" class="form-control" rows="3" maxlength="300" placeholder="Comment...">{{ old($inputComments) }}</textarea>
 
                                                                 @if ($errors->has($inputComments))
                                                                     <span class="help-block"><strong>{{ $errors->first($inputComments) }}</strong></span>

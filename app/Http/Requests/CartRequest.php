@@ -28,6 +28,12 @@ class CartRequest extends FormRequest
             'guest.*.beds'       => 'required_without:guest.*.dormitory',
             'guest.*.dormitory'  => 'required_without:guest.*.beds',
             'guest.*.comments'   => 'max:300',
+            'street'             => 'required|max:255',
+            'city'               => 'required|max:255',
+            'country'            => 'required|not_in:0',
+            'zipcode'            => 'required|max:25',
+            'mobile'             => 'required|max:20',
+            'phone'              => 'required|max:20',
         ];
     }
 }
