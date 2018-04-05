@@ -29,17 +29,9 @@ $(function(){
 
     // Sleeps calculation
     $('.jsCalSleep').change(function() {
-        // Helping object for env variables
-        var env = {
-            tax_one: window.environment.service_tax_one,
-            tax_two: window.environment.service_tax_two,
-            tax_three: window.environment.service_tax_three
-        };
 
         // Days multiply with prepayment_amount
         var amountDays    = $('.amountDays').data('amountdays');
-
-        var serviceTax    = '';
 
         // Sleeps select box value is null for validation purpose. So value is set as 0
         var sleeps        = 0;
@@ -51,39 +43,15 @@ $(function(){
         var total     = amountDays * sleeps;
         $( '.replaceInquiryGuest' ).html(sleeps);
         $( '.replaceInquiryDeposit' ).html(formatter.format(total));
-        if(total <= 30) {
-            serviceTax = env.tax_one;
-        }
 
-        if(total > 30 && total <= 100) {
-            serviceTax = env.tax_two;
-        }
-
-        if(total > 100) {
-            serviceTax = env.tax_three;
-        }
-
-        var sumPrepaymentAmountPercentage   = (serviceTax / 100) * total;
-        var sumPrepaymentAmountServiceTotal = total + sumPrepaymentAmountPercentage;
-
-        $( '.replaceInquiryCompleteDeposit' ).html(formatter.format(total));
-        $( '.replaceInquiryServiceFee' ).html(serviceTax+' %');
-        $( '.replaceInquiryCompletePayment' ).html(formatter.format(sumPrepaymentAmountServiceTotal));
+        inquiryTotalDepositCalc(total);
     });
 
     // Beds calculation
     $('.jsCalBed').change(function() {
-        // Helping object for env variables
-        var env = {
-            tax_one: window.environment.service_tax_one,
-            tax_two: window.environment.service_tax_two,
-            tax_three: window.environment.service_tax_three
-        };
 
         // Days multiply with prepayment_amount
         var amountDays = $('.amountDays').data('amountdays');
-
-        var serviceTax = '';
 
         // Beds & Dorms select box value is null for validation purpose. So value is set as 0
         var dorms      = 0;
@@ -102,39 +70,14 @@ $(function(){
         $( '.replaceInquiryGuest' ).html(guest);
         $( '.replaceInquiryDeposit' ).html(formatter.format(total));
 
-        if(total <= 30) {
-            serviceTax = env.tax_one;
-        }
-
-        if(total > 30 && total <= 100) {
-            serviceTax = env.tax_two;
-        }
-
-        if(total > 100) {
-            serviceTax = env.tax_three;
-        }
-
-        var sumPrepaymentAmountPercentage   = (serviceTax / 100) * total;
-        var sumPrepaymentAmountServiceTotal = total + sumPrepaymentAmountPercentage;
-
-        $( '.replaceInquiryCompleteDeposit' ).html(formatter.format(total));
-        $( '.replaceInquiryServiceFee' ).html(serviceTax+' %');
-        $( '.replaceInquiryCompletePayment' ).html(formatter.format(sumPrepaymentAmountServiceTotal));
+        inquiryTotalDepositCalc(total);
     });
 
     // Dorms calculation
     $('.jsCalDorm').change(function() {
-        // Helping object for env variables
-        var env = {
-            tax_one: window.environment.service_tax_one,
-            tax_two: window.environment.service_tax_two,
-            tax_three: window.environment.service_tax_three
-        };
 
         // Days multiply with prepayment_amount
         var amountDays = $('.amountDays').data('amountdays');
-
-        var serviceTax = '';
 
         // Beds & Dorms select box value is null for validation purpose. So value is set as 0
         var dorms      = 0;
@@ -153,6 +96,20 @@ $(function(){
         $( '.replaceInquiryGuest' ).html(guest);
         $( '.replaceInquiryDeposit' ).html(formatter.format(total));
 
+        inquiryTotalDepositCalc(total);
+    });
+
+    function inquiryTotalDepositCalc(total)
+    {
+        // Helping object for env variables
+        var env = {
+            tax_one: window.environment.service_tax_one,
+            tax_two: window.environment.service_tax_two,
+            tax_three: window.environment.service_tax_three
+        };
+
+        var serviceTax    = '';
+
         if(total <= 30) {
             serviceTax = env.tax_one;
         }
@@ -171,5 +128,5 @@ $(function(){
         $( '.replaceInquiryCompleteDeposit' ).html(formatter.format(total));
         $( '.replaceInquiryServiceFee' ).html(serviceTax+' %');
         $( '.replaceInquiryCompletePayment' ).html(formatter.format(sumPrepaymentAmountServiceTotal));
-    });
+    }
 });

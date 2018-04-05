@@ -52,7 +52,7 @@
 
                                             <div class="row row-booking1">
                                                 <div class="col-sm-12 col-sm-12-booking1 month-opening-booking1">
-                                                    <div class="form-group row row-booking1" data-cartid="{{ $cart->_id }}">
+                                                    <div class="form-group row row-booking1 forComments" data-cartid="{{ $cart->_id }}">
 
                                                         @php
                                                             $amount                  = ($cabinDetails->cabin($cart->cabin_id)->prepayment_amount * round(abs(strtotime($cart->checkin_from->format('Y-m-d')) - strtotime($cart->reserve_to->format('Y-m-d')))/86400)) * $cart->guests;
@@ -60,6 +60,10 @@
 
                                                             /* For javascript cal */
                                                             $amountBookingDays       = $cabinDetails->cabin($cart->cabin_id)->prepayment_amount * round(abs(strtotime($cart->checkin_from->format('Y-m-d')) - strtotime($cart->reserve_to->format('Y-m-d')))/86400);
+                                                            $inputBeds               = 'guest.'.$cart->_id.'.beds';
+                                                            $inputDormitory          = 'guest.'.$cart->_id.'.dormitory';
+                                                            $inputSleeps             = 'guest.'.$cart->_id.'.sleeps';
+                                                            $inputComments           = 'guest.'.$cart->_id.'.comments';
                                                         @endphp
 
                                                         <div class="amountBookingDays_{{ $cart->_id }}" data-amountbookingdays="{{ $amountBookingDays }}"></div>
@@ -77,36 +81,36 @@
                                                             </div>
                                                         </div>
                                                         @if($cabinDetails->cabin($cart->cabin_id)->sleeping_place != 1)
-                                                            <div class="col-sm-4 col-sm-4-f-booking1 col-sm-4-booking1 form-group {{ $errors->has('beds') ? ' has-error' : '' }}">
+                                                            <div class="col-sm-4 col-sm-4-f-booking1 col-sm-4-booking1 form-group {{ $errors->has($inputBeds) ? ' has-error' : '' }}">
                                                                 <label>Bed(s)</label>
-                                                                <select class="form-control form-control-booking1 jsBookCalBeds" name="beds[]">
+                                                                <select class="form-control form-control-booking1 jsBookCalBeds" name="guest[{{ $cart->_id }}][beds]">
                                                                     <option value="">Choose Bed(s)</option>
                                                                     @for($i = 1; $i <= 30; $i++)
                                                                         <option value="{{ $i }}" @if($i == $cart->beds) selected @endif>{{ $i }}</option>
                                                                     @endfor
                                                                 </select>
 
-                                                                @if ($errors->has('beds'))
-                                                                    <span class="help-block"><strong>{{ $errors->first('beds') }}</strong></span>
+                                                                @if ($errors->has($inputBeds))
+                                                                    <span class="help-block"><strong>{{ $errors->first($inputBeds) }}</strong></span>
                                                                 @endif
                                                             </div>
 
-                                                            <div class="col-sm-4 col-sm-4-booking1 form-group {{ $errors->has('dormitory') ? ' has-error' : '' }}">
+                                                            <div class="col-sm-4 col-sm-4-booking1 form-group {{ $errors->has($inputDormitory) ? ' has-error' : '' }}">
                                                                 <label>Dormitory(s)</label>
 
-                                                                <select class="form-control form-control-booking1 jsBookCalDormitory" name="dormitory[]">
+                                                                <select class="form-control form-control-booking1 jsBookCalDormitory" name="guest[{{ $cart->_id }}][dormitory]">
                                                                     <option value="">Choose Dorm(s)</option>
                                                                     @for($i = 1; $i <= 30; $i++)
                                                                         <option value="{{ $i }}">{{ $i }}</option>
                                                                     @endfor
                                                                 </select>
 
-                                                                @if ($errors->has('dormitory'))
-                                                                    <span class="help-block"><strong>{{ $errors->first('dormitory') }}</strong></span>
+                                                                @if ($errors->has($inputDormitory))
+                                                                    <span class="help-block"><strong>{{ $errors->first($inputDormitory) }}</strong></span>
                                                                 @endif
                                                             </div>
                                                         @else
-                                                            <div class="col-sm-4 col-sm-4-booking1 form-group {{ $errors->has('guest.*.sleeps') ? ' has-error' : '' }}">
+                                                            <div class="col-sm-4 col-sm-4-booking1 form-group {{ $errors->has($inputSleeps) ? ' has-error' : '' }}">
                                                                 <label>Sleep(s)</label>
 
                                                                 <select class="form-control form-control-booking1 jsBookCalSleep"  name="guest[{{ $cart->_id }}][sleeps]">
@@ -116,8 +120,8 @@
                                                                     @endfor
                                                                 </select>
 
-                                                                @if ($errors->has('guest.*.sleeps'))
-                                                                    <span class="help-block"><strong>{{ $errors->first('guest.*.sleeps') }}</strong></span>
+                                                                @if ($errors->has($inputSleeps))
+                                                                    <span class="help-block"><strong>{{ $errors->first($inputSleeps) }}</strong></span>
                                                                 @endif
                                                             </div>
                                                         @endif
@@ -136,7 +140,14 @@
                                                         @endif
 
                                                         <div class="col-sm-4 col-sm-4-f-booking1 comment-booking1 col-sm-4-booking1">
-                                                            <input class="form-control comment-box-booking1 form-control-booking1" type="text" placeholder="Comment:" name="comment[]">
+                                                            <div class="form-group {{ $errors->has($inputComments) ? ' has-error' : '' }}">
+                                                                <textarea id="comments_{{ $cart->_id }}" name="guest[{{ $cart->_id }}][comments]" class="form-control" rows="3" maxlength="300" placeholder="Comment..."></textarea>
+
+                                                                @if ($errors->has($inputComments))
+                                                                    <span class="help-block"><strong>{{ $errors->first($inputComments) }}</strong></span>
+                                                                @endif
+                                                                <div id="textarea_feedback_{{ $cart->_id }}"></div>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -238,7 +249,7 @@
                                                                 <select class="form-control" id="country" name="country">
                                                                     <option value="0"> Choose Country </option>
                                                                     @foreach($country as $land)
-                                                                        <option value="{{ $land->name }}" @if($land->name == Auth::user()->usrCountry || old('country') == $land->name) selected="selected" @endif>{{ $land->name }}</option>
+                                                                        <option value="{{ $land->name }}" @if($land->name == Auth::user()->usrCountry || old('country') == $land->name) selected @endif>{{ $land->name }}</option>
                                                                     @endforeach
                                                                 </select>
 

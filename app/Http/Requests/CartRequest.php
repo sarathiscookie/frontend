@@ -24,8 +24,10 @@ class CartRequest extends FormRequest
     public function rules()
     {
         return [
-            'guest.*.sleeps' => 'required|not_in:0'
+            'guest.*.sleeps'     => 'required|not_in:0',
+            'guest.*.beds'       => 'required_without:guest.*.dormitory',
+            'guest.*.dormitory'  => 'required_without:guest.*.beds',
+            'guest.*.comments'   => 'max:300',
         ];
     }
-
 }
