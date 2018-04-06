@@ -29,14 +29,13 @@
             @endif
 
             @isset($carts)
-
-                @php
-                    $prepayment_amount = [];
-                @endphp
-
-                    <form action="{{ route('cart.store') }}" method="post">
+                 <form action="{{ route('cart.store') }}" method="post">
 
                         {{ csrf_field() }}
+
+                        @php
+                            $prepayment_amount = [];
+                        @endphp
 
                         @forelse($carts as $key => $cart)
 
@@ -125,6 +124,8 @@
                                                                 @endif
                                                             </div>
                                                         @endif
+
+                                                        <input type="hidden" name="sleeping_place[]" value="{{$cabinDetails->cabin($cart->cabin_id)->sleeping_place}}">
 
                                                         @if($cabinDetails->cabin($cart->cabin_id)->halfboard == '1' && $cabinDetails->cabin($cart->cabin_id)->halfboard_price != '')
                                                             <div class="col-sm-4 col-sm-4-booking1">
@@ -333,7 +334,6 @@
                             </div>
                         @endif
                     </form>
-
             @endisset
 
         </div>
