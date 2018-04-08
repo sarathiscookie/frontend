@@ -6,6 +6,12 @@ $(function(){
         }
     });
 
+    /* Set time count down */
+    //https://www.w3schools.com/howto/howto_js_countdown.asp
+
+    /* Delete booking from cart automatically */
+
+
     /* Character limit for comments begin */
 
     if($(".forComments").length > 0) {
