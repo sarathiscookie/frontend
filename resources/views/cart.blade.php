@@ -62,6 +62,7 @@
                                                             $inputBeds               = 'guest.'.$cart->_id.'.beds';
                                                             $inputDormitory          = 'guest.'.$cart->_id.'.dormitory';
                                                             $inputSleeps             = 'guest.'.$cart->_id.'.sleeps';
+                                                            $halfBoard               = 'guest.'.$cart->_id.'.halfboard';
                                                             $inputComments           = 'guest.'.$cart->_id.'.comments';
                                                         @endphp
 
@@ -132,7 +133,7 @@
                                                                 <div class="form-group">
                                                                     <div class="checkbox">
                                                                         <label>
-                                                                            <input type="checkbox" id="halfboard" name="halfboard[]" value="1">
+                                                                            <input type="checkbox" id="halfboard_{{ $cart->_id }}" name="guest[{{ $cart->_id }}][halfboard]" value="1" @if (old($halfBoard) === "1") checked @endif>
                                                                             Half board available
                                                                         </label>
                                                                     </div>
@@ -212,7 +213,7 @@
                             @endphp
 
                             <div class="row content row-booking1">
-                                {{--<div class="col-sm-9">
+                                <div class="col-sm-9">
                                     <div class="panel panel-default booking-box-booking1 panel-default-booking1 text-left">
                                         <div class="panel-body panel-body-booking1">
                                             <div class="row row-booking1">
@@ -297,7 +298,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                </div>--}}
+                                </div>
 
                                 <div class="col-sm-3 col-sm-3-booking1 col-sm-r col-sm-r-booking1">
                                     <div class="panel panel-default booking-box-booking1 bottom-boxes-booking1 panel-booking1 panel-default-booking1">
