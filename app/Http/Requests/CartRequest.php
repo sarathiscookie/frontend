@@ -23,17 +23,32 @@ class CartRequest extends FormRequest
      */
     public function rules()
     {
-        return [
-            'guest.*.sleeps'     => 'required|not_in:0',
+        /*return [
+            'guest.*.sleeps'     => 'required',
             'guest.*.beds'       => 'required_without:guest.*.dormitory',
             'guest.*.dormitory'  => 'required_without:guest.*.beds',
-            'guest.*.comments'   => 'max:300',
+            'guest.*.comments'   => 'required|max:300',
             'street'             => 'required|max:255',
             'city'               => 'required|max:255',
             'country'            => 'required|not_in:0',
             'zipcode'            => 'required|max:25',
             'mobile'             => 'required|max:20',
             'phone'              => 'required|max:20',
+        ];*/
+        $rules = [
+            'guest' => 'array'
         ];
+        foreach($this->request->get('guest') as $key => $val){
+            if($this->request->get('guest')[$key]['sleeping_place'] === '1') {
+                $rules['guest.'.$key.'.sleeps'] = 'required|not_in:0';
+                $rules['guest.'.$key.'.comments'] = 'max:300';
+            }
+            else {
+                $rules['guest.'.$key.'.comments'] = 'max:300';
+                $rules['guest.'.$key.'.beds'] = 'required_without:guest.'.$key.'.dormitory';
+                $rules['guest.'.$key.'.dormitory'] = 'required_without:guest.'.$key.'.beds';
+            }
+        }
+        return $rules;
     }
 }

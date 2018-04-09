@@ -82,7 +82,7 @@
                                                         @if($cabinDetails->cabin($cart->cabin_id)->sleeping_place != 1)
                                                             <div class="col-sm-4 col-sm-4-f-booking1 col-sm-4-booking1 form-group {{ $errors->has($inputBeds) ? ' has-error' : '' }}">
                                                                 <label>Bed(s)</label>
-                                                                <select class="form-control form-control-booking1 jsBookCalBeds" name="guest[{{ $cart->_id }}][beds]">
+                                                                <select class="form-control form-control-booking1 jsBookCalBeds" name="guest[{{ $cart->_id }}][beds]" id="beds_{{ $cart->_id }}">
                                                                     <option value="">Choose Bed(s)</option>
                                                                     @for($i = 1; $i <= 30; $i++)
                                                                         <option value="{{ $i }}" @if($i == $cart->beds) selected @endif>{{ $i }}</option>
@@ -97,7 +97,7 @@
                                                             <div class="col-sm-4 col-sm-4-booking1 form-group {{ $errors->has($inputDormitory) ? ' has-error' : '' }}">
                                                                 <label>Dormitory(s)</label>
 
-                                                                <select class="form-control form-control-booking1 jsBookCalDormitory" name="guest[{{ $cart->_id }}][dormitory]">
+                                                                <select class="form-control form-control-booking1 jsBookCalDormitory" name="guest[{{ $cart->_id }}][dormitory]" id="dormitory_{{ $cart->_id }}">
                                                                     <option value="">Choose Dorm(s)</option>
                                                                     @for($i = 1; $i <= 30; $i++)
                                                                         <option value="{{ $i }}">{{ $i }}</option>
@@ -112,7 +112,7 @@
                                                             <div class="col-sm-4 col-sm-4-booking1 form-group {{ $errors->has($inputSleeps) ? ' has-error' : '' }}">
                                                                 <label>Sleep(s)</label>
 
-                                                                <select class="form-control form-control-booking1 jsBookCalSleep"  name="guest[{{ $cart->_id }}][sleeps]">
+                                                                <select class="form-control form-control-booking1 jsBookCalSleep"  name="guest[{{ $cart->_id }}][sleeps]" id="sleeps_{{ $cart->_id }}">
                                                                     <option value="">Choose Sleep(s)</option>
                                                                     @for($i = 1; $i <= 30; $i++)
                                                                         <option value="{{ $i }}" @if($i == $cart->sleeps) selected @endif>{{ $i }}</option>
@@ -125,7 +125,7 @@
                                                             </div>
                                                         @endif
 
-                                                        <input type="hidden" name="sleeping_place[]" value="{{$cabinDetails->cabin($cart->cabin_id)->sleeping_place}}">
+                                                        <input type="hidden" name="guest[{{ $cart->_id }}][sleeping_place]" value="{{ $cabinDetails->cabin($cart->cabin_id)->sleeping_place }}">
 
                                                         @if($cabinDetails->cabin($cart->cabin_id)->halfboard == '1' && $cabinDetails->cabin($cart->cabin_id)->halfboard_price != '')
                                                             <div class="col-sm-4 col-sm-4-booking1">
@@ -212,7 +212,7 @@
                             @endphp
 
                             <div class="row content row-booking1">
-                                <div class="col-sm-9">
+                                {{--<div class="col-sm-9">
                                     <div class="panel panel-default booking-box-booking1 panel-default-booking1 text-left">
                                         <div class="panel-body panel-body-booking1">
                                             <div class="row row-booking1">
@@ -297,7 +297,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                </div>--}}
 
                                 <div class="col-sm-3 col-sm-3-booking1 col-sm-r col-sm-r-booking1">
                                     <div class="panel panel-default booking-box-booking1 bottom-boxes-booking1 panel-booking1 panel-default-booking1">
