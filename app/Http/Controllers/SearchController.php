@@ -73,7 +73,7 @@ class SearchController extends Controller
      *
      * @param  string  $now
      * @param  string  $end
-     * @return object
+     * @return \Illuminate\Http\Response
      */
     protected function generateDates($now, $end){
         $period = new DatePeriod(
@@ -89,7 +89,7 @@ class SearchController extends Controller
      * To generate date format as mongo.
      *
      * @param  string  $date
-     * @return object
+     * @return \Illuminate\Http\Response
      */
     protected function getDateUtc($date)
     {
@@ -307,7 +307,6 @@ class SearchController extends Controller
                         }
 
                         /* Taking beds, dorms and sleeps depends up on sleeping_place */
-                        /* >= 75% are booked Orange, 100% is red, < 75% are green*/
                         if($cabin->sleeping_place != 1) {
 
                             $totalBeds     = $beds + $msBeds;
@@ -317,7 +316,7 @@ class SearchController extends Controller
                             if($cabin->not_regular === 1) {
                                 $not_regular_date_explode = explode(" - ", $cabin->not_regular_date);
                                 $not_regular_date_begin   = DateTime::createFromFormat('d.m.y', $not_regular_date_explode[0])->format('Y-m-d');
-                                $not_regular_date_end     = DateTime::createFromFormat('d.m.y', $not_regular_date_explode[1])->format('Y-m-d 23:59:59'); //To get the end date we need to add time
+                                $not_regular_date_end     = DateTime::createFromFormat('d.m.y', $not_regular_date_explode[1])->format('Y-m-d 23:59:59'); //To get the end date. We need to add time
                                 $generateNotRegularDates  = $this->generateDates($not_regular_date_begin, $not_regular_date_end);
 
                                 foreach($generateNotRegularDates as $generateNotRegularDate) {
