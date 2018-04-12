@@ -29,17 +29,20 @@ $(function() {
     /* Functionality for add to cart */
     $("body").on("click", ".addToCart", function(e) {
         e.preventDefault();
-        var cabin     = $(this).parent().parent().data("cab");
-        var dateFrom  = $("#dateFrom_"+cabin).val();
-        var dateTo    = $("#dateTo_"+cabin).val();
-        var persons   = $("#persons_"+cabin).val();
-        var addToCart = $(this).val();
-        var errorsHtml= '';
+        var cabin          = $(this).parent().parent().data("cab");
+        var dateFrom       = $("#dateFrom_"+cabin).val();
+        var dateTo         = $("#dateTo_"+cabin).val();
+        var beds           = $("#beds_"+cabin).val();
+        var dorms          = $("#dorms_"+cabin).val();
+        var sleeps         = $("#sleeps_"+cabin).val();
+        var sleeping_place = $("#sleeping_place_"+cabin).val();
+        var addToCart      = $(this).val();
+        var errorsHtml     = '';
         $.ajax({
             url: '/add/to/cart',
             dataType: 'JSON',
             type: 'POST',
-            data: { dateFrom: dateFrom, dateTo: dateTo, persons: persons, addToCart: addToCart, cabin: cabin }
+            data: { dateFrom: dateFrom, dateTo: dateTo, beds: beds, dorms: dorms, sleeps: sleeps, addToCart: addToCart, cabin: cabin, sleeping_place:sleeping_place }
         })
             .done(function( data ) {
                 if(data.response === 'success') {

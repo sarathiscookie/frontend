@@ -112,23 +112,43 @@
                                                         <div class="red_{{ $result->_id }}" data-red="{{ $calendar[3] }}"></div>
                                                         <div class="notSeasonTime_{{ $result->_id }}" data-notseasontime="{{ $calendar[4] }}"></div>
 
-                                                        <div class="col-sm-4-cabinlist col-sm-4">
+                                                        <div class="col-sm-6-cabinlist col-sm-6">
                                                             <input type="text" class="form-control form-control-cabinlist backButtonDateFrom dateFrom" id="dateFrom_{{ $result->_id }}" name="dateFrom_{{ $result->_id }}" placeholder="Arrival" value="" readonly autocomplete="off">
                                                         </div>
 
-                                                        <div class="col-sm-4-cabinlist col-sm-4">
+                                                        <div class="col-sm-6-cabinlist col-sm-6">
                                                             <input type="text" class="form-control form-control-cabinlist backButtonDateTo dateTo" id="dateTo_{{ $result->_id }}" name="dateTo_{{ $result->_id }}" placeholder="Departure" value="" readonly autocomplete="off">
                                                         </div>
 
-                                                        <div class="col-sm-4-cabinlist col-sm-4">
-                                                            <select class="form-control form-control-cabinlist" size="3" id="persons_{{ $result->_id }}" name="persons_{{ $result->_id }}">
-                                                                <option value="0">Persons</option>
-                                                                @for($i = 1; $i <= 30; $i++)
-                                                                    <option value="{{ $i }}">{{ $i }}</option>
-                                                                @endfor
-                                                            </select>
-                                                        </div>
+                                                        @if($result->sleeping_place != 1)
+                                                            <div class="col-sm-6-cabinlist col-sm-6 dropdown-top-buffer">
+                                                                <select class="form-control form-control-cabinlist" size="3" id="beds_{{ $result->_id }}" name="beds_{{ $result->_id }}">
+                                                                    <option value="">Choose Bed(s)</option>
+                                                                    @for($i = 1; $i <= 30; $i++)
+                                                                        <option value="{{ $i }}">{{ $i }}</option>
+                                                                    @endfor
+                                                                </select>
+                                                            </div>
 
+                                                            <div class="col-sm-6-cabinlist col-sm-6 dropdown-top-buffer">
+                                                                <select class="form-control form-control-cabinlist" size="3" id="dorms_{{ $result->_id }}" name="dorms_{{ $result->_id }}">
+                                                                    <option value="">Choose Dorm(s)</option>
+                                                                    @for($i = 1; $i <= 30; $i++)
+                                                                        <option value="{{ $i }}">{{ $i }}</option>
+                                                                    @endfor
+                                                                </select>
+                                                            </div>
+                                                        @else
+                                                            <div class="col-sm-6-cabinlist col-sm-6 dropdown-top-buffer">
+                                                                <select class="form-control form-control-cabinlist" size="3" id="sleeps_{{ $result->_id }}" name="sleeps_{{ $result->_id }}">
+                                                                    <option value="">Choose Sleep(s)</option>
+                                                                    @for($i = 1; $i <= 30; $i++)
+                                                                        <option value="{{ $i }}">{{ $i }}</option>
+                                                                    @endfor
+                                                                </select>
+                                                            </div>
+                                                        @endif
+                                                        <input type="hidden" id="sleeping_place_{{ $result->_id }}" value="{{ $result->sleeping_place }}">
                                                     </div>
 
                                                     <hr>
