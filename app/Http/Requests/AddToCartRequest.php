@@ -23,11 +23,20 @@ class AddToCartRequest extends FormRequest
      */
     public function rules()
     {
-        return [
+        $rules = [
             'dateFrom' => 'required',
             'dateTo'   => 'required',
-            'persons'  => 'required|not_in:0',
         ];
+
+        if($this->request->get('sleeping_place') === '1') {
+            $rules['sleeps'] = 'required|not_in:0';
+        }
+        else {
+            $rules['beds']   = 'required_without:dorms';
+            $rules['dorms']  = 'required_without:beds';
+        }
+
+        return $rules;
     }
 
     /**
@@ -38,9 +47,11 @@ class AddToCartRequest extends FormRequest
     public function messages()
     {
         return [
-            'dateFrom.required' => 'Arrival date is required',
-            'dateTo.required'   => 'Departure date is required',
-            'persons.required'  => 'No of persons required',
+            'dateFrom.required'      => 'Arrival date is required',
+            'dateTo.required'        => 'Departure date is required',
+            'beds.required_without'  => 'The beds field is required when dormitory is not present.',
+            'dorms.required_without' => 'The dormitory field is required when beds is not present.',
+            'sleeps.required'        => 'The sleeps field is required.'
         ];
     }
 }
