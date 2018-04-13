@@ -22,7 +22,7 @@ class CartController extends Controller
      *
      * @param  string  $now
      * @param  string  $end
-     * @return object
+     * @return \Illuminate\Http\Response
      */
     protected function generateDates($now, $end){
         $period = new DatePeriod(
@@ -38,7 +38,7 @@ class CartController extends Controller
      * To generate date format as mongo.
      *
      * @param  string  $date
-     * @return object
+     * @return \Illuminate\Http\Response
      */
     protected function getDateUtc($date)
     {
@@ -59,6 +59,7 @@ class CartController extends Controller
         $carts   = Booking::where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
             ->where('status', "8")
             ->where('is_delete', 0)
+            ->take(5)
             ->get();
 
         $country  = Country::select('name')
@@ -105,7 +106,133 @@ class CartController extends Controller
      */
     public function store(CartRequest $request)
     {
-        dd($request->all());
+        $carts                        = Booking::where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
+            ->where('status', "8")
+            ->where('is_delete', 0)
+            ->take(5)
+            ->get();
+
+        if($carts){
+            $test      = []; // for testing purpose
+            $not_regular_dates        = [];
+            foreach ($carts as $key => $cart) {
+
+                $cabin                = Cabin::select('name', 'mon_day', 'tue_day', 'wed_day', 'thu_day', 'fri_day', 'sat_day', 'sun_day', 'not_regular', 'not_regular_date', 'regular')
+                    ->where('is_delete', 0)
+                    ->where('other_cabin', "0")
+                    ->findOrFail($cart->cabin_id);
+
+                // Generate date b/w checking from and to
+                $generateBookingDates = $this->generateDates($cart->checkin_from->format('Y-m-d'), $cart->reserve_to->format('Y-m-d'));
+
+                foreach ($generateBookingDates as $generateBookingDate) {
+
+                    $dates            = $generateBookingDate->format('Y-m-d');
+                    $day              = $generateBookingDate->format('D');
+
+                    /* Checking bookings available begins */
+                    $mon_day          = ($cabin->mon_day === 1) ? 'Mon' : 0;
+                    $tue_day          = ($cabin->tue_day === 1) ? 'Tue' : 0;
+                    $wed_day          = ($cabin->wed_day === 1) ? 'Wed' : 0;
+                    $thu_day          = ($cabin->thu_day === 1) ? 'Thu' : 0;
+                    $fri_day          = ($cabin->fri_day === 1) ? 'Fri' : 0;
+                    $sat_day          = ($cabin->sat_day === 1) ? 'Sat' : 0;
+                    $sun_day          = ($cabin->sun_day === 1) ? 'Sun' : 0;
+
+                    /* Getting bookings from booking collection status 1=> Fix, 2=> Cancel, 3=> Completed, 4=> Request (Reservation), 5=> Waiting for payment, 6=> Expired, 7=> Inquiry, 8=> Cart */
+                    $bookings  = Booking::select('beds', 'dormitory', 'sleeps')
+                        ->where('is_delete', 0)
+                        ->where('cabinname', $cabin->name)
+                        ->whereIn('status', ['1', '4', '7', '8'])
+                        ->whereRaw(['checkin_from' => array('$lte' => $this->getDateUtc($generateBookingDate->format('d.m.y')))])
+                        ->whereRaw(['reserve_to' => array('$gt' => $this->getDateUtc($generateBookingDate->format('d.m.y')))])
+                        ->get();
+
+                    $test[] = $bookings;
+
+                    /* Getting bookings from mschool collection status 1=> Fix, 2=> Cancel, 3=> Completed, 4=> Request (Reservation), 5=> Waiting for payment, 6=> Expired, 7=> Inquiry, 8=> Cart */
+                    $msBookings  = MountSchoolBooking::select('beds', 'dormitory', 'sleeps')
+                        ->where('is_delete', 0)
+                        ->where('cabin_name', $cabin->name)
+                        ->whereIn('status', ['1', '4', '7', '8'])
+                        ->whereRaw(['check_in' => array('$lte' => $this->getDateUtc($generateBookingDate->format('d.m.y')))])
+                        ->whereRaw(['reserve_to' => array('$gt' => $this->getDateUtc($generateBookingDate->format('d.m.y')))])
+                        ->get();
+
+                    /* Getting count of sleeps, beds and dorms */
+                    if(count($bookings) > 0) {
+                        $sleeps          = $bookings->sum('sleeps');
+                        $beds            = $bookings->sum('beds');
+                        $dorms           = $bookings->sum('dormitory');
+                    }
+                    else {
+                        $dorms           = 0;
+                        $beds            = 0;
+                        $sleeps          = 0;
+                    }
+
+                    if(count($msBookings) > 0) {
+                        $msSleeps        = $msBookings->sum('sleeps');
+                        $msBeds          = $msBookings->sum('beds');
+                        $msDorms         = $msBookings->sum('dormitory');
+                    }
+                    else {
+                        $msSleeps        = 0;
+                        $msBeds          = 0;
+                        $msDorms         = 0;
+                    }
+
+                    /* Taking beds, dorms and sleeps depends up on sleeping_place */
+                    if($cabin->sleeping_place != 1) {
+
+                        $totalBeds     = $beds + $msBeds;
+                        $totalDorms    = $dorms + $msDorms;
+
+                        /* Calculating beds & dorms for not regular */
+                        if($cabin->not_regular === 1) {
+                            $not_regular_date_explode = explode(" - ", $cabin->not_regular_date);
+                            $not_regular_date_begin   = DateTime::createFromFormat('d.m.y', $not_regular_date_explode[0])->format('Y-m-d');
+                            $not_regular_date_end     = DateTime::createFromFormat('d.m.y', $not_regular_date_explode[1])->format('Y-m-d 23:59:59'); //To get the end date. We need to add time.
+                            $generateNotRegularDates  = $this->generateDates($not_regular_date_begin, $not_regular_date_end);
+
+                            foreach($generateNotRegularDates as $generateNotRegularDate) {
+                                $not_regular_dates[]  = $generateNotRegularDate->format('Y-m-d');
+                            }
+
+                            if(in_array($dates, $not_regular_dates)) {
+
+                            }
+                        }
+                        /* Calculating beds & dorms for regular */
+                        /*if($cabin->regular === 1) {
+
+                        }*/
+                        /* Calculating beds & dorms for normal */
+                        /*if(!in_array($dates, $dates_array)) {
+
+                        }*/
+                    }
+                    else {
+                        $totalSleeps  = $sleeps + $msSleeps;
+                    }
+
+                    /* Checking bookings available ends */
+                }
+
+
+            }
+
+
+            dd($test);// for testing purpose
+
+        }
+
+
+        // Checking beds, dorms, sleeps availability
+        // Not need to check date in season
+        // Update guest, beds, dorms, sleeps, halfboard, comments, total prepayment amount, prepayment amount, order_id
+        // Redirect to payment choosing page
+
     }
 
     /**

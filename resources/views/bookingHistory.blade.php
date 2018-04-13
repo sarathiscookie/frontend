@@ -573,6 +573,12 @@
 </div>
 <main>
     <div class="container-fluid text-center container-fluid-history">
+        @if ( session()->has('response') && session()->get('response') === 'success' )
+            <div class="alert alert-success alert-dismissible" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <strong>Well done! </strong> Inquiry send successfully. We will get back you shortly.
+            </div>
+        @endif
         <div class="panel panel-default text-left panel-history panel-default-history">
             <div class="panel-body panel-body-history">
                 <div class="row row-history content">

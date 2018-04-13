@@ -70,19 +70,16 @@
 
                                                         <div class="col-sm-4 col-sm-4-booking1">
                                                             <div class="form-group">
-                                                                <label>From</label>
                                                                 <input type="text" class="form-control form-control-booking1" value="{{ $cart->checkin_from->format('d.m.y') }}"  readonly>
                                                             </div>
                                                         </div>
                                                         <div class="col-sm-4 col-sm-4-booking1">
                                                             <div class="form-group">
-                                                                <label>To</label>
                                                                 <input type="text" class="form-control form-control-booking1" value="{{ $cart->reserve_to->format('d.m.y') }}"  readonly>
                                                             </div>
                                                         </div>
                                                         @if($cabinDetails->cabin($cart->cabin_id)->sleeping_place != 1)
                                                             <div class="col-sm-4 col-sm-4-f-booking1 col-sm-4-booking1 form-group {{ $errors->has($inputBeds) ? ' has-error' : '' }}">
-                                                                <label>Bed(s)</label>
                                                                 <select class="form-control form-control-booking1 jsBookCalBeds" name="guest[{{ $cart->_id }}][beds]" id="beds_{{ $cart->_id }}">
                                                                     <option value="">Choose Bed(s)</option>
                                                                     @for($i = 1; $i <= 30; $i++)
@@ -96,12 +93,10 @@
                                                             </div>
 
                                                             <div class="col-sm-4 col-sm-4-booking1 form-group {{ $errors->has($inputDormitory) ? ' has-error' : '' }}">
-                                                                <label>Dormitory(s)</label>
-
                                                                 <select class="form-control form-control-booking1 jsBookCalDormitory" name="guest[{{ $cart->_id }}][dormitory]" id="dormitory_{{ $cart->_id }}">
                                                                     <option value="">Choose Dorm(s)</option>
                                                                     @for($i = 1; $i <= 30; $i++)
-                                                                        <option value="{{ $i }}">{{ $i }}</option>
+                                                                        <option value="{{ $i }}" @if($i == $cart->dormitory) selected @endif>{{ $i }}</option>
                                                                     @endfor
                                                                 </select>
 
@@ -111,8 +106,6 @@
                                                             </div>
                                                         @else
                                                             <div class="col-sm-4 col-sm-4-booking1 form-group {{ $errors->has($inputSleeps) ? ' has-error' : '' }}">
-                                                                <label>Sleep(s)</label>
-
                                                                 <select class="form-control form-control-booking1 jsBookCalSleep"  name="guest[{{ $cart->_id }}][sleeps]" id="sleeps_{{ $cart->_id }}">
                                                                     <option value="">Choose Sleep(s)</option>
                                                                     @for($i = 1; $i <= 30; $i++)
