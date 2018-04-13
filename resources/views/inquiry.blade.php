@@ -51,7 +51,7 @@
                                     @if (session()->has('error'))
                                         <div class="alert alert-warning alert-dismissible" role="alert">
                                             <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                            <strong>Oops!</strong> {{ session()->get('error') }}
+                                            <strong>Oh snap!</strong> {{ session()->get('error') }}
                                         </div>
                                     @endif
 
@@ -80,7 +80,7 @@
                                                         <select class="form-control form-control-booking1 jsCalBed" name="beds">
                                                             <option value="">Choose Bed(s)</option>
                                                             @for($i = 1; $i <= 30; $i++)
-                                                                <option value="{{ $i }}" @if(session()->get('beds') == $i || old('beds') == $i) selected @endif>{{ $i }}</option>
+                                                                <option value="{{ $i }}" @if(session()->get('beds') == $i) selected @endif @if($i < session()->get('beds')) disabled @endif>{{ $i }}</option>
                                                             @endfor
                                                         </select>
 
@@ -95,7 +95,7 @@
                                                         <select class="form-control form-control-booking1 jsCalDorm" name="dormitory">
                                                             <option value="">Choose Dorm(s)</option>
                                                             @for($i = 1; $i <= 30; $i++)
-                                                                <option value="{{ $i }}" @if(old('dormitory') == $i) selected @endif>{{ $i }}</option>
+                                                                <option value="{{ $i }}" @if(session()->get('dormitory') == $i) selected @endif @if($i < session()->get('dormitory')) disabled @endif>{{ $i }}</option>
                                                             @endfor
                                                         </select>
 
@@ -107,11 +107,10 @@
                                             @else
                                                 <div class="col-sm-4 col-sm-4-booking1">
                                                     <div class="form-group {{ $errors->has('sleeps') ? ' has-error' : '' }}">
-                                                        <label>Sleep(s)</label>
                                                         <select class="form-control form-control-booking1 jsCalSleep" name="sleeps">
                                                             <option value="">Choose Sleep(s)</option>
                                                             @for($i = 1; $i <= 30; $i++)
-                                                                <option value="{{ $i }}" @if(session()->get('sleeps') == $i || old('sleeps') == $i) selected @endif>{{ $i }}</option>
+                                                                <option value="{{ $i }}" @if(session()->get('sleeps') == $i) selected @endif @if($i < session()->get('sleeps')) disabled @endif>{{ $i }}</option>
                                                             @endfor
                                                         </select>
 

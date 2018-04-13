@@ -23,31 +23,21 @@ class InquiryRequest extends FormRequest
      */
     public function rules()
     {
-        // Rules for contact information, beds, dorms & sleeps
+        $rules =  [
+            'street'        => 'required|max:255',
+            'city'          => 'required|max:255',
+            'country'       => 'required|not_in:0',
+            'zipcode'       => 'required|max:25',
+            'mobile'        => 'required|max:20',
+            'phone'         => 'required|max:20',
+            'comments'      => 'max:300'
+        ];
         if(session()->get('sleeping_place') === 1) {
-            $rules =  [
-                'street'        => 'required|max:255',
-                'city'          => 'required|max:255',
-                'country'       => 'required|not_in:0',
-                'zipcode'       => 'required|max:25',
-                'mobile'        => 'required|max:20',
-                'phone'         => 'required|max:20',
-                'comments'      => 'max:300',
-                'sleeps'        => 'required|not_in:0'
-            ];
+            $rules['sleeps']    = 'required|not_in:0';
         }
         else {
-            $rules =  [
-                'street'        => 'required|max:255',
-                'city'          => 'required|max:255',
-                'country'       => 'required|not_in:0',
-                'zipcode'       => 'required|max:25',
-                'mobile'        => 'required|max:20',
-                'phone'         => 'required|max:20',
-                'comments'      => 'max:300',
-                'beds'          => 'required_without:dormitory',
-                'dormitory'     => 'required_without:beds'
-            ];
+            $rules['beds']      = 'required_without:dormitory';
+            $rules['dormitory'] = 'required_without:beds';
         }
         return $rules;
     }
