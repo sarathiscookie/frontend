@@ -91,7 +91,7 @@
     display:none !important;
 }}
 /*Main*/
-@media (max-width:767px) {.col-md-2-cabin-details, .col-md-8-cabin-details, .col-sm-4-cabin-details {
+@media (max-width:767px) {.col-md-2-cabin-details, .col-md-8-cabin-details, .col-sm-6-cabin-details {
     position:relative;
     min-height:1px;
     padding-right:0;
@@ -110,7 +110,7 @@
     background-color:#5F6876;
     border-radius:3px;
 }
-@media (max-width:767px) {.col-sm-4-cabin-details{
+@media (max-width:767px) {.col-sm-6-cabin-details{
     padding-bottom:30px;
 }}
 /*Details*/
@@ -261,7 +261,7 @@
     padding-top:30px;
 }}
 /*Arrival Depature and Persons fields*/
-.col-sm-4-cabin-details{
+.col-sm-6-cabin-details{
     padding:0px 0px 15px 0px;
 }
 .form-control-cabin-details{
@@ -365,3 +365,7 @@
 .morelink {
     display: block;
 }
+
+/* Adding margin for Beds dorms and sleeps dropdown begin */
+.dropdown-cabin-details-top-buffer { margin-top:5px; }
+/* Adding margin for Beds dorms and sleeps dropdown end */

@@ -739,7 +739,7 @@ class CabinDetailsController extends Controller
         else {
             $totalSleeps = $sleeps + $msSleeps;
 
-            /* Calculating beds & dorms for not regular */
+            /* Calculating sleeps for not regular */
             if($cabin->not_regular === 1) {
                 $not_regular_date_explode = explode(" - ", $cabin->not_regular_date);
                 $not_regular_date_begin   = DateTime::createFromFormat('d.m.y', $not_regular_date_explode[0])->format('Y-m-d');
@@ -779,7 +779,7 @@ class CabinDetailsController extends Controller
                 }
             }
 
-            /* Calculating beds & dorms for regular */
+            /* Calculating sleeps for regular */
             if($cabin->regular === 1) {
 
                 if($mon_day === $day) {
@@ -1002,7 +1002,7 @@ class CabinDetailsController extends Controller
 
             }
 
-            /* Calculating beds & dorms for normal */
+            /* Calculating sleeps for normal */
             if(!in_array($dayBegin, $dates_array)) {
 
                 if(($totalSleeps < $cabin->sleeps)) {

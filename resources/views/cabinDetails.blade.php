@@ -87,20 +87,42 @@
                                                     <div class="red_{{ $cabinDetails->_id }}" data-red="{{ $calendar[3] }}"></div>
                                                     <div class="notSeasonTime_{{ $cabinDetails->_id }}" data-notseasontime="{{ $calendar[4] }}"></div>
 
-                                                    <div class="col-sm-4 col-sm-4-cabin-details">
+                                                    <div class="col-sm-6 col-sm-6-cabin-details">
                                                         <input type="text" class="form-control form-control-cabin-details dateFrom" id="dateFrom_{{ $cabinDetails->_id }}" name="dateFrom" placeholder="Arrival" readonly>
                                                     </div>
-                                                    <div class="col-sm-4 col-sm-4-cabin-details">
+                                                    <div class="col-sm-6 col-sm-6-cabin-details">
                                                         <input type="text" class="form-control form-control-cabin-details dateTo" id="dateTo_{{ $cabinDetails->_id }}" name="dateTo" placeholder="Departure" readonly>
                                                     </div>
-                                                    <div class="col-sm-4 col-sm-4-cabin-details">
-                                                        <select class="form-control form-control-cabin-details" size="3">
-                                                            <option>Persons</option>
-                                                            @for($i = 1; $i <= 30; $i++)
-                                                                <option value="{{ $i }}">{{ $i }}</option>
-                                                            @endfor
-                                                        </select>
-                                                    </div>
+
+                                                    @if($cabinDetails->sleeping_place != 1)
+                                                        <div class="col-sm-6 col-sm-6-cabin-details dropdown-cabin-details-top-buffer">
+                                                            <select class="form-control form-control-cabin-details" size="3" id="beds" name="beds">
+                                                                <option value="">Choose Bed(s)</option>
+                                                                @for($i = 1; $i <= 30; $i++)
+                                                                    <option value="{{ $i }}">{{ $i }}</option>
+                                                                @endfor
+                                                            </select>
+                                                        </div>
+
+                                                        <div class="col-sm-6 col-sm-6-cabin-details dropdown-cabin-details-top-buffer">
+                                                            <select class="form-control form-control-cabin-details" size="3" id="dorms" name="dorms">
+                                                                <option value="">Choose Dorm(s)</option>
+                                                                @for($i = 1; $i <= 30; $i++)
+                                                                    <option value="{{ $i }}">{{ $i }}</option>
+                                                                @endfor
+                                                            </select>
+                                                        </div>
+                                                    @else
+                                                        <div class="col-sm-6 col-sm-6-cabin-details dropdown-cabin-details-top-buffer">
+                                                            <select class="form-control form-control-cabin-details" size="3" id="sleeps" name="sleeps">
+                                                                <option value="">Choose Sleep(s)</option>
+                                                                @for($i = 1; $i <= 30; $i++)
+                                                                    <option value="{{ $i }}">{{ $i }}</option>
+                                                                @endfor
+                                                            </select>
+                                                        </div>
+                                                    @endif
+
                                                 </div>
                                                 <hr>
                                             </div>
@@ -314,7 +336,7 @@
                                 </div>
 
                             </div>
-                            <div class="col-sm-4 col-sm-4-cabin-details" id="div-advertising-cabin-details">
+                            <div class="col-sm-6 col-sm-6-cabin-details" id="div-advertising-cabin-details">
                                 <a href="#"><img src="{{ asset('storage/img/Werbung.jpg') }}" class="img-responsive" id="advertising" alt="advertising"></a>
                             </div>
                         </div>
