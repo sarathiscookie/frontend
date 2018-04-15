@@ -18,6 +18,7 @@ class ServiceController extends Controller
         $cartCount     = Booking::where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
             ->where('status', "8")
             ->where('is_delete', 0)
+            ->take(5)
             ->count();
         if($cartCount) {
             return $cartCount;
