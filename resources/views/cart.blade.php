@@ -28,6 +28,16 @@
                 </div>
             @endif
 
+                @if (session()->has('notAvailable'))
+                    <div id="flash" class="alert alert-danger">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        {!! session()->get('notAvailable') !!}
+                    </div>
+                @endif
+
+
             @isset($carts)
                  <form action="{{ route('cart.store') }}" method="post">
 
@@ -323,7 +333,7 @@
                             <div>
                                 <div id="btn-ground-2-booking1">
                                     <a href="/search" class="btn btn-default-booking1 btn-default btn-sm btn-details btn-details-booking1"><span class="glyphicon glyphicon-list-alt" style="font-size: 14px;" aria-hidden="true"></span> Continue Booking</a>
-                                    <button type="submit" class="btn btn-default-booking1 btn-default btn-sm btn-details btn-details-booking1"><span class="glyphicon glyphicon-credit-card" style="font-size: 14px;" aria-hidden="true"></span> Payment</button>
+                                    <button type="submit" class="btn btn-default-booking1 btn-default btn-sm btn-details btn-details-booking1" name="createBooking" value="createBooking"><span class="glyphicon glyphicon-credit-card" style="font-size: 14px;" aria-hidden="true"></span> Payment</button>
                                 </div>
                             </div>
                         @endif

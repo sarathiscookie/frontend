@@ -22,7 +22,7 @@ class InquiryController extends Controller
      *
      * @param  string  $now
      * @param  string  $end
-     * @return object
+     * @return \Illuminate\Http\Response
      */
     protected function generateDates($now, $end){
         $period = new DatePeriod(
@@ -38,7 +38,7 @@ class InquiryController extends Controller
      * To generate date format as mongo.
      *
      * @param  string  $date
-     * @return object
+     * @return \Illuminate\Http\Response
      */
     public function getDateUtc($date)
     {
@@ -56,16 +56,23 @@ class InquiryController extends Controller
      */
     public function index()
     {
-        $cabinDetails  = Cabin::select('name', 'region', 'prepayment_amount', 'sleeping_place', 'halfboard', 'halfboard_price')
-            ->where('is_delete', 0)
-            ->where('other_cabin', "0")
-            ->findOrFail(session()->get('cabin_id'));
+        /* Condition to check session contains inquiry details. If session has inquiry then only guest can send inquiry */
+        if(session()->has('cabin_id') && session()->has('cabin_name') && session()->has('checkin_from') && session()->has('reserve_to')) {
+            $cabinDetails = Cabin::select('name', 'region', 'prepayment_amount', 'sleeping_place', 'halfboard', 'halfboard_price')
+                ->where('is_delete', 0)
+                ->where('other_cabin', "0")
+                ->findOrFail(session()->get('cabin_id'));
 
-        $country       = Country::select('name')
-            ->where('is_delete', 0)
-            ->get();
+            $country = Country::select('name')
+                ->where('is_delete', 0)
+                ->get();
 
-        return view('inquiry', ['cabinDetails' => $cabinDetails, 'country' => $country]);
+            return view('inquiry', ['cabinDetails' => $cabinDetails, 'country' => $country]);
+        }
+        else{
+            /* After sent inquiry details session data will delete and guest can't send same inquiry again. If guest tried to send same inquiry again page will redirect in to search. */
+            return redirect()->route('search');
+        }
     }
 
     /**
@@ -87,7 +94,7 @@ class InquiryController extends Controller
     public function store(InquiryRequest $request)
     {
         /* Condition to check session contains inquiry details. If session has inquiry then only guest can send inquiry */
-        if($request->session()->has('cabin_id') && $request->session()->has('cabin_name') && $request->session()->has('checkin_from') && $request->session()->has('reserve_to')) {
+        if($request->has('inquirySend') && $request->session()->has('cabin_id') && $request->session()->has('cabin_name') && $request->session()->has('checkin_from') && $request->session()->has('reserve_to')) {
 
             $monthBegin                  = DateTime::createFromFormat('d.m.y', $request->session()->get('checkin_from'))->format('Y-m-d');
             $monthEnd                    = DateTime::createFromFormat('d.m.y', $request->session()->get('reserve_to'))->format('Y-m-d');
@@ -563,7 +570,7 @@ class InquiryController extends Controller
         }
         else{
             /* After sent inquiry details session data will delete and guest can't send same inquiry again. If guest tried to send same inquiry again page will redirect in to search. */
-            return redirect()->route('search')->with('status', 'Before send an inquiry check availability');
+            return redirect()->route('search');
         }
     }
 

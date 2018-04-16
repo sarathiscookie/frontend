@@ -36,4 +36,26 @@ class Userlist extends Eloquent
      */
 
     protected $dates = ['emailConfirmedDate'];
+
+    /**
+     * Set the user's address first letter in to uppercase.
+     *
+     * @param  string  $value
+     * @return void
+     */
+    public function setusrAddressAttribute($value)
+    {
+        $this->attributes['usrAddress'] = ucfirst($value);
+    }
+
+    /**
+     * Set the user's city first letter in to uppercase.
+     *
+     * @param  string  $value
+     * @return void
+     */
+    public function setusrCityAttribute($value)
+    {
+        $this->attributes['usrCity'] = ucfirst($value);
+    }
 }

@@ -320,7 +320,7 @@
                     <div class="row content row-booking1">
                         <div id="btn-ground-2-booking1">
                             <input type="hidden" name="sleeping_place" value="{{ $cabinDetails->sleeping_place }}">
-                            <button type="submit" class="btn-default-booking1 btn-sm btn-details-booking1"><span class="glyphicon glyphicon-envelope" style="font-size: 16px;" aria-hidden="true"></span>  Send Inquiry</button>
+                            <button type="submit" class="btn-default-booking1 btn-sm btn-details-booking1" name="inquirySend" value="inquirySend"><span class="glyphicon glyphicon-envelope" style="font-size: 16px;" aria-hidden="true"></span>  Send Inquiry</button>
                         </div>
                     </div>
                 @endif
