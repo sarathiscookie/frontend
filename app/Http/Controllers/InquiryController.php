@@ -56,17 +56,16 @@ class InquiryController extends Controller
      */
     public function index()
     {
+        $cabinDetails  = Cabin::select('name', 'region', 'prepayment_amount', 'sleeping_place', 'halfboard', 'halfboard_price')
+            ->where('is_delete', 0)
+            ->where('other_cabin', "0")
+            ->findOrFail(session()->get('cabin_id'));
 
-            $cabinDetails  = Cabin::select('name', 'region', 'prepayment_amount', 'sleeping_place', 'halfboard', 'halfboard_price')
-                ->where('is_delete', 0)
-                ->where('other_cabin', "0")
-                ->findOrFail(session()->get('cabin_id'));
+        $country       = Country::select('name')
+            ->where('is_delete', 0)
+            ->get();
 
-            $country       = Country::select('name')
-                ->where('is_delete', 0)
-                ->get();
-
-            return view('inquiry', ['cabinDetails' => $cabinDetails, 'country' => $country]);
+        return view('inquiry', ['cabinDetails' => $cabinDetails, 'country' => $country]);
     }
 
     /**
@@ -88,11 +87,10 @@ class InquiryController extends Controller
     public function store(InquiryRequest $request)
     {
         /* Condition to check session contains inquiry details. If session has inquiry then only guest can send inquiry */
-        if(session()->has('cabin_id') && session()->has('cabin_name') && session()->has('checkin_from') &&
-            session()->has('reserve_to') && session()->has('user')) {
+        if($request->session()->has('cabin_id') && $request->session()->has('cabin_name') && $request->session()->has('checkin_from') && $request->session()->has('reserve_to')) {
 
-            $monthBegin                  = DateTime::createFromFormat('d.m.y', session()->get('checkin_from'))->format('Y-m-d');
-            $monthEnd                    = DateTime::createFromFormat('d.m.y', session()->get('reserve_to'))->format('Y-m-d');
+            $monthBegin                  = DateTime::createFromFormat('d.m.y', $request->session()->get('checkin_from'))->format('Y-m-d');
+            $monthEnd                    = DateTime::createFromFormat('d.m.y', $request->session()->get('reserve_to'))->format('Y-m-d');
 
             $bedsRequest                 = (int)$request->beds;
             $dormsRequest                = (int)$request->dormitory;
@@ -110,7 +108,7 @@ class InquiryController extends Controller
 
                 $cabin                   = Cabin::where('is_delete', 0)
                     ->where('other_cabin', '0')
-                    ->findOrFail(session()->get('cabin_id'));
+                    ->findOrFail($request->session()->get('cabin_id'));
 
                 $generateBookingDates    = $this->generateDates($monthBegin, $monthEnd);
 
@@ -489,12 +487,12 @@ class InquiryController extends Controller
 
                     /* Inquiry booking begin */
                     $inquiry                          = new Booking;
-                    $inquiry->cabinname               = session()->get('cabin_name');
-                    $inquiry->cabin_id                = new \MongoDB\BSON\ObjectID(session()->get('cabin_id'));
+                    $inquiry->cabinname               = $request->session()->get('cabin_name');
+                    $inquiry->cabin_id                = new \MongoDB\BSON\ObjectID($request->session()->get('cabin_id'));
                     $inquiry->user                    = new \MongoDB\BSON\ObjectID(Auth::user()->_id);
                     $inquiry->bookingdate             = Carbon::now();
-                    $inquiry->checkin_from            = $this->getDateUtc(session()->get('checkin_from'));
-                    $inquiry->reserve_to              = $this->getDateUtc(session()->get('reserve_to'));
+                    $inquiry->checkin_from            = $this->getDateUtc($request->session()->get('checkin_from'));
+                    $inquiry->reserve_to              = $this->getDateUtc($request->session()->get('reserve_to'));
                     $inquiry->beds                    = $bedsRequest;
                     $inquiry->dormitory               = $dormsRequest;
                     $inquiry->sleeps                  = ($cabin->sleeping_place === 1) ? $sleepsRequest : $requestBedsSumDorms;
@@ -518,21 +516,21 @@ class InquiryController extends Controller
                         /* Update cabin invoice_autonum begin */
                         Cabin::where('is_delete', 0)
                             ->where('other_cabin', "0")
-                            ->where('name', session()->get('cabin_name'))
-                            ->where('_id', new \MongoDB\BSON\ObjectID(session()->get('cabin_id')))
+                            ->where('name', $request->session()->get('cabin_name'))
+                            ->where('_id', new \MongoDB\BSON\ObjectID($request->session()->get('cabin_id')))
                             ->update(['invoice_autonum' => $autoNumber]);
 
                         /* Delete session details */
-                        session()->forget('cabin_id');
-                        session()->forget('cabin_name');
-                        session()->forget('sleeping_place');
-                        session()->forget('checkin_from');
-                        session()->forget('reserve_to');
-                        session()->forget('user');
-                        session()->forget('beds');
-                        session()->forget('dormitory');
-                        session()->forget('sleeps');
-                        session()->forget('guests');
+                        $request->session()->forget('cabin_id');
+                        $request->session()->forget('cabin_name');
+                        $request->session()->forget('sleeping_place');
+                        $request->session()->forget('checkin_from');
+                        $request->session()->forget('reserve_to');
+                        $request->session()->forget('user');
+                        $request->session()->forget('beds');
+                        $request->session()->forget('dormitory');
+                        $request->session()->forget('sleeps');
+                        $request->session()->forget('guests');
 
                         /* Store user details begin */
                         $userDetails               = Userlist::find(Auth::user()->_id);
@@ -565,7 +563,7 @@ class InquiryController extends Controller
         }
         else{
             /* After sent inquiry details session data will delete and guest can't send same inquiry again. If guest tried to send same inquiry again page will redirect in to search. */
-            return redirect()->route('search');
+            return redirect()->route('search')->with('status', 'Before send an inquiry check availability');
         }
     }
 

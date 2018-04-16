@@ -18,6 +18,14 @@
                 @foreach($cabinSearchResult as $result)
                     <div class="panel panel-default text-left">
                         <div class="panel-body">
+
+                            @if ( session()->has('status') )
+                                <div class="alert alert-info alert-dismissible" role="alert">
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                    <strong>Heads up! </strong> {{ session()->get('status') }}
+                                </div>
+                            @endif
+
                             <div class="row content row-cabinlist">
                                 <div class="col-sm-2">
                                     <img src="{{ asset('storage/img/huette_cabin_list.jpg') }}" class="img-responsive img-thumbnail" style="width:100%" alt="Image">
