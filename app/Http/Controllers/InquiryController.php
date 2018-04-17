@@ -156,7 +156,7 @@ class InquiryController extends Controller
                                 }
                                 else {
                                     $availableStatus[] = 'notPossible';
-                                    return redirect()->back()->with('error', 'Better check yourself, you are not looking too good.');
+                                    return redirect()->back()->with('error', 'You can select greater than values from select box');
                                 }
                             }
                         }
@@ -175,7 +175,7 @@ class InquiryController extends Controller
                                     }
                                     else {
                                         $availableStatus[] = 'notPossible';
-                                        return redirect()->back()->with('error', 'Better check yourself, you are not looking too good.');
+                                        return redirect()->back()->with('error', 'You can select greater than values from select box');
                                     }
                                 }
                             }
@@ -191,7 +191,7 @@ class InquiryController extends Controller
                                     }
                                     else {
                                         $availableStatus[] = 'notPossible';
-                                        return redirect()->back()->with('error', 'Better check yourself, you are not looking too good.');
+                                        return redirect()->back()->with('error', 'You can select greater than values from select box');
                                     }
                                 }
                             }
@@ -207,7 +207,7 @@ class InquiryController extends Controller
                                     }
                                     else {
                                         $availableStatus[] = 'notPossible';
-                                        return redirect()->back()->with('error', 'Better check yourself, you are not looking too good.');
+                                        return redirect()->back()->with('error', 'You can select greater than values from select box');
                                     }
                                 }
                             }
@@ -223,7 +223,7 @@ class InquiryController extends Controller
                                     }
                                     else {
                                         $availableStatus[] = 'notPossible';
-                                        return redirect()->back()->with('error', 'Better check yourself, you are not looking too good.');
+                                        return redirect()->back()->with('error', 'You can select greater than values from select box');
                                     }
                                 }
                             }
@@ -239,7 +239,7 @@ class InquiryController extends Controller
                                     }
                                     else {
                                         $availableStatus[] = 'notPossible';
-                                        return redirect()->back()->with('error', 'Better check yourself, you are not looking too good.');
+                                        return redirect()->back()->with('error', 'You can select greater than values from select box');
                                     }
                                 }
                             }
@@ -255,7 +255,7 @@ class InquiryController extends Controller
                                     }
                                     else {
                                         $availableStatus[] = 'notPossible';
-                                        return redirect()->back()->with('error', 'Better check yourself, you are not looking too good.');
+                                        return redirect()->back()->with('error', 'You can select greater than values from select box');
                                     }
                                 }
                             }
@@ -271,7 +271,7 @@ class InquiryController extends Controller
                                     }
                                     else {
                                         $availableStatus[] = 'notPossible';
-                                        return redirect()->back()->with('error', 'Better check yourself, you are not looking too good.');
+                                        return redirect()->back()->with('error', 'You can select greater than values from select box');
                                     }
                                 }
                             }
@@ -285,7 +285,7 @@ class InquiryController extends Controller
                             }
                             else {
                                 $availableStatus[] = 'notPossible';
-                                return redirect()->back()->with('error', 'Better check yourself, you are not looking too good.');
+                                return redirect()->back()->with('error', 'You can select greater than values from select box');
                             }
                         }
 
@@ -312,7 +312,7 @@ class InquiryController extends Controller
                                 }
                                 else {
                                     $availableStatus[] = 'notPossible';
-                                    return redirect()->back()->with('error', 'Better check yourself, you are not looking too good.');
+                                    return redirect()->back()->with('error', 'You can select greater than values from select box');
                                 }
                             }
                         }
@@ -331,7 +331,7 @@ class InquiryController extends Controller
                                     }
                                     else {
                                         $availableStatus[] = 'notPossible';
-                                        return redirect()->back()->with('error', 'Better check yourself, you are not looking too good.');
+                                        return redirect()->back()->with('error', 'You can select greater than values from select box');
                                     }
                                 }
                             }
@@ -347,7 +347,7 @@ class InquiryController extends Controller
                                     }
                                     else {
                                         $availableStatus[] = 'notPossible';
-                                        return redirect()->back()->with('error', 'Better check yourself, you are not looking too good.');
+                                        return redirect()->back()->with('error', 'You can select greater than values from select box');
                                     }
                                 }
                             }
@@ -363,7 +363,7 @@ class InquiryController extends Controller
                                     }
                                     else {
                                         $availableStatus[] = 'notPossible';
-                                        return redirect()->back()->with('error', 'Better check yourself, you are not looking too good.');
+                                        return redirect()->back()->with('error', 'You can select greater than values from select box');
                                     }
                                 }
                             }
@@ -379,7 +379,7 @@ class InquiryController extends Controller
                                     }
                                     else {
                                         $availableStatus[] = 'notPossible';
-                                        return redirect()->back()->with('error', 'Better check yourself, you are not looking too good.');
+                                        return redirect()->back()->with('error', 'You can select greater than values from select box');
                                     }
                                 }
                             }
@@ -395,7 +395,7 @@ class InquiryController extends Controller
                                     }
                                     else {
                                         $availableStatus[] = 'notPossible';
-                                        return redirect()->back()->with('error', 'Better check yourself, you are not looking too good.');
+                                        return redirect()->back()->with('error', 'You can select greater than values from select box');
                                     }
                                 }
                             }
@@ -411,7 +411,7 @@ class InquiryController extends Controller
                                     }
                                     else {
                                         $availableStatus[] = 'notPossible';
-                                        return redirect()->back()->with('error', 'Better check yourself, you are not looking too good.');
+                                        return redirect()->back()->with('error', 'You can select greater than values from select box');
                                     }
                                 }
                             }
@@ -427,7 +427,7 @@ class InquiryController extends Controller
                                     }
                                     else {
                                         $availableStatus[] = 'notPossible';
-                                        return redirect()->back()->with('error', 'Better check yourself, you are not looking too good.');
+                                        return redirect()->back()->with('error', 'You can select greater than values from select box');
                                     }
                                 }
                             }
@@ -441,7 +441,7 @@ class InquiryController extends Controller
                             }
                             else {
                                 $availableStatus[] = 'notPossible';
-                                return redirect()->back()->with('error', 'Better check yourself, you are not looking too good.');
+                                return redirect()->back()->with('error', 'You can select greater than values from select box');
                             }
 
                         }

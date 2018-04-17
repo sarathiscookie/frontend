@@ -108,15 +108,18 @@ class CartController extends Controller
     {
         if(isset($request->createBooking) && $request->createBooking === 'createBooking'){
 
-            $sleepsRequest                = 0;
-            $bedsRequest                  = 0;
-            $dormsRequest                 = 0;
-            $requestBedsSumDorms          = 0;
-            $commentsRequest              = '';
-            $not_regular_dates            = [];
-            $clickHere                    = '<a href="/inquiry">click here</a>';
+            $sleepsRequest         = 0;
+            $bedsRequest           = 0;
+            $dormsRequest          = 0;
+            $requestBedsSumDorms   = 0;
+            $commentsRequest       = '';
+            $available             = 'failure';
+            $not_regular_dates     = [];
+            $dates_array           = [];
+            $availableStatus       = [];
+            $clickHere             = '<a href="/inquiry">click here</a>';
 
-            $carts                        = Booking::where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
+            $carts                 = Booking::where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
                 ->where('status', "8")
                 ->where('is_delete', 0)
                 ->take(5)
@@ -136,34 +139,29 @@ class CartController extends Controller
                         $requestBedsSumDorms = $bedsRequest + $dormsRequest;
                     }
 
-                    $cabin                   = Cabin::select('_id', 'name', 'mon_day', 'tue_day', 'wed_day', 'thu_day', 'fri_day', 'sat_day', 'sun_day', 'not_regular', 'not_regular_date', 'regular', 'sleeping_place', 'not_regular_inquiry_guest', 'not_regular_beds', 'not_regular_dorms', 'not_regular_sleeps')
-                        ->where('is_delete', 0)
+                    $cabin                   = Cabin::where('is_delete', 0)
                         ->where('other_cabin', "0")
                         ->findOrFail($cart->cabin_id);
 
-                    $country                 = Country::select('name')
-                        ->where('is_delete', 0)
-                        ->get();
-
                     // Generate date b/w checking from and to
-                    $generateBookingDates = $this->generateDates($cart->checkin_from->format('Y-m-d'), $cart->reserve_to->format('Y-m-d'));
+                    $generateBookingDates    = $this->generateDates($cart->checkin_from->format('Y-m-d'), $cart->reserve_to->format('Y-m-d'));
 
                     foreach ($generateBookingDates as $generateBookingDate) {
 
-                        $dates            = $generateBookingDate->format('Y-m-d');
-                        $day              = $generateBookingDate->format('D');
+                        $dates      = $generateBookingDate->format('Y-m-d');
+                        $day        = $generateBookingDate->format('D');
 
                         /* Checking bookings available begins */
-                        $mon_day          = ($cabin->mon_day === 1) ? 'Mon' : 0;
-                        $tue_day          = ($cabin->tue_day === 1) ? 'Tue' : 0;
-                        $wed_day          = ($cabin->wed_day === 1) ? 'Wed' : 0;
-                        $thu_day          = ($cabin->thu_day === 1) ? 'Thu' : 0;
-                        $fri_day          = ($cabin->fri_day === 1) ? 'Fri' : 0;
-                        $sat_day          = ($cabin->sat_day === 1) ? 'Sat' : 0;
-                        $sun_day          = ($cabin->sun_day === 1) ? 'Sun' : 0;
+                        $mon_day    = ($cabin->mon_day === 1) ? 'Mon' : 0;
+                        $tue_day    = ($cabin->tue_day === 1) ? 'Tue' : 0;
+                        $wed_day    = ($cabin->wed_day === 1) ? 'Wed' : 0;
+                        $thu_day    = ($cabin->thu_day === 1) ? 'Thu' : 0;
+                        $fri_day    = ($cabin->fri_day === 1) ? 'Fri' : 0;
+                        $sat_day    = ($cabin->sat_day === 1) ? 'Sat' : 0;
+                        $sun_day    = ($cabin->sun_day === 1) ? 'Sun' : 0;
 
                         /* Getting bookings from booking collection status 1=> Fix, 2=> Cancel, 3=> Completed, 4=> Request (Reservation), 5=> Waiting for payment, 6=> Expired, 7=> Inquiry, 8=> Cart */
-                        $bookings  = Booking::select('beds', 'dormitory', 'sleeps')
+                        $bookings   = Booking::select('beds', 'dormitory', 'sleeps')
                             ->where('is_delete', 0)
                             ->where('cabinname', $cabin->name)
                             ->whereIn('status', ['1', '4', '7', '8'])
@@ -172,7 +170,7 @@ class CartController extends Controller
                             ->get();
 
                         /* Getting bookings from mschool collection status 1=> Fix, 2=> Cancel, 3=> Completed, 4=> Request (Reservation), 5=> Waiting for payment, 6=> Expired, 7=> Inquiry, 8=> Cart */
-                        $msBookings  = MountSchoolBooking::select('beds', 'dormitory', 'sleeps')
+                        $msBookings = MountSchoolBooking::select('beds', 'dormitory', 'sleeps')
                             ->where('is_delete', 0)
                             ->where('cabin_name', $cabin->name)
                             ->whereIn('status', ['1', '4', '7', '8'])
@@ -206,8 +204,9 @@ class CartController extends Controller
                         /* Taking beds, dorms and sleeps depends up on sleeping_place */
                         if($cabin->sleeping_place != 1) {
 
-                            $totalBeds     = $beds + $msBeds;
-                            $totalDorms    = $dorms + $msDorms;
+                            // Reason for subtraction: Eg cabin->beds = 5 cabin->dorms = 5. If guest added 3 beds and 3 dorms to cart, cart data is treated as booked for 1 hour. When guest edit the cart (eg set beds to 4 and dorms to 4) the availability condition will run and shows not available. Because already 3 beds and 3 dorms in booking cart. So we subtract the particular user's cart->beds and cart->dormitory.
+                            $totalBeds     = ($beds + $msBeds) - $cart->beds;
+                            $totalDorms    = ($dorms + $msDorms) - $cart->dormitory;
 
                             /* Calculating beds & dorms for not regular */
                             if($cabin->not_regular === 1) {
@@ -222,9 +221,475 @@ class CartController extends Controller
 
                                 if(in_array($dates, $not_regular_dates)) {
 
-                                    $dates_array[] = $dates;
+                                    $dates_array[]               = $dates;
 
-                                    if($requestBedsSumDorms >= $cabin->not_regular_inquiry_guest) {
+                                    if(($totalBeds < $cabin->not_regular_beds) || ($totalDorms < $cabin->not_regular_dorms)) {
+                                        $not_regular_beds_diff   = $cabin->not_regular_beds - $totalBeds;
+                                        $not_regular_dorms_diff  = $cabin->not_regular_dorms - $totalDorms;
+
+                                        /* Available beds and dorms on not regular */
+                                        $not_regular_beds_avail  = ($not_regular_beds_diff >= 0) ? $not_regular_beds_diff : 0;
+                                        $not_regular_dorms_avail = ($not_regular_dorms_diff >= 0) ? $not_regular_dorms_diff : 0;
+
+                                        if($bedsRequest <= $not_regular_beds_avail) {
+                                            $availableStatus[]   = 'available';
+                                        }
+                                        else {
+                                            $availableStatus[]   = 'notAvailable';
+                                            return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', $bedsRequest.' Beds are not available on '.$generateBookingDate->format("jS F"));
+                                        }
+
+                                        if($dormsRequest <= $not_regular_dorms_avail) {
+                                            $availableStatus[]   = 'available';
+                                        }
+                                        else {
+                                            $availableStatus[]   = 'notAvailable';
+                                            return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', $dormsRequest.' Dorms are not available on '.$generateBookingDate->format("jS F"));
+                                        }
+
+                                        if($requestBedsSumDorms >= $cabin->not_regular_inquiry_guest) {
+                                            $availableStatus[]   = 'notAvailable';
+
+                                            $request->session()->put('cabin_id', new \MongoDB\BSON\ObjectID($cabin->_id));
+                                            $request->session()->put('cabin_name', $cabin->name);
+                                            $request->session()->put('sleeping_place', $cabin->sleeping_place);
+                                            $request->session()->put('checkin_from', $cart->checkin_from->format('d.m.y'));
+                                            $request->session()->put('reserve_to', $cart->reserve_to->format('d.m.y'));
+                                            $request->session()->put('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id));
+                                            $request->session()->put('beds', $bedsRequest);
+                                            $request->session()->put('dormitory', $dormsRequest);
+                                            $request->session()->put('sleeps', $requestBedsSumDorms);
+                                            $request->session()->put('guests', $requestBedsSumDorms);
+
+                                            return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', 'On '.$generateBookingDate->format("jS F").' booking is possible if sum of beds and dorms is less than '.$cabin->not_regular_inquiry_guest.'. But you can send enquiry. Please '.$clickHere.' for inquiry');
+                                        }
+                                    }
+                                    else {
+                                        $availableStatus[] = 'notAvailable';
+                                        return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', 'Beds and Dorms are already filled on '.$generateBookingDate->format("jS F"));
+                                    }
+
+                                }
+                            }
+
+                            /* Calculating beds & dorms for regular */
+                            if($cabin->regular === 1) {
+
+                                if($mon_day === $day) {
+
+                                    if(!in_array($dates, $dates_array)) {
+
+                                        $dates_array[]             = $dates;
+
+                                        if(($totalBeds < $cabin->mon_beds) || ($totalDorms < $cabin->mon_dorms)) {
+                                            $mon_beds_diff         = $cabin->mon_beds - $totalBeds;
+                                            $mon_dorms_diff        = $cabin->mon_dorms - $totalDorms;
+
+                                            /* Available beds and dorms on regular monday */
+                                            $mon_beds_avail        = ($mon_beds_diff >= 0) ? $mon_beds_diff : 0;
+                                            $mon_dorms_avail       = ($mon_dorms_diff >= 0) ? $mon_dorms_diff : 0;
+
+                                            if($bedsRequest <= $mon_beds_avail) {
+                                                $availableStatus[] = 'available';
+                                            }
+                                            else {
+                                                $availableStatus[] = 'notAvailable';
+                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', $bedsRequest.' Beds are not available on '.$generateBookingDate->format("jS F"));
+                                            }
+
+                                            if($dormsRequest <= $mon_dorms_avail) {
+                                                $availableStatus[] = 'available';
+                                            }
+                                            else {
+                                                $availableStatus[] = 'notAvailable';
+                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', $dormsRequest.' Dorms are not available on '.$generateBookingDate->format("jS F"));
+                                            }
+
+                                            /* Checking requested beds and dorms sum is greater or equal to inquiry. Cabin inquiry guest is greater than 0 */
+                                            if($requestBedsSumDorms >= $cabin->mon_inquiry_guest) {
+                                                $availableStatus[] = 'notAvailable';
+
+                                                $request->session()->put('cabin_id', new \MongoDB\BSON\ObjectID($cabin->_id));
+                                                $request->session()->put('cabin_name', $cabin->name);
+                                                $request->session()->put('sleeping_place', $cabin->sleeping_place);
+                                                $request->session()->put('checkin_from', $cart->checkin_from->format('d.m.y'));
+                                                $request->session()->put('reserve_to', $cart->reserve_to->format('d.m.y'));
+                                                $request->session()->put('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id));
+                                                $request->session()->put('beds', $bedsRequest);
+                                                $request->session()->put('dormitory', $dormsRequest);
+                                                $request->session()->put('sleeps', $requestBedsSumDorms);
+                                                $request->session()->put('guests', $requestBedsSumDorms);
+
+                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', 'On '.$generateBookingDate->format("jS F").' booking is possible if sum of beds and dorms is less than '.$cabin->mon_inquiry_guest.'. But you can send enquiry. Please '.$clickHere.' for inquiry');
+                                            }
+                                        }
+                                        else {
+                                            $availableStatus[] = 'notAvailable';
+                                            return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', 'Beds and Dorms are already filled on '.$generateBookingDate->format("jS F"));
+                                        }
+                                    }
+                                }
+
+                                if($tue_day === $day) {
+
+                                    if(!in_array($dates, $dates_array)) {
+
+                                        $dates_array[]             = $dates;
+
+                                        if(($totalBeds < $cabin->tue_beds) || ($totalDorms < $cabin->tue_dorms)) {
+                                            $tue_beds_diff         = $cabin->tue_beds - $totalBeds;
+                                            $tue_dorms_diff        = $cabin->tue_dorms - $totalDorms;
+
+                                            /* Available beds and dorms on regular tuesday */
+                                            $tue_beds_avail        = ($tue_beds_diff >= 0) ? $tue_beds_diff : 0;
+                                            $tue_dorms_avail       = ($tue_dorms_diff >= 0) ? $tue_dorms_diff : 0;
+
+                                            if($bedsRequest <= $tue_beds_avail) {
+                                                $availableStatus[] = 'available';
+                                            }
+                                            else {
+                                                $availableStatus[] = 'notAvailable';
+                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', $bedsRequest.' Beds are not available on '.$generateBookingDate->format("jS F"));
+                                            }
+
+                                            if($dormsRequest <= $tue_dorms_avail) {
+                                                $availableStatus[] = 'available';
+                                            }
+                                            else {
+                                                $availableStatus[] = 'notAvailable';
+                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', $dormsRequest.' Dorms are not available on '.$generateBookingDate->format("jS F"));
+                                            }
+
+                                            /* Checking requested beds and dorms sum is greater or equal to inquiry. Cabin inquiry guest is greater than 0 */
+                                            if($requestBedsSumDorms >= $cabin->tue_inquiry_guest) {
+                                                $availableStatus[] = 'notAvailable';
+
+                                                $request->session()->put('cabin_id', new \MongoDB\BSON\ObjectID($cabin->_id));
+                                                $request->session()->put('cabin_name', $cabin->name);
+                                                $request->session()->put('sleeping_place', $cabin->sleeping_place);
+                                                $request->session()->put('checkin_from', $cart->checkin_from->format('d.m.y'));
+                                                $request->session()->put('reserve_to', $cart->reserve_to->format('d.m.y'));
+                                                $request->session()->put('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id));
+                                                $request->session()->put('beds', $bedsRequest);
+                                                $request->session()->put('dormitory', $dormsRequest);
+                                                $request->session()->put('sleeps', $requestBedsSumDorms);
+                                                $request->session()->put('guests', $requestBedsSumDorms);
+
+                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', 'On '.$generateBookingDate->format("jS F").' booking is possible if sum of beds and dorms is less than '.$cabin->tue_inquiry_guest.'. But you can send enquiry. Please '.$clickHere.' for inquiry');
+                                            }
+                                        }
+                                        else {
+                                            $availableStatus[] = 'notAvailable';
+                                            return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', 'Beds and Dorms are already filled on '.$generateBookingDate->format("jS F"));
+                                        }
+                                    }
+                                }
+
+                                if($wed_day === $day) {
+
+                                    if(!in_array($dates, $dates_array)) {
+
+                                        $dates_array[] = $dates;
+
+                                        if(($totalBeds < $cabin->wed_beds) || ($totalDorms < $cabin->wed_dorms)) {
+                                            $wed_beds_diff              = $cabin->wed_beds - $totalBeds;
+                                            $wed_dorms_diff             = $cabin->wed_dorms - $totalDorms;
+
+                                            /* Available beds and dorms on regular wednesday */
+                                            $wed_beds_avail             = ($wed_beds_diff >= 0) ? $wed_beds_diff : 0;
+                                            $wed_dorms_avail            = ($wed_dorms_diff >= 0) ? $wed_dorms_diff : 0;
+
+                                            if($bedsRequest <= $wed_beds_avail) {
+                                                $availableStatus[] = 'available';
+                                            }
+                                            else {
+                                                $availableStatus[] = 'notAvailable';
+                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', $bedsRequest.' Beds are not available on '.$generateBookingDate->format("jS F"));
+                                            }
+
+                                            if($dormsRequest <= $wed_dorms_avail) {
+                                                $availableStatus[] = 'available';
+                                            }
+                                            else {
+                                                $availableStatus[] = 'notAvailable';
+                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', $dormsRequest.' Dorms are not available on '.$generateBookingDate->format("jS F"));
+                                            }
+
+                                            /* Checking requested beds and dorms sum is greater or equal to inquiry. Cabin inquiry guest is greater than 0 */
+                                            if($requestBedsSumDorms >= $cabin->wed_inquiry_guest) {
+                                                $availableStatus[] = 'notAvailable';
+
+                                                $request->session()->put('cabin_id', new \MongoDB\BSON\ObjectID($cabin->_id));
+                                                $request->session()->put('cabin_name', $cabin->name);
+                                                $request->session()->put('sleeping_place', $cabin->sleeping_place);
+                                                $request->session()->put('checkin_from', $cart->checkin_from->format('d.m.y'));
+                                                $request->session()->put('reserve_to', $cart->reserve_to->format('d.m.y'));
+                                                $request->session()->put('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id));
+                                                $request->session()->put('beds', $bedsRequest);
+                                                $request->session()->put('dormitory', $dormsRequest);
+                                                $request->session()->put('sleeps', $requestBedsSumDorms);
+                                                $request->session()->put('guests', $requestBedsSumDorms);
+
+                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', 'On '.$generateBookingDate->format("jS F").' booking is possible if sum of beds and dorms is less than '.$cabin->wed_inquiry_guest.'. But you can send enquiry. Please '.$clickHere.' for inquiry');
+                                            }
+                                        }
+                                        else {
+                                            $availableStatus[] = 'notAvailable';
+                                            return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', 'Beds and Dorms are already filled on '.$generateBookingDate->format("jS F"));
+                                        }
+                                    }
+                                }
+
+                                if($thu_day === $day) {
+
+                                    if(!in_array($dates, $dates_array)) {
+
+                                        $dates_array[] = $dates;
+
+                                        if(($totalBeds < $cabin->thu_beds) || ($totalDorms < $cabin->thu_dorms)) {
+                                            $thu_beds_diff              = $cabin->thu_beds - $totalBeds;
+                                            $thu_dorms_diff             = $cabin->thu_dorms - $totalDorms;
+
+                                            /* Available beds and dorms on regular thursday */
+                                            $thu_beds_avail             = ($thu_beds_diff >= 0) ? $thu_beds_diff : 0;
+                                            $thu_dorms_avail            = ($thu_dorms_diff >= 0) ? $thu_dorms_diff : 0;
+
+                                            if($bedsRequest <= $thu_beds_avail) {
+                                                $availableStatus[] = 'available';
+                                            }
+                                            else {
+                                                $availableStatus[] = 'notAvailable';
+                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', $bedsRequest.' Beds are not available on '.$generateBookingDate->format("jS F"));
+                                            }
+
+                                            if($dormsRequest <= $thu_dorms_avail) {
+                                                $availableStatus[] = 'available';
+                                            }
+                                            else {
+                                                $availableStatus[] = 'notAvailable';
+                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', $dormsRequest.' Dorms are not available on '.$generateBookingDate->format("jS F"));
+                                            }
+
+                                            /* Checking requested beds and dorms sum is greater or equal to inquiry. Cabin inquiry guest is greater than 0 */
+                                            if($requestBedsSumDorms >= $cabin->thu_inquiry_guest) {
+                                                $availableStatus[] = 'notAvailable';
+
+                                                $request->session()->put('cabin_id', new \MongoDB\BSON\ObjectID($cabin->_id));
+                                                $request->session()->put('cabin_name', $cabin->name);
+                                                $request->session()->put('sleeping_place', $cabin->sleeping_place);
+                                                $request->session()->put('checkin_from', $cart->checkin_from->format('d.m.y'));
+                                                $request->session()->put('reserve_to', $cart->reserve_to->format('d.m.y'));
+                                                $request->session()->put('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id));
+                                                $request->session()->put('beds', $bedsRequest);
+                                                $request->session()->put('dormitory', $dormsRequest);
+                                                $request->session()->put('sleeps', $requestBedsSumDorms);
+                                                $request->session()->put('guests', $requestBedsSumDorms);
+
+                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', 'On '.$generateBookingDate->format("jS F").' booking is possible if sum of beds and dorms is less than '.$cabin->thu_inquiry_guest.'. But you can send enquiry. Please '.$clickHere.' for inquiry');
+                                            }
+                                        }
+                                        else {
+                                            $availableStatus[] = 'notAvailable';
+                                            return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', 'Beds and Dorms are already filled on '.$generateBookingDate->format("jS F"));
+                                        }
+                                    }
+                                }
+
+                                if($fri_day === $day) {
+
+                                    if(!in_array($dates, $dates_array)) {
+
+                                        $dates_array[] = $dates;
+
+                                        if(($totalBeds < $cabin->fri_beds) || ($totalDorms < $cabin->fri_dorms)) {
+                                            $fri_beds_diff         = $cabin->fri_beds - $totalBeds;
+                                            $fri_dorms_diff        = $cabin->fri_dorms - $totalDorms;
+
+                                            /* Available beds and dorms on regular friday */
+                                            $fri_beds_avail        = ($fri_beds_diff >= 0) ? $fri_beds_diff : 0;
+                                            $fri_dorms_avail       = ($fri_dorms_diff >= 0) ? $fri_dorms_diff : 0;
+
+                                            if($bedsRequest <= $fri_beds_avail) {
+                                                $availableStatus[] = 'available';
+                                            }
+                                            else {
+                                                $availableStatus[] = 'notAvailable';
+                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', $bedsRequest.' Beds are not available on '.$generateBookingDate->format("jS F"));
+                                            }
+
+                                            if($dormsRequest <= $fri_dorms_avail) {
+                                                $availableStatus[] = 'available';
+                                            }
+                                            else {
+                                                $availableStatus[] = 'notAvailable';
+                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', $dormsRequest.' Dorms are not available on '.$generateBookingDate->format("jS F"));
+                                            }
+
+                                            /* Checking requested beds and dorms sum is greater or equal to inquiry. Cabin inquiry guest is greater than 0 */
+                                            if($requestBedsSumDorms >= $cabin->fri_inquiry_guest) {
+                                                $availableStatus[] = 'notAvailable';
+
+                                                $request->session()->put('cabin_id', new \MongoDB\BSON\ObjectID($cabin->_id));
+                                                $request->session()->put('cabin_name', $cabin->name);
+                                                $request->session()->put('sleeping_place', $cabin->sleeping_place);
+                                                $request->session()->put('checkin_from', $cart->checkin_from->format('d.m.y'));
+                                                $request->session()->put('reserve_to', $cart->reserve_to->format('d.m.y'));
+                                                $request->session()->put('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id));
+                                                $request->session()->put('beds', $bedsRequest);
+                                                $request->session()->put('dormitory', $dormsRequest);
+                                                $request->session()->put('sleeps', $requestBedsSumDorms);
+                                                $request->session()->put('guests', $requestBedsSumDorms);
+
+                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', 'On '.$generateBookingDate->format("jS F").' booking is possible if sum of beds and dorms is less than '.$cabin->fri_inquiry_guest.'. But you can send enquiry. Please '.$clickHere.' for inquiry');
+                                            }
+                                        }
+                                        else {
+                                            $availableStatus[] = 'notAvailable';
+                                            return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', 'Beds and Dorms are already filled on '.$generateBookingDate->format("jS F"));
+                                        }
+                                    }
+                                }
+
+                                if($sat_day === $day) {
+
+                                    if(!in_array($dates, $dates_array)) {
+
+                                        $dates_array[]             = $dates;
+
+                                        if(($totalBeds < $cabin->sat_beds) || ($totalDorms < $cabin->sat_dorms)) {
+                                            $sat_beds_diff         = $cabin->sat_beds - $totalBeds;
+                                            $sat_dorms_diff        = $cabin->sat_dorms - $totalDorms;
+
+                                            /* Available beds and dorms on regular saturday */
+                                            $sat_beds_avail        = ($sat_beds_diff >= 0) ? $sat_beds_diff : 0;
+                                            $sat_dorms_avail       = ($sat_dorms_diff >= 0) ? $sat_dorms_diff : 0;
+
+                                            if($bedsRequest <= $sat_beds_avail) {
+                                                $availableStatus[] = 'available';
+                                            }
+                                            else {
+                                                $availableStatus[] = 'notAvailable';
+                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', $bedsRequest.' Beds are not available on '.$generateBookingDate->format("jS F"));
+                                            }
+
+                                            if($dormsRequest <= $sat_dorms_avail) {
+                                                $availableStatus[] = 'available';
+                                            }
+                                            else {
+                                                $availableStatus[] = 'notAvailable';
+                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', $dormsRequest.' Dorms are not available on '.$generateBookingDate->format("jS F"));
+                                            }
+
+                                            /* Checking requested beds and dorms sum is greater or equal to inquiry. Cabin inquiry guest is greater than 0 */
+                                            if($requestBedsSumDorms >= $cabin->sat_inquiry_guest) {
+                                                $availableStatus[] = 'notAvailable';
+
+                                                $request->session()->put('cabin_id', new \MongoDB\BSON\ObjectID($cabin->_id));
+                                                $request->session()->put('cabin_name', $cabin->name);
+                                                $request->session()->put('sleeping_place', $cabin->sleeping_place);
+                                                $request->session()->put('checkin_from', $cart->checkin_from->format('d.m.y'));
+                                                $request->session()->put('reserve_to', $cart->reserve_to->format('d.m.y'));
+                                                $request->session()->put('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id));
+                                                $request->session()->put('beds', $bedsRequest);
+                                                $request->session()->put('dormitory', $dormsRequest);
+                                                $request->session()->put('sleeps', $requestBedsSumDorms);
+                                                $request->session()->put('guests', $requestBedsSumDorms);
+
+                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', 'On '.$generateBookingDate->format("jS F").' booking is possible if sum of beds and dorms is less than '.$cabin->sat_inquiry_guest.'. But you can send enquiry. Please '.$clickHere.' for inquiry');
+                                            }
+                                        }
+                                        else {
+                                            $availableStatus[] = 'notAvailable';
+                                            return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', 'Beds and Dorms are already filled on '.$generateBookingDate->format("jS F"));
+                                        }
+                                    }
+                                }
+
+                                if($sun_day === $day) {
+
+                                    if(!in_array($dates, $dates_array)) {
+
+                                        $dates_array[] = $dates;
+
+                                        if(($totalBeds < $cabin->sun_beds) || ($totalDorms < $cabin->sun_dorms)) {
+                                            $sun_beds_diff         = $cabin->sun_beds - $totalBeds;
+                                            $sun_dorms_diff        = $cabin->sun_dorms - $totalDorms;
+
+                                            /* Available beds and dorms on regular sunday */
+                                            $sun_beds_avail        = ($sun_beds_diff >= 0) ? $sun_beds_diff : 0;
+                                            $sun_dorms_avail       = ($sun_dorms_diff >= 0) ? $sun_dorms_diff : 0;
+
+                                            if($bedsRequest <= $sun_beds_avail) {
+                                                $availableStatus[] = 'available';
+                                            }
+                                            else {
+                                                $availableStatus[] = 'notAvailable';
+                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', $bedsRequest.' Beds are not available on '.$generateBookingDate->format("jS F"));
+                                            }
+
+                                            if($dormsRequest <= $sun_dorms_avail) {
+                                                $availableStatus[] = 'available';
+                                            }
+                                            else {
+                                                $availableStatus[] = 'notAvailable';
+                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', $dormsRequest.' Dorms are not available on '.$generateBookingDate->format("jS F"));
+                                            }
+
+                                            /* Checking requested beds and dorms sum is greater or equal to inquiry. Cabin inquiry guest is greater than 0 */
+                                            if($requestBedsSumDorms >= $cabin->sun_inquiry_guest) {
+                                                $availableStatus[] = 'notAvailable';
+
+                                                $request->session()->put('cabin_id', new \MongoDB\BSON\ObjectID($cabin->_id));
+                                                $request->session()->put('cabin_name', $cabin->name);
+                                                $request->session()->put('sleeping_place', $cabin->sleeping_place);
+                                                $request->session()->put('checkin_from', $cart->checkin_from->format('d.m.y'));
+                                                $request->session()->put('reserve_to', $cart->reserve_to->format('d.m.y'));
+                                                $request->session()->put('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id));
+                                                $request->session()->put('beds', $bedsRequest);
+                                                $request->session()->put('dormitory', $dormsRequest);
+                                                $request->session()->put('sleeps', $requestBedsSumDorms);
+                                                $request->session()->put('guests', $requestBedsSumDorms);
+
+                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', 'On '.$generateBookingDate->format("jS F").' booking is possible if sum of beds and dorms is less than '.$cabin->sun_inquiry_guest.'. But you can send enquiry. Please '.$clickHere.' for inquiry');
+                                            }
+                                        }
+                                        else {
+                                            $availableStatus[] = 'notAvailable';
+                                            return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', 'Beds and Dorms are already filled on '.$generateBookingDate->format("jS F"));
+                                        }
+                                    }
+                                }
+                            }
+                            /* Calculating beds & dorms for normal */
+                            if(!in_array($dates, $dates_array)) {
+
+                                if(($totalBeds < $cabin->beds) || ($totalDorms < $cabin->dormitory)) {
+
+                                    $normal_beds_diff              = $cabin->beds - $totalBeds;
+                                    $normal_dorms_diff             = $cabin->dormitory - $totalDorms;
+
+                                    /* Available beds and dorms on normal */
+                                    $normal_beds_avail             = ($normal_beds_diff >= 0) ? $normal_beds_diff : 0;
+                                    $normal_dorms_avail            = ($normal_dorms_diff >= 0) ? $normal_dorms_diff : 0;
+
+                                    if($bedsRequest <= $normal_beds_avail) {
+                                        $availableStatus[] = 'available';
+                                    }
+                                    else {
+                                        $availableStatus[] = 'notAvailable';
+                                        return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', $bedsRequest.' Beds are not available on '.$generateBookingDate->format("jS F"));
+                                    }
+
+                                    if($dormsRequest <= $normal_dorms_avail) {
+                                        $availableStatus[] = 'available';
+                                    }
+                                    else {
+                                        $availableStatus[] = 'notAvailable';
+                                        return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', $dormsRequest.' Dorms are not available on '.$generateBookingDate->format("jS F"));
+                                    }
+
+                                    /* Checking requested beds and dorms sum is greater or equal to inquiry. Cabin inquiry guest is greater than 0 */
+                                    if($requestBedsSumDorms >= $cabin->inquiry_starts) {
                                         $availableStatus[] = 'notAvailable';
 
                                         $request->session()->put('cabin_id', new \MongoDB\BSON\ObjectID($cabin->_id));
@@ -238,72 +703,466 @@ class CartController extends Controller
                                         $request->session()->put('sleeps', $requestBedsSumDorms);
                                         $request->session()->put('guests', $requestBedsSumDorms);
 
-                                        return redirect()->back()->with('notAvailable', 'On '.$generateBookingDate->format("jS F").' booking is possible if sum of beds and dorms is less than '.$cabin->not_regular_inquiry_guest.'. But you can send enquiry. Please '.$clickHere.' for inquiry');
+                                        return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', 'On '.$generateBookingDate->format("jS F").' booking is possible if sum of beds and dorms is less than '.$cabin->inquiry_starts.'. But you can send enquiry. Please '.$clickHere.' for inquiry');
                                     }
-                                    else {
-
-                                        if(($totalBeds < $cabin->not_regular_beds) || ($totalDorms < $cabin->not_regular_dorms)) {
-                                            $not_regular_beds_diff              = $cabin->not_regular_beds - $totalBeds;
-                                            $not_regular_dorms_diff             = $cabin->not_regular_dorms - $totalDorms;
-
-                                            /* Available beds and dorms on not regular */
-                                            $not_regular_beds_avail             = ($not_regular_beds_diff >= 0) ? $not_regular_beds_diff : 0;
-                                            $not_regular_dorms_avail            = ($not_regular_dorms_diff >= 0) ? $not_regular_dorms_diff : 0;
-
-                                            if($bedsRequest <= $not_regular_beds_avail) {
-                                                $availableStatus[] = 'available';
-                                            }
-                                            else {
-                                                $availableStatus[] = 'notAvailable';
-                                                return redirect()->back()->with('notAvailable', $bedsRequest.' Beds are not available on '.$generateBookingDate->format("jS F"));
-                                            }
-
-                                            if($dormsRequest <= $not_regular_dorms_avail) {
-                                                $availableStatus[] = 'available';
-                                            }
-                                            else {
-                                                $availableStatus[] = 'notAvailable';
-                                                return redirect()->back()->with('notAvailable', $dormsRequest.' Dorms are not available on '.$generateBookingDate->format("jS F"));
-                                            }
-                                        }
-
-                                    }
-
+                                }
+                                else {
+                                    $availableStatus[] = 'notAvailable';
+                                    return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', 'Beds and Dorms are already filled on '.$generateBookingDate->format("jS F"));
                                 }
                             }
-                            /* Calculating beds & dorms for regular */
-                            /*if($cabin->regular === 1) {
 
-                            }*/
-                            /* Calculating beds & dorms for normal */
-                            /*if(!in_array($dates, $dates_array)) {
-
-                            }*/
                         }
                         else {
-                            $totalSleeps  = $sleeps + $msSleeps;
-                        }
+                            $totalSleeps  = ($sleeps + $msSleeps) - $cart->sleeps;
 
+                            /* Calculating sleeps for not regular */
+                            if($cabin->not_regular === 1) {
+                                $not_regular_date_explode = explode(" - ", $cabin->not_regular_date);
+                                $not_regular_date_begin   = DateTime::createFromFormat('d.m.y', $not_regular_date_explode[0])->format('Y-m-d');
+                                $not_regular_date_end     = DateTime::createFromFormat('d.m.y', $not_regular_date_explode[1])->format('Y-m-d 23:59:59'); //To get the end date we need to add time
+                                $generateNotRegularDates  = $this->generateDates($not_regular_date_begin, $not_regular_date_end);
+
+                                foreach($generateNotRegularDates as $generateNotRegularDate) {
+                                    $not_regular_dates[]  = $generateNotRegularDate->format('Y-m-d');
+                                }
+
+                                if(in_array($dates, $not_regular_dates)) {
+
+                                    $dates_array[]                = $dates;
+
+                                    if(($totalSleeps < $cabin->not_regular_sleeps)) {
+                                        $not_regular_sleeps_diff  = $cabin->not_regular_sleeps - $totalSleeps;
+
+                                        /* Available sleeps on not regular */
+                                        $not_regular_sleeps_avail = ($not_regular_sleeps_diff >= 0) ? $not_regular_sleeps_diff : 0;
+
+                                        if($sleepsRequest <= $not_regular_sleeps_avail) {
+                                            $availableStatus[] = 'available';
+                                        }
+                                        else {
+                                            $availableStatus[] = 'notAvailable';
+                                            return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', $sleepsRequest.' Sleeps are not available on '.$generateBookingDate->format("jS F"));
+                                        }
+
+                                        /* Checking requested sleeps is greater or equal to inquiry. Cabin inquiry guest is greater than 0 */
+                                        if($sleepsRequest >= $cabin->not_regular_inquiry_guest) {
+                                            $availableStatus[] = 'notAvailable';
+
+                                            $request->session()->put('cabin_id', new \MongoDB\BSON\ObjectID($cabin->_id));
+                                            $request->session()->put('cabin_name', $cabin->name);
+                                            $request->session()->put('sleeping_place', $cabin->sleeping_place);
+                                            $request->session()->put('checkin_from', $cart->checkin_from->format('d.m.y'));
+                                            $request->session()->put('reserve_to', $cart->reserve_to->format('d.m.y'));
+                                            $request->session()->put('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id));
+                                            $request->session()->put('beds', 0);
+                                            $request->session()->put('dormitory', 0);
+                                            $request->session()->put('sleeps', $sleepsRequest);
+                                            $request->session()->put('guests', $sleepsRequest);
+
+                                            return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', 'On '.$generateBookingDate->format("jS F").' booking is possible if no of sleeps is less than '.$cabin->not_regular_inquiry_guest.'. But you can send enquiry. Please '.$clickHere.' for inquiry');
+                                        }
+                                    }
+                                    else {
+                                        $availableStatus[] = 'notAvailable';
+                                        return redirect()->back()->with('notAvailable.'.$cart->_id.'.status',  'Sleeps are already filled on '.$generateBookingDate->format("jS F"));
+                                    }
+                                }
+                            }
+
+                            /* Calculating sleeps for regular */
+                            if($cabin->regular === 1) {
+
+                                if($mon_day === $day) {
+
+                                    if(!in_array($dates, $dates_array)) {
+
+                                        $dates_array[] = $dates;
+
+                                        if(($totalSleeps < $cabin->mon_sleeps)) {
+                                            $mon_sleeps_diff       = $cabin->mon_sleeps - $totalSleeps;
+
+                                            /* Available sleeps on regular monday */
+                                            $mon_sleeps_avail      = ($mon_sleeps_diff >= 0) ? $mon_sleeps_diff : 0;
+
+                                            if($sleepsRequest <= $mon_sleeps_avail) {
+                                                $availableStatus[] = 'available';
+                                            }
+                                            else {
+                                                $availableStatus[] = 'notAvailable';
+                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', $sleepsRequest.' Sleeps are not available on '.$generateBookingDate->format("jS F"));
+                                            }
+
+                                            /* Checking requested sleeps is greater or equal to inquiry. Cabin inquiry guest is greater than 0 */
+                                            if($sleepsRequest >= $cabin->mon_inquiry_guest) {
+                                                $availableStatus[] = 'notAvailable';
+
+                                                $request->session()->put('cabin_id', new \MongoDB\BSON\ObjectID($cabin->_id));
+                                                $request->session()->put('cabin_name', $cabin->name);
+                                                $request->session()->put('sleeping_place', $cabin->sleeping_place);
+                                                $request->session()->put('checkin_from', $cart->checkin_from->format('d.m.y'));
+                                                $request->session()->put('reserve_to', $cart->reserve_to->format('d.m.y'));
+                                                $request->session()->put('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id));
+                                                $request->session()->put('beds', 0);
+                                                $request->session()->put('dormitory', 0);
+                                                $request->session()->put('sleeps', $sleepsRequest);
+                                                $request->session()->put('guests', $sleepsRequest);
+
+                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', 'On '.$generateBookingDate->format("jS F").' booking is possible if no of sleeps is less than '.$cabin->mon_inquiry_guest.'. But you can send enquiry. Please '.$clickHere.' for inquiry');
+                                            }
+                                        }
+                                        else {
+                                            $availableStatus[] = 'notAvailable';
+                                            return redirect()->back()->with('notAvailable.'.$cart->_id.'.status',  'Sleeps are already filled on '.$generateBookingDate->format("jS F"));
+                                        }
+                                    }
+                                }
+
+                                if($tue_day === $day) {
+
+                                    if(!in_array($dates, $dates_array)) {
+
+                                        $dates_array[]             = $dates;
+
+                                        if(($totalSleeps < $cabin->tue_sleeps)) {
+                                            $tue_sleeps_diff       = $cabin->tue_sleeps - $totalSleeps;
+
+                                            /* Available sleeps on regular tuesday */
+                                            $tue_sleeps_avail      = ($tue_sleeps_diff >= 0) ? $tue_sleeps_diff : 0;
+
+                                            if($sleepsRequest <= $tue_sleeps_avail) {
+                                                $availableStatus[] = 'available';
+                                            }
+                                            else {
+                                                $availableStatus[] = 'notAvailable';
+                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', $sleepsRequest.' Sleeps are not available on '.$generateBookingDate->format("jS F"));
+                                            }
+
+                                            /* Checking requested sleeps is greater or equal to inquiry. Cabin inquiry guest is greater than 0 */
+                                            if($sleepsRequest >= $cabin->tue_inquiry_guest) {
+                                                $availableStatus[] = 'notAvailable';
+
+                                                $request->session()->put('cabin_id', new \MongoDB\BSON\ObjectID($cabin->_id));
+                                                $request->session()->put('cabin_name', $cabin->name);
+                                                $request->session()->put('sleeping_place', $cabin->sleeping_place);
+                                                $request->session()->put('checkin_from', $cart->checkin_from->format('d.m.y'));
+                                                $request->session()->put('reserve_to', $cart->reserve_to->format('d.m.y'));
+                                                $request->session()->put('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id));
+                                                $request->session()->put('beds', 0);
+                                                $request->session()->put('dormitory', 0);
+                                                $request->session()->put('sleeps', $sleepsRequest);
+                                                $request->session()->put('guests', $sleepsRequest);
+
+                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', 'On '.$generateBookingDate->format("jS F").' booking is possible if no of sleeps is less than '.$cabin->tue_inquiry_guest.'. But you can send enquiry. Please '.$clickHere.' for inquiry');
+                                            }
+                                        }
+                                        else {
+                                            $availableStatus[] = 'notAvailable';
+                                            return redirect()->back()->with('notAvailable.'.$cart->_id.'.status',  'Sleeps are already filled on '.$generateBookingDate->format("jS F"));
+                                        }
+                                    }
+                                }
+
+                                if($wed_day === $day) {
+
+                                    if(!in_array($dates, $dates_array)) {
+
+                                        $dates_array[] = $dates;
+
+                                        if(($totalSleeps < $cabin->wed_sleeps)) {
+                                            $wed_sleeps_diff       = $cabin->wed_sleeps - $totalSleeps;
+
+                                            /* Available sleeps on regular wednesday */
+                                            $wed_sleeps_avail      = ($wed_sleeps_diff >= 0) ? $wed_sleeps_diff : 0;
+
+                                            if($sleepsRequest <= $wed_sleeps_avail) {
+                                                $availableStatus[] = 'available';
+                                            }
+                                            else {
+                                                $availableStatus[] = 'notAvailable';
+                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', $sleepsRequest.' Sleeps are not available on '.$generateBookingDate->format("jS F"));
+                                            }
+
+                                            /* Checking requested sleeps is greater or equal to inquiry. Cabin inquiry guest is greater than 0 */
+                                            if($sleepsRequest >= $cabin->wed_inquiry_guest) {
+                                                $availableStatus[] = 'notAvailable';
+
+                                                $request->session()->put('cabin_id', new \MongoDB\BSON\ObjectID($cabin->_id));
+                                                $request->session()->put('cabin_name', $cabin->name);
+                                                $request->session()->put('sleeping_place', $cabin->sleeping_place);
+                                                $request->session()->put('checkin_from', $cart->checkin_from->format('d.m.y'));
+                                                $request->session()->put('reserve_to', $cart->reserve_to->format('d.m.y'));
+                                                $request->session()->put('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id));
+                                                $request->session()->put('beds', 0);
+                                                $request->session()->put('dormitory', 0);
+                                                $request->session()->put('sleeps', $sleepsRequest);
+                                                $request->session()->put('guests', $sleepsRequest);
+
+                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', 'On '.$generateBookingDate->format("jS F").' booking is possible if no of sleeps is less than '.$cabin->wed_inquiry_guest.'. But you can send enquiry. Please '.$clickHere.' for inquiry');
+                                            }
+                                        }
+                                        else {
+                                            $availableStatus[] = 'notAvailable';
+                                            return redirect()->back()->with('notAvailable.'.$cart->_id.'.status',  'Sleeps are already filled on '.$generateBookingDate->format("jS F"));
+                                        }
+                                    }
+                                }
+
+                                if($thu_day === $day) {
+
+                                    if(!in_array($dates, $dates_array)) {
+
+                                        $dates_array[]             = $dates;
+
+                                        if(($totalSleeps < $cabin->thu_sleeps)) {
+                                            $thu_sleeps_diff       = $cabin->thu_sleeps - $totalSleeps;
+
+                                            /* Available sleeps on regular thursday */
+                                            $thu_sleeps_avail      = ($thu_sleeps_diff >= 0) ? $thu_sleeps_diff : 0;
+
+                                            if($sleepsRequest <= $thu_sleeps_avail) {
+                                                $availableStatus[] = 'available';
+                                            }
+                                            else {
+                                                $availableStatus[] = 'notAvailable';
+                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', $sleepsRequest.' Sleeps are not available on '.$generateBookingDate->format("jS F"));
+                                            }
+
+                                            /* Checking requested sleeps is greater or equal to inquiry. Cabin inquiry guest is greater than 0 */
+                                            if($sleepsRequest >= $cabin->thu_inquiry_guest) {
+                                                $availableStatus[] = 'notAvailable';
+
+                                                $request->session()->put('cabin_id', new \MongoDB\BSON\ObjectID($cabin->_id));
+                                                $request->session()->put('cabin_name', $cabin->name);
+                                                $request->session()->put('sleeping_place', $cabin->sleeping_place);
+                                                $request->session()->put('checkin_from', $cart->checkin_from->format('d.m.y'));
+                                                $request->session()->put('reserve_to', $cart->reserve_to->format('d.m.y'));
+                                                $request->session()->put('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id));
+                                                $request->session()->put('beds', 0);
+                                                $request->session()->put('dormitory', 0);
+                                                $request->session()->put('sleeps', $sleepsRequest);
+                                                $request->session()->put('guests', $sleepsRequest);
+
+                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', 'On '.$generateBookingDate->format("jS F").' booking is possible if no of sleeps is less than '.$cabin->thu_inquiry_guest.'. But you can send enquiry. Please '.$clickHere.' for inquiry');
+                                            }
+
+                                        }
+                                        else {
+                                            $availableStatus[] = 'notAvailable';
+                                            return redirect()->back()->with('notAvailable.'.$cart->_id.'.status',  'Sleeps are already filled on '.$generateBookingDate->format("jS F"));
+                                        }
+                                    }
+                                }
+
+                                if($fri_day === $day) {
+
+                                    if(!in_array($dates, $dates_array)) {
+
+                                        $dates_array[]             = $dates;
+
+                                        if(($totalSleeps < $cabin->fri_sleeps)) {
+                                            $fri_sleeps_diff       = $cabin->fri_sleeps - $totalSleeps;
+
+                                            /* Available sleeps on regular friday */
+                                            $fri_sleeps_avail      = ($fri_sleeps_diff >= 0) ? $fri_sleeps_diff : 0;
+
+                                            if($sleepsRequest <= $fri_sleeps_avail) {
+                                                $availableStatus[] = 'available';
+                                            }
+                                            else {
+                                                $availableStatus[] = 'notAvailable';
+                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', $sleepsRequest.' Sleeps are not available on '.$generateBookingDate->format("jS F"));
+                                            }
+
+                                            /* Checking requested sleeps is greater or equal to inquiry. Cabin inquiry guest is greater than 0 */
+                                            if($sleepsRequest >= $cabin->fri_inquiry_guest) {
+                                                $availableStatus[] = 'notAvailable';
+
+                                                $request->session()->put('cabin_id', new \MongoDB\BSON\ObjectID($cabin->_id));
+                                                $request->session()->put('cabin_name', $cabin->name);
+                                                $request->session()->put('sleeping_place', $cabin->sleeping_place);
+                                                $request->session()->put('checkin_from', $cart->checkin_from->format('d.m.y'));
+                                                $request->session()->put('reserve_to', $cart->reserve_to->format('d.m.y'));
+                                                $request->session()->put('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id));
+                                                $request->session()->put('beds', 0);
+                                                $request->session()->put('dormitory', 0);
+                                                $request->session()->put('sleeps', $sleepsRequest);
+                                                $request->session()->put('guests', $sleepsRequest);
+
+                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', 'On '.$generateBookingDate->format("jS F").' booking is possible if no of sleeps is less than '.$cabin->fri_inquiry_guest.'. But you can send enquiry. Please '.$clickHere.' for inquiry');
+                                            }
+                                        }
+                                        else {
+                                            $availableStatus[] = 'notAvailable';
+                                            return redirect()->back()->with('notAvailable.'.$cart->_id.'.status',  'Sleeps are already filled on '.$generateBookingDate->format("jS F"));
+                                        }
+                                    }
+                                }
+
+                                if($sat_day === $day) {
+
+                                    if(!in_array($dates, $dates_array)) {
+
+                                        $dates_array[] = $dates;
+
+                                        if(($totalSleeps < $cabin->sat_sleeps)) {
+                                            $sat_sleeps_diff       = $cabin->sat_sleeps - $totalSleeps;
+
+                                            /* Available sleeps on regular saturday */
+                                            $sat_sleeps_avail      = ($sat_sleeps_diff >= 0) ? $sat_sleeps_diff : 0;
+
+                                            if($sleepsRequest <= $sat_sleeps_avail) {
+                                                $availableStatus[] = 'available';
+                                            }
+                                            else {
+                                                $availableStatus[] = 'notAvailable';
+                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', $sleepsRequest.' Sleeps are not available on '.$generateBookingDate->format("jS F"));
+                                            }
+
+                                            /* Checking requested sleeps is greater or equal to inquiry. Cabin inquiry guest is greater than 0 */
+                                            if($sleepsRequest >= $cabin->sat_inquiry_guest) {
+                                                $availableStatus[] = 'notAvailable';
+
+                                                $request->session()->put('cabin_id', new \MongoDB\BSON\ObjectID($cabin->_id));
+                                                $request->session()->put('cabin_name', $cabin->name);
+                                                $request->session()->put('sleeping_place', $cabin->sleeping_place);
+                                                $request->session()->put('checkin_from', $cart->checkin_from->format('d.m.y'));
+                                                $request->session()->put('reserve_to', $cart->reserve_to->format('d.m.y'));
+                                                $request->session()->put('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id));
+                                                $request->session()->put('beds', 0);
+                                                $request->session()->put('dormitory', 0);
+                                                $request->session()->put('sleeps', $sleepsRequest);
+                                                $request->session()->put('guests', $sleepsRequest);
+
+                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', 'On '.$generateBookingDate->format("jS F").' booking is possible if no of sleeps is less than '.$cabin->sat_inquiry_guest.'. But you can send enquiry. Please '.$clickHere.' for inquiry');
+                                            }
+                                        }
+                                        else {
+                                            $availableStatus[] = 'notAvailable';
+                                            return redirect()->back()->with('notAvailable.'.$cart->_id.'.status',  'Sleeps are already filled on '.$generateBookingDate->format("jS F"));
+                                        }
+                                    }
+                                }
+
+                                if($sun_day === $day) {
+
+                                    if(!in_array($dates, $dates_array)) {
+
+                                        $dates_array[] = $dates;
+
+                                        if(($totalSleeps < $cabin->sun_sleeps)) {
+                                            $sun_sleeps_diff       = $cabin->sun_sleeps - $totalSleeps;
+
+                                            /* Available sleeps on regular sunday */
+                                            $sun_sleeps_avail      = ($sun_sleeps_diff >= 0) ? $sun_sleeps_diff : 0;
+
+                                            if($sleepsRequest <= $sun_sleeps_avail) {
+                                                $availableStatus[] = 'available';
+                                            }
+                                            else {
+                                                $availableStatus[] = 'notAvailable';
+                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', $sleepsRequest.' Sleeps are not available on '.$generateBookingDate->format("jS F"));
+                                            }
+
+                                            /* Checking requested sleeps is greater or equal to inquiry. Cabin inquiry guest is greater than 0 */
+                                            if($sleepsRequest >= $cabin->sun_inquiry_guest) {
+                                                $availableStatus[] = 'notAvailable';
+
+                                                $request->session()->put('cabin_id', new \MongoDB\BSON\ObjectID($cabin->_id));
+                                                $request->session()->put('cabin_name', $cabin->name);
+                                                $request->session()->put('sleeping_place', $cabin->sleeping_place);
+                                                $request->session()->put('checkin_from', $cart->checkin_from->format('d.m.y'));
+                                                $request->session()->put('reserve_to', $cart->reserve_to->format('d.m.y'));
+                                                $request->session()->put('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id));
+                                                $request->session()->put('beds', 0);
+                                                $request->session()->put('dormitory', 0);
+                                                $request->session()->put('sleeps', $sleepsRequest);
+                                                $request->session()->put('guests', $sleepsRequest);
+
+                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', 'On '.$generateBookingDate->format("jS F").' booking is possible if no of sleeps is less than '.$cabin->sun_inquiry_guest.'. But you can send enquiry. Please '.$clickHere.' for inquiry');
+                                            }
+                                        }
+                                        else {
+                                            $availableStatus[] = 'notAvailable';
+                                            return redirect()->back()->with('notAvailable.'.$cart->_id.'.status',  'Sleeps are already filled on '.$generateBookingDate->format("jS F"));
+                                        }
+                                    }
+                                }
+
+                            }
+
+                            /* Calculating sleeps for normal */
+                            if(!in_array($dates, $dates_array)) {
+
+                                if(($totalSleeps < $cabin->sleeps)) {
+                                    $normal_sleeps_diff    = $cabin->sleeps - $totalSleeps;
+
+                                    /* Available sleeps on normal */
+                                    $normal_sleeps_avail   = ($normal_sleeps_diff >= 0) ? $normal_sleeps_diff : 0;
+
+                                    if($sleepsRequest <= $normal_sleeps_avail) {
+                                        $availableStatus[] = 'available';
+                                    }
+                                    else {
+                                        $availableStatus[] = 'notAvailable';
+                                        return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', $sleepsRequest.' Sleeps are not available on '.$generateBookingDate->format("jS F"));
+                                    }
+
+                                    /* Checking requested sleeps is greater or equal to inquiry. Cabin inquiry guest is greater than 0 */
+                                    if($sleepsRequest >= $cabin->inquiry_starts) {
+                                        $availableStatus[] = 'notAvailable';
+
+                                        $request->session()->put('cabin_id', new \MongoDB\BSON\ObjectID($cabin->_id));
+                                        $request->session()->put('cabin_name', $cabin->name);
+                                        $request->session()->put('sleeping_place', $cabin->sleeping_place);
+                                        $request->session()->put('checkin_from', $cart->checkin_from->format('d.m.y'));
+                                        $request->session()->put('reserve_to', $cart->reserve_to->format('d.m.y'));
+                                        $request->session()->put('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id));
+                                        $request->session()->put('beds', 0);
+                                        $request->session()->put('dormitory', 0);
+                                        $request->session()->put('sleeps', $sleepsRequest);
+                                        $request->session()->put('guests', $sleepsRequest);
+
+
+                                        return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', 'On '.$generateBookingDate->format("jS F").' booking is possible if no of sleeps is less than '.$cabin->inquiry_starts.'. But you can send enquiry. Please '.$clickHere.' for inquiry');
+                                    }
+                                }
+                                else {
+                                    $availableStatus[] = 'notAvailable';
+                                    return redirect()->back()->with('notAvailable.'.$cart->_id.'.status',  'Sleeps are already filled on '.$generateBookingDate->format("jS F"));
+                                }
+
+                            }
+
+                        }
                         /* Checking bookings available ends */
                     }
 
+                    if(!in_array('notAvailable', $availableStatus)) {
+                        $available                        = 'success';
+                        $booking                          = Booking::find($cart->_id);
+                        $booking->order_id                = // prepare orderid
+                        $booking->beds                    = $bedsRequest;
+                        $booking->dormitory               = $dormsRequest;
+                        $booking->sleeps                  = ($cabin->sleeping_place === 1) ? $sleepsRequest : $requestBedsSumDorms;
+                        $booking->guests                  = ($cabin->sleeping_place === 1) ? $sleepsRequest : $requestBedsSumDorms;
+                        $booking->halfboard               = ($request->halfboard === '1') ? $request->halfboard : '0';
+                        $booking->comments                = $request->comments; //get comments
+                        $booking->prepayment_amount       = (float)//$sumPrepaymentAmount;// calculate amount
+                        $booking->total_prepayment_amount = (float)//$sumPrepaymentAmountServiceTotal; // calculate amount
+                        $booking->save();
+                    }
 
                 }
-
-
-                //dd($commentsRequest);// for testing purpose
-
             }
 
 
-            // Checking beds, dorms, sleeps availability
-            // Not need to check date in season
+
             // Update guest, beds, dorms, sleeps, halfboard, comments, total prepayment amount, prepayment amount, order_id
             // Redirect to payment choosing page
         }
-        else {
-            return redirect()->back();
-        }
+
+        return redirect()->back();
     }
 
     /**

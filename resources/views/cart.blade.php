@@ -28,16 +28,6 @@
                 </div>
             @endif
 
-                @if (session()->has('notAvailable'))
-                    <div id="flash" class="alert alert-danger">
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                        {!! session()->get('notAvailable') !!}
-                    </div>
-                @endif
-
-
             @isset($carts)
                  <form action="{{ route('cart.store') }}" method="post">
 
@@ -49,6 +39,20 @@
 
                         @forelse($carts as $key => $cart)
 
+                         @php
+                             $amount                  = ($cabinDetails->cabin($cart->cabin_id)->prepayment_amount * round(abs(strtotime($cart->checkin_from->format('Y-m-d')) - strtotime($cart->reserve_to->format('Y-m-d')))/86400)) * $cart->guests;
+                             $prepayment_amount[]     = ($cabinDetails->cabin($cart->cabin_id)->prepayment_amount * round(abs(strtotime($cart->checkin_from->format('Y-m-d')) - strtotime($cart->reserve_to->format('Y-m-d')))/86400)) * $cart->guests;
+
+                             /* For javascript cal */
+                             $amountBookingDays       = $cabinDetails->cabin($cart->cabin_id)->prepayment_amount * round(abs(strtotime($cart->checkin_from->format('Y-m-d')) - strtotime($cart->reserve_to->format('Y-m-d')))/86400);
+                             $inputBeds               = 'guest.'.$cart->_id.'.beds';
+                             $inputDormitory          = 'guest.'.$cart->_id.'.dormitory';
+                             $inputSleeps             = 'guest.'.$cart->_id.'.sleeps';
+                             $halfBoard               = 'guest.'.$cart->_id.'.halfboard';
+                             $inputComments           = 'guest.'.$cart->_id.'.comments';
+                             $notAvailStatus          = 'notAvailable.'.$cart->_id.'.status';
+                         @endphp
+
                             <div class="panel panel-default text-left panel-booking1 panel-default-booking1">
                                 <div class="panel-body panel-body-booking1">
                                     <div class="row content row-booking1">
@@ -59,22 +63,18 @@
 
                                             <h3 class="headliner-cabinname">{{ $cabinDetails->cabin($cart->cabin_id)->name }} - {{ $cabinDetails->cabin($cart->cabin_id)->region }}<span class="glyphicon glyphicon-question-sign" title="Please check your data and correct if necessary. To edit them, simply double-click on the desired field."></span></h3>
 
+                                            @if (session()->has($notAvailStatus))
+                                                <div id="flash" class="alert alert-danger">
+                                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                    {!! session()->get($notAvailStatus) !!}
+                                                </div>
+                                            @endif
+
                                             <div class="row row-booking1">
                                                 <div class="col-sm-12 col-sm-12-booking1 month-opening-booking1">
                                                     <div class="form-group row row-booking1 forComments" data-cartid="{{ $cart->_id }}">
-
-                                                        @php
-                                                            $amount                  = ($cabinDetails->cabin($cart->cabin_id)->prepayment_amount * round(abs(strtotime($cart->checkin_from->format('Y-m-d')) - strtotime($cart->reserve_to->format('Y-m-d')))/86400)) * $cart->guests;
-                                                            $prepayment_amount[]     = ($cabinDetails->cabin($cart->cabin_id)->prepayment_amount * round(abs(strtotime($cart->checkin_from->format('Y-m-d')) - strtotime($cart->reserve_to->format('Y-m-d')))/86400)) * $cart->guests;
-
-                                                            /* For javascript cal */
-                                                            $amountBookingDays       = $cabinDetails->cabin($cart->cabin_id)->prepayment_amount * round(abs(strtotime($cart->checkin_from->format('Y-m-d')) - strtotime($cart->reserve_to->format('Y-m-d')))/86400);
-                                                            $inputBeds               = 'guest.'.$cart->_id.'.beds';
-                                                            $inputDormitory          = 'guest.'.$cart->_id.'.dormitory';
-                                                            $inputSleeps             = 'guest.'.$cart->_id.'.sleeps';
-                                                            $halfBoard               = 'guest.'.$cart->_id.'.halfboard';
-                                                            $inputComments           = 'guest.'.$cart->_id.'.comments';
-                                                        @endphp
 
                                                         <div class="amountBookingDays_{{ $cart->_id }}" data-amountbookingdays="{{ $amountBookingDays }}"></div>
 
@@ -88,6 +88,7 @@
                                                                 <input type="text" class="form-control form-control-booking1" value="{{ $cart->reserve_to->format('d.m.y') }}"  readonly>
                                                             </div>
                                                         </div>
+
                                                         @if($cabinDetails->cabin($cart->cabin_id)->sleeping_place != 1)
                                                             <div class="col-sm-4 col-sm-4-f-booking1 col-sm-4-booking1 form-group {{ $errors->has($inputBeds) ? ' has-error' : '' }}">
                                                                 <select class="form-control form-control-booking1 jsBookCalBeds" name="guest[{{ $cart->_id }}][beds]" id="beds_{{ $cart->_id }}">
