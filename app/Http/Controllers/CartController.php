@@ -4,12 +4,12 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Requests\CartRequest;
-use App\Season;
 use App\Cabin;
 use App\Booking;
 use App\MountSchoolBooking;
-use App\Userlist;
 use App\Country;
+use App\Order;
+use Carbon\Carbon;
 use DateTime;
 use DatePeriod;
 use DateInterval;
@@ -106,17 +106,22 @@ class CartController extends Controller
      */
     public function store(CartRequest $request)
     {
-        if(isset($request->createBooking) && $request->createBooking === 'createBooking'){
-
-            $sleepsRequest         = 0;
+        if(isset($request->createBooking) && $request->createBooking === 'createBooking') {
+            $available             = 'failure';
             $bedsRequest           = 0;
             $dormsRequest          = 0;
             $requestBedsSumDorms   = 0;
-            $commentsRequest       = '';
-            $available             = 'failure';
+            $sleepsRequest         = 0;
+            $serviceTax            = 0;
+            $eachDepositWithTax    = 0;
+            $amountServiceTotal    = 0;
             $not_regular_dates     = [];
             $dates_array           = [];
             $availableStatus       = [];
+            $prepayment_amount     = [];
+            $sumPrepaymentAmount   = [];
+            $cartId                = [];
+
             $clickHere             = '<a href="/inquiry">click here</a>';
 
             $carts                 = Booking::where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
@@ -128,40 +133,84 @@ class CartController extends Controller
             if($carts){
                 foreach ($carts as $key => $cart) {
 
-                    $commentsRequest         = $request->guest[$cart->_id]['comments'];
+                    $cartId[]                 = $cart->_id;
 
-                    if ((int)$request->guest[$cart->_id]['sleeping_place'] === 1) {
-                        $sleepsRequest       = (int)$request->guest[$cart->_id]['sleeps'];
-                    }
-                    else {
-                        $bedsRequest         = (int)$request->guest[$cart->_id]['beds'];
-                        $dormsRequest        = (int)$request->guest[$cart->_id]['dormitory'];
-                        $requestBedsSumDorms = $bedsRequest + $dormsRequest;
-                    }
-
-                    $cabin                   = Cabin::where('is_delete', 0)
+                    $cabin                    = Cabin::where('is_delete', 0)
                         ->where('other_cabin', "0")
                         ->findOrFail($cart->cabin_id);
 
+                    /* Form request begin */
+                    $commentsRequest          = $request->guest[$cart->_id]['comments'];
+                    if(isset($request->guest[$cart->_id]['halfboard']))
+                    {
+                        $halfBoard            = $request->guest[$cart->_id]['halfboard'];
+                    }
+                    else {
+                        $halfBoard            = '0';
+                    }
+
+                    if ($cabin->sleeping_place === 1) {
+                        $sleepsRequest        = (int)$request->guest[$cart->_id]['sleeps'];
+                    }
+                    else {
+                        $bedsRequest          = (int)$request->guest[$cart->_id]['beds'];
+                        $dormsRequest         = (int)$request->guest[$cart->_id]['dormitory'];
+                        $requestBedsSumDorms  = $bedsRequest + $dormsRequest;
+                    }
+                    /* Form request end */
+
+                    /* Payment calculation begin */
+                    $monthBegin               = $cart->checkin_from->format('Y-m-d');
+                    $monthEnd                 = $cart->reserve_to->format('Y-m-d');
+                    $d1                       = new DateTime($monthBegin);
+                    $d2                       = new DateTime($monthEnd);
+                    $dateDifference           = $d2->diff($d1);
+                    $guestSleepsTypeCondition = ($cabin->sleeping_place === 1) ? $sleepsRequest : $requestBedsSumDorms;
+                    $amount                   = round(($cabin->prepayment_amount * $dateDifference->days) * $guestSleepsTypeCondition, 2);
+                    $prepayment_amount[]      = ($cabin->prepayment_amount * $dateDifference->days) * $guestSleepsTypeCondition;
+                    $sumPrepaymentAmount      = round(array_sum($prepayment_amount), 2);
+
+                    if($sumPrepaymentAmount <= 30) {
+                        $serviceTax           = env('SERVICE_TAX_ONE');
+                        $eachAmountPercentage = ($serviceTax / 100) * $amount;
+                        $eachDepositWithTax   = round($amount + $eachAmountPercentage, 2);
+                    }
+
+                    if($sumPrepaymentAmount > 30 && $sumPrepaymentAmount <= 100) {
+                        $serviceTax           = env('SERVICE_TAX_TWO');
+                        $eachAmountPercentage = ($serviceTax / 100) * $amount;
+                        $eachDepositWithTax   = round($amount + $eachAmountPercentage, 2);
+                    }
+
+                    if($sumPrepaymentAmount > 100) {
+                        $serviceTax           = env('SERVICE_TAX_THREE');
+                        $eachAmountPercentage = ($serviceTax / 100) * $amount;
+                        $eachDepositWithTax   = round($amount + $eachAmountPercentage, 2);
+                    }
+
+                    $amountPercentage         = ($serviceTax / 100) * $sumPrepaymentAmount;
+                    $amountServiceTotal       = round($sumPrepaymentAmount + $amountPercentage, 2);
+                    /* Payment calculation end */
+
                     // Generate date b/w checking from and to
-                    $generateBookingDates    = $this->generateDates($cart->checkin_from->format('Y-m-d'), $cart->reserve_to->format('Y-m-d'));
+                    $generateBookingDates     = $this->generateDates($cart->checkin_from->format('Y-m-d'), $cart->reserve_to->format('Y-m-d'));
 
                     foreach ($generateBookingDates as $generateBookingDate) {
 
-                        $dates      = $generateBookingDate->format('Y-m-d');
-                        $day        = $generateBookingDate->format('D');
+                        $dates                = $generateBookingDate->format('Y-m-d');
+                        $day                  = $generateBookingDate->format('D');
 
                         /* Checking bookings available begins */
-                        $mon_day    = ($cabin->mon_day === 1) ? 'Mon' : 0;
-                        $tue_day    = ($cabin->tue_day === 1) ? 'Tue' : 0;
-                        $wed_day    = ($cabin->wed_day === 1) ? 'Wed' : 0;
-                        $thu_day    = ($cabin->thu_day === 1) ? 'Thu' : 0;
-                        $fri_day    = ($cabin->fri_day === 1) ? 'Fri' : 0;
-                        $sat_day    = ($cabin->sat_day === 1) ? 'Sat' : 0;
-                        $sun_day    = ($cabin->sun_day === 1) ? 'Sun' : 0;
+                        $mon_day              = ($cabin->mon_day === 1) ? 'Mon' : 0;
+                        $tue_day              = ($cabin->tue_day === 1) ? 'Tue' : 0;
+                        $wed_day              = ($cabin->wed_day === 1) ? 'Wed' : 0;
+                        $thu_day              = ($cabin->thu_day === 1) ? 'Thu' : 0;
+                        $fri_day              = ($cabin->fri_day === 1) ? 'Fri' : 0;
+                        $sat_day              = ($cabin->sat_day === 1) ? 'Sat' : 0;
+                        $sun_day              = ($cabin->sun_day === 1) ? 'Sun' : 0;
 
                         /* Getting bookings from booking collection status 1=> Fix, 2=> Cancel, 3=> Completed, 4=> Request (Reservation), 5=> Waiting for payment, 6=> Expired, 7=> Inquiry, 8=> Cart */
-                        $bookings   = Booking::select('beds', 'dormitory', 'sleeps')
+                        $bookings             = Booking::select('beds', 'dormitory', 'sleeps')
                             ->where('is_delete', 0)
                             ->where('cabinname', $cabin->name)
                             ->whereIn('status', ['1', '4', '7', '8'])
@@ -170,7 +219,7 @@ class CartController extends Controller
                             ->get();
 
                         /* Getting bookings from mschool collection status 1=> Fix, 2=> Cancel, 3=> Completed, 4=> Request (Reservation), 5=> Waiting for payment, 6=> Expired, 7=> Inquiry, 8=> Cart */
-                        $msBookings = MountSchoolBooking::select('beds', 'dormitory', 'sleeps')
+                        $msBookings           = MountSchoolBooking::select('beds', 'dormitory', 'sleeps')
                             ->where('is_delete', 0)
                             ->where('cabin_name', $cabin->name)
                             ->whereIn('status', ['1', '4', '7', '8'])
@@ -180,25 +229,25 @@ class CartController extends Controller
 
                         /* Getting count of sleeps, beds and dorms */
                         if(count($bookings) > 0) {
-                            $sleeps          = $bookings->sum('sleeps');
-                            $beds            = $bookings->sum('beds');
-                            $dorms           = $bookings->sum('dormitory');
+                            $sleeps        = $bookings->sum('sleeps');
+                            $beds          = $bookings->sum('beds');
+                            $dorms         = $bookings->sum('dormitory');
                         }
                         else {
-                            $dorms           = 0;
-                            $beds            = 0;
-                            $sleeps          = 0;
+                            $dorms         = 0;
+                            $beds          = 0;
+                            $sleeps        = 0;
                         }
 
                         if(count($msBookings) > 0) {
-                            $msSleeps        = $msBookings->sum('sleeps');
-                            $msBeds          = $msBookings->sum('beds');
-                            $msDorms         = $msBookings->sum('dormitory');
+                            $msSleeps      = $msBookings->sum('sleeps');
+                            $msBeds        = $msBookings->sum('beds');
+                            $msDorms       = $msBookings->sum('dormitory');
                         }
                         else {
-                            $msSleeps        = 0;
-                            $msBeds          = 0;
-                            $msDorms         = 0;
+                            $msSleeps      = 0;
+                            $msBeds        = 0;
+                            $msDorms       = 0;
                         }
 
                         /* Taking beds, dorms and sleeps depends up on sleeping_place */
@@ -236,7 +285,7 @@ class CartController extends Controller
                                         }
                                         else {
                                             $availableStatus[]   = 'notAvailable';
-                                            return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', $bedsRequest.' Beds are not available on '.$generateBookingDate->format("jS F"));
+                                            return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', $bedsRequest.' Beds are not available on '.$generateBookingDate->format("jS F"))->withInput();
                                         }
 
                                         if($dormsRequest <= $not_regular_dorms_avail) {
@@ -244,7 +293,7 @@ class CartController extends Controller
                                         }
                                         else {
                                             $availableStatus[]   = 'notAvailable';
-                                            return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', $dormsRequest.' Dorms are not available on '.$generateBookingDate->format("jS F"));
+                                            return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', $dormsRequest.' Dorms are not available on '.$generateBookingDate->format("jS F"))->withInput();
                                         }
 
                                         if($requestBedsSumDorms >= $cabin->not_regular_inquiry_guest) {
@@ -261,12 +310,12 @@ class CartController extends Controller
                                             $request->session()->put('sleeps', $requestBedsSumDorms);
                                             $request->session()->put('guests', $requestBedsSumDorms);
 
-                                            return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', 'On '.$generateBookingDate->format("jS F").' booking is possible if sum of beds and dorms is less than '.$cabin->not_regular_inquiry_guest.'. But you can send enquiry. Please '.$clickHere.' for inquiry');
+                                            return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', 'On '.$generateBookingDate->format("jS F").' booking is possible if sum of beds and dorms is less than '.$cabin->not_regular_inquiry_guest.'. But you can send enquiry. Please '.$clickHere.' for inquiry')->withInput();
                                         }
                                     }
                                     else {
                                         $availableStatus[] = 'notAvailable';
-                                        return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', 'Beds and Dorms are already filled on '.$generateBookingDate->format("jS F"));
+                                        return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', 'Beds and Dorms are already filled on '.$generateBookingDate->format("jS F"))->withInput();
                                     }
 
                                 }
@@ -294,7 +343,7 @@ class CartController extends Controller
                                             }
                                             else {
                                                 $availableStatus[] = 'notAvailable';
-                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', $bedsRequest.' Beds are not available on '.$generateBookingDate->format("jS F"));
+                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', $bedsRequest.' Beds are not available on '.$generateBookingDate->format("jS F"))->withInput();
                                             }
 
                                             if($dormsRequest <= $mon_dorms_avail) {
@@ -302,7 +351,7 @@ class CartController extends Controller
                                             }
                                             else {
                                                 $availableStatus[] = 'notAvailable';
-                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', $dormsRequest.' Dorms are not available on '.$generateBookingDate->format("jS F"));
+                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', $dormsRequest.' Dorms are not available on '.$generateBookingDate->format("jS F"))->withInput();
                                             }
 
                                             /* Checking requested beds and dorms sum is greater or equal to inquiry. Cabin inquiry guest is greater than 0 */
@@ -320,12 +369,12 @@ class CartController extends Controller
                                                 $request->session()->put('sleeps', $requestBedsSumDorms);
                                                 $request->session()->put('guests', $requestBedsSumDorms);
 
-                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', 'On '.$generateBookingDate->format("jS F").' booking is possible if sum of beds and dorms is less than '.$cabin->mon_inquiry_guest.'. But you can send enquiry. Please '.$clickHere.' for inquiry');
+                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', 'On '.$generateBookingDate->format("jS F").' booking is possible if sum of beds and dorms is less than '.$cabin->mon_inquiry_guest.'. But you can send enquiry. Please '.$clickHere.' for inquiry')->withInput();
                                             }
                                         }
                                         else {
                                             $availableStatus[] = 'notAvailable';
-                                            return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', 'Beds and Dorms are already filled on '.$generateBookingDate->format("jS F"));
+                                            return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', 'Beds and Dorms are already filled on '.$generateBookingDate->format("jS F"))->withInput();
                                         }
                                     }
                                 }
@@ -349,7 +398,7 @@ class CartController extends Controller
                                             }
                                             else {
                                                 $availableStatus[] = 'notAvailable';
-                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', $bedsRequest.' Beds are not available on '.$generateBookingDate->format("jS F"));
+                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', $bedsRequest.' Beds are not available on '.$generateBookingDate->format("jS F"))->withInput();
                                             }
 
                                             if($dormsRequest <= $tue_dorms_avail) {
@@ -357,7 +406,7 @@ class CartController extends Controller
                                             }
                                             else {
                                                 $availableStatus[] = 'notAvailable';
-                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', $dormsRequest.' Dorms are not available on '.$generateBookingDate->format("jS F"));
+                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', $dormsRequest.' Dorms are not available on '.$generateBookingDate->format("jS F"))->withInput();
                                             }
 
                                             /* Checking requested beds and dorms sum is greater or equal to inquiry. Cabin inquiry guest is greater than 0 */
@@ -375,12 +424,12 @@ class CartController extends Controller
                                                 $request->session()->put('sleeps', $requestBedsSumDorms);
                                                 $request->session()->put('guests', $requestBedsSumDorms);
 
-                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', 'On '.$generateBookingDate->format("jS F").' booking is possible if sum of beds and dorms is less than '.$cabin->tue_inquiry_guest.'. But you can send enquiry. Please '.$clickHere.' for inquiry');
+                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', 'On '.$generateBookingDate->format("jS F").' booking is possible if sum of beds and dorms is less than '.$cabin->tue_inquiry_guest.'. But you can send enquiry. Please '.$clickHere.' for inquiry')->withInput();
                                             }
                                         }
                                         else {
                                             $availableStatus[] = 'notAvailable';
-                                            return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', 'Beds and Dorms are already filled on '.$generateBookingDate->format("jS F"));
+                                            return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', 'Beds and Dorms are already filled on '.$generateBookingDate->format("jS F"))->withInput();
                                         }
                                     }
                                 }
@@ -404,7 +453,7 @@ class CartController extends Controller
                                             }
                                             else {
                                                 $availableStatus[] = 'notAvailable';
-                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', $bedsRequest.' Beds are not available on '.$generateBookingDate->format("jS F"));
+                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', $bedsRequest.' Beds are not available on '.$generateBookingDate->format("jS F"))->withInput();
                                             }
 
                                             if($dormsRequest <= $wed_dorms_avail) {
@@ -412,7 +461,7 @@ class CartController extends Controller
                                             }
                                             else {
                                                 $availableStatus[] = 'notAvailable';
-                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', $dormsRequest.' Dorms are not available on '.$generateBookingDate->format("jS F"));
+                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', $dormsRequest.' Dorms are not available on '.$generateBookingDate->format("jS F"))->withInput();
                                             }
 
                                             /* Checking requested beds and dorms sum is greater or equal to inquiry. Cabin inquiry guest is greater than 0 */
@@ -430,12 +479,12 @@ class CartController extends Controller
                                                 $request->session()->put('sleeps', $requestBedsSumDorms);
                                                 $request->session()->put('guests', $requestBedsSumDorms);
 
-                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', 'On '.$generateBookingDate->format("jS F").' booking is possible if sum of beds and dorms is less than '.$cabin->wed_inquiry_guest.'. But you can send enquiry. Please '.$clickHere.' for inquiry');
+                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', 'On '.$generateBookingDate->format("jS F").' booking is possible if sum of beds and dorms is less than '.$cabin->wed_inquiry_guest.'. But you can send enquiry. Please '.$clickHere.' for inquiry')->withInput();
                                             }
                                         }
                                         else {
                                             $availableStatus[] = 'notAvailable';
-                                            return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', 'Beds and Dorms are already filled on '.$generateBookingDate->format("jS F"));
+                                            return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', 'Beds and Dorms are already filled on '.$generateBookingDate->format("jS F"))->withInput();
                                         }
                                     }
                                 }
@@ -459,7 +508,7 @@ class CartController extends Controller
                                             }
                                             else {
                                                 $availableStatus[] = 'notAvailable';
-                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', $bedsRequest.' Beds are not available on '.$generateBookingDate->format("jS F"));
+                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', $bedsRequest.' Beds are not available on '.$generateBookingDate->format("jS F"))->withInput();
                                             }
 
                                             if($dormsRequest <= $thu_dorms_avail) {
@@ -467,7 +516,7 @@ class CartController extends Controller
                                             }
                                             else {
                                                 $availableStatus[] = 'notAvailable';
-                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', $dormsRequest.' Dorms are not available on '.$generateBookingDate->format("jS F"));
+                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', $dormsRequest.' Dorms are not available on '.$generateBookingDate->format("jS F"))->withInput();
                                             }
 
                                             /* Checking requested beds and dorms sum is greater or equal to inquiry. Cabin inquiry guest is greater than 0 */
@@ -485,12 +534,12 @@ class CartController extends Controller
                                                 $request->session()->put('sleeps', $requestBedsSumDorms);
                                                 $request->session()->put('guests', $requestBedsSumDorms);
 
-                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', 'On '.$generateBookingDate->format("jS F").' booking is possible if sum of beds and dorms is less than '.$cabin->thu_inquiry_guest.'. But you can send enquiry. Please '.$clickHere.' for inquiry');
+                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', 'On '.$generateBookingDate->format("jS F").' booking is possible if sum of beds and dorms is less than '.$cabin->thu_inquiry_guest.'. But you can send enquiry. Please '.$clickHere.' for inquiry')->withInput();
                                             }
                                         }
                                         else {
                                             $availableStatus[] = 'notAvailable';
-                                            return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', 'Beds and Dorms are already filled on '.$generateBookingDate->format("jS F"));
+                                            return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', 'Beds and Dorms are already filled on '.$generateBookingDate->format("jS F"))->withInput();
                                         }
                                     }
                                 }
@@ -514,7 +563,7 @@ class CartController extends Controller
                                             }
                                             else {
                                                 $availableStatus[] = 'notAvailable';
-                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', $bedsRequest.' Beds are not available on '.$generateBookingDate->format("jS F"));
+                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', $bedsRequest.' Beds are not available on '.$generateBookingDate->format("jS F"))->withInput();
                                             }
 
                                             if($dormsRequest <= $fri_dorms_avail) {
@@ -522,7 +571,7 @@ class CartController extends Controller
                                             }
                                             else {
                                                 $availableStatus[] = 'notAvailable';
-                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', $dormsRequest.' Dorms are not available on '.$generateBookingDate->format("jS F"));
+                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', $dormsRequest.' Dorms are not available on '.$generateBookingDate->format("jS F"))->withInput();
                                             }
 
                                             /* Checking requested beds and dorms sum is greater or equal to inquiry. Cabin inquiry guest is greater than 0 */
@@ -540,12 +589,12 @@ class CartController extends Controller
                                                 $request->session()->put('sleeps', $requestBedsSumDorms);
                                                 $request->session()->put('guests', $requestBedsSumDorms);
 
-                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', 'On '.$generateBookingDate->format("jS F").' booking is possible if sum of beds and dorms is less than '.$cabin->fri_inquiry_guest.'. But you can send enquiry. Please '.$clickHere.' for inquiry');
+                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', 'On '.$generateBookingDate->format("jS F").' booking is possible if sum of beds and dorms is less than '.$cabin->fri_inquiry_guest.'. But you can send enquiry. Please '.$clickHere.' for inquiry')->withInput();
                                             }
                                         }
                                         else {
                                             $availableStatus[] = 'notAvailable';
-                                            return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', 'Beds and Dorms are already filled on '.$generateBookingDate->format("jS F"));
+                                            return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', 'Beds and Dorms are already filled on '.$generateBookingDate->format("jS F"))->withInput();
                                         }
                                     }
                                 }
@@ -569,7 +618,7 @@ class CartController extends Controller
                                             }
                                             else {
                                                 $availableStatus[] = 'notAvailable';
-                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', $bedsRequest.' Beds are not available on '.$generateBookingDate->format("jS F"));
+                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', $bedsRequest.' Beds are not available on '.$generateBookingDate->format("jS F"))->withInput();
                                             }
 
                                             if($dormsRequest <= $sat_dorms_avail) {
@@ -577,7 +626,7 @@ class CartController extends Controller
                                             }
                                             else {
                                                 $availableStatus[] = 'notAvailable';
-                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', $dormsRequest.' Dorms are not available on '.$generateBookingDate->format("jS F"));
+                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', $dormsRequest.' Dorms are not available on '.$generateBookingDate->format("jS F"))->withInput();
                                             }
 
                                             /* Checking requested beds and dorms sum is greater or equal to inquiry. Cabin inquiry guest is greater than 0 */
@@ -595,12 +644,12 @@ class CartController extends Controller
                                                 $request->session()->put('sleeps', $requestBedsSumDorms);
                                                 $request->session()->put('guests', $requestBedsSumDorms);
 
-                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', 'On '.$generateBookingDate->format("jS F").' booking is possible if sum of beds and dorms is less than '.$cabin->sat_inquiry_guest.'. But you can send enquiry. Please '.$clickHere.' for inquiry');
+                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', 'On '.$generateBookingDate->format("jS F").' booking is possible if sum of beds and dorms is less than '.$cabin->sat_inquiry_guest.'. But you can send enquiry. Please '.$clickHere.' for inquiry')->withInput();
                                             }
                                         }
                                         else {
                                             $availableStatus[] = 'notAvailable';
-                                            return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', 'Beds and Dorms are already filled on '.$generateBookingDate->format("jS F"));
+                                            return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', 'Beds and Dorms are already filled on '.$generateBookingDate->format("jS F"))->withInput();
                                         }
                                     }
                                 }
@@ -624,7 +673,7 @@ class CartController extends Controller
                                             }
                                             else {
                                                 $availableStatus[] = 'notAvailable';
-                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', $bedsRequest.' Beds are not available on '.$generateBookingDate->format("jS F"));
+                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', $bedsRequest.' Beds are not available on '.$generateBookingDate->format("jS F"))->withInput();
                                             }
 
                                             if($dormsRequest <= $sun_dorms_avail) {
@@ -632,7 +681,7 @@ class CartController extends Controller
                                             }
                                             else {
                                                 $availableStatus[] = 'notAvailable';
-                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', $dormsRequest.' Dorms are not available on '.$generateBookingDate->format("jS F"));
+                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', $dormsRequest.' Dorms are not available on '.$generateBookingDate->format("jS F"))->withInput();
                                             }
 
                                             /* Checking requested beds and dorms sum is greater or equal to inquiry. Cabin inquiry guest is greater than 0 */
@@ -650,12 +699,12 @@ class CartController extends Controller
                                                 $request->session()->put('sleeps', $requestBedsSumDorms);
                                                 $request->session()->put('guests', $requestBedsSumDorms);
 
-                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', 'On '.$generateBookingDate->format("jS F").' booking is possible if sum of beds and dorms is less than '.$cabin->sun_inquiry_guest.'. But you can send enquiry. Please '.$clickHere.' for inquiry');
+                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', 'On '.$generateBookingDate->format("jS F").' booking is possible if sum of beds and dorms is less than '.$cabin->sun_inquiry_guest.'. But you can send enquiry. Please '.$clickHere.' for inquiry')->withInput();
                                             }
                                         }
                                         else {
                                             $availableStatus[] = 'notAvailable';
-                                            return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', 'Beds and Dorms are already filled on '.$generateBookingDate->format("jS F"));
+                                            return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', 'Beds and Dorms are already filled on '.$generateBookingDate->format("jS F"))->withInput();
                                         }
                                     }
                                 }
@@ -677,7 +726,7 @@ class CartController extends Controller
                                     }
                                     else {
                                         $availableStatus[] = 'notAvailable';
-                                        return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', $bedsRequest.' Beds are not available on '.$generateBookingDate->format("jS F"));
+                                        return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', $bedsRequest.' Beds are not available on '.$generateBookingDate->format("jS F"))->withInput();
                                     }
 
                                     if($dormsRequest <= $normal_dorms_avail) {
@@ -685,7 +734,7 @@ class CartController extends Controller
                                     }
                                     else {
                                         $availableStatus[] = 'notAvailable';
-                                        return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', $dormsRequest.' Dorms are not available on '.$generateBookingDate->format("jS F"));
+                                        return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', $dormsRequest.' Dorms are not available on '.$generateBookingDate->format("jS F"))->withInput();
                                     }
 
                                     /* Checking requested beds and dorms sum is greater or equal to inquiry. Cabin inquiry guest is greater than 0 */
@@ -703,18 +752,18 @@ class CartController extends Controller
                                         $request->session()->put('sleeps', $requestBedsSumDorms);
                                         $request->session()->put('guests', $requestBedsSumDorms);
 
-                                        return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', 'On '.$generateBookingDate->format("jS F").' booking is possible if sum of beds and dorms is less than '.$cabin->inquiry_starts.'. But you can send enquiry. Please '.$clickHere.' for inquiry');
+                                        return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', 'On '.$generateBookingDate->format("jS F").' booking is possible if sum of beds and dorms is less than '.$cabin->inquiry_starts.'. But you can send enquiry. Please '.$clickHere.' for inquiry')->withInput();
                                     }
                                 }
                                 else {
                                     $availableStatus[] = 'notAvailable';
-                                    return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', 'Beds and Dorms are already filled on '.$generateBookingDate->format("jS F"));
+                                    return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', 'Beds and Dorms are already filled on '.$generateBookingDate->format("jS F"))->withInput();
                                 }
                             }
 
                         }
                         else {
-                            $totalSleeps  = ($sleeps + $msSleeps) - $cart->sleeps;
+                            $totalSleeps   = ($sleeps + $msSleeps) - $cart->sleeps;
 
                             /* Calculating sleeps for not regular */
                             if($cabin->not_regular === 1) {
@@ -742,7 +791,7 @@ class CartController extends Controller
                                         }
                                         else {
                                             $availableStatus[] = 'notAvailable';
-                                            return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', $sleepsRequest.' Sleeps are not available on '.$generateBookingDate->format("jS F"));
+                                            return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', $sleepsRequest.' Sleeps are not available on '.$generateBookingDate->format("jS F"))->withInput();
                                         }
 
                                         /* Checking requested sleeps is greater or equal to inquiry. Cabin inquiry guest is greater than 0 */
@@ -760,12 +809,12 @@ class CartController extends Controller
                                             $request->session()->put('sleeps', $sleepsRequest);
                                             $request->session()->put('guests', $sleepsRequest);
 
-                                            return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', 'On '.$generateBookingDate->format("jS F").' booking is possible if no of sleeps is less than '.$cabin->not_regular_inquiry_guest.'. But you can send enquiry. Please '.$clickHere.' for inquiry');
+                                            return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', 'On '.$generateBookingDate->format("jS F").' booking is possible if no of sleeps is less than '.$cabin->not_regular_inquiry_guest.'. But you can send enquiry. Please '.$clickHere.' for inquiry')->withInput();
                                         }
                                     }
                                     else {
                                         $availableStatus[] = 'notAvailable';
-                                        return redirect()->back()->with('notAvailable.'.$cart->_id.'.status',  'Sleeps are already filled on '.$generateBookingDate->format("jS F"));
+                                        return redirect()->back()->with('notAvailable.'.$cart->_id.'.status',  'Sleeps are already filled on '.$generateBookingDate->format("jS F"))->withInput();
                                     }
                                 }
                             }
@@ -790,7 +839,7 @@ class CartController extends Controller
                                             }
                                             else {
                                                 $availableStatus[] = 'notAvailable';
-                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', $sleepsRequest.' Sleeps are not available on '.$generateBookingDate->format("jS F"));
+                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', $sleepsRequest.' Sleeps are not available on '.$generateBookingDate->format("jS F"))->withInput();
                                             }
 
                                             /* Checking requested sleeps is greater or equal to inquiry. Cabin inquiry guest is greater than 0 */
@@ -808,12 +857,12 @@ class CartController extends Controller
                                                 $request->session()->put('sleeps', $sleepsRequest);
                                                 $request->session()->put('guests', $sleepsRequest);
 
-                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', 'On '.$generateBookingDate->format("jS F").' booking is possible if no of sleeps is less than '.$cabin->mon_inquiry_guest.'. But you can send enquiry. Please '.$clickHere.' for inquiry');
+                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', 'On '.$generateBookingDate->format("jS F").' booking is possible if no of sleeps is less than '.$cabin->mon_inquiry_guest.'. But you can send enquiry. Please '.$clickHere.' for inquiry')->withInput();
                                             }
                                         }
                                         else {
                                             $availableStatus[] = 'notAvailable';
-                                            return redirect()->back()->with('notAvailable.'.$cart->_id.'.status',  'Sleeps are already filled on '.$generateBookingDate->format("jS F"));
+                                            return redirect()->back()->with('notAvailable.'.$cart->_id.'.status',  'Sleeps are already filled on '.$generateBookingDate->format("jS F"))->withInput();
                                         }
                                     }
                                 }
@@ -835,7 +884,7 @@ class CartController extends Controller
                                             }
                                             else {
                                                 $availableStatus[] = 'notAvailable';
-                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', $sleepsRequest.' Sleeps are not available on '.$generateBookingDate->format("jS F"));
+                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', $sleepsRequest.' Sleeps are not available on '.$generateBookingDate->format("jS F"))->withInput();
                                             }
 
                                             /* Checking requested sleeps is greater or equal to inquiry. Cabin inquiry guest is greater than 0 */
@@ -853,12 +902,12 @@ class CartController extends Controller
                                                 $request->session()->put('sleeps', $sleepsRequest);
                                                 $request->session()->put('guests', $sleepsRequest);
 
-                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', 'On '.$generateBookingDate->format("jS F").' booking is possible if no of sleeps is less than '.$cabin->tue_inquiry_guest.'. But you can send enquiry. Please '.$clickHere.' for inquiry');
+                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', 'On '.$generateBookingDate->format("jS F").' booking is possible if no of sleeps is less than '.$cabin->tue_inquiry_guest.'. But you can send enquiry. Please '.$clickHere.' for inquiry')->withInput();
                                             }
                                         }
                                         else {
                                             $availableStatus[] = 'notAvailable';
-                                            return redirect()->back()->with('notAvailable.'.$cart->_id.'.status',  'Sleeps are already filled on '.$generateBookingDate->format("jS F"));
+                                            return redirect()->back()->with('notAvailable.'.$cart->_id.'.status',  'Sleeps are already filled on '.$generateBookingDate->format("jS F"))->withInput();
                                         }
                                     }
                                 }
@@ -880,7 +929,7 @@ class CartController extends Controller
                                             }
                                             else {
                                                 $availableStatus[] = 'notAvailable';
-                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', $sleepsRequest.' Sleeps are not available on '.$generateBookingDate->format("jS F"));
+                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', $sleepsRequest.' Sleeps are not available on '.$generateBookingDate->format("jS F"))->withInput();
                                             }
 
                                             /* Checking requested sleeps is greater or equal to inquiry. Cabin inquiry guest is greater than 0 */
@@ -898,12 +947,12 @@ class CartController extends Controller
                                                 $request->session()->put('sleeps', $sleepsRequest);
                                                 $request->session()->put('guests', $sleepsRequest);
 
-                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', 'On '.$generateBookingDate->format("jS F").' booking is possible if no of sleeps is less than '.$cabin->wed_inquiry_guest.'. But you can send enquiry. Please '.$clickHere.' for inquiry');
+                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', 'On '.$generateBookingDate->format("jS F").' booking is possible if no of sleeps is less than '.$cabin->wed_inquiry_guest.'. But you can send enquiry. Please '.$clickHere.' for inquiry')->withInput();
                                             }
                                         }
                                         else {
                                             $availableStatus[] = 'notAvailable';
-                                            return redirect()->back()->with('notAvailable.'.$cart->_id.'.status',  'Sleeps are already filled on '.$generateBookingDate->format("jS F"));
+                                            return redirect()->back()->with('notAvailable.'.$cart->_id.'.status',  'Sleeps are already filled on '.$generateBookingDate->format("jS F"))->withInput();
                                         }
                                     }
                                 }
@@ -925,7 +974,7 @@ class CartController extends Controller
                                             }
                                             else {
                                                 $availableStatus[] = 'notAvailable';
-                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', $sleepsRequest.' Sleeps are not available on '.$generateBookingDate->format("jS F"));
+                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', $sleepsRequest.' Sleeps are not available on '.$generateBookingDate->format("jS F"))->withInput();
                                             }
 
                                             /* Checking requested sleeps is greater or equal to inquiry. Cabin inquiry guest is greater than 0 */
@@ -943,13 +992,13 @@ class CartController extends Controller
                                                 $request->session()->put('sleeps', $sleepsRequest);
                                                 $request->session()->put('guests', $sleepsRequest);
 
-                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', 'On '.$generateBookingDate->format("jS F").' booking is possible if no of sleeps is less than '.$cabin->thu_inquiry_guest.'. But you can send enquiry. Please '.$clickHere.' for inquiry');
+                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', 'On '.$generateBookingDate->format("jS F").' booking is possible if no of sleeps is less than '.$cabin->thu_inquiry_guest.'. But you can send enquiry. Please '.$clickHere.' for inquiry')->withInput();
                                             }
 
                                         }
                                         else {
                                             $availableStatus[] = 'notAvailable';
-                                            return redirect()->back()->with('notAvailable.'.$cart->_id.'.status',  'Sleeps are already filled on '.$generateBookingDate->format("jS F"));
+                                            return redirect()->back()->with('notAvailable.'.$cart->_id.'.status',  'Sleeps are already filled on '.$generateBookingDate->format("jS F"))->withInput();
                                         }
                                     }
                                 }
@@ -971,7 +1020,7 @@ class CartController extends Controller
                                             }
                                             else {
                                                 $availableStatus[] = 'notAvailable';
-                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', $sleepsRequest.' Sleeps are not available on '.$generateBookingDate->format("jS F"));
+                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', $sleepsRequest.' Sleeps are not available on '.$generateBookingDate->format("jS F"))->withInput();
                                             }
 
                                             /* Checking requested sleeps is greater or equal to inquiry. Cabin inquiry guest is greater than 0 */
@@ -989,12 +1038,12 @@ class CartController extends Controller
                                                 $request->session()->put('sleeps', $sleepsRequest);
                                                 $request->session()->put('guests', $sleepsRequest);
 
-                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', 'On '.$generateBookingDate->format("jS F").' booking is possible if no of sleeps is less than '.$cabin->fri_inquiry_guest.'. But you can send enquiry. Please '.$clickHere.' for inquiry');
+                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', 'On '.$generateBookingDate->format("jS F").' booking is possible if no of sleeps is less than '.$cabin->fri_inquiry_guest.'. But you can send enquiry. Please '.$clickHere.' for inquiry')->withInput();
                                             }
                                         }
                                         else {
                                             $availableStatus[] = 'notAvailable';
-                                            return redirect()->back()->with('notAvailable.'.$cart->_id.'.status',  'Sleeps are already filled on '.$generateBookingDate->format("jS F"));
+                                            return redirect()->back()->with('notAvailable.'.$cart->_id.'.status',  'Sleeps are already filled on '.$generateBookingDate->format("jS F"))->withInput();
                                         }
                                     }
                                 }
@@ -1016,7 +1065,7 @@ class CartController extends Controller
                                             }
                                             else {
                                                 $availableStatus[] = 'notAvailable';
-                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', $sleepsRequest.' Sleeps are not available on '.$generateBookingDate->format("jS F"));
+                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', $sleepsRequest.' Sleeps are not available on '.$generateBookingDate->format("jS F"))->withInput();
                                             }
 
                                             /* Checking requested sleeps is greater or equal to inquiry. Cabin inquiry guest is greater than 0 */
@@ -1034,12 +1083,12 @@ class CartController extends Controller
                                                 $request->session()->put('sleeps', $sleepsRequest);
                                                 $request->session()->put('guests', $sleepsRequest);
 
-                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', 'On '.$generateBookingDate->format("jS F").' booking is possible if no of sleeps is less than '.$cabin->sat_inquiry_guest.'. But you can send enquiry. Please '.$clickHere.' for inquiry');
+                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', 'On '.$generateBookingDate->format("jS F").' booking is possible if no of sleeps is less than '.$cabin->sat_inquiry_guest.'. But you can send enquiry. Please '.$clickHere.' for inquiry')->withInput();
                                             }
                                         }
                                         else {
                                             $availableStatus[] = 'notAvailable';
-                                            return redirect()->back()->with('notAvailable.'.$cart->_id.'.status',  'Sleeps are already filled on '.$generateBookingDate->format("jS F"));
+                                            return redirect()->back()->with('notAvailable.'.$cart->_id.'.status',  'Sleeps are already filled on '.$generateBookingDate->format("jS F"))->withInput();
                                         }
                                     }
                                 }
@@ -1061,7 +1110,7 @@ class CartController extends Controller
                                             }
                                             else {
                                                 $availableStatus[] = 'notAvailable';
-                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', $sleepsRequest.' Sleeps are not available on '.$generateBookingDate->format("jS F"));
+                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', $sleepsRequest.' Sleeps are not available on '.$generateBookingDate->format("jS F"))->withInput();
                                             }
 
                                             /* Checking requested sleeps is greater or equal to inquiry. Cabin inquiry guest is greater than 0 */
@@ -1079,12 +1128,12 @@ class CartController extends Controller
                                                 $request->session()->put('sleeps', $sleepsRequest);
                                                 $request->session()->put('guests', $sleepsRequest);
 
-                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', 'On '.$generateBookingDate->format("jS F").' booking is possible if no of sleeps is less than '.$cabin->sun_inquiry_guest.'. But you can send enquiry. Please '.$clickHere.' for inquiry');
+                                                return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', 'On '.$generateBookingDate->format("jS F").' booking is possible if no of sleeps is less than '.$cabin->sun_inquiry_guest.'. But you can send enquiry. Please '.$clickHere.' for inquiry')->withInput();
                                             }
                                         }
                                         else {
                                             $availableStatus[] = 'notAvailable';
-                                            return redirect()->back()->with('notAvailable.'.$cart->_id.'.status',  'Sleeps are already filled on '.$generateBookingDate->format("jS F"));
+                                            return redirect()->back()->with('notAvailable.'.$cart->_id.'.status',  'Sleeps are already filled on '.$generateBookingDate->format("jS F"))->withInput();
                                         }
                                     }
                                 }
@@ -1105,7 +1154,7 @@ class CartController extends Controller
                                     }
                                     else {
                                         $availableStatus[] = 'notAvailable';
-                                        return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', $sleepsRequest.' Sleeps are not available on '.$generateBookingDate->format("jS F"));
+                                        return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', $sleepsRequest.' Sleeps are not available on '.$generateBookingDate->format("jS F"))->withInput();
                                     }
 
                                     /* Checking requested sleeps is greater or equal to inquiry. Cabin inquiry guest is greater than 0 */
@@ -1124,12 +1173,12 @@ class CartController extends Controller
                                         $request->session()->put('guests', $sleepsRequest);
 
 
-                                        return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', 'On '.$generateBookingDate->format("jS F").' booking is possible if no of sleeps is less than '.$cabin->inquiry_starts.'. But you can send enquiry. Please '.$clickHere.' for inquiry');
+                                        return redirect()->back()->with('notAvailable.'.$cart->_id.'.status', 'On '.$generateBookingDate->format("jS F").' booking is possible if no of sleeps is less than '.$cabin->inquiry_starts.'. But you can send enquiry. Please '.$clickHere.' for inquiry')->withInput();
                                     }
                                 }
                                 else {
                                     $availableStatus[] = 'notAvailable';
-                                    return redirect()->back()->with('notAvailable.'.$cart->_id.'.status',  'Sleeps are already filled on '.$generateBookingDate->format("jS F"));
+                                    return redirect()->back()->with('notAvailable.'.$cart->_id.'.status',  'Sleeps are already filled on '.$generateBookingDate->format("jS F"))->withInput();
                                 }
 
                             }
@@ -1139,26 +1188,39 @@ class CartController extends Controller
                     }
 
                     if(!in_array('notAvailable', $availableStatus)) {
-                        $available                        = 'success';
-                        $booking                          = Booking::find($cart->_id);
-                        $booking->order_id                = // prepare orderid
-                        $booking->beds                    = $bedsRequest;
-                        $booking->dormitory               = $dormsRequest;
-                        $booking->sleeps                  = ($cabin->sleeping_place === 1) ? $sleepsRequest : $requestBedsSumDorms;
-                        $booking->guests                  = ($cabin->sleeping_place === 1) ? $sleepsRequest : $requestBedsSumDorms;
-                        $booking->halfboard               = ($request->halfboard === '1') ? $request->halfboard : '0';
-                        $booking->comments                = $request->comments; //get comments
-                        $booking->prepayment_amount       = (float)//$sumPrepaymentAmount;// calculate amount
-                        $booking->total_prepayment_amount = (float)//$sumPrepaymentAmountServiceTotal; // calculate amount
+                        $available                         = 'success';
+                        $booking                           = Booking::find($cart->_id);
+                        $booking->beds                     = ($cabin->sleeping_place != 1) ? $bedsRequest : 0;
+                        $booking->dormitory                = ($cabin->sleeping_place != 1) ? $dormsRequest : 0;
+                        $booking->sleeps                   = ($cabin->sleeping_place === 1) ? $sleepsRequest : $requestBedsSumDorms;
+                        $booking->guests                   = ($cabin->sleeping_place === 1) ? $sleepsRequest : $requestBedsSumDorms;
+                        $booking->halfboard                = $halfBoard;
+                        $booking->comments                 = $commentsRequest;
+                        $booking->prepayment_amount        = (float)$amount;
+                        $booking->total_prepayment_amount  = (float)$eachDepositWithTax; // Total prepayment amount is not the exact figure.
+                        $booking->updated_at               = Carbon::now();
                         $booking->save();
                     }
 
                 }
             }
 
+            if($available === 'success') {
+                /* insert or update order going on */
+                /*Order::where('type', 1)
+                    ->where('user_id', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
+                    ->update(['delayed' => 1]);
+                $order                             = new Order;
+                $order->booking_id                 = $cartId;
+                $order->user_id                    = new \MongoDB\BSON\ObjectID(Auth::user()->_id);
+                $order->sumPrepaymentAmount        = (float)$sumPrepaymentAmount;
+                $order->serviceTax                 = (float)$serviceTax;
+                $order->sumPrepaymentAmountWithTax = (float)$amountServiceTotal;
+                $order->is_delete                  = 0;
+                $order->type                       = 1; // 1 => cart
+                $order->save();*/
+            }
 
-
-            // Update guest, beds, dorms, sleeps, halfboard, comments, total prepayment amount, prepayment amount, order_id
             // Redirect to payment choosing page
         }
 

@@ -511,8 +511,8 @@ class InquiryController extends Controller
                     $inquiry->read                    = 0;
                     $inquiry->status                  = '7';
                     $inquiry->inquirystatus           = 0; //0 = waiting, 1 = Approved, 2 = Rejected
-                    $inquiry->prepayment_amount       = (float)$sumPrepaymentAmount;
-                    $inquiry->total_prepayment_amount = (float)$sumPrepaymentAmountServiceTotal;
+                    $inquiry->prepayment_amount       = round($sumPrepaymentAmount, 2);
+                    $inquiry->total_prepayment_amount = round($sumPrepaymentAmountServiceTotal, 2);
                     $inquiry->payment_status          = "0";
                     $inquiry->is_delete               = 0;
                     $inquiry->save();

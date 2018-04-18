@@ -33,5 +33,5 @@ class Booking extends Eloquent
      * Internally, these dates will be converted to MongoDate objects when saved to the database.
      */
 
-    protected $dates = ['bookingdate', 'checkin_from', 'reserve_to', 'cart_expiry_date'];
+    protected $dates = ['bookingdate', 'checkin_from', 'reserve_to', 'cart_expiry_date', 'updated_at'];
 }

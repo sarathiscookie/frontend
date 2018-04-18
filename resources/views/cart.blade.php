@@ -40,11 +40,16 @@
                         @forelse($carts as $key => $cart)
 
                          @php
-                             $amount                  = ($cabinDetails->cabin($cart->cabin_id)->prepayment_amount * round(abs(strtotime($cart->checkin_from->format('Y-m-d')) - strtotime($cart->reserve_to->format('Y-m-d')))/86400)) * $cart->guests;
-                             $prepayment_amount[]     = ($cabinDetails->cabin($cart->cabin_id)->prepayment_amount * round(abs(strtotime($cart->checkin_from->format('Y-m-d')) - strtotime($cart->reserve_to->format('Y-m-d')))/86400)) * $cart->guests;
+                             $monthBegin              = $cart->checkin_from->format('Y-m-d');
+                             $monthEnd                = $cart->reserve_to->format('Y-m-d');
+                             $d1                      = new DateTime($monthBegin);
+                             $d2                      = new DateTime($monthEnd);
+                             $dateDifference          = $d2->diff($d1);
+                             $amount                  = ($cabinDetails->cabin($cart->cabin_id)->prepayment_amount * $dateDifference->days) * $cart->guests;
+                             $prepayment_amount[]     = ($cabinDetails->cabin($cart->cabin_id)->prepayment_amount * $dateDifference->days) * $cart->guests;
 
                              /* For javascript cal */
-                             $amountBookingDays       = $cabinDetails->cabin($cart->cabin_id)->prepayment_amount * round(abs(strtotime($cart->checkin_from->format('Y-m-d')) - strtotime($cart->reserve_to->format('Y-m-d')))/86400);
+                             $amountBookingDays       = $cabinDetails->cabin($cart->cabin_id)->prepayment_amount * $dateDifference->days;
                              $inputBeds               = 'guest.'.$cart->_id.'.beds';
                              $inputDormitory          = 'guest.'.$cart->_id.'.dormitory';
                              $inputSleeps             = 'guest.'.$cart->_id.'.sleeps';
@@ -193,11 +198,6 @@
                         @if(array_sum($prepayment_amount) > 0 )
 
                             @php
-                                $moneyBalance                   = 0;
-                                $moneyBalanceDeduct             = 0;
-                                $moneyBalanceDeductPercentage   = 0;
-                                $moneyBalanceDeductServiceTotal = 0;
-
                                 $sumPrepaymentAmount = array_sum($prepayment_amount);
 
                                 if($sumPrepaymentAmount <= 30) {
