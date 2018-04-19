@@ -112,15 +112,12 @@ class CartController extends Controller
             $dormsRequest          = 0;
             $requestBedsSumDorms   = 0;
             $sleepsRequest         = 0;
-            $serviceTax            = 0;
             $eachDepositWithTax    = 0;
-            $amountServiceTotal    = 0;
+            $invoiceNumber         = '';
             $not_regular_dates     = [];
             $dates_array           = [];
             $availableStatus       = [];
             $prepayment_amount     = [];
-            $sumPrepaymentAmount   = [];
-            $cartId                = [];
 
             $clickHere             = '<a href="/inquiry">click here</a>';
 
@@ -132,9 +129,6 @@ class CartController extends Controller
 
             if($carts){
                 foreach ($carts as $key => $cart) {
-
-                    $cartId[]                 = $cart->_id;
-
                     $cabin                    = Cabin::where('is_delete', 0)
                         ->where('other_cabin', "0")
                         ->findOrFail($cart->cabin_id);
@@ -187,9 +181,6 @@ class CartController extends Controller
                         $eachAmountPercentage = ($serviceTax / 100) * $amount;
                         $eachDepositWithTax   = round($amount + $eachAmountPercentage, 2);
                     }
-
-                    $amountPercentage         = ($serviceTax / 100) * $sumPrepaymentAmount;
-                    $amountServiceTotal       = round($sumPrepaymentAmount + $amountPercentage, 2);
                     /* Payment calculation end */
 
                     // Generate date b/w checking from and to
@@ -1196,34 +1187,17 @@ class CartController extends Controller
                         $booking->guests                   = ($cabin->sleeping_place === 1) ? $sleepsRequest : $requestBedsSumDorms;
                         $booking->halfboard                = $halfBoard;
                         $booking->comments                 = $commentsRequest;
-                        $booking->prepayment_amount        = (float)$amount;
-                        $booking->total_prepayment_amount  = (float)$eachDepositWithTax; // Total prepayment amount is not the exact figure.
+                        $booking->prepayment_amount        = $amount;
+                        $booking->total_prepayment_amount  = $eachDepositWithTax; // Total prepayment amount is not the exact figure.
                         $booking->updated_at               = Carbon::now();
                         $booking->save();
                     }
 
                 }
-            }
 
-            if($available === 'success') {
-                /* insert or update order going on */
-                /*Order::where('type', 1)
-                    ->where('user_id', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
-                    ->update(['delayed' => 1]);
-                $order                             = new Order;
-                $order->booking_id                 = $cartId;
-                $order->user_id                    = new \MongoDB\BSON\ObjectID(Auth::user()->_id);
-                $order->sumPrepaymentAmount        = (float)$sumPrepaymentAmount;
-                $order->serviceTax                 = (float)$serviceTax;
-                $order->sumPrepaymentAmountWithTax = (float)$amountServiceTotal;
-                $order->is_delete                  = 0;
-                $order->type                       = 1; // 1 => cart
-                $order->save();*/
+                return redirect()->route('payment')->with('availableStatus', $available);
             }
-
-            // Redirect to payment choosing page
         }
-
         return redirect()->back();
     }
 
