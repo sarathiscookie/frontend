@@ -60,24 +60,35 @@
                         <div class="col-sm-3 col-sm-3-booking2">
                             <div class="panel panel-default booking-box-booking2 panel-booking2 panel-default-booking2">
                                 <div class="panel-body panel-body-booking2">
-                                    <div class="row row-booking2">
-                                        <div class="col-sm-12 month-opening-booking2 col-sm-12-booking2">
-                                            <h5>Complete Payment<span class="glyphicon glyphicon-booking2 glyphicon-question-sign" title="Here all costs are listed again. The service fee helps us operate Huetten-Holiday and offer services like our live-chat for your trip. It contains sales tax."></span></h5>
+                                    @isset($moneyBalance)
+                                        <div class="row row-booking2">
+                                            <div class="col-sm-12 col-sm-12-booking2 month-opening-booking2">
+                                                <h5>Your Amount</h5>
+                                                <span class="label label-info label-cabinlist"><input type="checkbox" class="moneyBalance" name="moneyBalance" value="1"> Redeem now! {{ number_format($moneyBalance, 2, ',', '') }}&euro;</span>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="row row-booking2">
-                                        <div class="col-sm-12 col-sm-12-extra-booking2 col-sm-12-booking2-booking2">
-                                            <p class="info-listing-booking2">Deposit:</p><p class="info-listing-price-booking2">60,00€</p>
-                                            <p class="info-listing-booking2">Amount:</p><p class="info-listing-price-booking2">-20,00€</p>
-                                            <p class="info-listing-booking2">Deposit netto:</p><p class="info-listing-price-booking2">40,00€</p>
-                                            <p class="info-listing-booking2">Service fee:</p><p class="info-listing-price-booking2">7,50€</p>
+                                    @endisset
+
+                                    @isset($sumPrepaymentAmount)
+                                        <div class="row row-booking2">
+                                            <div class="col-sm-12 month-opening-booking2 col-sm-12-booking2">
+                                                <h5>Complete Payment<span class="glyphicon glyphicon-booking2 glyphicon-question-sign" title="Here all costs are listed again. The service fee helps us operate Huetten-Holiday and offer services like our live-chat for your trip. It contains sales tax."></span></h5>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="row row-booking2">
-                                        <div class="col-sm-12 col-sm-12-extra-booking2 col-sm-12-booking2">
-                                            <h5 class="info-listing-booking2">Payment incl.<br /> Service fee:</h5><h5 class="info-listing-price-booking2">47,50€</h5>
+                                        <div class="row row-booking2">
+                                            <div class="col-sm-12 col-sm-12-extra-booking2 col-sm-12-booking2-booking2">
+                                                <p class="info-listing-booking2">Deposit:</p><p class="info-listing-price-booking2">{{ number_format($sumPrepaymentAmount, 2, ',', '') }}&euro;</p>
+                                                <p class="info-listing-booking2">Amount:</p><p class="info-listing-price-booking2">-20,00€</p>
+                                                <p class="info-listing-booking2">Deposit netto:</p><p class="info-listing-price-booking2">40,00€</p>
+                                                <p class="info-listing-booking2">Service fee:</p><p class="info-listing-price-booking2">{{ $serviceTax }}%</p>
+                                            </div>
                                         </div>
-                                    </div>
+                                        <div class="row row-booking2">
+                                            <div class="col-sm-12 col-sm-12-extra-booking2 col-sm-12-booking2">
+                                                <h5 class="info-listing-booking2">Payment incl.<br /> Service fee:</h5><h5 class="info-listing-price-booking2">{{ number_format($prepayServiceTotal, 2, ',', '') }}&euro;</h5>
+                                            </div>
+                                        </div>
+                                    @endisset
                                 </div>
                             </div>
                         </div>
