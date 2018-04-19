@@ -113,12 +113,9 @@ class CartController extends Controller
             $requestBedsSumDorms   = 0;
             $sleepsRequest         = 0;
             $eachDepositWithTax    = 0;
-            $invoiceNumber         = '';
             $not_regular_dates     = [];
             $dates_array           = [];
             $availableStatus       = [];
-            $prepayment_amount     = [];
-
             $clickHere             = '<a href="/inquiry">click here</a>';
 
             $carts                 = Booking::where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
@@ -161,22 +158,20 @@ class CartController extends Controller
                     $dateDifference           = $d2->diff($d1);
                     $guestSleepsTypeCondition = ($cabin->sleeping_place === 1) ? $sleepsRequest : $requestBedsSumDorms;
                     $amount                   = round(($cabin->prepayment_amount * $dateDifference->days) * $guestSleepsTypeCondition, 2);
-                    $prepayment_amount[]      = ($cabin->prepayment_amount * $dateDifference->days) * $guestSleepsTypeCondition;
-                    $sumPrepaymentAmount      = round(array_sum($prepayment_amount), 2);
 
-                    if($sumPrepaymentAmount <= 30) {
+                    if($amount <= 30) {
                         $serviceTax           = env('SERVICE_TAX_ONE');
                         $eachAmountPercentage = ($serviceTax / 100) * $amount;
                         $eachDepositWithTax   = round($amount + $eachAmountPercentage, 2);
                     }
 
-                    if($sumPrepaymentAmount > 30 && $sumPrepaymentAmount <= 100) {
+                    if($amount > 30 && $amount <= 100) {
                         $serviceTax           = env('SERVICE_TAX_TWO');
                         $eachAmountPercentage = ($serviceTax / 100) * $amount;
                         $eachDepositWithTax   = round($amount + $eachAmountPercentage, 2);
                     }
 
-                    if($sumPrepaymentAmount > 100) {
+                    if($amount > 100) {
                         $serviceTax           = env('SERVICE_TAX_THREE');
                         $eachAmountPercentage = ($serviceTax / 100) * $amount;
                         $eachDepositWithTax   = round($amount + $eachAmountPercentage, 2);
@@ -1197,6 +1192,7 @@ class CartController extends Controller
 
                 return redirect()->route('payment')->with('availableStatus', $available);
             }
+
         }
         return redirect()->back();
     }
