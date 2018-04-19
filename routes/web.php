@@ -141,6 +141,17 @@ Route::group(['middleware' => ['auth']], function () {
     */
     /* view booking history */
     Route::get('/booking/history', 'BookingHistoryController@index')->name('booking.history');
+
+    /*
+    |--------------------------------------------------------------------------
+    | Payment
+    |--------------------------------------------------------------------------
+    |
+    | Route for view payment type, redeem amount, payment gateway functionality
+    |
+    */
+    /* view payment page */
+    Route::get('/payment', 'PaymentController@index')->name('payment');
 });
 
 
