@@ -6,6 +6,8 @@
 
     @inject('service', 'App\Http\Controllers\CabinDetailsController')
 
+    @inject('cabinServices', 'App\Http\Controllers\SearchController')
+
     @inject('calendarServices', 'App\Http\Controllers\CalendarController')
 
     @isset($cabinDetails)
@@ -77,6 +79,10 @@
                                             <div class="col-sm-12 col-sm-12-cabin-details">
                                                 <h5>Your journey begins here <span class="glyphicon glyphicon-question-sign" title="Please choose your arrival/depature date and the number of persons with whom you would like to visit the cabin. Then enter Booking to get to the next step."></span></h5>
                                                 <div class="form-group row row-cabin-details calendar" data-id="{{ $cabinDetails->_id }}">
+
+                                                    <div class="col-sm-12" id="errors_{{ $cabinDetails->_id }}"></div>
+                                                    <div class="col-sm-12" id="warning_{{ $cabinDetails->_id }}"></div>
+
                                                     @php
                                                         $calendar = $calendarServices->calendar($cabinDetails->_id)
                                                     @endphp
@@ -88,15 +94,15 @@
                                                     <div class="notSeasonTime_{{ $cabinDetails->_id }}" data-notseasontime="{{ $calendar[4] }}"></div>
 
                                                     <div class="col-sm-6 col-sm-6-cabin-details">
-                                                        <input type="text" class="form-control form-control-cabin-details dateFrom" id="dateFrom_{{ $cabinDetails->_id }}" name="dateFrom" placeholder="Arrival" readonly>
+                                                        <input type="text" class="form-control form-control-cabin-details dateFrom" id="dateFrom_{{ $cabinDetails->_id }}" name="dateFrom_{{ $cabinDetails->_id }}" placeholder="Arrival" readonly>
                                                     </div>
                                                     <div class="col-sm-6 col-sm-6-cabin-details">
-                                                        <input type="text" class="form-control form-control-cabin-details dateTo" id="dateTo_{{ $cabinDetails->_id }}" name="dateTo" placeholder="Departure" readonly>
+                                                        <input type="text" class="form-control form-control-cabin-details dateTo" id="dateTo_{{ $cabinDetails->_id }}" name="dateTo_{{ $cabinDetails->_id }}" placeholder="Departure" readonly>
                                                     </div>
 
                                                     @if($cabinDetails->sleeping_place != 1)
                                                         <div class="col-sm-6 col-sm-6-cabin-details dropdown-cabin-details-top-buffer">
-                                                            <select class="form-control form-control-cabin-details" size="3" id="beds" name="beds">
+                                                            <select class="form-control form-control-cabin-details" size="3" id="beds_{{ $cabinDetails->_id }}" name="beds_{{ $cabinDetails->_id }}">
                                                                 <option value="">Choose Bed(s)</option>
                                                                 @for($i = 1; $i <= 30; $i++)
                                                                     <option value="{{ $i }}">{{ $i }}</option>
@@ -105,7 +111,7 @@
                                                         </div>
 
                                                         <div class="col-sm-6 col-sm-6-cabin-details dropdown-cabin-details-top-buffer">
-                                                            <select class="form-control form-control-cabin-details" size="3" id="dorms" name="dorms">
+                                                            <select class="form-control form-control-cabin-details" size="3" id="dorms_{{ $cabinDetails->_id }}" name="dorms_{{ $cabinDetails->_id }}">
                                                                 <option value="">Choose Dorm(s)</option>
                                                                 @for($i = 1; $i <= 30; $i++)
                                                                     <option value="{{ $i }}">{{ $i }}</option>
@@ -114,7 +120,7 @@
                                                         </div>
                                                     @else
                                                         <div class="col-sm-6 col-sm-6-cabin-details dropdown-cabin-details-top-buffer">
-                                                            <select class="form-control form-control-cabin-details" size="3" id="sleeps" name="sleeps">
+                                                            <select class="form-control form-control-cabin-details" size="3" id="sleeps_{{ $cabinDetails->_id }}" name="sleeps_{{ $cabinDetails->_id }}">
                                                                 <option value="">Choose Sleep(s)</option>
                                                                 @for($i = 1; $i <= 30; $i++)
                                                                     <option value="{{ $i }}">{{ $i }}</option>
@@ -123,17 +129,19 @@
                                                         </div>
                                                     @endif
 
+                                                    <input type="hidden" id="sleeping_place_{{ $cabinDetails->_id }}" value="{{ $cabinDetails->sleeping_place }}">
                                                 </div>
                                                 <hr>
                                             </div>
                                         </div>
-                                        <div class="row row-cabin-details">
+                                        <div class="row row-cabin-details" data-cab="{{ $cabinDetails->_id }}">
                                             <div class="col-sm-12 -cabin-details col-sm-12-cabin-details">
-                                                <h4>{!! $service->bookingPossibleNextDays($cabinDetails->_id) !!}</h4>
+                                                <h4>{!! $cabinServices->bookingPossibleNextDays($cabinDetails->_id) !!}</h4>
+                                                <!-- Authentication Links -->
                                                 @guest
                                                     <a href="{{ route('login') }}" class="btn btn-default btn-sm btn-space pull-right btn-booking">Add To Cart</a>
                                                     @else
-                                                        <a href="/cart" class="btn btn-default btn-sm btn-space pull-right btn-booking">Add To Cart</a>
+                                                        <button type="button" class="btn btn-default btn-sm btn-space pull-right btn-booking addToCart" name="addToCart" value="addToCart">Add To Cart</button>
                                                 @endguest
                                             </div>
                                         </div>
@@ -253,7 +261,7 @@
                                 <div class="detail-points-cabin-details">
 
                                     <h2 class="details-headline-cabin-details">Reservation / cancelation</h2>
-                                    <strong class="details-underheadline-cabin-details">Deposit: </strong><p class="inh-cabin-details">{{ $cabinDetails->prepayment_amount }} &euro;</p>
+                                    <strong class="details-underheadline-cabin-details">Deposit: </strong><p class="inh-cabin-details">{{ number_format($cabinDetails->prepayment_amount, 2, ',', '') }}&euro;</p>
 
                                     <strong class="details-underheadline-cabin-details">Cancelation deadline: </strong>
                                     <p class="inh-cabin-details">
