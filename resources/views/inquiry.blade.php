@@ -169,7 +169,7 @@
                                         </div><br />
                                         <div class="row row-booking1">
                                             <div class="col-sm-12 col-sm-12-booking1 col-sm-12-extra-booking1 depsit-booking1">
-                                                <p class="info-listing-booking1">Deposit:</p><p class="info-listing-price-booking1 replaceInquiryDeposit">{{ number_format($amount, 2, ',', '') }}&euro;</p>
+                                                <p class="info-listing-booking1">Deposit:</p><p class="info-listing-price-booking1 replaceInquiryDeposit">{{ number_format($amount, 2, ',', '.') }}&euro;</p>
                                             </div>
                                         </div>
                                     </div>
@@ -300,14 +300,14 @@
                                     <div class="normalCalculation">
                                         <div class="row row-booking1">
                                             <div class="col-sm-12 col-sm-12-booking1 col-sm-12-extra-booking1">
-                                                <p class="info-listing-booking1">Deposit:</p><p class="info-listing-price-booking1 replaceInquiryCompleteDeposit">{{ number_format($sumPrepaymentAmount, 2, '.', '') }}&euro;</p>
+                                                <p class="info-listing-booking1">Deposit:</p><p class="info-listing-price-booking1 replaceInquiryCompleteDeposit">{{ number_format($sumPrepaymentAmount, 2, ',', '.') }}&euro;</p>
                                                 <p class="info-listing-booking1">Service fee:</p><p class="info-listing-price-booking1 replaceInquiryServiceFee">{{ $serviceTax }}%</p>
                                             </div>
                                         </div>
 
                                         <div class="row row-booking1">
                                             <div class="col-sm-12 col-sm-12-booking1 col-sm-12-extra-booking1">
-                                                <h5 class="info-listing-booking1">Payment incl.<br /> Service fee:</h5><h5 class="info-listing-price-booking1 replaceInquiryCompletePayment">{{ number_format($sumPrepaymentAmountServiceTotal, 2, '.', '') }}&euro;</h5>
+                                                <h5 class="info-listing-booking1">Payment incl.<br /> Service fee:</h5><h5 class="info-listing-price-booking1 replaceInquiryCompletePayment">{{ number_format($sumPrepaymentAmountServiceTotal, 2, ',', '.') }}&euro;</h5>
                                             </div>
                                         </div>
                                     </div>

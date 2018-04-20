@@ -1343,7 +1343,7 @@ class SearchController extends Controller
                         /* Checking bookings available ends */
                     }
                     if(!in_array('notAvailable', $availableStatus)) {
-                        $available = 'success';
+                        $available                 = 'success';
                         $booking                   = new Booking;
                         $booking->cabinname        = $cabin->name;
                         $booking->cabin_id         = new \MongoDB\BSON\ObjectID($cabin->_id);

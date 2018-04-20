@@ -45,11 +45,11 @@
                              $d1                      = new DateTime($monthBegin);
                              $d2                      = new DateTime($monthEnd);
                              $dateDifference          = $d2->diff($d1);
-                             $amount                  = ($cabinDetails->cabin($cart->cabin_id)->prepayment_amount * $dateDifference->days) * $cart->guests;
-                             $prepayment_amount[]     = ($cabinDetails->cabin($cart->cabin_id)->prepayment_amount * $dateDifference->days) * $cart->guests;
+                             $amount                  = round(($cabinDetails->cabin($cart->cabin_id)->prepayment_amount * $dateDifference->days) * $cart->guests, 2);
+                             $prepayment_amount[]     = round(($cabinDetails->cabin($cart->cabin_id)->prepayment_amount * $dateDifference->days) * $cart->guests, 2);
 
                              /* For javascript cal */
-                             $amountBookingDays       = $cabinDetails->cabin($cart->cabin_id)->prepayment_amount * $dateDifference->days;
+                             $amountBookingDays       = round($cabinDetails->cabin($cart->cabin_id)->prepayment_amount * $dateDifference->days, 2);
                              $inputBeds               = 'guest.'.$cart->_id.'.beds';
                              $inputDormitory          = 'guest.'.$cart->_id.'.dormitory';
                              $inputSleeps             = 'guest.'.$cart->_id.'.sleeps';
@@ -180,7 +180,7 @@
                                                     </div><br />
                                                     <div class="row row-booking1">
                                                         <div class="col-sm-12 col-sm-12-booking1 col-sm-12-extra-booking1 depsit-booking1">
-                                                            <p class="info-listing-booking1">Deposit:</p><p class="info-listing-price-booking1 bookingDeposit replaceBookingDeposit_{{ $cart->_id }}">{{ number_format($amount, 2, ',', '') }}&euro;</p>
+                                                            <p class="info-listing-booking1">Deposit:</p><p class="info-listing-price-booking1 bookingDeposit replaceBookingDeposit_{{ $cart->_id }}">{{ number_format($amount, 2, ',', '.') }}&euro;</p>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -315,14 +315,14 @@
 
                                             <div class="row row-booking1">
                                                 <div class="col-sm-12 col-sm-12-booking1 col-sm-12-extra-booking1">
-                                                    <p class="info-listing-booking1">Deposit:</p><p class="info-listing-price-booking1 replaceBookingCompleteDeposit">{{ number_format($sumPrepaymentAmount, 2, ',', '') }}&euro;</p>
+                                                    <p class="info-listing-booking1">Deposit:</p><p class="info-listing-price-booking1 replaceBookingCompleteDeposit">{{ number_format($sumPrepaymentAmount, 2, ',', '.') }}&euro;</p>
                                                     <p class="info-listing-booking1">Service fee:</p><p class="info-listing-price-booking1 replaceBookingServiceFee">{{ $serviceTax }}%</p>
                                                 </div>
                                             </div>
 
                                             <div class="row row-booking1">
                                                 <div class="col-sm-12 col-sm-12-booking1 col-sm-12-extra-booking1">
-                                                    <h5 class="info-listing-booking1">Payment incl.<br /> Service fee:</h5><h5 class="info-listing-price-booking1 replaceBookingCompletePayment">{{ number_format($sumPrepaymentAmountServiceTotal, 2, ',', '') }}&euro;</h5>
+                                                    <h5 class="info-listing-booking1">Payment incl.<br /> Service fee:</h5><h5 class="info-listing-price-booking1 replaceBookingCompletePayment">{{ number_format($sumPrepaymentAmountServiceTotal, 2, ',', '.') }}&euro;</h5>
                                                 </div>
                                             </div>
 
