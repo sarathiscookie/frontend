@@ -7,7 +7,7 @@
         <div class="col-md-2 col-md-2-booking2"></div>
         <div class="col-md-8 col-md-8-booking2" id="list-filter-booking2">
             <nav class="navbar navbar-default navbar-default-booking2">
-                <h2 class="cabin-head-booking2">Choose a payment</h2><h2 class="cabin-head-booking2">Step 2 of 3<span class="glyphicon glyphicon-booking2 glyphicon-question-sign" title="You are on the first of three steps to book a cabin night. Control your data and enter next step to get to the next step."></span></h2>
+                <h2 class="cabin-head-booking2">Choose a payment</h2><h2 class="cabin-head-booking2">Step 1 of 3<span class="glyphicon glyphicon-booking2 glyphicon-question-sign" title="You are on the first of three steps to book a cabin night. Control your data and enter next step to get to the next step."></span></h2>
             </nav>
         </div>
         <div class="col-md-2 col-md-2-booking2"></div>
@@ -15,6 +15,13 @@
 
     <main>
         <div class="container-fluid text-center container-fluid-booking2">
+            @if (session()->has('availableStatus') && session()->get('availableStatus') === 'success')
+                <div class="alert alert-success alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <strong>Well done!</strong> Here you can choose your payment.
+                </div>
+            @endif
+
             <div class="panel panel-booking2 panel-default text-left panel-default-booking2">
                 <div class="panel-body panel-body-booking2">
                     <div class="row content row-booking2">
@@ -59,33 +66,37 @@
                         </div>
                         <div class="col-sm-3 col-sm-3-booking2">
                             <div class="panel panel-default booking-box-booking2 panel-booking2 panel-default-booking2">
+
+                                <!-- Calculation amount with money balance -->
                                 <div class="panel-body panel-body-booking2">
-                                    @isset($moneyBalance)
-                                        <div class="row row-booking2">
+                                    @if(isset($moneyBalance) && $moneyBalance > 0)
+                                        <div class="row row-booking2" data-redeem="{{ $moneyBalance }}">
                                             <div class="col-sm-12 col-sm-12-booking2 month-opening-booking2">
                                                 <h5>Your Amount</h5>
-                                                <span class="label label-info label-cabinlist"><input type="checkbox" class="moneyBalance" name="moneyBalance" value="1"> Redeem now! {{ number_format($moneyBalance, 2, ',', '') }}&euro;</span>
+                                                <span class="label label-info label-cabinlist"><input type="checkbox" class="moneyBalance" name="moneyBalance" value="1"> Redeem now! {{ number_format($moneyBalance, 2, ',', '.') }}&euro;</span>
                                             </div>
                                         </div>
-                                    @endisset
+                                    @endif
 
                                     @isset($sumPrepaymentAmount)
-                                        <div class="row row-booking2">
+                                        <div class="row row-booking2 sumPrepayAmount" data-sumprepayamount="{{ $sumPrepaymentAmount }}">
                                             <div class="col-sm-12 month-opening-booking2 col-sm-12-booking2">
                                                 <h5>Complete Payment<span class="glyphicon glyphicon-booking2 glyphicon-question-sign" title="Here all costs are listed again. The service fee helps us operate Huetten-Holiday and offer services like our live-chat for your trip. It contains sales tax."></span></h5>
                                             </div>
                                         </div>
                                         <div class="row row-booking2">
                                             <div class="col-sm-12 col-sm-12-extra-booking2 col-sm-12-booking2-booking2">
-                                                <p class="info-listing-booking2">Deposit:</p><p class="info-listing-price-booking2">{{ number_format($sumPrepaymentAmount, 2, ',', '') }}&euro;</p>
-                                                <p class="info-listing-booking2">Amount:</p><p class="info-listing-price-booking2">-20,00€</p>
-                                                <p class="info-listing-booking2">Deposit netto:</p><p class="info-listing-price-booking2">40,00€</p>
+                                                <p class="info-listing-booking2">Deposit:</p><p class="info-listing-price-booking2">{{ number_format($sumPrepaymentAmount, 2, ',', '.') }}&euro;</p>
+                                                <div class="afterRedeem" style="display: none">
+                                                    <p class="info-listing-booking2">Deducted:</p><p class="info-listing-price-booking2 reducedAmount"></p>
+                                                    <p class="info-listing-booking2">Amount:</p><p class="info-listing-price-booking2 afterRedeemAmount"></p>
+                                                </div>
                                                 <p class="info-listing-booking2">Service fee:</p><p class="info-listing-price-booking2">{{ $serviceTax }}%</p>
                                             </div>
                                         </div>
                                         <div class="row row-booking2">
                                             <div class="col-sm-12 col-sm-12-extra-booking2 col-sm-12-booking2">
-                                                <h5 class="info-listing-booking2">Payment incl.<br /> Service fee:</h5><h5 class="info-listing-price-booking2">{{ number_format($prepayServiceTotal, 2, ',', '') }}&euro;</h5>
+                                                <h5 class="info-listing-booking2">Payment incl.<br /> Service fee:</h5><h5 class="info-listing-price-booking2 sumPrepayServiceTotal">{{ number_format($prepayServiceTotal, 2, ',', '.') }}&euro;</h5>
                                             </div>
                                         </div>
                                     @endisset
@@ -106,4 +117,11 @@
 @endsection
 
 @push('scripts')
+    <script>
+        window.environment = {
+            service_tax_one: '{{ env('SERVICE_TAX_ONE') }}',
+            service_tax_two: '{{ env('SERVICE_TAX_TWO') }}',
+            service_tax_three: '{{ env('SERVICE_TAX_THREE') }}'
+        }
+    </script>
 @endpush
