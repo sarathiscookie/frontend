@@ -54,7 +54,7 @@ $(function() {
         /* Function for service tax calculation */
         function serviceFees(sumPrepayAmount)
         {
-            var serviceTaxBook  = 0;
+            var serviceTaxBook = 0;
 
             if(sumPrepayAmount <= 30) {
                 serviceTaxBook = envBook.tax_one;
