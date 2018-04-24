@@ -19,23 +19,9 @@ $(function() {
         if($(this).is(":checked")) {
             $( ".afterRedeem" ).show();
 
-            var serviceTaxBook  = 0;
-            var redeemAmount    = $(this).parents().eq(2).data('redeem'); // We can use parent().parent().parent() also but it is slower.
-            var sumPrepayAmount = $( ".sumPrepayAmount" ).data('sumprepayamount');
-
-            /* Condition for service tax calculation begin */
-            if(sumPrepayAmount <= 30) {
-                serviceTaxBook = envBook.tax_one;
-            }
-
-            if(sumPrepayAmount > 30 && sumPrepayAmount <= 100) {
-                serviceTaxBook = envBook.tax_two;
-            }
-
-            if(sumPrepayAmount > 100) {
-                serviceTaxBook = envBook.tax_three;
-            }
-            /* Condition for service tax calculation end */
+            var redeemAmount              = $(this).parents().eq(2).data('redeem'); // We can use parent().parent().parent() also but it is slower.
+            var sumPrepayAmount           = $( ".sumPrepayAmount" ).data('sumprepayamount');
+            var serviceTaxBook            = serviceFees(sumPrepayAmount);
 
             if (redeemAmount > sumPrepayAmount) {
                 var afterRedeemAmount     = redeemAmount - sumPrepayAmount;
@@ -56,6 +42,34 @@ $(function() {
         }
         else {
             $( ".afterRedeem" ).hide();
+            var sumPrepaymentAmount    = $( ".sumPrepayAmount" ).data('sumprepayamount');
+            var serviceFee             = serviceFees(sumPrepaymentAmount);
+            console.log(serviceFee);
+            var sumPrepaymentPerc      = (serviceFee / 100) * sumPrepaymentAmount;
+            var sumPrepaymentServTotal = sumPrepaymentAmount + sumPrepaymentPerc;
+
+            $( ".sumPrepayServiceTotal" ).html(formatter.format(sumPrepaymentServTotal));
         }
+
+        /* Function for service tax calculation */
+        function serviceFees(sumPrepayAmount)
+        {
+            var serviceTaxBook  = 0;
+
+            if(sumPrepayAmount <= 30) {
+                serviceTaxBook = envBook.tax_one;
+            }
+
+            if(sumPrepayAmount > 30 && sumPrepayAmount <= 100) {
+                serviceTaxBook = envBook.tax_two;
+            }
+
+            if(sumPrepayAmount > 100) {
+                serviceTaxBook = envBook.tax_three;
+            }
+
+            return serviceTaxBook;
+        }
+
     });
 });
