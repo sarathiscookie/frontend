@@ -15,6 +15,13 @@
 
     <main>
         <div class="container-fluid text-center container-fluid-booking2">
+            @if ($errors->has('payment'))
+                <div class="alert alert-danger alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <strong>OOPS!</strong> {{ $errors->first('payment') }}
+                </div>
+            @endif
+
             @if (session()->has('availableStatus') && session()->get('availableStatus') === 'success')
                 <div class="alert alert-success alert-dismissible" role="alert">
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -22,96 +29,114 @@
                 </div>
             @endif
 
-            <div class="panel panel-booking2 panel-default text-left panel-default-booking2">
-                <div class="panel-body panel-body-booking2">
-                    <div class="row content row-booking2">
-                        <div class="col-sm-7 text-left col-sm-7-booking2">
-                            <div class="row row-booking2">
-                                <div class="col-sm-12 month-opening-booking2 col-sm-12-booking2">
-                                    <div class="form-group row row-booking2">
-                                        <ul class="payment-options-booking2">
-                                            <li class="li-head-booking2">Kind of payment</li>
-                                            <li class="check-it-list-booking2 check-it-list-spe-booking2 line-col-booking2" id="bill-booking2"><input type="radio" value="payment" class="check-it-booking2 radio-payment" > Pay by bill </li>
-                                            <li class="check-it-list-booking2 check-it-list-spe-booking2"><input type="radio" value="payment" class="check-it-booking2 radio-payment" > Klarna </li>
-                                            <li class="pay-logo-booking2">
-                                                <img src="{{ asset('storage/img/logo_black.png') }}" class="pay-figure-booking2" alt="pay-option" title="SOFORT Überweisung (Klarna)">
-                                            </li>
-                                            <li class="check-it-list-booking2 check-it-list-spe-booking2 line-col-booking2"><input class="check-it-booking2 radio-payment" type="radio" value="payment"> Paydirekt </li>
-                                            <li class="pay-logo-booking2 line-col-booking2">
-                                                <img src="{{ asset('storage/img/paydirekt_logo_4C.png') }}" class="pay-figure-booking2" alt="pay-option" title="Paydirect">
-                                            </li>
-                                            <li class="check-it-list-booking2 check-it-list-spe-booking2"><input class="check-it-booking2 radio-payment" type="radio" value="payment"> PayPal </li>
-                                            <li class="pay-logo-booking2">
-                                                <img src="{{ asset('storage/img/de-pp-logo-100px.png') }}" class="pay-figure-booking2" alt="pay-option" title="PayPal">
-                                            </li>
-                                            <li class="check-it-list-booking2 check-it-list-spe-booking2 line-col-booking2"><input class="check-it-booking2 radio-payment" type="radio" value="payment"> Creditcard </li>
-                                            <li class="pay-logo-booking2 line-col-booking2">
-                                                <img src="{{ asset('storage/img/mc_acc_opt_70_3x.png') }}" class="pay-figure-booking2" alt="pay-option" title="Mastercard"><img src="{{ asset('storage/img/Visa_BlueGradient.png') }}" class="pay-figure-booking2" alt="pay-option" title="VISA">
-                                            </li>
-                                        </ul>
-                                        <ul class="payment-options-booking2">
-                                            <li class="li-head-booking2">Terms and conditions</li>
-                                            <li class="check-it-list-booking2"><input class="check-it-booking2" type="checkbox"><a href="#"> Please confirm the privacy of Huetten-Holiday.de</a></li>
-                                            <li class="check-it-list-booking2"><input class="check-it-booking2" type="checkbox"><a href="#"> Please confirm the terms and conditions of Huetten-Holiday.de</a></li>
-                                        </ul>
-                                        <ul class="payment-options-booking2">
-                                            <li class="li-head-booking2">Newscenter</li>
-                                            <li class="check-it-list-booking2"><input class="check-it-booking2" type="checkbox" checked="checked" disabled=""> Informations about your booking</li>
-                                            <li class="check-it-list-booking2"><input class="check-it-booking2" type="checkbox" checked="checked"> Updates about our system</li>
-                                            <li class="check-it-list-booking2"><input class="check-it-booking2" type="checkbox" checked="checked"> Subscribe to Newsletter</li>
-                                        </ul>
+            <form action="{{ route('payment.store') }}" method="post">
+
+                {{ csrf_field() }}
+
+                <div class="panel panel-booking2 panel-default text-left panel-default-booking2">
+                    <div class="panel-body panel-body-booking2">
+                        <div class="row content row-booking2">
+                            <div class="col-sm-7 text-left col-sm-7-booking2">
+                                <div class="row row-booking2">
+                                    <div class="col-sm-12 month-opening-booking2 col-sm-12-booking2">
+                                        <div class="form-group row row-booking2">
+                                            <ul class="payment-options-booking2">
+                                                <li class="li-head-booking2">Kind of payment</li>
+                                                <li class="check-it-list-booking2 check-it-list-spe-booking2 line-col-booking2" id="bill-booking2">
+                                                    <input type="radio" name="payment" class="check-it-booking2 radio-payment" value="payByBill"> Pay by bill
+                                                </li>
+                                                <li class="check-it-list-booking2 check-it-list-spe-booking2">
+                                                    <input type="radio" name="payment" class="check-it-booking2 radio-payment" value="sofort"> Klarna
+                                                </li>
+                                                <li class="pay-logo-booking2">
+                                                    <img src="{{ asset('storage/img/logo_black.png') }}" class="pay-figure-booking2" alt="pay-option" title="SOFORT Überweisung (Klarna)">
+                                                </li>
+                                                <li class="check-it-list-booking2 check-it-list-spe-booking2 line-col-booking2">
+                                                    <input type="radio" name="payment" class="check-it-booking2 radio-payment" value="payDirect"> Paydirekt
+                                                </li>
+                                                <li class="pay-logo-booking2 line-col-booking2">
+                                                    <img src="{{ asset('storage/img/paydirekt_logo_4C.png') }}" class="pay-figure-booking2" alt="pay-option" title="Paydirect">
+                                                </li>
+                                                <li class="check-it-list-booking2 check-it-list-spe-booking2">
+                                                    <input type="radio" name="payment" class="check-it-booking2 radio-payment" value="payPal"> PayPal
+                                                </li>
+                                                <li class="pay-logo-booking2">
+                                                    <img src="{{ asset('storage/img/de-pp-logo-100px.png') }}" class="pay-figure-booking2" alt="pay-option" title="PayPal">
+                                                </li>
+                                                <li class="check-it-list-booking2 check-it-list-spe-booking2 line-col-booking2">
+                                                    <input type="radio" name="payment" class="check-it-booking2 radio-payment" value="creditCard"> Creditcard
+                                                </li>
+                                                <li class="pay-logo-booking2 line-col-booking2">
+                                                    <img src="{{ asset('storage/img/mc_acc_opt_70_3x.png') }}" class="pay-figure-booking2" alt="pay-option" title="Mastercard"><img src="{{ asset('storage/img/Visa_BlueGradient.png') }}" class="pay-figure-booking2" alt="pay-option" title="VISA">
+                                                </li>
+                                            </ul>
+                                            <ul class="payment-options-booking2">
+                                                <li class="li-head-booking2">Terms and conditions</li>
+                                                <li class="check-it-list-booking2"><input class="check-it-booking2" type="checkbox"><a href="#"> Please confirm the privacy of Huetten-Holiday.de</a></li>
+                                                <li class="check-it-list-booking2"><input class="check-it-booking2" type="checkbox"><a href="#"> Please confirm the terms and conditions of Huetten-Holiday.de</a></li>
+                                            </ul>
+                                            <ul class="payment-options-booking2">
+                                                <li class="li-head-booking2">Newscenter</li>
+                                                <li class="check-it-list-booking2"><input class="check-it-booking2" type="checkbox" checked="checked" disabled=""> Informations about your booking</li>
+                                                <li class="check-it-list-booking2"><input class="check-it-booking2" type="checkbox" checked="checked"> Updates about our system</li>
+                                                <li class="check-it-list-booking2"><input class="check-it-booking2" type="checkbox" checked="checked"> Subscribe to Newsletter</li>
+                                            </ul>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="col-sm-3 col-sm-3-booking2">
-                            <div class="panel panel-default booking-box-booking2 panel-booking2 panel-default-booking2">
+                            <div class="col-sm-3 col-sm-3-booking2">
+                                <div class="panel panel-default booking-box-booking2 panel-booking2 panel-default-booking2">
 
-                                <!-- Calculation amount with money balance -->
-                                <div class="panel-body panel-body-booking2">
-                                    @if(isset($moneyBalance) && $moneyBalance > 0)
-                                        <div class="row row-booking2" data-redeem="{{ $moneyBalance }}">
-                                            <div class="col-sm-12 col-sm-12-booking2 month-opening-booking2">
-                                                <h5>Your Amount</h5>
-                                                <span class="label label-info label-cabinlist"><input type="checkbox" class="moneyBalance" name="moneyBalance" value="1"> Redeem now! {{ number_format($moneyBalance, 2, ',', '.') }}&euro;</span>
-                                            </div>
-                                        </div>
-                                    @endif
-
-                                    @isset($sumPrepaymentAmount)
-                                        <div class="row row-booking2 sumPrepayAmount" data-sumprepayamount="{{ $sumPrepaymentAmount }}">
-                                            <div class="col-sm-12 month-opening-booking2 col-sm-12-booking2">
-                                                <h5>Complete Payment<span class="glyphicon glyphicon-booking2 glyphicon-question-sign" title="Here all costs are listed again. The service fee helps us operate Huetten-Holiday and offer services like our live-chat for your trip. It contains sales tax."></span></h5>
-                                            </div>
-                                        </div>
-                                        <div class="row row-booking2">
-                                            <div class="col-sm-12 col-sm-12-extra-booking2 col-sm-12-booking2-booking2">
-                                                <p class="info-listing-booking2">Deposit:</p><p class="info-listing-price-booking2">{{ number_format($sumPrepaymentAmount, 2, ',', '.') }}&euro;</p>
-                                                <div class="afterRedeem" style="display: none">
-                                                    <p class="info-listing-booking2">Deducted:</p><p class="info-listing-price-booking2 reducedAmount"></p>
-                                                    <p class="info-listing-booking2">Amount:</p><p class="info-listing-price-booking2 afterRedeemAmount"></p>
+                                    <!-- Calculation amount with money balance -->
+                                    <div class="panel-body panel-body-booking2">
+                                        @if(isset($moneyBalance) && $moneyBalance > 0)
+                                            <div class="row row-booking2" data-redeem="{{ $moneyBalance }}">
+                                                <div class="col-sm-12 col-sm-12-booking2 month-opening-booking2">
+                                                    <h5>Your Amount</h5>
+                                                    <span class="label label-info label-cabinlist"><input type="checkbox" class="moneyBalance" name="moneyBalance" value="1"> Redeem now! {{ number_format($moneyBalance, 2, ',', '.') }}&euro;</span>
                                                 </div>
-                                                <p class="info-listing-booking2">Service fee:</p><p class="info-listing-price-booking2">{{ $serviceTax }}%</p>
                                             </div>
-                                        </div>
-                                        <div class="row row-booking2">
-                                            <div class="col-sm-12 col-sm-12-extra-booking2 col-sm-12-booking2">
-                                                <h5 class="info-listing-booking2">Payment incl.<br /> Service fee:</h5><h5 class="info-listing-price-booking2 sumPrepayServiceTotal">{{ number_format($prepayServiceTotal, 2, ',', '.') }}&euro;</h5>
+                                        @endif
+
+                                        @isset($sumPrepaymentAmount)
+                                            <div class="row row-booking2 sumPrepayAmount" data-sumprepayamount="{{ $sumPrepaymentAmount }}">
+                                                <div class="col-sm-12 month-opening-booking2 col-sm-12-booking2">
+                                                    <h5>Complete Payment<span class="glyphicon glyphicon-booking2 glyphicon-question-sign" title="Here all costs are listed again. The service fee helps us operate Huetten-Holiday and offer services like our live-chat for your trip. It contains sales tax."></span></h5>
+                                                </div>
                                             </div>
-                                        </div>
-                                    @endisset
+                                            <div class="row row-booking2">
+                                                <div class="col-sm-12 col-sm-12-extra-booking2 col-sm-12-booking2-booking2">
+                                                    <p class="info-listing-booking2">Deposit:</p><p class="info-listing-price-booking2">{{ number_format($sumPrepaymentAmount, 2, ',', '.') }}&euro;</p>
+                                                    <div class="afterRedeem" style="display: none">
+                                                        <p class="info-listing-booking2">Deducted:</p><p class="info-listing-price-booking2 reducedAmount"></p>
+                                                        <p class="info-listing-booking2">Amount:</p><p class="info-listing-price-booking2 afterRedeemAmount"></p>
+                                                    </div>
+                                                    <p class="info-listing-booking2">Service fee:</p><p class="info-listing-price-booking2">{{ $serviceTax }}%</p>
+                                                </div>
+                                            </div>
+                                            <div class="row row-booking2">
+                                                <div class="col-sm-12 col-sm-12-extra-booking2 col-sm-12-booking2">
+                                                    <h5 class="info-listing-booking2">Payment incl.<br /> Service fee:</h5><h5 class="info-listing-price-booking2 sumPrepayServiceTotal">{{ number_format($prepayServiceTotal, 2, ',', '.') }}&euro;</h5>
+                                                </div>
+                                            </div>
+                                        @endisset
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div>
-                <div id="btn-ground-2-booking2">
-                    <button type="button" class="btn btn-default btn-default-booking2 btn-sm btn-details-booking2">Book the Cabin</button>
+
+                <div>
+                    <div id="btn-ground-2-booking2">
+                        <button type="submit" class="btn btn-default btn-default-booking2 btn-sm btn-details-booking2">Book the Cabin</button>
+                    </div>
                 </div>
-            </div>
-        </div><br><br>
+            </form>
+
+        </div>
+        <br><br>
     </main>
 
 @endsection

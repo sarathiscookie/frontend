@@ -261,7 +261,7 @@
                                 <div class="detail-points-cabin-details">
 
                                     <h2 class="details-headline-cabin-details">Reservation / cancelation</h2>
-                                    <strong class="details-underheadline-cabin-details">Deposit: </strong><p class="inh-cabin-details">{{ number_format($cabinDetails->prepayment_amount, 2, ',', '') }}&euro;</p>
+                                    <strong class="details-underheadline-cabin-details">Deposit: </strong><p class="inh-cabin-details">{{ number_format($cabinDetails->prepayment_amount, 2, ',', '.') }}&euro;</p>
 
                                     <strong class="details-underheadline-cabin-details">Cancelation deadline: </strong>
                                     <p class="inh-cabin-details">

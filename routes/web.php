@@ -125,10 +125,10 @@ Route::group(['middleware' => ['auth']], function () {
     | Route for view and send inquiry
     |
     */
-    /* view inquiry page */
+    /* View inquiry page */
     Route::get('/inquiry', 'InquiryController@index')->name('inquiry');
 
-    /* send and store inquiry */
+    /* Send and store inquiry */
     Route::post('/inquiry/send', 'InquiryController@store')->name('inquiry.store');
 
     /*
@@ -139,7 +139,7 @@ Route::group(['middleware' => ['auth']], function () {
     | Route for view booking history
     |
     */
-    /* view booking history */
+    /* View booking history */
     Route::get('/booking/history', 'BookingHistoryController@index')->name('booking.history');
 
     /*
@@ -150,8 +150,11 @@ Route::group(['middleware' => ['auth']], function () {
     | Route for view payment type, redeem amount, payment gateway functionality
     |
     */
-    /* view payment page */
+    /* View payment page */
     Route::get('/payment', 'PaymentController@index')->name('payment');
+
+    /* Choose payment and store data */
+    Route::post('/payment/store', 'PaymentController@store')->name('payment.store');
 });
 
 
