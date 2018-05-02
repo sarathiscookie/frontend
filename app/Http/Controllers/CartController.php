@@ -9,6 +9,7 @@ use App\Booking;
 use App\MountSchoolBooking;
 use App\Country;
 use App\Order;
+use App\Userlist;
 use Carbon\Carbon;
 use DateTime;
 use DatePeriod;
@@ -1189,6 +1190,16 @@ class CartController extends Controller
                     }
 
                 }
+
+                // Update contact information
+                $user               = Userlist::find(Auth::user()->_id);
+                $user->usrAddress   = $request->street;
+                $user->usrCity      = $request->city;
+                $user->usrCountry   = $request->country;
+                $user->usrZip       = $request->zipcode;
+                $user->usrMobile    = $request->mobile;
+                $user->usrTelephone = $request->phone;
+                $user->save();
 
                 return redirect()->route('payment')->with('availableStatus', $available);
             }
