@@ -1192,7 +1192,10 @@ class CartController extends Controller
                 }
 
                 // Update contact information
-                $user               = Userlist::find(Auth::user()->_id);
+                $user               = Userlist::where('is_delete', 0)
+                    ->where('usrActive', '1')
+                    ->find(Auth::user()->_id);
+
                 $user->usrAddress   = $request->street;
                 $user->usrCity      = $request->city;
                 $user->usrCountry   = $request->country;
