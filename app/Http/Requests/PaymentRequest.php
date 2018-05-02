@@ -24,7 +24,7 @@ class PaymentRequest extends FormRequest
     public function rules()
     {
         return [
-            'payment'        => 'required',
+            //
         ];
     }
 }

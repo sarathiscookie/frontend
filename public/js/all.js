@@ -735,4 +735,16 @@ $(function() {
         }
 
     });
+
+    /* Credit card functionality */
+    $("input[name='payment']").on("click", function(){
+        if($(this).val() === 'creditCard') {
+            $("#creditcard").show();
+        }
+        else {
+            $("#creditcard").hide();
+        }
+    });
+
+
 });

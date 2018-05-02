@@ -15,6 +15,13 @@
 
     <main>
         <div class="container-fluid text-center container-fluid-booking2">
+            @if (session()->has('choosePaymentNullData'))
+                <div class="alert alert-danger alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <strong>OOPS!</strong> {{ session()->get('choosePaymentNullData') }}
+                </div>
+            @endif
+
             @if ($errors->has('payment'))
                 <div class="alert alert-danger alert-dismissible" role="alert">
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -45,27 +52,76 @@
                                                 <li class="check-it-list-booking2 check-it-list-spe-booking2 line-col-booking2" id="bill-booking2">
                                                     <input type="radio" name="payment" class="check-it-booking2 radio-payment" value="payByBill"> Pay by bill
                                                 </li>
+
                                                 <li class="check-it-list-booking2 check-it-list-spe-booking2">
                                                     <input type="radio" name="payment" class="check-it-booking2 radio-payment" value="sofort"> Klarna
                                                 </li>
+
                                                 <li class="pay-logo-booking2">
                                                     <img src="{{ asset('storage/img/logo_black.png') }}" class="pay-figure-booking2" alt="pay-option" title="SOFORT Überweisung (Klarna)">
                                                 </li>
+
                                                 <li class="check-it-list-booking2 check-it-list-spe-booking2 line-col-booking2">
                                                     <input type="radio" name="payment" class="check-it-booking2 radio-payment" value="payDirect"> Paydirekt
                                                 </li>
+
                                                 <li class="pay-logo-booking2 line-col-booking2">
                                                     <img src="{{ asset('storage/img/paydirekt_logo_4C.png') }}" class="pay-figure-booking2" alt="pay-option" title="Paydirect">
                                                 </li>
+
                                                 <li class="check-it-list-booking2 check-it-list-spe-booking2">
                                                     <input type="radio" name="payment" class="check-it-booking2 radio-payment" value="payPal"> PayPal
                                                 </li>
+
                                                 <li class="pay-logo-booking2">
                                                     <img src="{{ asset('storage/img/de-pp-logo-100px.png') }}" class="pay-figure-booking2" alt="pay-option" title="PayPal">
                                                 </li>
+
                                                 <li class="check-it-list-booking2 check-it-list-spe-booking2 line-col-booking2">
-                                                    <input type="radio" name="payment" class="check-it-booking2 radio-payment" value="creditCard"> Creditcard
+                                                    <input type="radio" name="payment" class="check-it-booking2 radio-payment" id="creditCard" value="creditCard"> Creditcard
                                                 </li>
+
+                                                <!-- Credit card: Payone hosted Iframe begin -->
+                                                <div id="creditcard" style="display: none;">
+                                                    <script type="text/javascript" src="https://secure.pay1.de/client-api/js/v1/payone_hosted_min.js"></script>
+                                                    <form name="paymentform" action="" method="post">
+                                                        <fieldset>
+                                                            <input type="hidden" name="pseudocardpan" id="pseudocardpan">
+                                                            <input type="hidden" name="truncatedcardpan" id="truncatedcardpan">
+
+                                                            <!-- configure your cardtype-selection here -->
+                                                            <label for="cardtypeInput">Card type</label>
+                                                            <select id="cardtype">
+                                                                <option value="V">VISA</option>
+                                                                <option value="M">Mastercard</option>
+                                                                <option value="A">Amex</option>
+                                                            </select>
+
+                                                            <label for="cardpanInput">Cardpan:</label>
+                                                            <span class="inputIframe" id="cardpan"></span>
+
+                                                            <label for="cvcInput">CVC:</label>
+                                                            <span id="cardcvc2" class="inputIframe"></span>
+
+                                                            <label for="expireInput">Expire Date:</label>
+                                                            <span id="expireInput" class="inputIframe">
+                                                            <span id="cardexpiremonth"></span>
+                                                            <span id="cardexpireyear"></span>
+                                                        </span>
+
+                                                            <label for="firstname">Firstname:</label>
+                                                            <input id="firstname" type="text" name="firstname" value="">
+                                                            <label for="lastname">Lastname:</label>
+                                                            <input id="lastname" type="text" name="lastname" value="">
+
+                                                            <div id="errorOutput"></div>
+                                                            <input id="paymentsubmit" type="button" value="Submit" onclick="check();">
+                                                        </fieldset>
+                                                    </form>
+                                                    <div id="paymentform"></div>
+                                                </div>
+                                                <!-- Credit card: Payone hosted Iframe end -->
+
                                                 <li class="pay-logo-booking2 line-col-booking2">
                                                     <img src="{{ asset('storage/img/mc_acc_opt_70_3x.png') }}" class="pay-figure-booking2" alt="pay-option" title="Mastercard"><img src="{{ asset('storage/img/Visa_BlueGradient.png') }}" class="pay-figure-booking2" alt="pay-option" title="VISA">
                                                 </li>

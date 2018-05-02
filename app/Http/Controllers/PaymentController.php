@@ -8,6 +8,7 @@ use App\Http\Requests\PaymentRequest;
 use App\Userlist;
 use App\Booking;
 use Auth;
+use Validator;
 use Payone;
 
 class PaymentController extends Controller
@@ -91,162 +92,276 @@ class PaymentController extends Controller
      */
     public function store(PaymentRequest $request)
     {
-        include(app_path() . '/function/Payone.php');
-
-        if(isset($request->payment)) {
-            $defaults = array(
-
-                "aid" => '34801',//"your_account_id",
-
-                "mid" => '33914',//"your_merchant_id",
-
-                "portalid" => '2024367',
-
-                "key" => hash("md5", "j75iq35Jg1MVMFC5"), // the key has to be hashed as md5
-
-                "mode" => "test", // can be "live" for actual transactions
-
-                "api_version" => "3.10",
-
-                "encoding" => "UTF-8"
-
-            );
-
-            if($request->payment === 'payPal') {
-                $personalData = array(
-
-                    "salutation" => "Herr",
-
-                    "title" => "Dr.",
-
-                    "firstname" => "Jane",
-
-                    "lastname" => "Doe",
-
-                    "street" => "Nebelhornstraße 3",
-
-                    "addressaddition" => "Waltenhofen",
-
-                    "zip" => "87448",
-
-                    "city" => "Regensburg",
-
-                    "country" => "DE",
-
-                    "email" => "sarath@cabin-holiday.com",
-
-                    "telephonenumber" => "9562903203",
-
-                    "birthday" => "19860307",
-
-                    "language" => "de",
-
-                    "gender" => "m",
-
-                    "ip" => "8.8.8.8"
-
-                );
-
-                $parameters = array(
-
-                    "request" => "authorization",
-
-                    "clearingtype" => "wlt", // wallet clearing type
-
-                    "wallettype" => "PPE", // PPE for Paypal
-
-                    "amount" => "100000",
-
-                    'currency' => 'EUR',
-
-                    "reference" => uniqid(),
-
-                    "narrative_text" => "Just an order",
-
-                    "de[1]"  => "Cabin Name: SCW-18-100023",   // Item description
-
-                    "document_date" => date('Ymd'),
-
-                    "booking_date" => date('Ymd'),
-
-                    "invoiceid" => "SCW-18-100023",
-
-                    "invoice_deliverymode" => "P", //PDF
-
-                    "invoice_deliverydate" => date('Ymd'), //PDF
-
-                    "invoiceappendix" => "Cabin Name: SCW-18-100023", //Dynamic text on the invoice
-
-                    "shipping_firstname" => "Jane",
-
-                    "shipping_lastname" => "Doe",
-
-                    "shipping_company" => "Huetten Holiday",
-
-                    "shipping_street" => "Nebelhornstraße 3",
-
-                    "shipping_zip" => "87448",
-
-                    "shipping_city" => "Regensburg",
-
-                    "shipping_country" => "DE",
-
-                    "successurl" => "https://payone.test/success.php?reference=your_unique_reference",
-
-                    "errorurl" => "https://payone.test/cancelled.php?reference=your_unique_reference",
-
-                    "backurl" => "https://payone.test/back.php?reference=your_unique_reference",
-
-                    /*"successurl" => "https://yourshop.de/payment/success?reference=your_unique_reference",
-
-                    "errorurl" => "https://yourshop.de/payment/error?reference=your_unique_reference",
-
-                    "backurl" => "https://yourshop.de/payment/back?reference=your_unique_reference",*/
-
-                );
-
-                $request = array_merge($defaults, $parameters, $personalData);
-
-                ksort($request);
-
-                //print_r($request);
-
-                /**
-
-                 * This should return something like:
-
-                 * Array
-
-                 * (
-
-                 *  [status] => REDIRECT
-
-                 *  [redirecturl] => https://www.sandbox.paypal.com/webscr?useraction=commit&cmd=_express-checkout&token=EC-4XXX73XXXK03XXX1A
-
-                 *  [txid] => 205387102
-
-                 *  [userid] => 90737467
-
-                 * )
-
-                 */
-
-                $response = Payone::sendRequest($request);
-
-                //dd($response);
-                if ($response["status"] == "REDIRECT") {
-                    return redirect()->away($response["redirecturl"]);
+        $user                        = Userlist::where('is_delete', 0)->where('usrActive', '1')->find(Auth::user()->_id);
+
+        $prepayment_amount           = [];
+        $serviceTax                  = 0;
+
+        $carts                       = Booking::where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
+            ->where('status', "8")
+            ->where('is_delete', 0)
+            ->take(5)
+            ->get();
+
+        if(count($carts) > 0) {
+            /* Amount calculation */
+            foreach ($carts as $key => $cart) {
+                $prepayment_amount[] = $cart->prepayment_amount;
+            }
+
+            $sum_prepayment_amount   = array_sum($prepayment_amount);
+
+            if($sum_prepayment_amount <= 30) {
+                $serviceTax          = env('SERVICE_TAX_ONE');
+            }
+
+            if($sum_prepayment_amount > 30 && $sum_prepayment_amount <= 100) {
+                $serviceTax          = env('SERVICE_TAX_TWO');
+            }
+
+            if($sum_prepayment_amount > 100) {
+                $serviceTax          = env('SERVICE_TAX_THREE');
+            }
+
+            $percentage              = ($serviceTax / 100) * $sum_prepayment_amount;
+
+            $prepay_service_total    = round($sum_prepayment_amount + $percentage, 2);
+
+            if(isset($request->moneyBalance) && $request->moneyBalance === '1') {
+                if($user->money_balance >= $prepay_service_total) {
+                    dd('money balance greater. not need payment choose validation');
+                    // not need payment choose validation
+                    // store order details
+                    // update user->moneybalance
+                    // redirect to success page
                 }
                 else {
-                    dd("Something went wrong. :(");
+                    if(isset($request->payment)) {
+                        // Function call for payment gateway section
+                        $paymentGateway = $this->paymentGateway($request->payment, $user, $request->ip(), str_replace(".", "", $prepay_service_total));
+                        if ($paymentGateway["status"] == "REDIRECT") {
+                            return redirect()->away($paymentGateway["redirecturl"]);
+                        }
+                        // store order details
+                        // update user->moneybalance
+                        // redirect to success page
+                    }
+                    else {
+                        $validator = Validator::make($request->all(), [
+                            'payment' => 'required'
+                        ]);
+
+                        if ($validator->fails()) {
+                            return redirect()->back()->withErrors($validator)->withInput();
+                        }
+                    }
                 }
             }
             else {
-                dd('others');
+                if(isset($request->payment)) {
+                    // Function call for payment gateway section
+                    $paymentGateway = $this->paymentGateway($request->payment, $user, $request->ip(), str_replace(".", "", $prepay_service_total));
+                    if ($paymentGateway["status"] == "REDIRECT") {
+                        return redirect()->away($paymentGateway["redirecturl"]);
+                    }
+                    // store order details
+                    // update user->moneybalance
+                    // redirect to success page
+                }
+                else {
+                    $validator = Validator::make($request->all(), [
+                        'payment' => 'required'
+                    ]);
+
+                    if ($validator->fails()) {
+                        return redirect()->back()->withErrors($validator)->withInput();
+                    }
+                }
             }
         }
+        else {
+            return redirect()->back()->with('choosePaymentNullData', 'Something went wrong! Please check your cart.');
+        }
+    }
 
-        return redirect()->back()->with('choosePaymentResponse', 'Select a payment method');
+    /**
+     * Display the specified resource.
+     *
+     * @param  string  $payment
+     * @param  string  $user
+     * @param  string  $ip
+     * @param  string  $amount
+     * @return array
+     */
+    public function paymentGateway($payment, $user, $ip, $amount)
+    {
+        $walletType   = "";
+
+        $clearingType = "";
+
+        $onlineBankTransferType = "";
+
+        include(app_path() . '/function/Payone.php');
+
+        /* Payment gateway details */
+        $defaults     = array(
+            "aid"         => env('AID'), // Account id
+
+            "mid"         => env('MID'), // Merchant id
+
+            "portalid"    => env('PORTAL_ID'),
+
+            "key"         => hash("md5", env('KEY')), // The key has to be hashed as md5
+
+            "mode"        => env('MODE'), // Can be "live" for actual transactions
+
+            "api_version" => env('API_VERSION'),
+
+            "encoding"    => env('ENCODING')
+        );
+
+        /* Personal details */
+        $personalData = array(
+
+            /*"salutation" => "Herr",
+
+            "title" => "Dr.",*/
+
+            "firstname" => $user->usrFirstname,
+
+            "lastname" => $user->usrLastname,
+
+            "street" => $user->usrAddress,
+
+            "zip" => $user->usrZip,
+
+            "city" => $user->usrCity,
+
+            "country" => "DE",
+
+            "email" => $user->usrEmail,
+
+            "telephonenumber" => $user->usrTelephone,
+
+            "language" => "de",
+
+            /*"gender" => "m",*/
+
+            "ip" => $ip
+        );
+
+        /* Condition for payment type */
+        if($payment === 'payPal') {
+            $clearingType = "wlt";
+            $walletType   = "PPE";
+        }
+        elseif ($payment === 'payDirect') {
+            $clearingType = "wlt";
+            $walletType   = "PDT";
+        }
+        elseif ($payment === 'sofort') {
+            $clearingType = "sb";
+            $onlineBankTransferType = "PNT";
+        }
+
+        /* Parameters for payment gateway */
+        $parameters = array(
+
+            "request" => "authorization",
+
+            "clearingtype" => $clearingType, // wallet clearing type
+
+            "wallettype" => $walletType,
+
+            "amount" => $amount,
+
+            'currency' => 'EUR',
+
+            "reference" => uniqid(),
+
+            "onlinebanktransfertype" => $onlineBankTransferType,
+
+            "bankcountry" => "DE",
+
+            "narrative_text" => "Cabin room booked",
+
+            "de[1]"  => "Bookings",   // Item description
+
+            "va[1]"  => 1900,   // Item description
+
+            "vatid" => "DE310927476",
+
+            "document_date" => date('Ymd'),
+
+            "booking_date" => date('Ymd'),
+
+            "invoiceid" => "SCW-18-100023",
+
+            "invoice_deliverymode" => "P", //PDF
+
+            "invoice_deliverydate" => date('Ymd'), //PDF
+
+            "invoiceappendix" => "Cabin Name: SCW-18-100023", //Dynamic text on the invoice
+
+            "shipping_firstname" => $user->usrFirstname,
+
+            "shipping_lastname" => $user->usrLastname,
+
+            "shipping_street" => $user->usrAddress,
+
+            "shipping_zip" => $user->usrZip,
+
+            "shipping_city" => $user->usrCity,
+
+            "shipping_country" => "DE",
+
+            "successurl" => "https://payone.test/success.php?reference=your_unique_reference",
+
+            "errorurl" => "https://payone.test/cancelled.php?reference=your_unique_reference",
+
+            "backurl" => "https://payone.test/back.php?reference=your_unique_reference",
+
+            /*"successurl" => "https://yourshop.de/payment/success?reference=your_unique_reference",
+
+            "errorurl" => "https://yourshop.de/payment/error?reference=your_unique_reference",
+
+            "backurl" => "https://yourshop.de/payment/back?reference=your_unique_reference",*/
+
+        );
+
+        $request = array_merge($defaults, $parameters, $personalData);
+
+        ksort($request);
+
+        //print_r($request);
+
+        $response = Payone::sendRequest($request);
+
+        /**
+
+         * This should return something like:
+
+         * Array
+
+         * (
+
+         *  [status] => REDIRECT
+
+         *  [redirecturl] => https://www.sandbox.paypal.com/webscr?useraction=commit&cmd=_express-checkout&token=EC-4XXX73XXXK03XXX1A
+
+         *  [redirecturl] => https://www.sofort.com/payment/go/7904xxxxxxxxxxxxxxxxxxxxeeca29ec9d8c7912
+
+         *  [redirecturl] => https://sandbox.paydirekt.de/checkout/#/checkout/fe012345-abcd-efef-1234-7d7d7d7d7d7d
+
+         *  [txid] => 205387102
+
+         *  [userid] => 90737467
+
+         * )
+
+         */
+
+        return $response;
     }
 
     /**
