@@ -285,9 +285,7 @@ class PaymentController extends Controller
 
             "narrative_text" => "Cabin room booked",
 
-            "de[1]"  => "Bookings",   // Item description
-
-            "va[1]"  => 1900,   // Item description
+            "va[1]"  => "1900",   // Item description
 
             "vatid" => "DE310927476",
 
@@ -295,11 +293,7 @@ class PaymentController extends Controller
 
             "booking_date" => date('Ymd'),
 
-            "invoiceid" => "SCW-18-100023",
-
             "invoice_deliverymode" => "P", //PDF
-
-            "invoice_deliverydate" => date('Ymd'), //PDF
 
             "invoiceappendix" => "Cabin Name: SCW-18-100023", //Dynamic text on the invoice
 
