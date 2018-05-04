@@ -8,7 +8,7 @@
         fieldset {
             padding: 1em;
             border: 1px solid #000;
-            width: 275px;
+            width: 400px;
             margin: 10px;
         }
         .paymentLabel {
@@ -18,22 +18,19 @@
             padding-top: 0.3em;
             text-align: right;
         }
-        .paymentformInput, .paymentformSelect{
+        .paymentformInput {
             font-size: 1em;
             border: 1px solid #000;
             padding: 0.1em;
         }
-        .paymentformSelect {
-            margin-right: 10px;
-        }
 
-        .paymentformInput, .inputIframe, .paymentformSelect {
+        .paymentformInput, .inputIframe {
             display: block;
             margin-bottom: 10px;
         }
 
         .paymentformInput {
-            width: 175px;
+            width: 200px;
         }
 
         #paymentsubmit {
@@ -131,7 +128,8 @@
                                                 </li>
 
                                                 <li class="pay-logo-booking2 line-col-booking2">
-                                                    <img src="{{ asset('storage/img/mc_acc_opt_70_3x.png') }}" class="pay-figure-booking2" alt="pay-option" title="Mastercard"><img src="{{ asset('storage/img/Visa_BlueGradient.png') }}" class="pay-figure-booking2" alt="pay-option" title="VISA">
+                                                    <img src="{{ asset('storage/img/mc_acc_opt_70_3x.png') }}" class="pay-figure-booking2" alt="pay-option" title="Mastercard">
+                                                    <img src="{{ asset('storage/img/Visa_BlueGradient.png') }}" class="pay-figure-booking2" alt="pay-option" title="VISA">
                                                 </li>
 
                                                 <!-- Credit card: Payone hosted Iframe begin -->
@@ -140,37 +138,51 @@
                                                         <fieldset>
                                                             <input type="hidden" name="pseudocardpan" id="pseudocardpan">
                                                             <input type="hidden" name="truncatedcardpan" id="truncatedcardpan">
+                                                            <input type="hidden" name="cardtypeResponse" id="cardtypeResponse">
+                                                            <input type="hidden" name="cardexpiredateResponse" id="cardexpiredateResponse">
 
-                                                            <!-- configure your cardtype-selection here -->
-                                                            <label class="paymentLabel" for="cardtypeInput">Card type</label>
-                                                            <span id="cardtype" class="inputIframe"></span>
+                                                            <div>
+                                                                <img src="{{ asset('storage/img/mc_acc_opt_70_3x.png') }}" class="pay-figure-booking2" alt="pay-option" title="Mastercard"  style="border: #EFEFEF solid 3px; max-width: 100px; max-height: 30px;" id="mastercard">
+                                                                <img src="{{ asset('storage/img/Visa_BlueGradient.png') }}" class="pay-figure-booking2" alt="pay-option" title="VISA"  style="border: #EFEFEF  solid 3px; max-width: 100px; max-height: 30px;" id="visa">
+                                                            </div>
 
-                                                            <label class="paymentLabel" for="cardpanInput">Cardpan:</label>
-                                                            <span class="inputIframe" id="cardpan"></span>
+                                                            <div class="form-group">
+                                                                <label class="paymentLabel" for="cardpanInput">Cardpan:</label>
+                                                                <span class="inputIframe" id="cardpan"></span>
+                                                            </div>
 
-                                                            <label class="paymentLabel" for="cvcInput">CVC:</label>
-                                                            <span id="cardcvc2" class="inputIframe"></span>
+                                                            <div class="form-group">
+                                                                <label class="paymentLabel" for="cvcInput">CVC:</label>
+                                                                <span id="cardcvc2" class="inputIframe"></span>
+                                                            </div>
 
-                                                            <label class="paymentLabel" for="expireInput">Expire Date:</label>
-                                                            <span id="expireInput" class="inputIframe">
-                                                            <span id="cardexpiremonth"></span>
-                                                            <span id="cardexpireyear"></span>
-                                                        </span>
-
-                                                            <label class="paymentLabel" for="firstname">Firstname:</label>
-                                                            <input class="paymentformInput" id="firstname" type="text" name="firstname" value="">
-
-                                                            <label class="paymentLabel" for="lastname">Lastname:</label>
-                                                            <input class="paymentformInput" id="lastname" type="text" name="lastname" value="">
+                                                            <div class="form-group">
+                                                                <label class="paymentLabel" for="expireInput">Expire Date:</label>
+                                                                <span id="expireInput" class="inputIframe">
+                                                                    <span id="cardexpiremonth"></span>
+                                                                    <span id="cardexpireyear"></span>
+                                                            </span>
+                                                            </div>
 
                                                             <div id="errorOutput"></div>
-                                                            <input class="paymentformInput" id="paymentsubmit" type="button" value="Submit" onclick="check();">
+
+                                                            <input id="paymentsubmit" type="button" value="Submit" onclick="check();">
                                                         </fieldset>
                                                     </form>
                                                     <div id="paymentform"></div>
+
+                                                    <h2>The JSON received from the server</h2>
+                                                    <div id="jsonResponse">
+                                                        <pre id="jsonResponsePre">Nothing received yet.</pre>
+                                                    </div>
+
+                                                    <h2>Autodetection callback result</h2>
+                                                    <div id="autodetectionResponse">
+                                                        <pre id="autodetectionResponsePre">Nothing received yet.</pre>
+                                                    </div>
+
                                                 </div>
                                                 <!-- Credit card: Payone hosted Iframe end -->
-
                                             </ul>
 
                                             <ul class="payment-options-booking2">
@@ -243,73 +255,118 @@
     </main>
 
     @php
+        // Main parameters for authorize request
         $aid                  = env('AID');
-        $amount               = str_replace(".", "", $prepayServiceTotal);
+        $mid                  = env('MID');
+        $portalid             = env('PORTAL_ID');
         $api_version          = env('API_VERSION');
-        $booking_date         = date('Ymd');
-        $clearingtype         = 'cc'; //cc - Credit card, rec - Invoice, cod - Cash on delivery, sb - Online Bank Transfer, wlt - e-wallet, fnc - Financing
-        $currency             = 'EUR';
-        $customerid           = mt_rand(111, 99999999);
-        $de[1]                = 'Credit card Booking'; // Item description
-        $document_date        = date('Ymd');
-        $due_time             = date('Ymd');
-        $ecommercemode        = '3dsecure';
-        $encoding             = env('ENCODING');
+        $mode                 = env('MODE');
+        $request              = "creditcardcheck"; // or "authorization";
+        $responsetype         = "JSON"; // or "REDIRECT";
+        $storecarddata        = "yes"; // yes: Card data is stored, a pseudo card number is returned. no: Card data is not stored
+        $successurl           = 'https://payone.test/success.php?reference=your_unique_reference';
         $errorurl             = 'https://payone.test/cancelled.php?reference=your_unique_reference';
+        $encoding             = env('ENCODING');
+        $key                  = env('KEY');
+        $clearingtype         = 'cc'; //cc - Credit card, rec - Invoice, cod - Cash on delivery, sb - Online Bank Transfer, wlt - e-wallet, fnc - Financing
+        $ecommercemode        = "3dsecure";
+
+        // Parameter ( Normal data )
+        $reference            = uniqid();
+        $pr[1]                = str_replace(".", "", $prepayServiceTotal);
+        $no[1]                = "1";
+        $amount               = str_replace(".", "", $prepayServiceTotal);
+        $currency             = 'EUR';
+        $param                = "Dynamic text";
+        $narrative_text       = "Dynamic text";
+        $document_date        = date('Ymd');
+        $booking_date         = date('Ymd');
+        $due_time             = mktime(0, 0, 0, date('n'), date('j') + 1);
         $id[1]                = mt_rand(111, 99999999);
+        $de[1]                = 'Dynamic text'; // Item description
+        $va[1]                = "1900";
+        $sd[1]                = date('Ymd');
+        $ed[1]                = date('Ymd');
+        $customerid           = mt_rand(111, 99999999);
+        $userid               = mt_rand(111, 99999999); //Debtor Id (Payone)
+
+        // Parameter ( Invoice )
+        $invoiceid            = mt_rand(111, 99999999);
         $invoice_deliverydate = date('Ymd');
         $invoice_deliveryenddate = date('Ymd');
         $invoice_deliverymode = 'P'; //PDF
-        $invoiceappendix      = 'Dynamic text on invoice'; //Dynamic text on the invoice
-        $invoiceid            = mt_rand(111, 99999999);
-        $mid                  = env('MID');
-        $mode                 = env('MODE');
-        $narrative_text       = "creditcardstatement";
-        $no[1]                = "1";
-        $param                = str_shuffle('abcdefghij');
-        $portalid             = env('PORTAL_ID');
-        $pr[1]                = str_replace(".", "", $prepayServiceTotal);
-        $reference            = uniqid();
-        $request              = 'authorization';
-        $responsetype         = 'JSON';
-        $successurl           = 'https://payone.test/success.php?reference=your_unique_reference';
-        $userid               = mt_rand(111, 99999999); //Debtor Id (Payone)
-        $va[1]                = "19";
-        $key                  = env('KEY');
+        $invoiceappendix      = 'Dynamic text';
 
+        //Parameter ( personal data )
+        $salutation           = Auth::user()->salutation;
+        $title                = Auth::user()->title;
+        $firstname            = Auth::user()->usrFirstname;
+        $lastname             = Auth::user()->usrLastname;
+        $company              = Auth::user()->company;
+        $street               = Auth::user()->usrAddress;
+        $zip                  = Auth::user()->usrZip;
+        $city                 = Auth::user()->usrCity;
+        if(Auth::user()->usrCountry === 'Deutschland') {
+           $countryName       = "DE";
+        }
+        elseif(Auth::user()->usrCountry === 'Österreich') {
+           $countryName       = "AT";
+        }
+        else {
+           $countryName       = "IT";
+        }
+        $country              = $countryName;
+        $email                = Auth::user()->usrEmail;
+        $telephonenumber      = Auth::user()->usrTelephone;
+        $language             = "de";
+        $vatid                = "DE310927476";
+        $gender               = Auth::user()->gender;
+        $personalid           = mt_rand(111, 99999999);
+
+        //Parameter ( delivery data )
+        $shipping_firstname   = Auth::user()->usrFirstname;
+        $shipping_lastname    = Auth::user()->usrLastname;
+        $shipping_company     = Auth::user()->company;
+        $shipping_street      = Auth::user()->usrAddress;
+        $shipping_zip         = Auth::user()->usrZip;
+        $shipping_city        = Auth::user()->usrCity;
+        $shipping_country     = $countryName;
+
+        // Hashing the parameters in sorted order
         $hash = hash_hmac("sha384", $aid .
-                $amount .
-                $api_version .
-                $booking_date .
-                $clearingtype .
-                $currency .
-                $customerid .
-                $de[1] .
-                $document_date .
-                $due_time .
-                $ecommercemode .
-                $encoding .
-                $errorurl .
-                $id[1] .
-                $invoice_deliverydate .
-                $invoice_deliveryenddate .
-                $invoice_deliverymode .
-                $invoiceappendix .
-                $invoiceid .
-                $mid .
-                $mode .
-                $narrative_text .
-                $no[1] .
-                $param .
-                $portalid .
-                $pr[1] .
-                $reference .
-                $request .
-                $responsetype .
-                $successurl .
-                $userid .
-                $va[1],
-                $key);
+        $amount .
+        $api_version .
+        $booking_date .
+        $clearingtype .
+        $currency .
+        $customerid  .
+        $de[1] .
+        $document_date .
+        $due_time .
+        $ecommercemode .
+        $encoding .
+        $errorurl .
+        $id[1] .
+        $invoice_deliverydate .
+        $invoice_deliveryenddate .
+        $invoice_deliverymode .
+        $invoiceappendix .
+        $invoiceid .
+        $mid .
+        $mode .
+        $narrative_text .
+        $no[1] .
+        $param .
+        $portalid .
+        $pr[1] .
+        $reference .
+        $request .
+        $responsetype .
+        $storecarddata .
+        $successurl .
+        $userid .
+        $va[1],
+        $key);
     @endphp
 @endsection
 
@@ -317,106 +374,165 @@
     <script type="text/javascript" src="https://secure.pay1.de/client-api/js/v1/payone_hosted_min.js"></script>
     <script>
         /* Payment gateway functionality begin */
-        var request, config;
-
-        config = {
-            fields: {
-                cardtype: {
-                    selector: "cardtype",
-                    cardtypes: ["V", "M", "A"]
-                },
-                cardpan: {
-                    selector: "cardpan",                 // put name of your div-container here
-                    type: "text",                        // text (default), password, tel
-                    style: "font-size: 1em; border: 1px solid #000;"
-                },
-                cardcvc2: {
-                    selector: "cardcvc2",                // put name of your div-container here
-                    type: "password",                    // select(default), text, password, tel
-                    style: "font-size: 1em; border: 1px solid #000;",
-                    size: "4",
-                    maxlength: "4",
-                    length: { "A": 4, "V": 3, "M": 3 } // Set required CVC length per card type.
-                },
-                cardexpiremonth: {
-                    selector: "cardexpiremonth",         // put name of your div-container here
-                    type: "select",                      // select(default), text, password, tel
-                    size: "2",
-                    maxlength: "2",
-                    iframe: {
-                        width: "50px"
+        var request,
+            supportedCardtypes = ["V", "M"],
+            config = {
+                fields: {
+                    cardpan: {
+                        selector: "cardpan",                 // put name of div-container here
+                        type: "text",                        // text (default), password, tel
+                        style: "font-size: 1em; border: 1px solid #000;"
+                    },
+                    cardcvc2: {
+                        selector: "cardcvc2",                // put name of div-container here
+                        type: "password",                    // select(default), text, password, tel
+                        style: "font-size: 1em; border: 1px solid #000;",
+                        size: "4",
+                        maxlength: "4",
+                        length: { "V": 3, "M": 3 } // enforce 3 digit CVC für VISA and Mastercard
+                    },
+                    cardexpiremonth: {
+                        selector: "cardexpiremonth",         // put name of div-container here
+                        type: "select",                      // select(default), text, password, tel
+                        size: "2",
+                        maxlength: "2",
+                        iframe: {
+                            width: "40px"
+                        },
+                        style: "font-size: 14px; width: 30px; border: solid 1px #000; height: 22px;"
+                    },
+                    cardexpireyear: {
+                        selector: "cardexpireyear",          // put name of div-container here
+                        type: "select",                      // select(default), text, password, tel
+                        iframe: {
+                            width: "60px"
+                        },
+                        style: "font-size: 14px; width: 50px; border: solid 1px #000; height: 22px;"
                     }
                 },
-                cardexpireyear: {
-                    selector: "cardexpireyear",          // put name of your div-container here
-                    type: "select",                      // select(default), text, password, tel
+                defaultStyle: {
+                    input: "font-size: 1em; border: 1px solid #000; width: 175px;",
+                    select: "font-size: 1em; border: 1px solid #000;",
                     iframe: {
-                        width: "80px"
+                        height: "32px",
+                        width: "180px"
                     }
-                }
-            },
-            defaultStyle: {
-                input: "font-size: 1em; border: 1px solid #000; width: 175px;",
-                select: "font-size: 1em; border: 1px solid #000;",
-                iframe: {
-                    height: "33px",
-                    width: "180px"
-                }
-            },
-            error: "errorOutput",                        // area to display error-messages (optional)
-            language: Payone.ClientApi.Language.de       // Language to display error-messages. (default: Payone.ClientApi.Language.en)
-        };
-
+                },
+                autoCardtypeDetection: {
+                    supportedCardtypes: supportedCardtypes,
+                    callback: function(detectedCardtype) {
+                        // For the output container below.
+                        document.getElementById('autodetectionResponsePre').innerHTML = detectedCardtype;
+                        if (detectedCardtype === 'V') {
+                            document.getElementById('visa').style.borderColor = '#5F6876';
+                            document.getElementById('mastercard').style.borderColor = '#EFEFEF';
+                        }
+                        else if (detectedCardtype === 'M') {
+                            document.getElementById('visa').style.borderColor = '#EFEFEF';
+                            document.getElementById('mastercard').style.borderColor = '#5F6876';
+                        }
+                        else {
+                            document.getElementById('visa').style.borderColor = '#EFEFEF';
+                            document.getElementById('mastercard').style.borderColor = '#EFEFEF';
+                        }
+                    }//,
+                    // deactivate: true // To turn off automatic card type detection.
+                },
+                error: "errorOutput",                        // area to display error-messages (optional)
+                language: Payone.ClientApi.Language.de       // Language to display error-messages. (default: Payone.ClientApi.Language.en)
+            };
         request = {
-            aid: '<?php echo $aid; ?>',
-            amount: '<?php echo $amount; ?>',
-            api_version: '<?php echo $api_version; ?>',
-            booking_date: '<?php echo $booking_date; ?>',
-            clearingtype: '<?php echo $clearingtype; ?>',
-            currency: '<?php echo $currency; ?>',
-            'de[1]': '<?php echo $de[1]; ?>',
-            ecommercemode: '<?php echo $ecommercemode; ?>',
-            encoding: '<?php echo $encoding; ?>',
-            errorurl: '<?php echo $errorurl; ?>',
-            invoice_deliverymode: '<?php echo $invoice_deliverymode; ?>',
-            invoiceappendix: '<?php echo $invoiceappendix; ?>',
-            mid: '<?php echo $mid; ?>',
-            mode: '<?php echo $mode; ?>',
-            portalid: '<?php echo $portalid; ?>',
-            reference: '<?php echo $reference; ?>',
-            request: '<?php echo $request; ?>',
-            responsetype: '<?php echo $responsetype; ?>',
-            successurl: '<?php echo $successurl; ?>',
-            key: '<?php echo $key; ?>',
-            storecarddata: 'yes',
-            hash: '<?php echo $hash; ?>'
+            aid                     : '<?php echo $aid; ?>',
+            clearingtype            : '<?php echo $clearingtype; ?>',
+            reference               : '<?php echo $reference; ?>',
+            'pr[1]'                 : '<?php echo $pr[1]; ?>',
+            'no[1]'                 : '<?php echo $no[1]; ?>',
+            amount                  : '<?php echo $amount; ?>',
+            currency                : '<?php echo $currency; ?>',
+            param                   : '<?php echo $param; ?>',
+            narrative_text          : '<?php echo $narrative_text; ?>',
+            document_date           : '<?php echo $document_date; ?>',
+            booking_date            : '<?php echo $booking_date; ?>',
+            due_time                : '<?php echo $due_time; ?>',
+            invoiceid               : '<?php echo $invoiceid; ?>',
+            invoice_deliverymode    : '<?php echo $invoice_deliverymode; ?>',
+            invoice_deliverydate    : '<?php echo $invoice_deliverydate; ?>',
+            invoice_deliveryenddate : '<?php echo $invoice_deliveryenddate; ?>',
+            invoiceappendix         : '<?php echo $invoiceappendix; ?>',
+            'id[1]'                 : '<?php echo $id[1]; ?>',
+            'de[1]'                 : '<?php echo $de[1]; ?>',
+            'va[1]'                 : '<?php echo $va[1]; ?>',
+            'sd[1]'                 : '<?php echo $sd[1]; ?>',
+            'ed[1]'                 : '<?php echo $ed[1]; ?>',
+            customerid              : '<?php echo $customerid; ?>',
+            userid                  : '<?php echo $userid; ?>',
+            salutation              : '<?php echo $salutation; ?>',
+            title                   : '<?php echo $title; ?>',
+            firstname               : '<?php echo $firstname; ?>',
+            lastname                : '<?php echo $lastname; ?>',
+            company                 : '<?php echo $company; ?>',
+            street                  : '<?php echo $street; ?>',
+            zip                     : '<?php echo $zip; ?>',
+            city                    : '<?php echo $city; ?>',
+            country                 : '<?php echo $country; ?>',
+            email                   : '<?php echo $email; ?>',
+            telephonenumber         : '<?php echo $telephonenumber; ?>',
+            language                : '<?php echo $language; ?>',
+            vatid                   : '<?php echo $vatid; ?>',
+            gender                  : '<?php echo $gender; ?>',
+            personalid              : '<?php echo $personalid; ?>',
+            shipping_firstname      : '<?php echo $shipping_firstname; ?>',
+            shipping_lastname       : '<?php echo $shipping_lastname; ?>',
+            shipping_company        : '<?php echo $shipping_company; ?>',
+            shipping_street         : '<?php echo $shipping_street; ?>',
+            shipping_zip            : '<?php echo $shipping_zip; ?>',
+            shipping_city           : '<?php echo $shipping_city; ?>',
+            shipping_country        : '<?php echo $shipping_country; ?>',
+            ecommercemode           : '<?php echo $ecommercemode; ?>',
+            successurl              : '<?php echo $successurl; ?>',
+            errorurl                : '<?php echo $errorurl; ?>',
+            mid                     : '<?php echo $mid; ?>',
+            portalid                : '<?php echo $portalid; ?>',
+            request                 : '<?php echo $request; ?>',
+            api_version             : '<?php echo $api_version; ?>',
+            mode                    : '<?php echo $mode; ?>',
+            responsetype            : '<?php echo $responsetype; ?>',
+            encoding                : '<?php echo $encoding; ?>',
+            storecarddata           : '<?php echo $storecarddata; ?>',
+            hash                    : '<?php echo $hash; ?>'
         };
         var iframes = new Payone.ClientApi.HostedIFrames(config, request);
 
         function check() {
-            console.debug("check");
-            // Function called by submitting PAY-button
             if (iframes.isComplete()) {
-                iframes.creditCardCheck('checkCallback');// Perform "CreditCardCheck" to create and get a "checkCallback". PseudoCardPan; then call your function
-            } else {
+                iframes.creditCardCheck('checkCallback');
+            }
+            else {
                 console.debug("not complete");
             }
         }
 
         function checkCallback(response) {
             console.debug(response);
+            console.log(response);
             if (response.status === "VALID") {
                 document.getElementById("pseudocardpan").value = response.pseudocardpan;
                 document.getElementById("truncatedcardpan").value = response.truncatedcardpan;
-                document.paymentform.submit();
+                document.getElementById("cardtypeResponse").value = response.cardtype;
+                document.getElementById("cardexpiredateResponse").value = response.cardexpiredate;
+                //document.paymentform.submit();
+            }
+
+            if (typeof response === 'object') {
+                var responseAsString = 'time: ' + new Date().getTime() + "\n";
+                for (var key in response) {
+                    if (response.hasOwnProperty(key)) {
+                        responseAsString += key + ': ' + response[key] + "\n";
+                    }
+                }
+                document.getElementById('jsonResponsePre').innerHTML = responseAsString;
             }
         }
         /* Payment gateway functionality end */
-
-        window.environment = {
-            service_tax_one: '{{ env('SERVICE_TAX_ONE') }}',
-            service_tax_two: '{{ env('SERVICE_TAX_TWO') }}',
-            service_tax_three: '{{ env('SERVICE_TAX_THREE') }}'
-        }
     </script>
 @endpush
