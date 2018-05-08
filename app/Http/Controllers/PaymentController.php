@@ -7,9 +7,11 @@ use Illuminate\Http\Request;
 use App\Http\Requests\PaymentRequest;
 use App\Userlist;
 use App\Booking;
+use App\Order;
 use Auth;
 use Validator;
 use Payone;
+use DateTime;
 
 class PaymentController extends Controller
 {
@@ -24,6 +26,7 @@ class PaymentController extends Controller
             $prepayment_amount           = [];
             $serviceTax                  = 0;
             $moneyBalance                = 0;
+            $payByBillPossible           = [];
             $carts                       = Booking::where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
                 ->where('status', "8")
                 ->where('is_delete', 0)
@@ -31,9 +34,24 @@ class PaymentController extends Controller
                 ->get();
 
             if(count($carts) > 0) {
-                /* Amount calculation */
+
                 foreach ($carts as $key => $cart) {
                     $prepayment_amount[] = $cart->prepayment_amount;
+
+                    /* Condition to check pay by bill possible begin */
+                    // Pay by bill radio button in payment page will show when there is three weeks diff b/w current date and checking from date.
+                    $checkingFrom        = $cart->checkin_from->format('Y-m-d');
+                    $currentDate         = date('Y-m-d');
+                    $d1                  = new DateTime($currentDate);
+                    $d2                  = new DateTime($checkingFrom);
+                    $dateDifference      = $d2->diff($d1);
+                    if($dateDifference->days > 20) {
+                        $payByBillPossible[] = 'yes';
+                    }
+                    else {
+                        $payByBillPossible[] = 'no';
+                    }
+                    /* Condition to check pay by bill possible end */
                 }
 
                 $sum_prepayment_amount   = array_sum($prepayment_amount);
@@ -62,7 +80,7 @@ class PaymentController extends Controller
                     $moneyBalance        = $user->money_balance;
                 }
 
-                return view('payment', ['moneyBalance' => $moneyBalance, 'sumPrepaymentAmount' => $sum_prepayment_amount, 'prepayServiceTotal' => $prepay_service_total, 'serviceTax' => $serviceTax]);
+                return view('payment', ['moneyBalance' => $moneyBalance, 'sumPrepaymentAmount' => $sum_prepayment_amount, 'prepayServiceTotal' => $prepay_service_total, 'serviceTax' => $serviceTax, 'payByBillPossible' => $payByBillPossible]);
             }
             else {
                 return redirect()->route('cart');
@@ -111,36 +129,39 @@ class PaymentController extends Controller
 
             $sum_prepayment_amount   = array_sum($prepayment_amount);
 
-            if($sum_prepayment_amount <= 30) {
-                $serviceTax          = env('SERVICE_TAX_ONE');
-            }
-
-            if($sum_prepayment_amount > 30 && $sum_prepayment_amount <= 100) {
-                $serviceTax          = env('SERVICE_TAX_TWO');
-            }
-
-            if($sum_prepayment_amount > 100) {
-                $serviceTax          = env('SERVICE_TAX_THREE');
-            }
-
-            $percentage              = ($serviceTax / 100) * $sum_prepayment_amount;
-
-            $prepay_service_total    = round($sum_prepayment_amount + $percentage, 2);
+            $total_prepayment_amount = round($sum_prepayment_amount, 2);
 
             if(isset($request->moneyBalance) && $request->moneyBalance === '1') {
-                if($user->money_balance >= $prepay_service_total) {
-                    dd('money balance greater. not need payment choose validation');
+                if($user->money_balance >= $total_prepayment_amount) {
+                    dd('money balance is greater');
+                    /*$order                           = Order::new();
+                    $order->order_number             = 'order_number';
+                    $order->order_amount             = 'order_number';
+                    $order->order_total_amount       = 'order_number';
+                    $order->order_money_balance_used = 'order_number';
+                    $order->created_at               = 'order_number';
+                    $order->updated_at               = 'order_number';
+                    $order->order_delete             = 'order_number';
+                    $order->save();*/
                     // not need payment choose validation
-                    // store order details
+                    // store order details -> order_id, order_number, order_date, order_amount, order_total_amount, order_money_balance_used, created_at, updated_at, order_delete
+                    // update booking details -> order_id, status, payment_status, prepayment amount, total prepayment amount
                     // update user->moneybalance
                     // redirect to success page
                 }
                 else {
                     if(isset($request->payment)) {
                         // Function call for payment gateway section
-                        $paymentGateway = $this->paymentGateway($request->payment, $user, $request->ip(), str_replace(".", "", $prepay_service_total));
+                        $paymentGateway = $this->paymentGateway($request->payment, $user, $request->ip(), str_replace(".", "", $total_prepayment_amount), $request->pseudocardpan);
                         if ($paymentGateway["status"] == "REDIRECT") {
                             return redirect()->away($paymentGateway["redirecturl"]);
+                        }
+                        elseif ($paymentGateway["status"] == "APPROVED") { // no 3d secure verification required, transaction went through
+                            echo "Thank you for your purchase."; // redirect to success url
+                            //return redirect()->route('payment.success');
+                        }
+                        else {
+                            echo "There has been an error processing your request.";
                         }
                         // store order details
                         // update user->moneybalance
@@ -160,9 +181,16 @@ class PaymentController extends Controller
             else {
                 if(isset($request->payment)) {
                     // Function call for payment gateway section
-                    $paymentGateway = $this->paymentGateway($request->payment, $user, $request->ip(), str_replace(".", "", $prepay_service_total));
-                    if ($paymentGateway["status"] == "REDIRECT") {
+                    $paymentGateway = $this->paymentGateway($request->payment, $user, $request->ip(), str_replace(".", "", $total_prepayment_amount), $request->pseudocardpan);
+                    if ($paymentGateway["status"] == "REDIRECT") { // If card is 3d secure return status is REDIRECT and "redirect url" will return.
                         return redirect()->away($paymentGateway["redirecturl"]);
+                    }
+                    elseif ($paymentGateway["status"] == "APPROVED") { // If card is not 3d secure return status is APPROVED and "redirect url" will not return. We manually redirect to success page.
+                        echo "Thank you for your purchase."; // redirect to success page
+                        //return redirect()->route('payment.success');
+                    }
+                    else {
+                        echo "There has been an error processing your request."; // redirect to error page
                     }
                     // store order details
                     // update user->moneybalance
@@ -193,15 +221,32 @@ class PaymentController extends Controller
      * @param  string  $amount
      * @return array
      */
-    public function paymentGateway($payment, $user, $ip, $amount)
+    public function paymentGateway($payment, $user, $ip, $amount, $pseudocardpan)
     {
-        $walletType   = "";
+        $walletType             = "";
 
-        $clearingType = "";
+        $clearingType           = "";
 
         $onlineBankTransferType = "";
 
+        $requestType            = "";
+
+        $pseudoCardPan          = "";
+
+        $countryName            = "";
+
         include(app_path() . '/function/Payone.php');
+
+        /* Condition for country*/
+        if(Auth::user()->usrCountry === 'Deutschland') {
+            $countryName       = "DE";
+        }
+        elseif(Auth::user()->usrCountry === 'Österreich') {
+            $countryName       = "AT";
+        }
+        else {
+            $countryName       = "IT";
+        }
 
         /* Payment gateway details */
         $defaults     = array(
@@ -223,9 +268,9 @@ class PaymentController extends Controller
         /* Personal details */
         $personalData = array(
 
-            /*"salutation" => "Herr",
+            "salutation" => $user->salutation,
 
-            "title" => "Dr.",*/
+            "title" => $user->title,
 
             "firstname" => $user->usrFirstname,
 
@@ -237,7 +282,7 @@ class PaymentController extends Controller
 
             "city" => $user->usrCity,
 
-            "country" => "DE",
+            "country" => $countryName,
 
             "email" => $user->usrEmail,
 
@@ -245,7 +290,7 @@ class PaymentController extends Controller
 
             "language" => "de",
 
-            /*"gender" => "m",*/
+            "gender" => $user->gender,
 
             "ip" => $ip
         );
@@ -254,20 +299,36 @@ class PaymentController extends Controller
         if($payment === 'payPal') {
             $clearingType = "wlt";
             $walletType   = "PPE";
+            $requestType = "authorization";
         }
         elseif ($payment === 'payDirect') {
             $clearingType = "wlt";
             $walletType   = "PDT";
+            $requestType = "authorization";
         }
         elseif ($payment === 'sofort') {
             $clearingType = "sb";
             $onlineBankTransferType = "PNT";
+            $requestType = "authorization";
+        }
+        elseif ($payment === 'creditCard') {
+            $clearingType = "cc";
+            $requestType = "authorization";
+            $pseudoCardPan = $pseudocardpan;
+        }
+        elseif ($payment === 'payByBill') {
+            $clearingType = "vor";
+            $requestType = "preauthorization";
+            $pseudoCardPan = $pseudocardpan;
+        }
+        else{
+            abort(404);
         }
 
         /* Parameters for payment gateway */
         $parameters = array(
 
-            "request" => "authorization",
+            "request" => $requestType,
 
             "clearingtype" => $clearingType, // wallet clearing type
 
@@ -283,6 +344,8 @@ class PaymentController extends Controller
 
             "bankcountry" => "DE",
 
+            "pseudocardpan" => $pseudoCardPan,
+
             "narrative_text" => "Cabin room booked",
 
             "va[1]"  => "1900",   // Item description
@@ -295,7 +358,7 @@ class PaymentController extends Controller
 
             "invoice_deliverymode" => "P", //PDF
 
-            "invoiceappendix" => "Cabin Name: SCW-18-100023", //Dynamic text on the invoice
+            "invoiceappendix" => "Dynamic text on the invoice", //Dynamic text on the invoice
 
             "shipping_firstname" => $user->usrFirstname,
 
@@ -309,25 +372,14 @@ class PaymentController extends Controller
 
             "shipping_country" => "DE",
 
-            "successurl" => "https://payone.test/success.php?reference=your_unique_reference",
+            "successurl" => "https://frontend.test/payment/success",
 
-            "errorurl" => "https://payone.test/cancelled.php?reference=your_unique_reference",
-
-            "backurl" => "https://payone.test/back.php?reference=your_unique_reference",
-
-            /*"successurl" => "https://yourshop.de/payment/success?reference=your_unique_reference",
-
-            "errorurl" => "https://yourshop.de/payment/error?reference=your_unique_reference",
-
-            "backurl" => "https://yourshop.de/payment/back?reference=your_unique_reference",*/
-
+            "errorurl" => "https://frontend.test/payment/error"
         );
 
         $request = array_merge($defaults, $parameters, $personalData);
 
         ksort($request);
-
-        //print_r($request);
 
         $response = Payone::sendRequest($request);
 
@@ -346,6 +398,8 @@ class PaymentController extends Controller
          *  [redirecturl] => https://www.sofort.com/payment/go/7904xxxxxxxxxxxxxxxxxxxxeeca29ec9d8c7912
 
          *  [redirecturl] => https://sandbox.paydirekt.de/checkout/#/checkout/fe012345-abcd-efef-1234-7d7d7d7d7d7d
+         *
+         *  [redirecturl] => https://secure.pay1.de/3ds/redirect.php?md=21775143&txid=271387899
 
          *  [txid] => 205387102
 
@@ -356,6 +410,50 @@ class PaymentController extends Controller
          */
 
         return $response;
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function response()
+    {
+        // you'll need to include the $defaults array somehow, or at least get the key from a secret configuration file
+        if ($_POST["key"] == hash("md5", env('KEY'))) {
+            // key is valid, this notification is for us
+            echo "TSOK";
+            if ($_POST["txaction"] == "appointed") {
+                dd($_POST);
+                // a freshly created transaction has been marked successfully initiated
+                // update that transaction accordingly, e.g. by $_POST["reference"]
+            }
+            if ($_POST["txaction"] == "paid") {
+                dd($_POST);
+                // update your transaction accordingly, e.g. by $_POST["reference"]
+            }
+        }
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function success()
+    {
+        //dd($_REQUEST);
+        dd('success');
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function failure()
+    {
+        dd('failure');
     }
 
     /**

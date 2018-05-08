@@ -688,30 +688,35 @@ $(function() {
 
             if (redeemAmount > sumPrepayAmount) {
                 var afterRedeemAmount     = redeemAmount - sumPrepayAmount;
-                var sumPrepayPercentage   = (serviceTaxBook / 100) * afterRedeemAmount;
-                var sumPrepayServiceTotal = afterRedeemAmount + sumPrepayPercentage;
-                $( ".reducedAmount" ).html(formatter.format(redeemAmount));
-                $( ".afterRedeemAmount" ).html(formatter.format(afterRedeemAmount));
-                $( ".sumPrepayServiceTotal" ).html(formatter.format(sumPrepayServiceTotal));
+                $( ".redeemAmount" ).html('<p class="info-listing-booking2">Redeem Amount:</p><p class="info-listing-price-booking2">'+formatter.format(redeemAmount)+'</p>');
+                $( ".moneyBalance" ).html('<p class="info-listing-booking2">Money Balance:</p><p class="info-listing-price-booking2">'+formatter.format(afterRedeemAmount)+'</p>');
+                $( ".afterRedeemAmount" ).html();
+                $( ".sumPrepayServiceTotal" ).html();
+                $( ".serviceFee" ).hide();
+                $( ".totalPrepayAmount" ).hide();
             }
             else {
                 var afterRedeemAmount     = sumPrepayAmount - redeemAmount;
                 var sumPrepayPercentage   = (serviceTaxBook / 100) * afterRedeemAmount;
                 var sumPrepayServiceTotal = afterRedeemAmount + sumPrepayPercentage;
-                $( ".reducedAmount" ).html(formatter.format(redeemAmount));
-                $( ".afterRedeemAmount" ).html(formatter.format(afterRedeemAmount));
+                $( ".redeemAmount" ).html('<p class="info-listing-booking2">Redeem Amount:</p><p class="info-listing-price-booking2">'+formatter.format(redeemAmount)+'</p>');
+                $( ".moneyBalance" ).html();
+                $( ".afterRedeemAmount" ).html('<p class="info-listing-booking2">Amount:</p><p class="info-listing-price-booking2">'+formatter.format(afterRedeemAmount)+'</p>');
                 $( ".sumPrepayServiceTotal" ).html(formatter.format(sumPrepayServiceTotal));
+                $( ".serviceFee" ).show();
+                $( ".totalPrepayAmount" ).show();
             }
         }
         else {
             $( ".afterRedeem" ).hide();
             var sumPrepaymentAmount    = $( ".sumPrepayAmount" ).data('sumprepayamount');
             var serviceFee             = serviceFees(sumPrepaymentAmount);
-            console.log(serviceFee);
             var sumPrepaymentPerc      = (serviceFee / 100) * sumPrepaymentAmount;
             var sumPrepaymentServTotal = sumPrepaymentAmount + sumPrepaymentPerc;
 
             $( ".sumPrepayServiceTotal" ).html(formatter.format(sumPrepaymentServTotal));
+            $( ".serviceFee" ).show();
+            $( ".totalPrepayAmount" ).show();
         }
 
         /* Function for service tax calculation */

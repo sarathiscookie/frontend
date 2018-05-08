@@ -82,7 +82,7 @@
                 </div>
             @endif
 
-            <form action="{{ route('payment.store') }}" method="post">
+            <form action="{{ route('payment.store') }}" method="post" name="paymentform">
 
                 {{ csrf_field() }}
 
@@ -95,8 +95,9 @@
                                         <div class="form-group row row-booking2">
                                             <ul class="payment-options-booking2">
                                                 <li class="li-head-booking2">Kind of payment</li>
+
                                                 <li class="check-it-list-booking2 check-it-list-spe-booking2 line-col-booking2" id="bill-booking2">
-                                                    <input type="radio" name="payment" class="check-it-booking2 radio-payment" value="payByBill"> Pay by bill
+                                                    <input type="radio" name="payment" class="check-it-booking2 radio-payment" value="payByBill" @if(in_array('no', $payByBillPossible)) disabled @endif> Pay by bill <span class="glyphicon glyphicon-booking2 glyphicon-question-sign" title="This button will enable if there is three weeks diff b/w current date and checking from date."></span>
                                                 </li>
 
                                                 <li class="check-it-list-booking2 check-it-list-spe-booking2">
@@ -134,7 +135,7 @@
 
                                                 <!-- Credit card: Payone hosted Iframe begin -->
                                                 <div id="creditcard" style="display: none;">
-                                                    <form name="paymentform" action="" method="post">
+
                                                         <fieldset>
                                                             <input type="hidden" name="pseudocardpan" id="pseudocardpan">
                                                             <input type="hidden" name="truncatedcardpan" id="truncatedcardpan">
@@ -166,20 +167,10 @@
 
                                                             <div id="errorOutput"></div>
 
-                                                            <input id="paymentsubmit" type="button" value="Submit" onclick="check();">
+
                                                         </fieldset>
-                                                    </form>
+
                                                     <div id="paymentform"></div>
-
-                                                    <h2>The JSON received from the server</h2>
-                                                    <div id="jsonResponse">
-                                                        <pre id="jsonResponsePre">Nothing received yet.</pre>
-                                                    </div>
-
-                                                    <h2>Autodetection callback result</h2>
-                                                    <div id="autodetectionResponse">
-                                                        <pre id="autodetectionResponsePre">Nothing received yet.</pre>
-                                                    </div>
 
                                                 </div>
                                                 <!-- Credit card: Payone hosted Iframe end -->
@@ -224,14 +215,18 @@
                                                 <div class="col-sm-12 col-sm-12-extra-booking2 col-sm-12-booking2-booking2">
                                                     <p class="info-listing-booking2">Deposit:</p><p class="info-listing-price-booking2">{{ number_format($sumPrepaymentAmount, 2, ',', '.') }}&euro;</p>
                                                     <div class="afterRedeem" style="display: none">
-                                                        <p class="info-listing-booking2">Deducted:</p><p class="info-listing-price-booking2 reducedAmount"></p>
-                                                        <p class="info-listing-booking2">Amount:</p><p class="info-listing-price-booking2 afterRedeemAmount"></p>
+                                                        <div class="redeemAmount"></div>
+                                                        <div class="moneyBalance"></div>
+                                                        <div class="afterRedeemAmount"></div>
                                                     </div>
-                                                    <p class="info-listing-booking2">Service fee:</p><p class="info-listing-price-booking2">{{ $serviceTax }}%</p>
+
+                                                    <div class="serviceFee">
+                                                        <p class="info-listing-booking2">Service fee:</p><p class="info-listing-price-booking2">{{ $serviceTax }}%</p>
+                                                    </div>
                                                 </div>
                                             </div>
                                             <div class="row row-booking2">
-                                                <div class="col-sm-12 col-sm-12-extra-booking2 col-sm-12-booking2">
+                                                <div class="col-sm-12 col-sm-12-extra-booking2 col-sm-12-booking2 totalPrepayAmount">
                                                     <h5 class="info-listing-booking2">Payment incl.<br /> Service fee:</h5><h5 class="info-listing-price-booking2 sumPrepayServiceTotal">{{ number_format($prepayServiceTotal, 2, ',', '.') }}&euro;</h5>
                                                 </div>
                                             </div>
@@ -245,7 +240,8 @@
 
                 <div>
                     <div id="btn-ground-2-booking2">
-                        <button type="submit" class="btn btn-default btn-default-booking2 btn-sm btn-details-booking2">Book the Cabin</button>
+                        <button type="submit" class="btn btn-default btn-default-booking2 btn-sm btn-details-booking2 nonCreditCardButton">Book the Cabin</button>
+                        <input id="paymentsubmit" class="btn btn-default btn-default-booking2 btn-sm btn-details-booking2" type="button" value="Book the Cabin" onclick="check();" style="display: none;">
                     </div>
                 </div>
             </form>
@@ -373,6 +369,17 @@
 @push('scripts')
     <script type="text/javascript" src="https://secure.pay1.de/client-api/js/v1/payone_hosted_min.js"></script>
     <script>
+        /* Credit card functionality */
+        $("input[name='payment']").on("click", function(){
+            if($(this).val() === 'creditCard') {
+                $("#paymentsubmit").show();
+                $(".nonCreditCardButton").hide();
+            }
+            else {
+                $(".nonCreditCardButton").show();
+                $("#paymentsubmit").hide();
+            }
+        });
         /* Payment gateway functionality begin */
         var request,
             supportedCardtypes = ["V", "M"],
@@ -422,7 +429,7 @@
                     supportedCardtypes: supportedCardtypes,
                     callback: function(detectedCardtype) {
                         // For the output container below.
-                        document.getElementById('autodetectionResponsePre').innerHTML = detectedCardtype;
+                        /*document.getElementById('autodetectionResponsePre').innerHTML = detectedCardtype;*/
                         if (detectedCardtype === 'V') {
                             document.getElementById('visa').style.borderColor = '#5F6876';
                             document.getElementById('mastercard').style.borderColor = '#EFEFEF';
@@ -513,26 +520,21 @@
         }
 
         function checkCallback(response) {
-            console.debug(response);
-            console.log(response);
             if (response.status === "VALID") {
                 document.getElementById("pseudocardpan").value = response.pseudocardpan;
                 document.getElementById("truncatedcardpan").value = response.truncatedcardpan;
                 document.getElementById("cardtypeResponse").value = response.cardtype;
                 document.getElementById("cardexpiredateResponse").value = response.cardexpiredate;
-                //document.paymentform.submit();
-            }
-
-            if (typeof response === 'object') {
-                var responseAsString = 'time: ' + new Date().getTime() + "\n";
-                for (var key in response) {
-                    if (response.hasOwnProperty(key)) {
-                        responseAsString += key + ': ' + response[key] + "\n";
-                    }
-                }
-                document.getElementById('jsonResponsePre').innerHTML = responseAsString;
+                document.paymentform.submit();
             }
         }
         /* Payment gateway functionality end */
+
+        /* Environment variables to payment js file */
+        window.environment = {
+            service_tax_one: '{{ env('SERVICE_TAX_ONE') }}',
+            service_tax_two: '{{ env('SERVICE_TAX_TWO') }}',
+            service_tax_three: '{{ env('SERVICE_TAX_THREE') }}'
+        }
     </script>
 @endpush
