@@ -30,7 +30,7 @@ mix.styles([
     'resources/assets/css/payment.css',
     'resources/assets/css/login.css',
     'resources/assets/css/register.css'
-], 'public/css/all.css');
+], 'public/css/all.css').version();
 
 mix.scripts([
     'resources/assets/js/welcome.js',
@@ -41,14 +41,14 @@ mix.scripts([
     'resources/assets/js/cart.js',
     'resources/assets/js/inquiry.js',
     'resources/assets/js/payment.js'
-], 'public/js/all.js');
+], 'public/js/all.js').version();
 
 /* Js and css for plugins */
 mix.styles([
     'resources/assets/css/plugins/lightslider.css'
-], 'public/css/plugins.css');
+], 'public/css/plugins.css').version();
 
 mix.scripts([
     'resources/assets/js/plugins/typeahead.bundle.js',
     'resources/assets/js/plugins/lightslider.js'
-], 'public/js/plugins.js');
+], 'public/js/plugins.js').version();

@@ -11,16 +11,16 @@
     <title>Huetten-Holiday.de - @yield('title')</title>
 
     <!-- Laravel default css -->
-    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    <link href="{{ mix('css/app.css') }}" rel="stylesheet">
 
     <!-- jQuery-ui -->
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 
     <!-- Css for all plugins -->
-    <link href="{{ asset('css/plugins.css') }}" rel="stylesheet">
+    <link href="{{ mix('css/plugins.css') }}" rel="stylesheet">
 
     <!-- Css for all modules -->
-    <link href="{{ asset('css/all.css') }}" rel="stylesheet">
+    <link href="{{ mix('css/all.css') }}" rel="stylesheet">
 
     @yield('styles')
 
@@ -139,16 +139,16 @@
 </footer>
 
 <!-- Laravel default js -->
-<script src="{{ asset('js/app.js') }}"></script>
+<script src="{{ mix('js/app.js') }}"></script>
 
 <!-- jQuery UI 1.12.1 -->
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
 <!-- Js for all plugins -->
-<script src="{{ asset('js/plugins.js') }}"></script>
+<script src="{{ mix('js/plugins.js') }}"></script>
 
 <!-- Js for all modules -->
-<script src="{{ asset('js/all.js') }}"></script>
+<script src="{{ mix('js/all.js') }}"></script>
 
 @stack('scripts')
 
