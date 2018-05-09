@@ -421,7 +421,7 @@ class PaymentController extends Controller
      */
     public function response()
     {
-        dd($_REQUEST);
+        print_r($_POST["key"]);
         // you'll need to include the $defaults array somehow, or at least get the key from a secret configuration file
         if ($_POST["key"] == hash("md5", env('KEY'))) {
             // key is valid, this notification is for us
@@ -445,6 +445,7 @@ class PaymentController extends Controller
      */
     public function success()
     {
+        print_r($_POST["txaction"]);
         return view('paymentSuccess');
     }
 
