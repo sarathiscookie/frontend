@@ -372,9 +372,9 @@ class PaymentController extends Controller
 
             "shipping_country" => "DE",
 
-            "successurl" => "https://frontend.test/payment/success",
+            "successurl" => env('SUCCESSURL'),
 
-            "errorurl" => "https://frontend.test/payment/error"
+            "errorurl" => env('ERRORURL')
         );
 
         $request = array_merge($defaults, $parameters, $personalData);
@@ -383,6 +383,7 @@ class PaymentController extends Controller
 
         $response = Payone::sendRequest($request);
 
+        //dd($response);
         /**
 
          * This should return something like:
@@ -391,7 +392,7 @@ class PaymentController extends Controller
 
          * (
 
-         *  [status] => REDIRECT
+         *  [status] => REDIRECT OR APPROVED
 
          *  [redirecturl] => https://www.sandbox.paypal.com/webscr?useraction=commit&cmd=_express-checkout&token=EC-4XXX73XXXK03XXX1A
 
@@ -401,9 +402,9 @@ class PaymentController extends Controller
          *
          *  [redirecturl] => https://secure.pay1.de/3ds/redirect.php?md=21775143&txid=271387899
 
-         *  [txid] => 205387102
+         *  [txid] => 271612813
 
-         *  [userid] => 90737467
+         *  [userid] => 128309888
 
          * )
 
@@ -415,10 +416,12 @@ class PaymentController extends Controller
     /**
      * Display the specified resource.
      *
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function response()
+    public function response(Request $request)
     {
+        dd($_POST);
         // you'll need to include the $defaults array somehow, or at least get the key from a secret configuration file
         if ($_POST["key"] == hash("md5", env('KEY'))) {
             // key is valid, this notification is for us
