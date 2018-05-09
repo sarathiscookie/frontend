@@ -167,8 +167,7 @@ Route::group(['middleware' => ['auth']], function () {
     /* Choose payment and store data */
     Route::post('/payment/store', 'PaymentController@store')->name('payment.store');
 
-    /* Response from payone */
-    Route::get('/payment/response', 'PaymentController@response')->name('payment.response');
+
 
     /* Payment success */
     Route::get('/payment/success', 'PaymentController@success')->name('payment.success');
@@ -177,6 +176,8 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/payment/error', 'PaymentController@error')->name('payment.error');
 });
 
+/* Response from payone */
+Route::get('/payment/response', 'PaymentController@response')->name('payment.response');
 
 
 
