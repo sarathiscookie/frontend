@@ -445,8 +445,7 @@ class PaymentController extends Controller
      */
     public function success()
     {
-        //dd($_REQUEST);
-        dd('success');
+        return view('paymentSuccess');
     }
 
     /**

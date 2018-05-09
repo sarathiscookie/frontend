@@ -28,6 +28,7 @@ mix.styles([
     'resources/assets/css/cart.css',
     'resources/assets/css/inquiry.css',
     'resources/assets/css/payment.css',
+    'resources/assets/css/paymentSuccess.css',
     'resources/assets/css/login.css',
     'resources/assets/css/register.css'
 ], 'public/css/all.css').version();
