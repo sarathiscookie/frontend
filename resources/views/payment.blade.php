@@ -279,12 +279,14 @@
         $booking_date         = date('Ymd');
         $due_time             = mktime(0, 0, 0, date('n'), date('j') + 1);
         $id[1]                = mt_rand(111, 99999999);
+        $it[1]                = 'handling';
         $de[1]                = 'Dynamic text'; // Item description
         $va[1]                = "1900";
         $sd[1]                = date('Ymd');
         $ed[1]                = date('Ymd');
         $customerid           = mt_rand(111, 99999999);
         $userid               = mt_rand(111, 99999999); //Debtor Id (Payone)
+        $txid                 = mt_rand(111, 99999999);
 
         // Parameter ( Invoice )
         $invoiceid            = mt_rand(111, 99999999);
@@ -348,6 +350,7 @@
         $invoice_deliverymode .
         $invoiceappendix .
         $invoiceid .
+        $it[1] .
         $mid .
         $mode .
         $narrative_text .

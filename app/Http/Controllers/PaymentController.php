@@ -372,6 +372,10 @@ class PaymentController extends Controller
 
             "shipping_country" => "DE",
 
+            "txid" => mt_rand(111, 99999999),
+
+            "it[1]" => 'handling',
+
             "successurl" => env('SUCCESSURL'),
 
             "errorurl" => env('ERRORURL')
