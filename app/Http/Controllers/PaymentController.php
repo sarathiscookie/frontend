@@ -256,7 +256,7 @@ class PaymentController extends Controller
 
             "portalid"    => env('PORTAL_ID'),
 
-            "key"         => hash("md5", env('KEY')), // The key has to be hashed as md5
+            "key"         => env('KEY'), // The key has to be hashed as md5
 
             "mode"        => env('MODE'), // Can be "live" for actual transactions
 
@@ -313,7 +313,7 @@ class PaymentController extends Controller
         }
         elseif ($payment === 'creditCard') {
             $clearingType = "cc";
-            $requestType = "authorization";
+            $requestType = "capture";
             $pseudoCardPan = $pseudocardpan;
         }
         elseif ($payment === 'payByBill') {
@@ -372,9 +372,9 @@ class PaymentController extends Controller
 
             "shipping_country" => "DE",
 
-            /*"successurl" => env('SUCCESSURL'),
+            "successurl" => env('SUCCESSURL'),
 
-            "errorurl" => env('ERRORURL')*/
+            "errorurl" => env('ERRORURL')
         );
 
         $request = array_merge($defaults, $parameters, $personalData);
