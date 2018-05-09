@@ -313,7 +313,7 @@ class PaymentController extends Controller
         }
         elseif ($payment === 'creditCard') {
             $clearingType = "cc";
-            $requestType = "capture";
+            $requestType = "authorization";
             $pseudoCardPan = $pseudocardpan;
         }
         elseif ($payment === 'payByBill') {
@@ -371,10 +371,6 @@ class PaymentController extends Controller
             "shipping_city" => $user->usrCity,
 
             "shipping_country" => "DE",
-
-            "txid" => mt_rand(111, 99999999),
-
-            "it[1]" => 'handling',
 
             "successurl" => env('SUCCESSURL'),
 
