@@ -169,15 +169,17 @@ Route::group(['middleware' => ['auth']], function () {
 
 
 
-    /* Payment success */
-    Route::get('/payment/success', 'PaymentController@success')->name('payment.success');
 
-    /* Payment failure */
-    Route::get('/payment/error', 'PaymentController@error')->name('payment.error');
 });
 
 /* Response from payone */
 Route::get('/payment/response', 'PaymentController@response')->name('payment.response');
+
+/* Payment success */
+Route::get('/payment/success', 'PaymentController@success')->name('payment.success');
+
+/* Payment failure */
+Route::get('/payment/error', 'PaymentController@error')->name('payment.error');
 
 
 
