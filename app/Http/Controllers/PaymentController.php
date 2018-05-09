@@ -372,9 +372,9 @@ class PaymentController extends Controller
 
             "shipping_country" => "DE",
 
-            "successurl" => env('SUCCESSURL'),
+            /*"successurl" => env('SUCCESSURL'),
 
-            "errorurl" => env('ERRORURL')
+            "errorurl" => env('ERRORURL')*/
         );
 
         $request = array_merge($defaults, $parameters, $personalData);
