@@ -260,7 +260,7 @@ class PaymentController extends Controller
 
             "portalid"    => env('PORTAL_ID'),
 
-            "key"         => hash("sha384", env('KEY')), // The key has to be hashed as md5
+            "key"         => hash("md5", env('KEY')), // The key has to be hashed as md5
 
             "mode"        => env('MODE'), // Can be "live" for actual transactions
 
