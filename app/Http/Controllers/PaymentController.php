@@ -425,6 +425,8 @@ class PaymentController extends Controller
      */
     public function response(Request $request)
     {
+        $data = $request->all();
+        dd($_POST);
         // you'll need to include the $defaults array somehow, or at least get the key from a secret configuration file
         if ($_POST["key"] == hash("md5", env('KEY'))) {
             // key is valid, this notification is for us
