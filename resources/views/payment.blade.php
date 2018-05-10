@@ -329,7 +329,7 @@
         $shipping_country     = $countryName;
 
         // Hashing the parameters in sorted order
-        $hash = hash_hmac("sha384", $aid .
+        $hash = md5($aid .
         $amount .
         $api_version .
         $booking_date .

@@ -428,7 +428,7 @@ class PaymentController extends Controller
         $data = $request->all();
 
         // you'll need to include the $defaults array somehow, or at least get the key from a secret configuration file
-        if ($_POST["key"] == hash("sha384", env('KEY'))) {
+        if ($_POST["key"] == hash("md5", env('KEY'))) {
             // key is valid, this notification is for us
             echo "TSOK";
             if ($_POST["txaction"] == "appointed") {
