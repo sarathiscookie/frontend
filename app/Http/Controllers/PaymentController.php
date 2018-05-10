@@ -159,9 +159,11 @@ class PaymentController extends Controller
                         elseif ($paymentGateway["status"] == "APPROVED") { // no 3d secure verification required, transaction went through
                             echo "Thank you for your purchase."; // redirect to success url
                             //return redirect()->route('payment.success');
+                            //[txid] => 271612813 [userid] => 128309888
                         }
                         else {
                             echo "There has been an error processing your request.";
+                            //[txid] => 271612813 [userid] => 128309888
                         }
                         // store order details
                         // update user->moneybalance
@@ -187,10 +189,12 @@ class PaymentController extends Controller
                     }
                     elseif ($paymentGateway["status"] == "APPROVED") { // If card is not 3d secure return status is APPROVED and "redirect url" will not return. We manually redirect to success page.
                         echo "Thank you for your purchase."; // redirect to success page
+                        //[txid] => 271612813 [userid] => 128309888
                         //return redirect()->route('payment.success');
                     }
                     else {
                         echo "There has been an error processing your request."; // redirect to error page
+                        //[txid] => 271612813 [userid] => 128309888
                     }
                     // store order details
                     // update user->moneybalance
@@ -419,9 +423,9 @@ class PaymentController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function response()
+    public function response(Request $request)
     {
-        print_r($_REQUEST);
+        dd($_POST);
         // you'll need to include the $defaults array somehow, or at least get the key from a secret configuration file
         if ($_POST["key"] == hash("md5", env('KEY'))) {
             // key is valid, this notification is for us
@@ -445,7 +449,6 @@ class PaymentController extends Controller
      */
     public function success()
     {
-        print_r($_REQUEST);
         return view('paymentSuccess');
     }
 
@@ -456,7 +459,6 @@ class PaymentController extends Controller
      */
     public function failure()
     {
-        print_r($_REQUEST);
         dd('failure');
     }
 
