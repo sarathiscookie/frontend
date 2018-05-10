@@ -263,7 +263,7 @@
         $successurl           = 'https://payone.test/success.php?reference=your_unique_reference';
         $errorurl             = 'https://payone.test/cancelled.php?reference=your_unique_reference';
         $encoding             = env('ENCODING');
-        $key                  = hash("sha384", env('KEY'));
+        $key                  = env('KEY');
         $clearingtype         = 'cc'; //cc - Credit card, rec - Invoice, cod - Cash on delivery, sb - Online Bank Transfer, wlt - e-wallet, fnc - Financing
         $ecommercemode        = "3dsecure";
 
