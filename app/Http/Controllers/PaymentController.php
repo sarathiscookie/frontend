@@ -260,7 +260,7 @@ class PaymentController extends Controller
 
             "portalid"    => env('PORTAL_ID'),
 
-            "key"         => hash("md5", env('KEY')), // The key has to be hashed as md5
+            "key"         => hash("sha384", env('KEY')), // The key has to be hashed as md5
 
             "mode"        => env('MODE'), // Can be "live" for actual transactions
 
@@ -432,12 +432,14 @@ class PaymentController extends Controller
             // key is valid, this notification is for us
             echo "TSOK";
             if ($_POST["txaction"] == "appointed") {
-                dd($_POST);
+                print_r($_POST);
+                exit();
                 // a freshly created transaction has been marked successfully initiated
                 // update that transaction accordingly, e.g. by $_POST["reference"]
             }
             if ($_POST["txaction"] == "paid") {
-                dd($_POST);
+                print_r($_POST);
+                exit();
                 // update your transaction accordingly, e.g. by $_POST["reference"]
             }
         }
