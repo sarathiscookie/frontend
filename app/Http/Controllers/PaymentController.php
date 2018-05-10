@@ -431,16 +431,16 @@ class PaymentController extends Controller
             // key is valid, this notification is for us
             echo "TSOK";
             if ($_POST["txaction"] == "appointed") {
-                dd($_POST);
+                //dd($_POST);
                 // a freshly created transaction has been marked successfully initiated
                 // update that transaction accordingly, e.g. by $_POST["reference"]
             }
             if ($_POST["txaction"] == "paid") {
-                dd($_POST);
+                //dd($_POST);
                 // update your transaction accordingly, e.g. by $_POST["reference"]
             }
         }
-        dd($data);
+        //dd($data);
     }
 
     /**
