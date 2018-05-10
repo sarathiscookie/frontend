@@ -426,6 +426,7 @@ class PaymentController extends Controller
     public function response(Request $request)
     {
         $data = $request->all();
+
         // you'll need to include the $defaults array somehow, or at least get the key from a secret configuration file
         if ($_POST["key"] == hash("sha384", env('KEY'))) {
             // key is valid, this notification is for us
@@ -440,7 +441,7 @@ class PaymentController extends Controller
                 // update your transaction accordingly, e.g. by $_POST["reference"]
             }
         }
-        //dd($data);
+        dd($data);
     }
 
     /**
