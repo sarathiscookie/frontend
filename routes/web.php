@@ -168,7 +168,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('/payment/store', 'PaymentController@store')->name('payment.store');
 
     /* Response from payone */
-    Route::post('/payment/response', 'PaymentController@response')->name('payment.response');
+    Route::get('/payment/response', 'PaymentController@response')->name('payment.response');
 
     /* Payment success */
     Route::get('/payment/success', 'PaymentController@success')->name('payment.success');
