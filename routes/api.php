@@ -18,4 +18,4 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 /* Response from payone */
-Route::get('/payment/response', 'PaymentController@response')->name('payment.response');
+Route::post('/payment/response', 'PaymentController@response')->name('payment.response');
