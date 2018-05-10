@@ -16,3 +16,6 @@ use Illuminate\Http\Request;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+/* Response from payone */
+Route::get('/payment/response', 'PaymentController@response')->name('payment.response');
