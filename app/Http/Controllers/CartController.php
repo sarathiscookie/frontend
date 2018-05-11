@@ -113,7 +113,7 @@ class CartController extends Controller
             $dormsRequest          = 0;
             $requestBedsSumDorms   = 0;
             $sleepsRequest         = 0;
-            $eachDepositWithTax    = 0;
+            /*$eachDepositWithTax    = 0;*/
             $not_regular_dates     = [];
             $dates_array           = [];
             $availableStatus       = [];
@@ -161,7 +161,7 @@ class CartController extends Controller
                     $guestSleepsTypeCondition = ($cabin->sleeping_place === 1) ? $sleepsRequest : $requestBedsSumDorms;
                     $amount                   = round(($cabin->prepayment_amount * $dateDifference->days) * $guestSleepsTypeCondition, 2);
 
-                    if($amount <= 30) {
+                    /*if($amount <= 30) {
                         $serviceTax           = env('SERVICE_TAX_ONE');
                         $eachAmountPercentage = ($serviceTax / 100) * $amount;
                         $eachDepositWithTax   = round($amount + $eachAmountPercentage, 2);
@@ -177,7 +177,7 @@ class CartController extends Controller
                         $serviceTax           = env('SERVICE_TAX_THREE');
                         $eachAmountPercentage = ($serviceTax / 100) * $amount;
                         $eachDepositWithTax   = round($amount + $eachAmountPercentage, 2);
-                    }
+                    }*/
                     /* Payment calculation end */
 
                     // Generate date b/w checking from and to
@@ -1201,7 +1201,7 @@ class CartController extends Controller
                         $booking->comments                 = $commentsRequest;
                         $booking->invoice_number           = $invoiceNumber;
                         $booking->prepayment_amount        = $amount;
-                        $booking->total_prepayment_amount  = $eachDepositWithTax; // Total prepayment amount is not the exact figure.
+                        $booking->total_prepayment_amount  = $amount; //$eachDepositWithTax; // Total prepayment amount is not the exact figure.
                         $booking->updated_at               = Carbon::now();
                         $booking->save();
                         /* Booking end */
