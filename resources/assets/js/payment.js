@@ -23,7 +23,7 @@ $(function() {
             var sumPrepayAmount           = $( ".sumPrepayAmount" ).data('sumprepayamount');
             var serviceTaxBook            = serviceFees(sumPrepayAmount);
 
-            if (redeemAmount > sumPrepayAmount) {
+            if (redeemAmount >= sumPrepayAmount) {
                 var afterRedeemAmount     = redeemAmount - sumPrepayAmount;
                 $( ".redeemAmount" ).html('<p class="info-listing-booking2">Redeem Amount:</p><p class="info-listing-price-booking2">'+formatter.format(redeemAmount)+'</p>');
                 $( ".moneyBalance" ).html('<p class="info-listing-booking2">Money Balance:</p><p class="info-listing-price-booking2">'+formatter.format(afterRedeemAmount)+'</p>');

@@ -20,4 +20,11 @@ class Order extends Eloquent
      * @var array
      */
     protected $guarded = ['_id'];
+
+    /**
+     * Eloquent allows you to work with Carbon/DateTime objects instead of MongoDate objects.
+     * Internally, these dates will be converted to MongoDate objects when saved to the database.
+     */
+
+    protected $dates = ['order_money_balance_used_date'];
 }

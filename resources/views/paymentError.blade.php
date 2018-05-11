@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Payment Success')
+@section('title', 'Payment Failure')
 
 @section('content')
     <div class="container-fluid container-fluid-booking3 bg-3 text-center">
@@ -20,9 +20,8 @@
                         <div class="col-sm-7 text-left col-sm-7-booking3">
                             <div class="row row-booking3">
                                 <div class="col-sm-12 month-opening-booking3 col-sm-12-booking3">
-                                    <h2>Well Done! Successfully booked</h2>
-                                    <p id="info-text-booking3">@if (session()->has('bookingSuccessStatus')) {{ session()->get('bookingSuccessStatus') }} @endif</p>
-                                    <p id="info-text-booking3">You will get a Voucher in the next minutes per Mail. Enjoy your trip!</p>
+                                    <h2>OOPS! Booing Failed</h2>
+                                    <p id="info-text-booking3">There were problems with the transaction. Take a step back and try again</p>
                                 </div>
                             </div>
                         </div>

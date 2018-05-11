@@ -12,6 +12,7 @@ use Auth;
 use Validator;
 use Payone;
 use DateTime;
+use Carbon\Carbon;
 
 class PaymentController extends Controller
 {
@@ -103,6 +104,48 @@ class PaymentController extends Controller
     }
 
     /**
+     * Function for order id.
+     *
+     * @param  string  $length
+     * @return \Illuminate\Http\Response
+     */
+    public function uniqidReal($length) {
+        if (function_exists("random_bytes")) {
+            $bytes = random_bytes(ceil($length / 2));
+        } elseif (function_exists("openssl_random_pseudo_bytes")) {
+            $bytes = openssl_random_pseudo_bytes(ceil($length / 2));
+        } else {
+            throw new Exception("no cryptographically secure random function available");
+        }
+        return substr(bin2hex($bytes), 0, $length);
+    }
+
+    /**
+     * Function for service fee
+     *
+     * @param  string  $sumPrepayAmount
+     * @return \Illuminate\Http\Response
+     */
+    public function serviceFees($sumPrepayAmount)
+    {
+        $serviceTaxBook = 0;
+
+        if($sumPrepayAmount <= 30) {
+            $serviceTaxBook = env('SERVICE_TAX_ONE');
+        }
+
+        if($sumPrepayAmount > 30 && $sumPrepayAmount <= 100) {
+            $serviceTaxBook = env('SERVICE_TAX_TWO');
+        }
+
+        if($sumPrepayAmount > 100) {
+            $serviceTaxBook = env('SERVICE_TAX_THREE');
+        }
+
+        return $serviceTaxBook;
+    }
+
+    /**
      * Store a newly created resource in storage.
      *
      * @param  \App\Http\Requests\PaymentRequest  $request
@@ -110,11 +153,9 @@ class PaymentController extends Controller
      */
     public function store(PaymentRequest $request)
     {
-        $user                        = Userlist::where('is_delete', 0)->where('usrActive', '1')->find(Auth::user()->_id);
-
         $prepayment_amount           = [];
-        $serviceTax                  = 0;
-
+        $cart_ids                    = [];
+        $user                        = Userlist::where('is_delete', 0)->where('usrActive', '1')->find(Auth::user()->_id);
         $carts                       = Booking::where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
             ->where('status', "8")
             ->where('is_delete', 0)
@@ -124,39 +165,77 @@ class PaymentController extends Controller
         if(count($carts) > 0) {
             /* Amount calculation */
             foreach ($carts as $key => $cart) {
-                $prepayment_amount[] = $cart->prepayment_amount;
+                $prepayment_amount[]  = $cart->prepayment_amount;
+                $cart_ids[]           = $cart->_id;
             }
 
+            $order_id                = 'ORDER'.'-'.date('y').'-'.$this->uniqidReal(13); // uniqid gives 13 chars, but we could adjust it to our needs.
             $sum_prepayment_amount   = array_sum($prepayment_amount);
-
             $total_prepayment_amount = round($sum_prepayment_amount, 2);
+            $serviceTaxBook          = $this->serviceFees($total_prepayment_amount);
 
-            if(isset($request->moneyBalance) && $request->moneyBalance === '1') {
+            if($request->has('moneyBalance') && $request->moneyBalance === '1') {
                 if($user->money_balance >= $total_prepayment_amount) {
-                    dd('money balance is greater');
-                    /*$order                           = Order::new();
-                    $order->order_number             = 'order_number';
-                    $order->order_amount             = 'order_number';
-                    $order->order_total_amount       = 'order_number';
-                    $order->order_money_balance_used = 'order_number';
-                    $order->created_at               = 'order_number';
-                    $order->updated_at               = 'order_number';
-                    $order->order_delete             = 'order_number';
-                    $order->save();*/
-                    // not need payment choose validation
+
+                    // How much money user have in their account after used money balance
+                    $afterRedeemAmount = $user->money_balance - $total_prepayment_amount;
+
+                    // Storing order details
+                    $order                                = new Order;
+                    $order->order_id                      = $order_id;
+                    $order->order_amount                  = $total_prepayment_amount;
+                    $order->order_total_amount            = $total_prepayment_amount;
+                    $order->order_money_balance_used      = round($total_prepayment_amount, 2);
+                    $order->order_money_balance_used_date = Carbon::now();
+                    $order->order_payed_method            = 1; // 1 => fully paid using money balance, 2 => Partially paid using money balance, 3 => Paid using payment gateway
+                    $order->order_delete                  = 0;
+                    $order->save();
+
+                    if($order) {
+                        // Updating user money balance
+                        $user->money_balance = round($afterRedeemAmount, 2);
+                        $user->save();
+
+                        // Updating booking details
+                        foreach ($cart_ids as $cart_id) {
+                            $cartUpdate                 = Booking::where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
+                                ->where('status', "8")
+                                ->where('is_delete', 0)
+                                ->find($cart_id);
+                            $cartUpdate->order_id       = new \MongoDB\BSON\ObjectID($order->_id);
+
+                            // later change to TSOK page begin
+                            $cartUpdate->status         = '1';
+                            $cartUpdate->payment_status = '1';
+                            // later change to TSOK page end
+
+                            $cartUpdate->save();
+                        }
+
+                        return redirect()->route('payment.success')->with('bookingSuccessStatus', 'Thank you very much for booking with Huetten-Holiday.de.');
+                    }
+                    else {
+                        return redirect()->back()->with('bookingFailureStatus', 'There has been an error processing your request.');
+                    }
+
+                    // check email send after purchase is needed or not
+                    //dd($cartId); //to update booking data
                     // store order details -> order_id, order_number, order_date, order_amount, order_total_amount, order_money_balance_used, created_at, updated_at, order_delete
                     // update booking details -> order_id, status, payment_status, prepayment amount, total prepayment amount
                     // update user->moneybalance
                     // redirect to success page
+                    //history of mey balance - money balance used - order number - invoice number - used date - user id
                 }
                 else {
                     if(isset($request->payment)) {
                         // Function call for payment gateway section
                         $paymentGateway = $this->paymentGateway($request->payment, $user, $request->ip(), str_replace(".", "", $total_prepayment_amount), $request->pseudocardpan);
                         if ($paymentGateway["status"] == "REDIRECT") {
+                            $request->session()->put('bookingSuccessStatus', 'Thank you very much for booking with Huetten-Holiday.de.'); // later change to TSOK page
                             return redirect()->away($paymentGateway["redirecturl"]);
                         }
                         elseif ($paymentGateway["status"] == "APPROVED") { // no 3d secure verification required, transaction went through
+                            $request->session()->put('bookingSuccessStatus', 'Thank you very much for booking with Huetten-Holiday.de.'); // later change to TSOK page
                             echo "Thank you for your purchase."; // redirect to success url
                             //return redirect()->route('payment.success');
                             //[txid] => 271612813 [userid] => 128309888
@@ -185,9 +264,11 @@ class PaymentController extends Controller
                     // Function call for payment gateway section
                     $paymentGateway = $this->paymentGateway($request->payment, $user, $request->ip(), str_replace(".", "", $total_prepayment_amount), $request->pseudocardpan);
                     if ($paymentGateway["status"] == "REDIRECT") { // If card is 3d secure return status is REDIRECT and "redirect url" will return.
+                        $request->session()->put('bookingSuccessStatus', 'Thank you very much for booking with Huetten-Holiday.de.'); // later change to TSOK page
                         return redirect()->away($paymentGateway["redirecturl"]);
                     }
                     elseif ($paymentGateway["status"] == "APPROVED") { // If card is not 3d secure return status is APPROVED and "redirect url" will not return. We manually redirect to success page.
+                        $request->session()->put('bookingSuccessStatus', 'Thank you very much for booking with Huetten-Holiday.de.'); // later change to TSOK page
                         echo "Thank you for your purchase."; // redirect to success page
                         //[txid] => 271612813 [userid] => 128309888
                         //return redirect()->route('payment.success');
@@ -223,6 +304,7 @@ class PaymentController extends Controller
      * @param  string  $user
      * @param  string  $ip
      * @param  string  $amount
+     * @param  string  $pseudocardpan
      * @return array
      */
     public function paymentGateway($payment, $user, $ip, $amount, $pseudocardpan)
@@ -386,8 +468,6 @@ class PaymentController extends Controller
         ksort($request);
 
         $response = Payone::sendRequest($request);
-
-        //dd($response);
         /**
 
          * This should return something like:
@@ -453,7 +533,12 @@ class PaymentController extends Controller
      */
     public function success()
     {
-        return view('paymentSuccess');
+        if(session()->has('bookingSuccessStatus')) {
+            return view('paymentSuccess');
+        }
+        else {
+            abort(404);
+        }
     }
 
     /**

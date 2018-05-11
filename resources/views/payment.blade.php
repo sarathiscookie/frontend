@@ -61,6 +61,13 @@
 
     <main>
         <div class="container-fluid text-center container-fluid-booking2">
+            @if (session()->has('bookingFailureStatus'))
+                <div class="alert alert-danger alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <strong>OOPS!</strong> {{ session()->get('bookingFailureStatus') }}
+                </div>
+            @endif
+
             @if (session()->has('choosePaymentNullData'))
                 <div class="alert alert-danger alert-dismissible" role="alert">
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
