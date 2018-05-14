@@ -506,19 +506,30 @@ class PaymentController extends Controller
         if ($_POST["key"] == hash("md5", env('KEY'))) {
             // key is valid, this notification is for us
             echo "TSOK";
-            if ($_POST["txaction"] === "appointed") {
-                print_r($_POST);
-                exit();
+            if ($_POST["txaction"] == "appointed") {
+                $bookingUpdate  = Booking::where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id));
+                $bookingUpdate->reference = $_POST["reference"];
+                $bookingUpdate->transaction_status = $_POST["transaction_status"];
+                $bookingUpdate->txaction = $_POST["appointed"];
+                $bookingUpdate->save();
                 // a freshly created transaction has been marked successfully initiated
                 // update that transaction accordingly, e.g. by $_POST["reference"]
             }
-            if ($_POST["txaction"] === "paid") {
-                print_r($_POST);
-                exit();
+            if ($_POST["txaction"] == "paid") {
+                $bookingUpdate  = Booking::where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id));
+                $bookingUpdate->reference = $_POST["reference"];
+                $bookingUpdate->transaction_status = $_POST["transaction_status"];
+                $bookingUpdate->txaction = $_POST["appointed"];
+                $bookingUpdate->save();
                 // update your transaction accordingly, e.g. by $_POST["reference"]
             }
         }
-        dd($data);
+
+        $bookingUpdate  = Booking::where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id));
+        $bookingUpdate->reference = 'nill';
+        $bookingUpdate->transaction_status = 'nill';
+        $bookingUpdate->txaction = 'nill';
+        $bookingUpdate->save();
     }
 
     /**
@@ -543,7 +554,7 @@ class PaymentController extends Controller
      */
     public function failure()
     {
-        dd('failure');
+        return view('paymentError');
     }
 
     /**
