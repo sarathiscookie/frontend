@@ -267,8 +267,8 @@
         $request              = "creditcardcheck"; // or "authorization";
         $responsetype         = "JSON"; // or "REDIRECT";
         $storecarddata        = "yes"; // yes: Card data is stored, a pseudo card number is returned. no: Card data is not stored
-        $successurl           = 'https://payone.test/success.php?reference=your_unique_reference';
-        $errorurl             = 'https://payone.test/cancelled.php?reference=your_unique_reference';
+        $successurl           = env('SUCCESSURL');
+        $errorurl             = env('ERRORURL');
         $encoding             = env('ENCODING');
         $key                  = env('KEY');
         $clearingtype         = 'cc'; //cc - Credit card, rec - Invoice, cod - Cash on delivery, sb - Online Bank Transfer, wlt - e-wallet, fnc - Financing
@@ -336,7 +336,7 @@
         $shipping_country     = $countryName;
 
         // Hashing the parameters in sorted order
-        $hash = md5($aid .
+        $hash = hash_hmac("sha384", $aid .
         $amount .
         $api_version .
         $booking_date .

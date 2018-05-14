@@ -17,6 +17,31 @@ use Carbon\Carbon;
 class PaymentController extends Controller
 {
     /**
+     * Function for service fee
+     *
+     * @param  string  $sumPrepayAmount
+     * @return \Illuminate\Http\Response
+     */
+    public function serviceFees($sumPrepayAmount)
+    {
+        $serviceTaxBook = 0;
+
+        if($sumPrepayAmount <= 30) {
+            $serviceTaxBook = env('SERVICE_TAX_ONE');
+        }
+
+        if($sumPrepayAmount > 30 && $sumPrepayAmount <= 100) {
+            $serviceTaxBook = env('SERVICE_TAX_TWO');
+        }
+
+        if($sumPrepayAmount > 100) {
+            $serviceTaxBook = env('SERVICE_TAX_THREE');
+        }
+
+        return $serviceTaxBook;
+    }
+
+    /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
@@ -25,7 +50,6 @@ class PaymentController extends Controller
     {
         /*if (session()->has('availableStatus') && session()->get('availableStatus') === 'success') {*/
             $prepayment_amount           = [];
-            $serviceTax                  = 0;
             $moneyBalance                = 0;
             $payByBillPossible           = [];
             $carts                       = Booking::where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
@@ -40,13 +64,13 @@ class PaymentController extends Controller
                     $prepayment_amount[] = $cart->prepayment_amount;
 
                     /* Condition to check pay by bill possible begin */
-                    // Pay by bill radio button in payment page will show when there is three weeks diff b/w current date and checking from date.
+                    // Pay by bill radio button in payment page will show when there is two weeks diff b/w current date and checking from date.
                     $checkingFrom        = $cart->checkin_from->format('Y-m-d');
                     $currentDate         = date('Y-m-d');
                     $d1                  = new DateTime($currentDate);
                     $d2                  = new DateTime($checkingFrom);
                     $dateDifference      = $d2->diff($d1);
-                    if($dateDifference->days > 20) {
+                    if($dateDifference->days > 14) {
                         $payByBillPossible[] = 'yes';
                     }
                     else {
@@ -56,19 +80,7 @@ class PaymentController extends Controller
                 }
 
                 $sum_prepayment_amount   = array_sum($prepayment_amount);
-
-                if($sum_prepayment_amount <= 30) {
-                    $serviceTax          = env('SERVICE_TAX_ONE');
-                }
-
-                if($sum_prepayment_amount > 30 && $sum_prepayment_amount <= 100) {
-                    $serviceTax          = env('SERVICE_TAX_TWO');
-                }
-
-                if($sum_prepayment_amount > 100) {
-                    $serviceTax          = env('SERVICE_TAX_THREE');
-                }
-
+                $serviceTax              = $this->serviceFees($sum_prepayment_amount);
                 $percentage              = ($serviceTax / 100) * $sum_prepayment_amount;
                 $prepay_service_total    = $sum_prepayment_amount + $percentage;
 
@@ -118,31 +130,6 @@ class PaymentController extends Controller
             throw new Exception("no cryptographically secure random function available");
         }
         return substr(bin2hex($bytes), 0, $length);
-    }
-
-    /**
-     * Function for service fee
-     *
-     * @param  string  $sumPrepayAmount
-     * @return \Illuminate\Http\Response
-     */
-    public function serviceFees($sumPrepayAmount)
-    {
-        $serviceTaxBook = 0;
-
-        if($sumPrepayAmount <= 30) {
-            $serviceTaxBook = env('SERVICE_TAX_ONE');
-        }
-
-        if($sumPrepayAmount > 30 && $sumPrepayAmount <= 100) {
-            $serviceTaxBook = env('SERVICE_TAX_TWO');
-        }
-
-        if($sumPrepayAmount > 100) {
-            $serviceTaxBook = env('SERVICE_TAX_THREE');
-        }
-
-        return $serviceTaxBook;
     }
 
     /**
@@ -224,7 +211,7 @@ class PaymentController extends Controller
                     // update booking details -> order_id, status, payment_status, prepayment amount, total prepayment amount
                     // update user->moneybalance
                     // redirect to success page
-                    //history of mey balance - money balance used - order number - invoice number - used date - user id
+                    //history of money balance - money balance used - order number - invoice number - used date - user id
                 }
                 else {
                     if(isset($request->payment)) {
@@ -244,9 +231,13 @@ class PaymentController extends Controller
                             echo "There has been an error processing your request.";
                             //[txid] => 271612813 [userid] => 128309888
                         }
-                        // store order details
+                        // check email send after purchase is needed or not
+                        //dd($cartId); //to update booking data
+                        // store order details -> order_id, order_number, order_date, order_amount, order_total_amount, order_money_balance_used, created_at, updated_at, order_delete
+                        // update booking details -> order_id, status, payment_status, prepayment amount, total prepayment amount
                         // update user->moneybalance
                         // redirect to success page
+                        //history of money balance - money balance used - order number - invoice number - used date - user id
                     }
                     else {
                         $validator = Validator::make($request->all(), [
@@ -277,9 +268,13 @@ class PaymentController extends Controller
                         echo "There has been an error processing your request."; // redirect to error page
                         //[txid] => 271612813 [userid] => 128309888
                     }
-                    // store order details
+                    // check email send after purchase is needed or not
+                    //dd($cartId); //to update booking data
+                    // store order details -> order_id, order_number, order_date, order_amount, order_total_amount, order_money_balance_used, created_at, updated_at, order_delete
+                    // update booking details -> order_id, status, payment_status, prepayment amount, total prepayment amount
                     // update user->moneybalance
                     // redirect to success page
+                    //history of money balance - money balance used - order number - invoice number - used date - user id
                 }
                 else {
                     $validator = Validator::make($request->all(), [
@@ -342,7 +337,7 @@ class PaymentController extends Controller
 
             "portalid"    => env('PORTAL_ID'),
 
-            "key"         => hash("md5", env('KEY')), // The key has to be hashed as md5
+            "key"         => env('KEY'), // The key has to be hashed as md5
 
             "mode"        => env('MODE'), // Can be "live" for actual transactions
 
@@ -511,13 +506,13 @@ class PaymentController extends Controller
         if ($_POST["key"] == hash("md5", env('KEY'))) {
             // key is valid, this notification is for us
             echo "TSOK";
-            if ($_POST["txaction"] == "appointed") {
+            if ($_POST["txaction"] === "appointed") {
                 print_r($_POST);
                 exit();
                 // a freshly created transaction has been marked successfully initiated
                 // update that transaction accordingly, e.g. by $_POST["reference"]
             }
-            if ($_POST["txaction"] == "paid") {
+            if ($_POST["txaction"] === "paid") {
                 print_r($_POST);
                 exit();
                 // update your transaction accordingly, e.g. by $_POST["reference"]
