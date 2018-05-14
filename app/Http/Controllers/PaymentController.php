@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\BookingSuccess;
 use Illuminate\Http\Request;
 
 use App\Http\Requests\PaymentRequest;
@@ -13,6 +14,8 @@ use Validator;
 use Payone;
 use DateTime;
 use Carbon\Carbon;
+use Mail;
+use Illuminate\Support\Facades\Schema;
 
 class PaymentController extends Controller
 {
@@ -159,15 +162,14 @@ class PaymentController extends Controller
             $order_id                = 'ORDER'.'-'.date('y').'-'.$this->uniqidReal(13); // uniqid gives 13 chars, but we could adjust it to our needs.
             $sum_prepayment_amount   = array_sum($prepayment_amount);
             $total_prepayment_amount = round($sum_prepayment_amount, 2);
-            $serviceTaxBook          = $this->serviceFees($total_prepayment_amount);
 
             if($request->has('moneyBalance') && $request->moneyBalance === '1') {
                 if($user->money_balance >= $total_prepayment_amount) {
 
-                    // How much money user have in their account after used money balance
+                    /* How much money user have in their account after used money balance */
                     $afterRedeemAmount = $user->money_balance - $total_prepayment_amount;
 
-                    // Storing order details
+                    /* Storing order details */
                     $order                                = new Order;
                     $order->order_id                      = $order_id;
                     $order->order_amount                  = $total_prepayment_amount;
@@ -179,11 +181,11 @@ class PaymentController extends Controller
                     $order->save();
 
                     if($order) {
-                        // Updating user money balance
+                        /* Updating user money balance */
                         $user->money_balance = round($afterRedeemAmount, 2);
                         $user->save();
 
-                        // Updating booking details
+                        /* Updating booking details */
                         foreach ($cart_ids as $cart_id) {
                             $cartUpdate                 = Booking::where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
                                 ->where('status', "8")
@@ -199,18 +201,16 @@ class PaymentController extends Controller
                             $cartUpdate->save();
                         }
 
+                        /* Send email to guest after successful booking */
+                        Mail::to($user->usrEmail)->send(new BookingSuccess());
+
                         return redirect()->route('payment.success')->with('bookingSuccessStatus', 'Thank you very much for booking with Huetten-Holiday.de.');
                     }
                     else {
                         return redirect()->back()->with('bookingFailureStatus', 'There has been an error processing your request.');
                     }
 
-                    // check email send after purchase is needed or not
-                    //dd($cartId); //to update booking data
-                    // store order details -> order_id, order_number, order_date, order_amount, order_total_amount, order_money_balance_used, created_at, updated_at, order_delete
-                    // update booking details -> order_id, status, payment_status, prepayment amount, total prepayment amount
-                    // update user->moneybalance
-                    // redirect to success page
+
                     //history of money balance - money balance used - order number - invoice number - used date - user id
                 }
                 else {
@@ -505,31 +505,41 @@ class PaymentController extends Controller
         // you'll need to include the $defaults array somehow, or at least get the key from a secret configuration file
         if ($_POST["key"] == hash("md5", env('KEY'))) {
             // key is valid, this notification is for us
-            echo "TSOK";
+
             if ($_POST["txaction"] == "appointed") {
-                $bookingUpdate  = Booking::where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id));
-                $bookingUpdate->reference = $_POST["reference"];
-                $bookingUpdate->transaction_status = $_POST["transaction_status"];
-                $bookingUpdate->txaction = $_POST["appointed"];
-                $bookingUpdate->save();
+                $order            = new Order;
+                foreach($_POST as $key => $value) {
+                    if(Schema::hasColumn($order->getTable(), $key)){
+                        if(is_array($value)) {
+                            $order->{$key} = $value[1];
+                        } else {
+                            $order->{$key} = $value;
+                        }
+                    }
+                }
+
+                $order->save();
+                echo "TSOK";
                 // a freshly created transaction has been marked successfully initiated
                 // update that transaction accordingly, e.g. by $_POST["reference"]
             }
             if ($_POST["txaction"] == "paid") {
-                $bookingUpdate  = Booking::where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id));
-                $bookingUpdate->reference = $_POST["reference"];
-                $bookingUpdate->transaction_status = $_POST["transaction_status"];
-                $bookingUpdate->txaction = $_POST["appointed"];
-                $bookingUpdate->save();
+                $order            = new Order;
+                foreach($_POST as $key => $value) {
+                    if(Schema::hasColumn($order->getTable(), $key)){
+                        if(is_array($value)) {
+                            $order->{$key} = $value[1];
+                        } else {
+                            $order->{$key} = $value;
+                        }
+                    }
+                }
+
+                $order->save();
+                echo "TSOK";
                 // update your transaction accordingly, e.g. by $_POST["reference"]
             }
         }
-
-        $bookingUpdate  = Booking::where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id));
-        $bookingUpdate->reference = 'nill';
-        $bookingUpdate->transaction_status = 'nill';
-        $bookingUpdate->txaction = 'nill';
-        $bookingUpdate->save();
     }
 
     /**
