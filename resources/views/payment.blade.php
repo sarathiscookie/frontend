@@ -275,7 +275,7 @@
         $ecommercemode           = "3dsecure";
 
         /* Parameter ( Normal data ) */
-        $reference               = mt_rand(111, 9999).uniqid();
+        $reference               = random_int(111, 99999).uniqid();
         $pr[1]                   = str_replace(".", "", $prepayServiceTotal);
         $no[1]                   = "1";
         $amount                  = str_replace(".", "", $prepayServiceTotal);
@@ -285,14 +285,14 @@
         $document_date           = date('Ymd');
         $booking_date            = date('Ymd');
         $due_time                = mktime(0, 0, 0, date('n'), date('j') + 1);
-        $id[1]                   = mt_rand(111, 9999).uniqid();
+        $id[1]                   = random_int(111, 99999).uniqid();
         $de[1]                   = 'ORDER'.date('y').$uniqueId; // Item description
         $va[1]                   = env('VATRATE');
         $sd[1]                   = date('Ymd');
         $ed[1]                   = date('Ymd');
-        $customerid              = mt_rand(999, 9999999999);
-        $userid                  = mt_rand(999, 9999999999); //Debtor Id (Payone)
-        $personalid              = mt_rand(999, 9999999999);
+        $customerid              = random_int(9999, 9999999999);
+        $userid                  = random_int(9999, 9999999999); //Debtor Id (Payone)
+        $personalid              = random_int(9999, 9999999999);
 
         /* Parameter ( Invoice ) */
         $invoiceid               = 'ORDER'.'-'.date('y').'-'.$uniqueId;

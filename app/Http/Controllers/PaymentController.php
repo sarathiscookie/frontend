@@ -419,7 +419,7 @@ class PaymentController extends Controller
 
             "currency"                => "EUR",
 
-            "reference"               => mt_rand(111, 9999).uniqid(),
+            "reference"               => random_int(111, 99999).uniqid(),
 
             "pr[1]"                   => str_replace(".", "", $amount),
 
@@ -449,15 +449,15 @@ class PaymentController extends Controller
 
             "due_time"                => mktime(0, 0, 0, date('n'), date('j') + 1),
 
-            "id[1]"                   => mt_rand(111, 9999).uniqid(),
+            "id[1]"                   => random_int(111, 99999).uniqid(),
 
             "de[1]"                   => "ORDER".date('y').$uniqueId,
 
-            "customerid"              => mt_rand(999, 9999999999),
+            "customerid"              => random_int(9999, 9999999999),
 
-            "userid"                  => mt_rand(999, 9999999999),
+            "userid"                  => random_int(9999, 9999999999),
 
-            "personalid"              => mt_rand(999, 9999999999),
+            "personalid"              => random_int(9999, 9999999999),
 
             "invoiceid"               => "ORDER"."-".date('y')."-".$uniqueId,
 
