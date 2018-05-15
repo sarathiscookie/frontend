@@ -113,7 +113,7 @@ class PaymentController extends Controller
                     $moneyBalance        = $user->money_balance;
                 }
 
-                return view('payment', ['moneyBalance' => $moneyBalance, 'sumPrepaymentAmount' => $sum_prepayment_amount, 'prepayServiceTotal' => $prepay_service_total, 'serviceTax' => $serviceTax, 'payByBillPossible' => $payByBillPossible, 'uniqueId' => $this->uniqidReal(6)]);
+                return view('payment', ['moneyBalance' => $moneyBalance, 'sumPrepaymentAmount' => $sum_prepayment_amount, 'prepayServiceTotal' => $prepay_service_total, 'serviceTax' => $serviceTax, 'payByBillPossible' => $payByBillPossible, 'uniqueId' => $this->uniqidReal(13)]);
             }
             else {
                 return redirect()->route('cart');
@@ -158,7 +158,7 @@ class PaymentController extends Controller
                 $prepayment_amount[]  = $cart->prepayment_amount;
                 $cart_ids[]           = $cart->_id;
             }
-            $uniqueId                = $this->uniqidReal(6);
+            $uniqueId                = $this->uniqidReal(13);
             $order_id                = 'ORDER'.'-'.date('y').'-'.$uniqueId; // uniqid gives 13 chars, but we could adjust it to our needs.
             $sum_prepayment_amount   = array_sum($prepayment_amount);
             $total_prepayment_amount = round($sum_prepayment_amount, 2);
@@ -411,7 +411,7 @@ class PaymentController extends Controller
 
             "request"                 => $requestType,
 
-            "clearingtype"            => $clearingType, // wallet clearing type
+            "clearingtype"            => $clearingType,
 
             "wallettype"              => $walletType,
 
@@ -493,6 +493,7 @@ class PaymentController extends Controller
         ksort($request);
 
         $response                     = Payone::sendRequest($request);
+
         /**
 
          * This should return something like:
