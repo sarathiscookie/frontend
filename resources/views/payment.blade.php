@@ -258,84 +258,86 @@
     </main>
 
     @php
-        // Main parameters for authorize request
-        $aid                  = env('AID');
-        $mid                  = env('MID');
-        $portalid             = env('PORTAL_ID');
-        $api_version          = env('API_VERSION');
-        $mode                 = env('MODE');
-        $request              = "creditcardcheck"; // or "authorization";
-        $responsetype         = "JSON"; // or "REDIRECT";
-        $storecarddata        = "yes"; // yes: Card data is stored, a pseudo card number is returned. no: Card data is not stored
-        $successurl           = env('SUCCESSURL');
-        $errorurl             = env('ERRORURL');
-        $encoding             = env('ENCODING');
-        $key                  = env('KEY');
-        $clearingtype         = 'cc'; //cc - Credit card, rec - Invoice, cod - Cash on delivery, sb - Online Bank Transfer, wlt - e-wallet, fnc - Financing
-        $ecommercemode        = "3dsecure";
+        /* Main parameters for authorize request */
+        $aid                     = env('AID');
+        $mid                     = env('MID');
+        $portalid                = env('PORTAL_ID');
+        $api_version             = env('API_VERSION');
+        $mode                    = env('MODE');
+        $request                 = "creditcardcheck"; // or "authorization";
+        $responsetype            = "JSON"; // or "REDIRECT";
+        $storecarddata           = "yes"; // yes: Card data is stored, a pseudo card number is returned. no: Card data is not stored
+        $successurl              = env('SUCCESSURL');
+        $errorurl                = env('ERRORURL');
+        $encoding                = env('ENCODING');
+        $key                     = env('KEY');
+        $clearingtype            = 'cc'; //cc - Credit card, rec - Invoice, cod - Cash on delivery, sb - Online Bank Transfer, wlt - e-wallet, fnc - Financing
+        $ecommercemode           = "3dsecure";
 
-        // Parameter ( Normal data )
-        $reference            = uniqid();
-        $pr[1]                = str_replace(".", "", $prepayServiceTotal);
-        $no[1]                = "1";
-        $amount               = str_replace(".", "", $prepayServiceTotal);
-        $currency             = 'EUR';
-        $param                = "Dynamic text";
-        $narrative_text       = "Dynamic text";
-        $document_date        = date('Ymd');
-        $booking_date         = date('Ymd');
-        $due_time             = mktime(0, 0, 0, date('n'), date('j') + 1);
-        $id[1]                = mt_rand(111, 99999999);
-        $de[1]                = 'Dynamic text'; // Item description
-        $va[1]                = "1900";
-        $sd[1]                = date('Ymd');
-        $ed[1]                = date('Ymd');
-        $customerid           = mt_rand(111, 99999999);
-        $userid               = mt_rand(111, 99999999); //Debtor Id (Payone)
+        /* Parameter ( Normal data ) */
+        $reference               = mt_rand(111, 9999).uniqid();
+        $pr[1]                   = str_replace(".", "", $prepayServiceTotal);
+        $no[1]                   = "1";
+        $amount                  = str_replace(".", "", $prepayServiceTotal);
+        $currency                = 'EUR';
+        $param                   = 'ORDER'.date('y').$uniqueId;
+        $narrative_text          = 'ORDER'.date('y').$uniqueId;
+        $document_date           = date('Ymd');
+        $booking_date            = date('Ymd');
+        $due_time                = mktime(0, 0, 0, date('n'), date('j') + 1);
+        $id[1]                   = mt_rand(111, 9999).uniqid();
+        $de[1]                   = 'ORDER'.date('y').$uniqueId; // Item description
+        $va[1]                   = env('VATRATE');
+        $sd[1]                   = date('Ymd');
+        $ed[1]                   = date('Ymd');
+        $customerid              = mt_rand(999, 9999999999);
+        $userid                  = mt_rand(999, 9999999999); //Debtor Id (Payone)
+        $personalid              = mt_rand(999, 9999999999);
 
-        // Parameter ( Invoice )
-        $invoiceid            = mt_rand(111, 99999999);
-        $invoice_deliverydate = date('Ymd');
+        /* Parameter ( Invoice ) */
+        $invoiceid               = 'ORDER'.'-'.date('y').'-'.$uniqueId;
+        $invoice_deliverydate    = date('Ymd');
         $invoice_deliveryenddate = date('Ymd');
-        $invoice_deliverymode = 'P'; //PDF
-        $invoiceappendix      = 'Dynamic text';
+        $invoice_deliverymode    = 'P'; //PDF
+        $invoiceappendix         = 'ORDER'.date('y').$uniqueId;
 
-        //Parameter ( personal data )
-        $salutation           = Auth::user()->salutation;
-        $title                = Auth::user()->title;
-        $firstname            = Auth::user()->usrFirstname;
-        $lastname             = Auth::user()->usrLastname;
-        $company              = Auth::user()->company;
-        $street               = Auth::user()->usrAddress;
-        $zip                  = Auth::user()->usrZip;
-        $city                 = Auth::user()->usrCity;
+        /* Parameter ( personal data ) */
+        /* Condition for user country */
         if(Auth::user()->usrCountry === 'Deutschland') {
-           $countryName       = "DE";
+           $countryName          = "DE";
         }
         elseif(Auth::user()->usrCountry === 'Österreich') {
-           $countryName       = "AT";
+           $countryName          = "AT";
         }
         else {
-           $countryName       = "IT";
+           $countryName          = "IT";
         }
-        $country              = $countryName;
-        $email                = Auth::user()->usrEmail;
-        $telephonenumber      = Auth::user()->usrTelephone;
-        $language             = "de";
-        $vatid                = "DE310927476";
-        $gender               = Auth::user()->gender;
-        $personalid           = mt_rand(111, 99999999);
 
-        //Parameter ( delivery data )
-        $shipping_firstname   = Auth::user()->usrFirstname;
-        $shipping_lastname    = Auth::user()->usrLastname;
-        $shipping_company     = Auth::user()->company;
-        $shipping_street      = Auth::user()->usrAddress;
-        $shipping_zip         = Auth::user()->usrZip;
-        $shipping_city        = Auth::user()->usrCity;
-        $shipping_country     = $countryName;
+        $country                 = $countryName;
+        $salutation              = Auth::user()->salutation;
+        $title                   = Auth::user()->title;
+        $firstname               = Auth::user()->usrFirstname;
+        $lastname                = Auth::user()->usrLastname;
+        $company                 = Auth::user()->company;
+        $street                  = Auth::user()->usrAddress;
+        $zip                     = Auth::user()->usrZip;
+        $city                    = Auth::user()->usrCity;
+        $email                   = Auth::user()->usrEmail;
+        $telephonenumber         = Auth::user()->usrTelephone;
+        $gender                  = Auth::user()->gender;
+        $language                = env('APP_LOCALE');
+        $vatid                   = env('VATID');
 
-        // Hashing the parameters in sorted order
+        /* Parameter ( delivery data ) */
+        $shipping_firstname      = Auth::user()->usrFirstname;
+        $shipping_lastname       = Auth::user()->usrLastname;
+        $shipping_company        = Auth::user()->company;
+        $shipping_street         = Auth::user()->usrAddress;
+        $shipping_zip            = Auth::user()->usrZip;
+        $shipping_city           = Auth::user()->usrCity;
+        $shipping_country        = $countryName;
+
+        /* Hashing the parameters in sorted order */
         $hash = hash_hmac("sha384", $aid .
         $amount .
         $api_version .

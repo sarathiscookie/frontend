@@ -45,6 +45,23 @@ class PaymentController extends Controller
     }
 
     /**
+     * Function for order id.
+     *
+     * @param  string  $length
+     * @return \Illuminate\Http\Response
+     */
+    public function uniqidReal($length) {
+        if (function_exists("random_bytes")) {
+            $bytes = random_bytes(ceil($length / 2));
+        } elseif (function_exists("openssl_random_pseudo_bytes")) {
+            $bytes = openssl_random_pseudo_bytes(ceil($length / 2));
+        } else {
+            throw new Exception("no cryptographically secure random function available");
+        }
+        return substr(bin2hex($bytes), 0, $length);
+    }
+
+    /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
@@ -96,7 +113,7 @@ class PaymentController extends Controller
                     $moneyBalance        = $user->money_balance;
                 }
 
-                return view('payment', ['moneyBalance' => $moneyBalance, 'sumPrepaymentAmount' => $sum_prepayment_amount, 'prepayServiceTotal' => $prepay_service_total, 'serviceTax' => $serviceTax, 'payByBillPossible' => $payByBillPossible]);
+                return view('payment', ['moneyBalance' => $moneyBalance, 'sumPrepaymentAmount' => $sum_prepayment_amount, 'prepayServiceTotal' => $prepay_service_total, 'serviceTax' => $serviceTax, 'payByBillPossible' => $payByBillPossible, 'uniqueId' => $this->uniqidReal(6)]);
             }
             else {
                 return redirect()->route('cart');
@@ -116,23 +133,6 @@ class PaymentController extends Controller
     public function create()
     {
         //
-    }
-
-    /**
-     * Function for order id.
-     *
-     * @param  string  $length
-     * @return \Illuminate\Http\Response
-     */
-    public function uniqidReal($length) {
-        if (function_exists("random_bytes")) {
-            $bytes = random_bytes(ceil($length / 2));
-        } elseif (function_exists("openssl_random_pseudo_bytes")) {
-            $bytes = openssl_random_pseudo_bytes(ceil($length / 2));
-        } else {
-            throw new Exception("no cryptographically secure random function available");
-        }
-        return substr(bin2hex($bytes), 0, $length);
     }
 
     /**
@@ -158,8 +158,8 @@ class PaymentController extends Controller
                 $prepayment_amount[]  = $cart->prepayment_amount;
                 $cart_ids[]           = $cart->_id;
             }
-
-            $order_id                = 'ORDER'.'-'.date('y').'-'.$this->uniqidReal(13); // uniqid gives 13 chars, but we could adjust it to our needs.
+            $uniqueId                = $this->uniqidReal(6);
+            $order_id                = 'ORDER'.'-'.date('y').'-'.$uniqueId; // uniqid gives 13 chars, but we could adjust it to our needs.
             $sum_prepayment_amount   = array_sum($prepayment_amount);
             $total_prepayment_amount = round($sum_prepayment_amount, 2);
 
@@ -210,13 +210,12 @@ class PaymentController extends Controller
                         return redirect()->back()->with('bookingFailureStatus', 'There has been an error processing your request.');
                     }
 
-
                     //history of money balance - money balance used - order number - invoice number - used date - user id
                 }
                 else {
                     if(isset($request->payment)) {
                         // Function call for payment gateway section
-                        $paymentGateway = $this->paymentGateway($request->payment, $user, $request->ip(), str_replace(".", "", $total_prepayment_amount), $request->pseudocardpan);
+                        $paymentGateway = $this->paymentGateway($request->all(), $request->ip(), $total_prepayment_amount, $uniqueId);
                         if ($paymentGateway["status"] == "REDIRECT") {
                             $request->session()->put('bookingSuccessStatus', 'Thank you very much for booking with Huetten-Holiday.de.'); // later change to TSOK page
                             return redirect()->away($paymentGateway["redirecturl"]);
@@ -253,7 +252,7 @@ class PaymentController extends Controller
             else {
                 if(isset($request->payment)) {
                     // Function call for payment gateway section
-                    $paymentGateway = $this->paymentGateway($request->payment, $user, $request->ip(), str_replace(".", "", $total_prepayment_amount), $request->pseudocardpan);
+                    $paymentGateway = $this->paymentGateway($request->all(), $request->ip(), $total_prepayment_amount, $uniqueId);
                     if ($paymentGateway["status"] == "REDIRECT") { // If card is 3d secure return status is REDIRECT and "redirect url" will return.
                         $request->session()->put('bookingSuccessStatus', 'Thank you very much for booking with Huetten-Holiday.de.'); // later change to TSOK page
                         return redirect()->away($paymentGateway["redirecturl"]);
@@ -295,174 +294,205 @@ class PaymentController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  string  $payment
-     * @param  string  $user
+     * @param  string  $request
      * @param  string  $ip
      * @param  string  $amount
-     * @param  string  $pseudocardpan
+     * @param  string  $uniqueId
      * @return array
      */
-    public function paymentGateway($payment, $user, $ip, $amount, $pseudocardpan)
+    public function paymentGateway($request, $ip, $amount, $uniqueId)
     {
-        $walletType             = "";
+        /* Declaring variables */
+        $walletType                   = "";
 
-        $clearingType           = "";
+        $clearingType                 = "";
 
-        $onlineBankTransferType = "";
+        $onlineBankTransferType       = "";
 
-        $requestType            = "";
+        $requestType                  = "";
 
-        $pseudoCardPan          = "";
+        $pseudoCardPan                = "";
 
-        $countryName            = "";
+        $countryName                  = "";
 
         include(app_path() . '/Function/Payone.php');
 
         /* Condition for country*/
         if(Auth::user()->usrCountry === 'Deutschland') {
-            $countryName       = "DE";
+            $countryName              = "DE";
         }
         elseif(Auth::user()->usrCountry === 'Österreich') {
-            $countryName       = "AT";
+            $countryName              = "AT";
         }
         else {
-            $countryName       = "IT";
+            $countryName              = "DE";
         }
 
         /* Payment gateway details */
-        $defaults     = array(
-            "aid"         => env('AID'), // Account id
+        $defaults                     = array(
+            "aid"                     => env('AID'),
 
-            "mid"         => env('MID'), // Merchant id
+            "mid"                     => env('MID'),
 
-            "portalid"    => env('PORTAL_ID'),
+            "portalid"                => env('PORTAL_ID'),
 
-            "key"         => hash("md5", env('KEY')), // The key has to be hashed as md5
+            "key"                     => hash("md5", env('KEY')), // The key has to be hashed as md5
 
-            "mode"        => env('MODE'), // Can be "live" for actual transactions
+            "mode"                    => env('MODE'), // Can be "live" for actual transactions
 
-            "api_version" => env('API_VERSION'),
+            "api_version"             => env('API_VERSION'),
 
-            "encoding"    => env('ENCODING')
+            "encoding"                => env('ENCODING')
         );
 
         /* Personal details */
-        $personalData = array(
+        $personalData                 = array(
 
-            "salutation" => $user->salutation,
+            "salutation"              => Auth::user()->salutation,
 
-            "title" => $user->title,
+            "title"                   => Auth::user()->title,
 
-            "firstname" => $user->usrFirstname,
+            "firstname"               => Auth::user()->usrFirstname,
 
-            "lastname" => $user->usrLastname,
+            "lastname"                => Auth::user()->usrLastname,
 
-            "street" => $user->usrAddress,
+            "company"                 => Auth::user()->company,
 
-            "zip" => $user->usrZip,
+            "street"                  => Auth::user()->usrAddress,
 
-            "city" => $user->usrCity,
+            "zip"                     => Auth::user()->usrZip,
 
-            "country" => $countryName,
+            "city"                    => Auth::user()->usrCity,
 
-            "email" => $user->usrEmail,
+            "country"                 => $countryName,
 
-            "telephonenumber" => $user->usrTelephone,
+            "email"                   => Auth::user()->usrEmail,
 
-            "language" => "de",
+            "telephonenumber"         => Auth::user()->usrTelephone,
 
-            "gender" => $user->gender,
+            "language"                => env('APP_LOCALE'),
 
-            "ip" => $ip
+            "gender"                  => Auth::user()->gender,
+
+            "ip"                      => $ip
         );
 
         /* Condition for payment type */
-        if($payment === 'payPal') {
-            $clearingType = "wlt";
-            $walletType   = "PPE";
-            $requestType = "authorization";
+        if($request['payment'] === 'payPal') {
+            $clearingType             = "wlt";
+            $walletType               = "PPE";
+            $requestType              = "authorization";
         }
-        elseif ($payment === 'payDirect') {
-            $clearingType = "wlt";
-            $walletType   = "PDT";
-            $requestType = "authorization";
+        elseif ($request['payment'] === 'payDirect') {
+            $clearingType             = "wlt";
+            $walletType               = "PDT";
+            $requestType              = "authorization";
         }
-        elseif ($payment === 'sofort') {
-            $clearingType = "sb";
-            $onlineBankTransferType = "PNT";
-            $requestType = "authorization";
+        elseif ($request['payment'] === 'sofort') {
+            $clearingType             = "sb";
+            $onlineBankTransferType   = "PNT";
+            $requestType              = "authorization";
         }
-        elseif ($payment === 'creditCard') {
-            $clearingType = "cc";
-            $requestType = "authorization";
-            $pseudoCardPan = $pseudocardpan;
+        elseif ($request['payment'] === 'creditCard') {
+            $clearingType             = "cc";
+            $requestType              = "authorization";
+            $pseudoCardPan            = $request['pseudocardpan'];
         }
-        elseif ($payment === 'payByBill') {
-            $clearingType = "vor";
-            $requestType = "preauthorization";
-            $pseudoCardPan = $pseudocardpan;
+        elseif ($request['payment'] === 'payByBill') {
+            $clearingType             = "vor";
+            $requestType              = "preauthorization";
         }
         else{
             abort(404);
         }
 
         /* Parameters for payment gateway */
-        $parameters = array(
+        $parameters                   = array(
 
-            "request" => $requestType,
+            "request"                 => $requestType,
 
-            "clearingtype" => $clearingType, // wallet clearing type
+            "clearingtype"            => $clearingType, // wallet clearing type
 
-            "wallettype" => $walletType,
+            "wallettype"              => $walletType,
 
-            "amount" => $amount,
+            "amount"                  => str_replace(".", "", $amount),
 
-            'currency' => 'EUR',
+            "currency"                => "EUR",
 
-            "reference" => uniqid(),
+            "reference"               => mt_rand(111, 9999).uniqid(),
 
-            "onlinebanktransfertype" => $onlineBankTransferType,
+            "pr[1]"                   => str_replace(".", "", $amount),
 
-            "bankcountry" => "DE",
+            "no[1]"                   => "1",
 
-            "pseudocardpan" => $pseudoCardPan,
+            "param"                   => "ORDER".date('y').$uniqueId,
 
-            "narrative_text" => "Cabin room booked",
+            "onlinebanktransfertype"  => $onlineBankTransferType,
 
-            "va[1]"  => "1900",   // Item description
+            "bankcountry"             => $countryName,
 
-            "vatid" => "DE310927476",
+            "pseudocardpan"           => $pseudoCardPan,
 
-            "document_date" => date('Ymd'),
+            "narrative_text"          => "ORDER".date('y').$uniqueId,
 
-            "booking_date" => date('Ymd'),
+            "va[1]"                   => env('VATRATE'),
 
-            "invoice_deliverymode" => "P", //PDF
+            "sd[1]"                   => date('Ymd'),
 
-            "invoiceappendix" => "Dynamic text on the invoice", //Dynamic text on the invoice
+            "ed[1]"                   => date('Ymd'),
 
-            "shipping_firstname" => $user->usrFirstname,
+            "vatid"                   => env('VATID'),
 
-            "shipping_lastname" => $user->usrLastname,
+            "document_date"           => date('Ymd'),
 
-            "shipping_street" => $user->usrAddress,
+            "booking_date"            => date('Ymd'),
 
-            "shipping_zip" => $user->usrZip,
+            "due_time"                => mktime(0, 0, 0, date('n'), date('j') + 1),
 
-            "shipping_city" => $user->usrCity,
+            "id[1]"                   => mt_rand(111, 9999).uniqid(),
 
-            "shipping_country" => "DE",
+            "de[1]"                   => "ORDER".date('y').$uniqueId,
 
-            "successurl" => env('SUCCESSURL'),
+            "customerid"              => mt_rand(999, 9999999999),
 
-            "errorurl" => env('ERRORURL')
+            "userid"                  => mt_rand(999, 9999999999),
+
+            "personalid"              => mt_rand(999, 9999999999),
+
+            "invoiceid"               => "ORDER"."-".date('y')."-".$uniqueId,
+
+            "invoice_deliverydate"    => date('Ymd'),
+
+            "invoice_deliveryenddate" => date('Ymd'),
+
+            "invoice_deliverymode"    => "P", //PDF
+
+            "invoiceappendix"         => "ORDER".date('y').$uniqueId, //Dynamic text on the invoice
+
+            "shipping_firstname"      => Auth::user()->usrFirstname,
+
+            "shipping_lastname"       => Auth::user()->usrLastname,
+
+            "shipping_company"        => Auth::user()->company,
+
+            "shipping_street"         => Auth::user()->usrAddress,
+
+            "shipping_zip"            => Auth::user()->usrZip,
+
+            "shipping_city"           => Auth::user()->usrCity,
+
+            "shipping_country"        => $countryName,
+
+            "successurl"              => env('SUCCESSURL'),
+
+            "errorurl"                => env('ERRORURL')
         );
 
-        $request = array_merge($defaults, $parameters, $personalData);
+        $request                      = array_merge($defaults, $parameters, $personalData);
 
         ksort($request);
 
-        $response = Payone::sendRequest($request);
+        $response                     = Payone::sendRequest($request);
         /**
 
          * This should return something like:
@@ -500,8 +530,6 @@ class PaymentController extends Controller
      */
     public function response(Request $request)
     {
-        $data = $request->all();
-
         // you'll need to include the $defaults array somehow, or at least get the key from a secret configuration file
         if ($_POST["key"] == hash("md5", env('KEY'))) {
             // key is valid, this notification is for us
@@ -539,6 +567,9 @@ class PaymentController extends Controller
                 echo "TSOK";
                 // update your transaction accordingly, e.g. by $_POST["reference"]
             }
+        }
+        else{
+            abort(404);
         }
     }
 
