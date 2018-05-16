@@ -9,6 +9,7 @@ use App\Http\Requests\PaymentRequest;
 use App\Userlist;
 use App\Booking;
 use App\Order;
+use App\Ordernumber;
 use Auth;
 use Validator;
 use Payone;
@@ -72,6 +73,7 @@ class PaymentController extends Controller
             $prepayment_amount           = [];
             $moneyBalance                = 0;
             $payByBillPossible           = [];
+            $cabin_code                  = '';
             $carts                       = Booking::where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
                 ->where('status', "8")
                 ->where('is_delete', 0)
@@ -97,8 +99,21 @@ class PaymentController extends Controller
                         $payByBillPossible[] = 'no';
                     }
                     /* Condition to check pay by bill possible end */
+
+                    $invoice_number      = explode('-', $cart->invoice_number, 2);
+                    $cabin_code         .= $invoice_number[0].'-';
                 }
 
+                /* Get order number */
+                $orderNumber             = Ordernumber::first();
+                if( !empty ($orderNumber->number) ) {
+                    $order_num           = (int)$orderNumber->number + 1;
+                }
+                else {
+                    $order_num           = 100000;
+                }
+
+                $order_number            = 'ORDER'.'-'.date('y').'-'.$cabin_code.$order_num;
                 $sum_prepayment_amount   = array_sum($prepayment_amount);
                 $serviceTax              = $this->serviceFees($sum_prepayment_amount);
                 $percentage              = ($serviceTax / 100) * $sum_prepayment_amount;
@@ -113,7 +128,7 @@ class PaymentController extends Controller
                     $moneyBalance        = $user->money_balance;
                 }
 
-                return view('payment', ['moneyBalance' => $moneyBalance, 'sumPrepaymentAmount' => $sum_prepayment_amount, 'prepayServiceTotal' => $prepay_service_total, 'serviceTax' => $serviceTax, 'payByBillPossible' => $payByBillPossible, 'uniqueId' => $this->uniqidReal(13)]);
+                return view('payment', ['moneyBalance' => $moneyBalance, 'sumPrepaymentAmount' => $sum_prepayment_amount, 'prepayServiceTotal' => $prepay_service_total, 'serviceTax' => $serviceTax, 'payByBillPossible' => $payByBillPossible, 'order_number' => $order_number]);
             }
             else {
                 return redirect()->route('cart');
@@ -145,6 +160,7 @@ class PaymentController extends Controller
     {
         $prepayment_amount           = [];
         $cart_ids                    = [];
+        $cabin_code                  = '';
         $user                        = Userlist::where('is_delete', 0)->where('usrActive', '1')->find(Auth::user()->_id);
         $carts                       = Booking::where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
             ->where('status', "8")
@@ -155,11 +171,24 @@ class PaymentController extends Controller
         if(count($carts) > 0) {
             /* Amount calculation */
             foreach ($carts as $key => $cart) {
-                $prepayment_amount[]  = $cart->prepayment_amount;
-                $cart_ids[]           = $cart->_id;
+                $prepayment_amount[] = $cart->prepayment_amount;
+                $cart_ids[]          = $cart->_id;
+                $invoice_number      = explode('-', $cart->invoice_number, 2);
+                $cabin_code         .= $invoice_number[0].'-';
             }
-            $uniqueId                = $this->uniqidReal(13);
-            $order_id                = 'ORDER'.'-'.date('y').'-'.$uniqueId; // uniqid gives 13 chars, but we could adjust it to our needs.
+
+            /* Create order number begin */
+            $orderNumber = Ordernumber::first();
+            if( !empty ($orderNumber->number) ) {
+                $order_num = (int)$orderNumber->number + 1;
+            }
+            else {
+                $order_num = 100000;
+            }
+            /* Create order number end */
+
+
+            $order_number            = 'ORDER'.'-'.date('y').'-'.$cabin_code.$order_num;
             $sum_prepayment_amount   = array_sum($prepayment_amount);
             $total_prepayment_amount = round($sum_prepayment_amount, 2);
 
@@ -171,7 +200,7 @@ class PaymentController extends Controller
 
                     /* Storing order details */
                     $order                                = new Order;
-                    $order->order_id                      = $order_id;
+                    $order->order_id                      = $order_number;
                     $order->order_amount                  = $total_prepayment_amount;
                     $order->order_total_amount            = $total_prepayment_amount;
                     $order->order_money_balance_used      = round($total_prepayment_amount, 2);
@@ -185,6 +214,10 @@ class PaymentController extends Controller
                         $user->money_balance = round($afterRedeemAmount, 2);
                         $user->save();
 
+                        /* Updating order number */
+                        $orderNumber->number = $order_num;
+                        $orderNumber->save();
+
                         /* Updating booking details */
                         foreach ($cart_ids as $cart_id) {
                             $cartUpdate                 = Booking::where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
@@ -192,12 +225,8 @@ class PaymentController extends Controller
                                 ->where('is_delete', 0)
                                 ->find($cart_id);
                             $cartUpdate->order_id       = new \MongoDB\BSON\ObjectID($order->_id);
-
-                            // later change to TSOK page begin
                             $cartUpdate->status         = '1';
                             $cartUpdate->payment_status = '1';
-                            // later change to TSOK page end
-
                             $cartUpdate->save();
                         }
 
@@ -215,7 +244,7 @@ class PaymentController extends Controller
                 else {
                     if(isset($request->payment)) {
                         // Function call for payment gateway section
-                        $paymentGateway = $this->paymentGateway($request->all(), $request->ip(), $total_prepayment_amount, $uniqueId);
+                        $paymentGateway = $this->paymentGateway($request->all(), $request->ip(), $total_prepayment_amount, $order_number);
                         if ($paymentGateway["status"] == "REDIRECT") {
                             $request->session()->put('bookingSuccessStatus', 'Thank you very much for booking with Huetten-Holiday.de.'); // later change to TSOK page
                             return redirect()->away($paymentGateway["redirecturl"]);
@@ -252,7 +281,7 @@ class PaymentController extends Controller
             else {
                 if(isset($request->payment)) {
                     // Function call for payment gateway section
-                    $paymentGateway = $this->paymentGateway($request->all(), $request->ip(), $total_prepayment_amount, $uniqueId);
+                    $paymentGateway = $this->paymentGateway($request->all(), $request->ip(), $total_prepayment_amount, $order_number);
                     if ($paymentGateway["status"] == "REDIRECT") { // If card is 3d secure return status is REDIRECT and "redirect url" will return.
                         $request->session()->put('bookingSuccessStatus', 'Thank you very much for booking with Huetten-Holiday.de.'); // later change to TSOK page
                         return redirect()->away($paymentGateway["redirecturl"]);
@@ -297,10 +326,10 @@ class PaymentController extends Controller
      * @param  string  $request
      * @param  string  $ip
      * @param  string  $amount
-     * @param  string  $uniqueId
+     * @param  string  $order_number
      * @return array
      */
-    public function paymentGateway($request, $ip, $amount, $uniqueId)
+    public function paymentGateway($request, $ip, $amount, $order_number)
     {
         /* Declaring variables */
         $walletType                   = "";
@@ -425,7 +454,7 @@ class PaymentController extends Controller
 
             "no[1]"                   => "1",
 
-            "param"                   => "ORDER".date('y').$uniqueId,
+            "param"                   => $order_number,
 
             "onlinebanktransfertype"  => $onlineBankTransferType,
 
@@ -433,7 +462,7 @@ class PaymentController extends Controller
 
             "pseudocardpan"           => $pseudoCardPan,
 
-            "narrative_text"          => "ORDER".date('y').$uniqueId,
+            "narrative_text"          => $order_number,
 
             "va[1]"                   => env('VATRATE'),
 
@@ -451,7 +480,7 @@ class PaymentController extends Controller
 
             "id[1]"                   => random_int(111, 99999).uniqid(),
 
-            "de[1]"                   => "ORDER".date('y').$uniqueId,
+            "de[1]"                   => $order_number,
 
             "customerid"              => random_int(9999, 9999999999),
 
@@ -459,7 +488,7 @@ class PaymentController extends Controller
 
             "personalid"              => random_int(9999, 9999999999),
 
-            "invoiceid"               => "ORDER"."-".date('y')."-".$uniqueId,
+            "invoiceid"               => $order_number,
 
             "invoice_deliverydate"    => date('Ymd'),
 
@@ -467,7 +496,7 @@ class PaymentController extends Controller
 
             "invoice_deliverymode"    => "P", //PDF
 
-            "invoiceappendix"         => "ORDER".date('y').$uniqueId, //Dynamic text on the invoice
+            "invoiceappendix"         => $order_number, //Dynamic text on the invoice
 
             "shipping_firstname"      => Auth::user()->usrFirstname,
 
@@ -494,6 +523,7 @@ class PaymentController extends Controller
 
         $response                     = Payone::sendRequest($request);
 
+        //dd($response);
         /**
 
          * This should return something like:
@@ -598,6 +628,7 @@ class PaymentController extends Controller
     {
         return view('paymentError');
     }
+
 
     /**
      * Display the specified resource.

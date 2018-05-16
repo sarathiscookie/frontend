@@ -280,13 +280,13 @@
         $no[1]                   = "1";
         $amount                  = str_replace(".", "", $prepayServiceTotal);
         $currency                = "EUR";
-        $param                   = "ORDER".date('y').$uniqueId;
-        $narrative_text          = "ORDER".date('y').$uniqueId;
+        $param                   = $order_number;
+        $narrative_text          = $order_number;
         $document_date           = date('Ymd');
         $booking_date            = date('Ymd');
         $due_time                = mktime(0, 0, 0, date('n'), date('j') + 1);
         $id[1]                   = random_int(111, 99999).uniqid();
-        $de[1]                   = "ORDER".date('y').$uniqueId; // Item description
+        $de[1]                   = $order_number; // Item description
         $va[1]                   = env('VATRATE');
         $sd[1]                   = date('Ymd');
         $ed[1]                   = date('Ymd');
@@ -295,11 +295,11 @@
         $personalid              = random_int(9999, 9999999999);
 
         /* Parameter ( Invoice ) */
-        $invoiceid               = "ORDER"."-".date('y')."-".$uniqueId;
+        $invoiceid               = $order_number;
         $invoice_deliverydate    = date('Ymd');
         $invoice_deliveryenddate = date('Ymd');
         $invoice_deliverymode    = "P"; //PDF
-        $invoiceappendix         = "ORDER".date('y').$uniqueId;
+        $invoiceappendix         = $order_number;
 
         /* Parameter ( personal data ) */
         /* Condition for user country */
