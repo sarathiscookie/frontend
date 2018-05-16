@@ -168,7 +168,7 @@ class PaymentController extends Controller
             ->take(5)
             ->get();
 
-        if(count($carts) > 0) {
+        if($carts) {
             /* Amount calculation */
             foreach ($carts as $key => $cart) {
                 $prepayment_amount[] = $cart->prepayment_amount;
@@ -187,7 +187,6 @@ class PaymentController extends Controller
             }
             /* Create order number end */
 
-
             $order_number            = 'ORDER'.'-'.date('y').'-'.$cabin_code.$order_num;
             $sum_prepayment_amount   = array_sum($prepayment_amount);
             $total_prepayment_amount = round($sum_prepayment_amount, 2);
@@ -205,7 +204,7 @@ class PaymentController extends Controller
                     $order->order_total_amount            = $total_prepayment_amount;
                     $order->order_money_balance_used      = round($total_prepayment_amount, 2);
                     $order->order_money_balance_used_date = Carbon::now();
-                    $order->order_payed_method            = 1; // 1 => fully paid using money balance, 2 => Partially paid using money balance, 3 => Paid using payment gateway
+                    $order->order_payment_method          = 1; // 1 => fully paid using money balance, 2 => Partially paid using money balance, 3 => Paid using payment gateway
                     $order->order_delete                  = 0;
                     $order->save();
 
@@ -238,34 +237,131 @@ class PaymentController extends Controller
                     else {
                         return redirect()->back()->with('bookingFailureStatus', 'There has been an error processing your request.');
                     }
-
-                    //history of money balance - money balance used - order number - invoice number - used date - user id
                 }
                 else {
                     if(isset($request->payment)) {
                         // Function call for payment gateway section
-                        $paymentGateway = $this->paymentGateway($request->all(), $request->ip(), $total_prepayment_amount, $order_number);
+                        $paymentGateway    = $this->paymentGateway($request->all(), $request->ip(), $total_prepayment_amount, $order_number);
+
+                        /* How much money user have in their account after used money balance */
+                        $afterRedeemAmount = $total_prepayment_amount - $user->money_balance;
+
                         if ($paymentGateway["status"] == "REDIRECT") {
-                            $request->session()->put('bookingSuccessStatus', 'Thank you very much for booking with Huetten-Holiday.de.'); // later change to TSOK page
-                            return redirect()->away($paymentGateway["redirecturl"]);
+
+                            /* Storing order details */
+                            $order                                = new Order;
+                            $order->order_id                      = $order_number;
+                            $order->order_status                  = "REDIRECT";
+                            $order->txid                          = $paymentGateway["txid"];
+                            $order->userid                        = $paymentGateway["userid"];
+                            $order->order_payment_type            = $request->payment;
+                            $order->order_payment_method          = 2; // 1 => fully paid using money balance, 2 => Partially paid using money balance, 3 => Paid using payment gateway
+                            $order->order_amount                  = round($afterRedeemAmount, 2);
+                            $order->order_delete                  = 0;
+                            $order->save();
+                            /* Storing order details end */
+
+                            if($order) {
+                                /* Updating user money balance */
+                                $user->userid                     = $paymentGateway["userid"];
+                                $user->save();
+
+                                /* Updating order number */
+                                $orderNumber->number = $order_num;
+                                $orderNumber->save();
+
+                                /* Updating booking details */
+                                foreach ($cart_ids as $cart_id) {
+                                    $cartUpdate                   = Booking::where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
+                                        ->where('status', "8")
+                                        ->where('is_delete', 0)
+                                        ->find($cart_id);
+                                    $cartUpdate->order_id         = new \MongoDB\BSON\ObjectID($order->_id);
+                                    $cartUpdate->save();
+                                }
+
+                                $request->session()->flash('bookingSuccessStatus', 'Thank you very much for booking with Huetten-Holiday.de.');
+                                return redirect()->away($paymentGateway["redirecturl"]);
+                            }
+                            else {
+                                return redirect()->back()->with('bookingFailureStatus', 'There has been an error processing your request.');
+                            }
                         }
                         elseif ($paymentGateway["status"] == "APPROVED") { // no 3d secure verification required, transaction went through
-                            $request->session()->put('bookingSuccessStatus', 'Thank you very much for booking with Huetten-Holiday.de.'); // later change to TSOK page
-                            echo "Thank you for your purchase."; // redirect to success url
-                            //return redirect()->route('payment.success');
-                            //[txid] => 271612813 [userid] => 128309888
+                            /* Storing order details */
+                            $order                                = new Order;
+                            $order->order_id                      = $order_number;
+                            $order->order_status                  = "APPROVED";
+                            $order->txid                          = $paymentGateway["txid"];
+                            $order->userid                        = $paymentGateway["userid"];
+                            $order->order_payment_type            = $request->payment;
+                            $order->order_payment_method          = 2; // 1 => fully paid using money balance, 2 => Partially paid using money balance, 3 => Paid using payment gateway
+                            $order->order_amount                  = round($afterRedeemAmount, 2);
+                            $order->order_delete                  = 0;
+                            $order->save();
+                            /* Storing order details end */
+
+                            if($order) {
+                                /* Updating user money balance */
+                                $user->userid                     = $paymentGateway["userid"];
+                                $user->save();
+
+                                /* Updating order number */
+                                $orderNumber->number = $order_num;
+                                $orderNumber->save();
+
+                                /* Updating booking details */
+                                foreach ($cart_ids as $cart_id) {
+                                    $cartUpdate                   = Booking::where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
+                                        ->where('status', "8")
+                                        ->where('is_delete', 0)
+                                        ->find($cart_id);
+                                    $cartUpdate->order_id         = new \MongoDB\BSON\ObjectID($order->_id);
+                                    $cartUpdate->save();
+                                }
+
+                                return redirect()->route('payment.success')->with('bookingSuccessStatus', 'Thank you very much for booking with Huetten-Holiday.de.');
+                            }
+                            else {
+                                return redirect()->back()->with('bookingFailureStatus', 'There has been an error processing your request.');
+                            }
                         }
                         else {
-                            echo "There has been an error processing your request.";
-                            //[txid] => 271612813 [userid] => 128309888
+                            /* Storing order details begin */
+                            $order                                = new Order;
+                            $order->order_id                      = $order_number;
+                            $order->order_status                  = "ERROR / PENDING";
+                            $order->txid                          = $paymentGateway["txid"];
+                            $order->userid                        = $paymentGateway["userid"];
+                            $order->order_payment_type            = $request->payment;
+                            $order->order_payment_method          = 2; // 1 => fully paid using money balance, 2 => Partially paid using money balance, 3 => Paid using payment gateway
+                            $order->order_amount                  = round($afterRedeemAmount, 2);
+                            $order->order_delete                  = 0;
+                            $order->save();
+                            /* Storing order details end */
+
+                            if($order) {
+                                /* Updating user money balance */
+                                $user->userid                     = $paymentGateway["userid"];
+                                $user->save();
+
+                                /* Updating order number */
+                                $orderNumber->number = $order_num;
+                                $orderNumber->save();
+
+                                /* Updating booking details */
+                                foreach ($cart_ids as $cart_id) {
+                                    $cartUpdate                   = Booking::where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
+                                        ->where('status', "8")
+                                        ->where('is_delete', 0)
+                                        ->find($cart_id);
+                                    $cartUpdate->order_id         = new \MongoDB\BSON\ObjectID($order->_id);
+                                    $cartUpdate->save();
+                                }
+
+                                return redirect()->route('payment.error')->with('bookingErrorStatus', 'There has been an error or pending processing your request.');
+                            }
                         }
-                        // check email send after purchase is needed or not
-                        //dd($cartId); //to update booking data
-                        // store order details -> order_id, order_number, order_date, order_amount, order_total_amount, order_money_balance_used, created_at, updated_at, order_delete
-                        // update booking details -> order_id, status, payment_status, prepayment amount, total prepayment amount
-                        // update user->moneybalance
-                        // redirect to success page
-                        //history of money balance - money balance used - order number - invoice number - used date - user id
                     }
                     else {
                         $validator = Validator::make($request->all(), [
@@ -283,26 +379,120 @@ class PaymentController extends Controller
                     // Function call for payment gateway section
                     $paymentGateway = $this->paymentGateway($request->all(), $request->ip(), $total_prepayment_amount, $order_number);
                     if ($paymentGateway["status"] == "REDIRECT") { // If card is 3d secure return status is REDIRECT and "redirect url" will return.
-                        $request->session()->put('bookingSuccessStatus', 'Thank you very much for booking with Huetten-Holiday.de.'); // later change to TSOK page
-                        return redirect()->away($paymentGateway["redirecturl"]);
+
+                        /* Storing order details */
+                        $order                                = new Order;
+                        $order->order_id                      = $order_number;
+                        $order->order_status                  = "REDIRECT";
+                        $order->txid                          = $paymentGateway["txid"];
+                        $order->userid                        = $paymentGateway["userid"];
+                        $order->order_payment_type            = $request->payment;
+                        $order->order_payment_method          = 3; // 1 => fully paid using money balance, 2 => Partially paid using money balance, 3 => Paid using payment gateway
+                        $order->order_amount                  = $total_prepayment_amount;
+                        $order->order_delete                  = 0;
+                        $order->save();
+                        /* Storing order details end */
+
+                        if($order) {
+                            /* Updating user money balance */
+                            $user->userid                     = $paymentGateway["userid"];
+                            $user->save();
+
+                            /* Updating order number */
+                            $orderNumber->number = $order_num;
+                            $orderNumber->save();
+
+                            /* Updating booking details */
+                            foreach ($cart_ids as $cart_id) {
+                                $cartUpdate                   = Booking::where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
+                                    ->where('status', "8")
+                                    ->where('is_delete', 0)
+                                    ->find($cart_id);
+                                $cartUpdate->order_id         = new \MongoDB\BSON\ObjectID($order->_id);
+                                $cartUpdate->save();
+                            }
+
+                            $request->session()->flash('bookingSuccessStatus', 'Thank you very much for booking with Huetten-Holiday.de.');
+                            return redirect()->away($paymentGateway["redirecturl"]);
+                        }
+                        else {
+                            return redirect()->back()->with('bookingFailureStatus', 'There has been an error processing your request.');
+                        }
                     }
                     elseif ($paymentGateway["status"] == "APPROVED") { // If card is not 3d secure return status is APPROVED and "redirect url" will not return. We manually redirect to success page.
-                        $request->session()->put('bookingSuccessStatus', 'Thank you very much for booking with Huetten-Holiday.de.'); // later change to TSOK page
-                        echo "Thank you for your purchase."; // redirect to success page
-                        //[txid] => 271612813 [userid] => 128309888
-                        //return redirect()->route('payment.success');
+                        /* Storing order details begin */
+                        $order                                = new Order;
+                        $order->order_id                      = $order_number;
+                        $order->order_status                  = "APPROVED";
+                        $order->txid                          = $paymentGateway["txid"];
+                        $order->userid                        = $paymentGateway["userid"];
+                        $order->order_payment_type            = $request->payment;
+                        $order->order_payment_method          = 3; // 1 => fully paid using money balance, 2 => Partially paid using money balance, 3 => Paid using payment gateway
+                        $order->order_amount                  = $total_prepayment_amount;
+                        $order->order_delete                  = 0;
+                        $order->save();
+                        /* Storing order details end */
+                        if($order) {
+                            /* Updating user money balance */
+                            $user->userid                     = $paymentGateway["userid"];
+                            $user->save();
+
+                            /* Updating order number */
+                            $orderNumber->number = $order_num;
+                            $orderNumber->save();
+
+                            /* Updating booking details */
+                            foreach ($cart_ids as $cart_id) {
+                                $cartUpdate                   = Booking::where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
+                                    ->where('status', "8")
+                                    ->where('is_delete', 0)
+                                    ->find($cart_id);
+                                $cartUpdate->order_id         = new \MongoDB\BSON\ObjectID($order->_id);
+                                $cartUpdate->save();
+                            }
+
+                            return redirect()->route('payment.success')->with('bookingSuccessStatus', 'Thank you very much for booking with Huetten-Holiday.de.');
+                        }
+                        else {
+                            return redirect()->back()->with('bookingFailureStatus', 'There has been an error processing your request.');
+                        }
                     }
                     else {
-                        echo "There has been an error processing your request."; // redirect to error page
-                        //[txid] => 271612813 [userid] => 128309888
+                        /* Storing order details begin */
+                        $order                                = new Order;
+                        $order->order_id                      = $order_number;
+                        $order->order_status                  = "ERROR / PENDING";
+                        $order->txid                          = $paymentGateway["txid"];
+                        $order->userid                        = $paymentGateway["userid"];
+                        $order->order_payment_type            = $request->payment;
+                        $order->order_payment_method          = 3; // 1 => fully paid using money balance, 2 => Partially paid using money balance, 3 => Paid using payment gateway
+                        $order->order_amount                  = $total_prepayment_amount;
+                        $order->order_delete                  = 0;
+                        $order->save();
+                        /* Storing order details end */
+
+                        if($order) {
+                            /* Updating user money balance */
+                            $user->userid                     = $paymentGateway["userid"];
+                            $user->save();
+
+                            /* Updating order number */
+                            $orderNumber->number = $order_num;
+                            $orderNumber->save();
+
+                            /* Updating booking details */
+                            foreach ($cart_ids as $cart_id) {
+                                $cartUpdate                   = Booking::where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
+                                    ->where('status', "8")
+                                    ->where('is_delete', 0)
+                                    ->find($cart_id);
+                                $cartUpdate->order_id         = new \MongoDB\BSON\ObjectID($order->_id);
+                                $cartUpdate->save();
+                            }
+
+                            return redirect()->route('payment.error')->with('bookingErrorStatus', 'There has been an error or pending processing your request.');
+                        }
                     }
-                    // check email send after purchase is needed or not
-                    //dd($cartId); //to update booking data
-                    // store order details -> order_id, order_number, order_date, order_amount, order_total_amount, order_money_balance_used, created_at, updated_at, order_delete
-                    // update booking details -> order_id, status, payment_status, prepayment amount, total prepayment amount
-                    // update user->moneybalance
-                    // redirect to success page
-                    //history of money balance - money balance used - order number - invoice number - used date - user id
                 }
                 else {
                     $validator = Validator::make($request->all(), [
@@ -315,9 +505,7 @@ class PaymentController extends Controller
                 }
             }
         }
-        else {
-            return redirect()->back()->with('choosePaymentNullData', 'Something went wrong! Please check your cart.');
-        }
+        return redirect()->back()->with('choosePaymentNullData', 'Something went wrong! Please check your cart.');
     }
 
     /**
@@ -561,43 +749,44 @@ class PaymentController extends Controller
      */
     public function response(Request $request)
     {
-        // you'll need to include the $defaults array somehow, or at least get the key from a secret configuration file
+        // The key from a secret configuration file
         if ($_POST["key"] == hash("md5", env('KEY'))) {
-            // key is valid, this notification is for us
+            // key is valid, this notification is for payone
+            echo "TSOK";
 
-            if ($_POST["txaction"] == "appointed") {
-                $order            = new Order;
-                foreach($_POST as $key => $value) {
-                    if(Schema::hasColumn($order->getTable(), $key)){
-                        if(is_array($value)) {
-                            $order->{$key} = $value[1];
-                        } else {
-                            $order->{$key} = $value;
-                        }
+            $order            = Order::where('userid', $_POST["userid"])->where('txid', $_POST["txid"])->first();
+            foreach($_POST as $key => $value) {
+                if(Schema::hasColumn($order->getTable(), $key)){
+                    if(is_array($value)) {
+                        $order->{$key} = $value[1];
+                    } else {
+                        $order->{$key} = $value;
                     }
                 }
-
-                $order->save();
-                echo "TSOK";
-                // a freshly created transaction has been marked successfully initiated
-                // update that transaction accordingly, e.g. by $_POST["reference"]
             }
-            if ($_POST["txaction"] == "paid") {
-                $order            = new Order;
-                foreach($_POST as $key => $value) {
-                    if(Schema::hasColumn($order->getTable(), $key)){
-                        if(is_array($value)) {
-                            $order->{$key} = $value[1];
-                        } else {
-                            $order->{$key} = $value;
-                        }
-                    }
-                }
+            $order->save();
 
-                $order->save();
-                echo "TSOK";
-                // update your transaction accordingly, e.g. by $_POST["reference"]
+            $order          = Order::where('userid', $_POST["userid"])->where('txid', $_POST["txid"])->first();
+            switch($_POST['txaction']) {
+                // check email send after purchase is needed or not
+                //dd($cartId); //to update booking data status, payment_status
+                // store order details -> order_id, order_number, order_date, order_amount, order_total_amount, order_money_balance_used, created_at, updated_at, order_delete
+                // update booking details -> order_id, status, payment_status, prepayment amount, total prepayment amount
+                // update user->moneybalance
+                // redirect to success page
+                //history of money balance - money balance used - order number - invoice number - used date - user id
+
+                case 'appointed':
+                    $order->tsok    = 'appointed';
+                    $order->save();
+                    break;
+                case 'paid':
+                    $order->tsok    = 'appointed';
+                    $order->save();
+                    // send invoice to guest
+                    break;
             }
+
         }
         else{
             abort(404);
