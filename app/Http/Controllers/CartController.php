@@ -117,7 +117,6 @@ class CartController extends Controller
             $not_regular_dates     = [];
             $dates_array           = [];
             $availableStatus       = [];
-            $invoiceNumber         = '';
             $clickHere             = '<a href="/inquiry">click here</a>';
 
             $carts                 = Booking::where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
@@ -1177,20 +1176,6 @@ class CartController extends Controller
 
                     if(!in_array('notAvailable', $availableStatus)) {
                         $available                         = 'success';
-                        /* Create invoice number begin */
-                        if( !empty ($cabin->invoice_autonum) ) {
-                            $autoNumber = (int)$cabin->invoice_autonum + 1;
-                        }
-                        else {
-                            $autoNumber = 100000;
-                        }
-
-                        if( !empty ($cabin->invoice_code) ) {
-                            $invoiceCode   = $cabin->invoice_code;
-                            $invoiceNumber = $invoiceCode . "-" . date("y") . "-" . $autoNumber;
-                        }
-                        /* Create invoice number end */
-
                         /* Booking begin */
                         $booking                           = Booking::find($cart->_id);
                         $booking->beds                     = ($cabin->sleeping_place != 1) ? $bedsRequest : 0;
@@ -1199,7 +1184,6 @@ class CartController extends Controller
                         $booking->guests                   = ($cabin->sleeping_place === 1) ? $sleepsRequest : $requestBedsSumDorms;
                         $booking->halfboard                = $halfBoard;
                         $booking->comments                 = $commentsRequest;
-                        $booking->invoice_number           = $invoiceNumber;
                         $booking->prepayment_amount        = $amount;
                         $booking->total_prepayment_amount  = $amount; //$eachDepositWithTax; // Total prepayment amount is not the exact figure.
                         $booking->updated_at               = Carbon::now();
