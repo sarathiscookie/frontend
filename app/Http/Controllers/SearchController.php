@@ -181,6 +181,7 @@ class SearchController extends Controller
         $d2                      = new DateTime($monthEnd);
         $dateDifference          = $d2->diff($d1);
         $available               = 'failure';
+        $invoiceNumber           = '';
         $bedsRequest             = (int)$request->beds;
         $dormsRequest            = (int)$request->dorms;
         $sleepsRequest           = (int)$request->sleeps;
@@ -1344,6 +1345,19 @@ class SearchController extends Controller
                     }
                     if(!in_array('notAvailable', $availableStatus)) {
                         $available                 = 'success';
+                        /* Create invoice number begin */
+                        if( !empty ($cabin->invoice_autonum) ) {
+                            $autoNumber = (int)$cabin->invoice_autonum + 1;
+                        }
+                        else {
+                            $autoNumber = 100000;
+                        }
+
+                        if( !empty ($cabin->invoice_code) ) {
+                            $invoiceCode   = $cabin->invoice_code;
+                            $invoiceNumber = $invoiceCode . "-" . date("y") . "-" . $autoNumber;
+                        }
+                        /* Create invoice number end */
                         $booking                   = new Booking;
                         $booking->cabinname        = $cabin->name;
                         $booking->cabin_id         = new \MongoDB\BSON\ObjectID($cabin->_id);
@@ -1352,6 +1366,7 @@ class SearchController extends Controller
                         $booking->user             = new \MongoDB\BSON\ObjectID(Auth::user()->_id);
                         $booking->beds             = $bedsRequest;
                         $booking->dormitory        = $dormsRequest;
+                        $booking->invoice_number   = $invoiceNumber;
                         $booking->sleeps           = ($cabin->sleeping_place === 1) ? $sleepsRequest : $requestBedsSumDorms;
                         $booking->guests           = ($cabin->sleeping_place === 1) ? $sleepsRequest : $requestBedsSumDorms;
                         $booking->bookingdate      = date('Y-m-d H:i:s');
