@@ -210,11 +210,11 @@ class PaymentController extends Controller
                     $order->save();
 
                     if($order) {
-                        /* Updating user money balance */
+                        /* Storing userid from payment response in to user collection */
                         $user->money_balance = round($afterRedeemAmount, 2);
                         $user->save();
 
-                        /* Updating order number */
+                        /* Updating order number in ordernumber collection */
                         $orderNumber->number = $order_num;
                         $orderNumber->save();
 
@@ -267,11 +267,11 @@ class PaymentController extends Controller
                             /* Storing order details end */
 
                             if($order) {
-                                /* Updating user money balance */
+                                /* Storing userid from payment response in to user collection */
                                 $user->userid        = $paymentGateway["userid"];
                                 $user->save();
 
-                                /* Updating order number */
+                                /* Updating order number in ordernumber collection */
                                 $orderNumber->number = $order_num;
                                 $orderNumber->save();
 
@@ -309,6 +309,7 @@ class PaymentController extends Controller
                             $order->order_total_amount    = $total;
                             $order->order_delete          = 0;
 
+                            /* If guest paid using payByBill we need to store bank details. Condition begin */
                             if($request->payment === 'payByBill') {
                                 if(in_array('yes', $payByBillPossible)) {
                                     $order->clearing_bankaccount       = $paymentGateway["clearing_bankaccount"];
@@ -318,24 +319,19 @@ class PaymentController extends Controller
                                     $order->clearing_bankaccountholder = $paymentGateway["clearing_bankaccountholder"];
                                     $order->clearing_bankiban          = $paymentGateway["clearing_bankiban"];
                                     $order->clearing_bankbic           = $paymentGateway["clearing_bankbic"];
-                                    $order->save();
-                                    $request->session()->flash('bookingSuccessStatusPrepayment', 'Thank you very much for booking with Huetten-Holiday.de.');
-                                    return redirect()->route('payment.prepayment')->with('order', $order);
-                                }
-                                else {
-                                    return redirect()->back()->with('bookingFailureStatus', 'There has been an error processing your request.');
                                 }
                             }
+                            /* If guest paid using payByBill we need to store bank details. Condition end */
 
                             $order->save();
                             /* Storing order details end */
 
                             if($order) {
-                                /* Updating user money balance */
+                                /* Storing userid from payment response in to user collection  */
                                 $user->userid        = $paymentGateway["userid"];
                                 $user->save();
 
-                                /* Updating order number */
+                                /* Updating order number in ordernumber collection */
                                 $orderNumber->number = $order_num;
                                 $orderNumber->save();
 
@@ -351,6 +347,18 @@ class PaymentController extends Controller
                                     $cartUpdate->userid       = $paymentGateway["userid"];
                                     $cartUpdate->save();
                                 }
+
+                                /* If guest paid using payByBill it will redirect to bank details listing page. Condition begin*/
+                                if($request->payment === 'payByBill') {
+                                    if(in_array('yes', $payByBillPossible)) {
+                                        $request->session()->flash('bookingSuccessStatusPrepayment', 'Thank you very much for booking with Huetten-Holiday.de.');
+                                        return redirect()->route('payment.prepayment')->with('order', $order);
+                                    }
+                                    else {
+                                        return redirect()->back()->with('bookingFailureStatus', 'There has been an error processing your request.');
+                                    }
+                                }
+                                /* If guest paid using payByBill it will redirect to bank details listing page. Condition end*/
 
                                 return redirect()->route('payment.success')->with('bookingSuccessStatus', 'Thank you very much for booking with Huetten-Holiday.de.');
                             }
@@ -375,11 +383,11 @@ class PaymentController extends Controller
                             /* Storing order details end */
 
                             if($order) {
-                                /* Updating user money balance */
+                                /* Storing userid from payment response in to user collection */
                                 $user->userid        = $paymentGateway["userid"];
                                 $user->save();
 
-                                /* Updating order number */
+                                /* Updating order number in ordernumber collection */
                                 $orderNumber->number = $order_num;
                                 $orderNumber->save();
 
@@ -436,11 +444,11 @@ class PaymentController extends Controller
                         /* Storing order details end */
 
                         if($order) {
-                            /* Updating user money balance */
+                            /* Storing userid from payment response in to user collection */
                             $user->userid        = $paymentGateway["userid"];
                             $user->save();
 
-                            /* Updating order number */
+                            /* Updating order number in ordernumber collection */
                             $orderNumber->number = $order_num;
                             $orderNumber->save();
 
@@ -478,6 +486,7 @@ class PaymentController extends Controller
                         $order->order_total_amount    = $total;
                         $order->order_delete          = 0;
 
+                        /* If guest paid using payByBill we need to store bank details. Condition begin */
                         if($request->payment === 'payByBill') {
                             if(in_array('yes', $payByBillPossible)) {
                                 $order->clearing_bankaccount       = $paymentGateway["clearing_bankaccount"];
@@ -487,24 +496,19 @@ class PaymentController extends Controller
                                 $order->clearing_bankaccountholder = $paymentGateway["clearing_bankaccountholder"];
                                 $order->clearing_bankiban          = $paymentGateway["clearing_bankiban"];
                                 $order->clearing_bankbic           = $paymentGateway["clearing_bankbic"];
-                                $order->save();
-                                $request->session()->flash('bookingSuccessStatusPrepayment', 'Thank you very much for booking with Huetten-Holiday.de.');
-                                return redirect()->route('payment.prepayment')->with('order', $order);
-                            }
-                            else {
-                                return redirect()->back()->with('bookingFailureStatus', 'There has been an error processing your request.');
                             }
                         }
+                        /* If guest paid using payByBill we need to store bank details. Condition end */
 
                         $order->save();
                         /* Storing order details end */
 
                         if($order) {
-                            /* Updating user money balance */
+                            /* Storing userid from payment response in to user collection */
                             $user->userid        = $paymentGateway["userid"];
                             $user->save();
 
-                            /* Updating order number */
+                            /* Updating order number in ordernumber collection */
                             $orderNumber->number = $order_num;
                             $orderNumber->save();
 
@@ -520,6 +524,18 @@ class PaymentController extends Controller
                                 $cartUpdate->userid       = $paymentGateway["userid"];
                                 $cartUpdate->save();
                             }
+
+                            /* If guest paid using payByBill it will redirect to bank details listing page. Condition begin*/
+                            if($request->payment === 'payByBill') {
+                                if(in_array('yes', $payByBillPossible)) {
+                                    $request->session()->flash('bookingSuccessStatusPrepayment', 'Thank you very much for booking with Huetten-Holiday.de.');
+                                    return redirect()->route('payment.prepayment')->with('order', $order);
+                                }
+                                else {
+                                    return redirect()->back()->with('bookingFailureStatus', 'There has been an error processing your request.');
+                                }
+                            }
+                            /* If guest paid using payByBill it will redirect to bank details listing page. Condition end*/
 
                             return redirect()->route('payment.success')->with('bookingSuccessStatus', 'Thank you very much for booking with Huetten-Holiday.de.');
                         }
@@ -544,11 +560,11 @@ class PaymentController extends Controller
                         /* Storing order details end */
 
                         if($order) {
-                            /* Updating user money balance */
+                            /* Storing userid from payment response in to user collection */
                             $user->userid        = $paymentGateway["userid"];
                             $user->save();
 
-                            /* Updating order number */
+                            /* Updating order number in ordernumber collection */
                             $orderNumber->number = $order_num;
                             $orderNumber->save();
 
