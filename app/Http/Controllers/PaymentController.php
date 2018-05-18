@@ -241,13 +241,13 @@ class PaymentController extends Controller
                 }
                 else {
                     if(isset($request->payment)) {
-                        // Function call for payment gateway section
-                        $paymentGateway    = $this->paymentGateway($request->all(), $request->ip(), $total_prepayment_amount, $order_number);
-
                         /* How much money user have in their account after used money balance */
                         $afterRedeemAmount = $total_prepayment_amount - $user->money_balance;
                         $percentage        = ($this->serviceFees($afterRedeemAmount) / 100) * $afterRedeemAmount;
                         $total             = round($afterRedeemAmount + $percentage, 2);
+
+                        // Function call for payment gateway section
+                        $paymentGateway    = $this->paymentGateway($request->all(), $request->ip(), $total, $order_number);
 
                         if ($paymentGateway["status"] == "REDIRECT") {
 
@@ -421,10 +421,10 @@ class PaymentController extends Controller
             }
             else {
                 if(isset($request->payment)) {
-                    // Function call for payment gateway section
-                    $paymentGateway = $this->paymentGateway($request->all(), $request->ip(), $total_prepayment_amount, $order_number);
                     $percentage     = ($this->serviceFees($total_prepayment_amount) / 100) * $total_prepayment_amount;
                     $total          = round($total_prepayment_amount + $percentage, 2);
+                    // Function call for payment gateway section
+                    $paymentGateway = $this->paymentGateway($request->all(), $request->ip(), $total, $order_number);
 
                     if ($paymentGateway["status"] == "REDIRECT") { // If card is 3d secure return status is REDIRECT and "redirect url" will return.
 
@@ -844,7 +844,7 @@ class PaymentController extends Controller
         if ($_POST["key"] == hash("md5", env('KEY'))) {
             // key is valid, this notification is for us
 
-            if ($_POST["txaction"] == "appointed") {
+            if ($_POST["txaction"] === "appointed") {
                 $payment        = new Payment;
                 foreach($_POST as $key => $value) {
                     if(Schema::hasColumn($payment->getTable(), $key)){
@@ -858,11 +858,36 @@ class PaymentController extends Controller
                 $payment->save();
                 echo "TSOK";
 
-                $order          = Order::where('userid', $_POST["userid"])->where('txid', $_POST["txid"])->first();
-                $order->tsok    = 'appointed';
+                $order               = Order::where('userid', $_POST["userid"])->where('txid', $_POST["txid"])->first();
+                $order->tsok         = 'appointed';
+                $order->reference    = $_POST["reference"];
+                $order->clearingtype = $_POST["clearingtype"];
                 $order->save();
+
+                /* Updating booking status and payment status begin */
+                $carts  = Booking::where('userid', $_POST["userid"])
+                    ->where('txid', $_POST["txid"])
+                    ->where('status', "8")
+                    ->where('is_delete', 0)
+                    ->get();
+                foreach ($carts as $cart) {
+
+                    if($_POST["clearingtype"] === 'vor') {
+                        $cartUpdate = Booking::where('userid', $_POST["userid"])
+                            ->where('txid', $_POST["txid"])
+                            ->where('status', "8")
+                            ->where('is_delete', 0)
+                            ->find($cart->_id);
+                        $cartUpdate->status         = '5';
+                        $cartUpdate->payment_status = '3';
+                        $cartUpdate->save();
+                    }
+                }
+                /* Updating booking status and payment status end */
+                /* Send email to guest after successful booking */
+                //Mail::to($user->usrEmail)->send(new BookingSuccess());
             }
-            if ($_POST["txaction"] == "paid") {
+            if ($_POST["txaction"] === "paid") {
                 $payment        = new Payment;
                 foreach($_POST as $key => $value) {
                     if(Schema::hasColumn($payment->getTable(), $key)){
@@ -876,9 +901,31 @@ class PaymentController extends Controller
                 $payment->save();
                 echo "TSOK";
 
-                $order          = Order::where('userid', $_POST["userid"])->where('txid', $_POST["txid"])->first();
-                $order->tsok    = 'paid';
+                $order               = Order::where('userid', $_POST["userid"])->where('txid', $_POST["txid"])->first();
+                $order->tsok         = 'paid';
+                $order->reference    = $_POST["reference"];
+                $order->clearingtype = $_POST["clearingtype"];
                 $order->save();
+
+                /* Updating booking status and payment status begin */
+                $carts  = Booking::where('userid', $_POST["userid"])
+                    ->where('txid', $_POST["txid"])
+                    ->where('status', "8")
+                    ->where('is_delete', 0)
+                    ->get();
+                foreach ($carts as $cart) {
+                    $cartUpdate = Booking::where('userid', $_POST["userid"])
+                        ->where('txid', $_POST["txid"])
+                        ->where('status', "8")
+                        ->where('is_delete', 0)
+                        ->find($cart->_id);
+                    $cartUpdate->status         = '1';
+                    $cartUpdate->payment_status = '1';
+                    $cartUpdate->save();
+                }
+                /* Updating booking status and payment status end */
+                /* Send email to guest after successful booking */
+                //Mail::to($user->usrEmail)->send(new BookingSuccess());
             }
         }
         else{

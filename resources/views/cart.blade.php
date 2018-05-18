@@ -11,7 +11,7 @@
         <div class="col-md-2 col-md-2-booking1"></div>
         <div class="col-md-8" id="list-filter-booking1">
             <nav class="navbar navbar-default navbar-default-booking1">
-                <h2 class="cabin-head-booking1">Edit your Booking(s)</h2><h2 class="cabin-head-booking1">Step 1 of 3<span class="glyphicon glyphicon-question-sign" title="You are on the first of three steps to book a cabin night. Control your data and enter next step to get to the next step."></span></h2>
+                <h2 class="cabin-head-booking1">Booking(s)</h2><h2 class="cabin-head-booking1">Step 1 of 3<span class="glyphicon glyphicon-question-sign" title="You are on the first of three steps to book a cabin night. Control your data and enter next step to get to the next step."></span></h2>
             </nav>
         </div>
         <div class="col-md-2 col-md-2-booking1"></div>
@@ -66,7 +66,7 @@
                                         </div>
                                         <div class="col-sm-7 text-left col-sm-7-booking1">
 
-                                            <h3 class="headliner-cabinname">{{ $cabinDetails->cabin($cart->cabin_id)->name }} - {{ $cabinDetails->cabin($cart->cabin_id)->region }}<span class="glyphicon glyphicon-question-sign" title="Please check your data and correct if necessary. To edit them, simply double-click on the desired field."></span></h3>
+                                            <h3 class="headliner-cabinname">{{ $cabinDetails->cabin($cart->cabin_id)->name }} - {{ $cabinDetails->cabin($cart->cabin_id)->region }}<span class="glyphicon glyphicon-question-sign" title="Please check your data and correct if necessary."></span></h3>
 
                                             @if (session()->has($notAvailStatus))
                                                 <div id="flash" class="alert alert-danger">
