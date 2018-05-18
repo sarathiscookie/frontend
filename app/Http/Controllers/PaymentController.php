@@ -268,7 +268,7 @@ class PaymentController extends Controller
 
                             if($order) {
                                 /* Updating user money balance */
-                                $user->userid             = $paymentGateway["userid"];
+                                $user->userid        = $paymentGateway["userid"];
                                 $user->save();
 
                                 /* Updating order number */
@@ -277,11 +277,14 @@ class PaymentController extends Controller
 
                                 /* Updating booking details */
                                 foreach ($cart_ids as $cart_id) {
-                                    $cartUpdate           = Booking::where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
+                                    $cartUpdate               = Booking::where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
                                         ->where('status', "8")
                                         ->where('is_delete', 0)
                                         ->find($cart_id);
-                                    $cartUpdate->order_id = new \MongoDB\BSON\ObjectID($order->_id);
+                                    $cartUpdate->order_id     = new \MongoDB\BSON\ObjectID($order->_id);
+                                    $cartUpdate->payment_type = $request->payment;
+                                    $cartUpdate->txid         = $paymentGateway["txid"];
+                                    $cartUpdate->userid       = $paymentGateway["userid"];
                                     $cartUpdate->save();
                                 }
 
@@ -329,7 +332,7 @@ class PaymentController extends Controller
 
                             if($order) {
                                 /* Updating user money balance */
-                                $user->userid                     = $paymentGateway["userid"];
+                                $user->userid        = $paymentGateway["userid"];
                                 $user->save();
 
                                 /* Updating order number */
@@ -338,11 +341,14 @@ class PaymentController extends Controller
 
                                 /* Updating booking details */
                                 foreach ($cart_ids as $cart_id) {
-                                    $cartUpdate                   = Booking::where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
+                                    $cartUpdate               = Booking::where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
                                         ->where('status', "8")
                                         ->where('is_delete', 0)
                                         ->find($cart_id);
-                                    $cartUpdate->order_id         = new \MongoDB\BSON\ObjectID($order->_id);
+                                    $cartUpdate->order_id     = new \MongoDB\BSON\ObjectID($order->_id);
+                                    $cartUpdate->payment_type = $request->payment;
+                                    $cartUpdate->txid         = $paymentGateway["txid"];
+                                    $cartUpdate->userid       = $paymentGateway["userid"];
                                     $cartUpdate->save();
                                 }
 
@@ -370,7 +376,7 @@ class PaymentController extends Controller
 
                             if($order) {
                                 /* Updating user money balance */
-                                $user->userid                     = $paymentGateway["userid"];
+                                $user->userid        = $paymentGateway["userid"];
                                 $user->save();
 
                                 /* Updating order number */
@@ -379,11 +385,14 @@ class PaymentController extends Controller
 
                                 /* Updating booking details */
                                 foreach ($cart_ids as $cart_id) {
-                                    $cartUpdate                   = Booking::where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
+                                    $cartUpdate               = Booking::where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
                                         ->where('status', "8")
                                         ->where('is_delete', 0)
                                         ->find($cart_id);
-                                    $cartUpdate->order_id         = new \MongoDB\BSON\ObjectID($order->_id);
+                                    $cartUpdate->order_id     = new \MongoDB\BSON\ObjectID($order->_id);
+                                    $cartUpdate->payment_type = $request->payment;
+                                    $cartUpdate->txid         = $paymentGateway["txid"];
+                                    $cartUpdate->userid       = $paymentGateway["userid"];
                                     $cartUpdate->save();
                                 }
 
@@ -428,7 +437,7 @@ class PaymentController extends Controller
 
                         if($order) {
                             /* Updating user money balance */
-                            $user->userid             = $paymentGateway["userid"];
+                            $user->userid        = $paymentGateway["userid"];
                             $user->save();
 
                             /* Updating order number */
@@ -437,11 +446,14 @@ class PaymentController extends Controller
 
                             /* Updating booking details */
                             foreach ($cart_ids as $cart_id) {
-                                $cartUpdate           = Booking::where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
+                                $cartUpdate               = Booking::where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
                                     ->where('status', "8")
                                     ->where('is_delete', 0)
                                     ->find($cart_id);
-                                $cartUpdate->order_id = new \MongoDB\BSON\ObjectID($order->_id);
+                                $cartUpdate->order_id     = new \MongoDB\BSON\ObjectID($order->_id);
+                                $cartUpdate->payment_type = $request->payment;
+                                $cartUpdate->txid         = $paymentGateway["txid"];
+                                $cartUpdate->userid       = $paymentGateway["userid"];
                                 $cartUpdate->save();
                             }
 
@@ -489,7 +501,7 @@ class PaymentController extends Controller
 
                         if($order) {
                             /* Updating user money balance */
-                            $user->userid             = $paymentGateway["userid"];
+                            $user->userid        = $paymentGateway["userid"];
                             $user->save();
 
                             /* Updating order number */
@@ -498,11 +510,14 @@ class PaymentController extends Controller
 
                             /* Updating booking details */
                             foreach ($cart_ids as $cart_id) {
-                                $cartUpdate           = Booking::where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
+                                $cartUpdate               = Booking::where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
                                     ->where('status', "8")
                                     ->where('is_delete', 0)
                                     ->find($cart_id);
-                                $cartUpdate->order_id = new \MongoDB\BSON\ObjectID($order->_id);
+                                $cartUpdate->order_id     = new \MongoDB\BSON\ObjectID($order->_id);
+                                $cartUpdate->payment_type = $request->payment;
+                                $cartUpdate->txid         = $paymentGateway["txid"];
+                                $cartUpdate->userid       = $paymentGateway["userid"];
                                 $cartUpdate->save();
                             }
 
@@ -530,7 +545,7 @@ class PaymentController extends Controller
 
                         if($order) {
                             /* Updating user money balance */
-                            $user->userid            = $paymentGateway["userid"];
+                            $user->userid        = $paymentGateway["userid"];
                             $user->save();
 
                             /* Updating order number */
@@ -539,11 +554,14 @@ class PaymentController extends Controller
 
                             /* Updating booking details */
                             foreach ($cart_ids as $cart_id) {
-                                $cartUpdate           = Booking::where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
+                                $cartUpdate               = Booking::where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
                                     ->where('status', "8")
                                     ->where('is_delete', 0)
                                     ->find($cart_id);
-                                $cartUpdate->order_id = new \MongoDB\BSON\ObjectID($order->_id);
+                                $cartUpdate->order_id     = new \MongoDB\BSON\ObjectID($order->_id);
+                                $cartUpdate->payment_type = $request->payment;
+                                $cartUpdate->txid         = $paymentGateway["txid"];
+                                $cartUpdate->userid       = $paymentGateway["userid"];
                                 $cartUpdate->save();
                             }
 
