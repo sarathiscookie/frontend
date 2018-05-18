@@ -52,7 +52,7 @@ $(function() {
             var sumPrepaymentServTotal = sumPrepaymentAmount + sumPrepaymentPerc;
 
             $( ".sumPrepayServiceTotal" ).html(formatter.format(sumPrepaymentServTotal));
-            $( ".serviceFee" ).show();
+            $( ".serviceFee" ).show('<p class="info-listing-booking2">Service fee:</p><p class="info-listing-price-booking2">'+serviceFee+'%</p>');
             $( ".totalPrepayAmount" ).show();
         }
 

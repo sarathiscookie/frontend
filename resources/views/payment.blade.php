@@ -227,6 +227,7 @@
                                                         <div class="afterRedeemAmount"></div>
                                                     </div>
 
+                                                    <div class="jsServiceFee"></div>
                                                     <div class="serviceFee">
                                                         <p class="info-listing-booking2">Service fee:</p><p class="info-listing-price-booking2">{{ $serviceTax }}%</p>
                                                     </div>
