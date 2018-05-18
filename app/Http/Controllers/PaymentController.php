@@ -856,10 +856,11 @@ class PaymentController extends Controller
                     }
                 }
                 $payment->save();
+                echo "TSOK";
 
                 $order          = Order::where('userid', $_POST["userid"])->where('txid', $_POST["txid"])->first();
                 $order->tsok    = 'appointed';
-                echo "TSOK";
+                $order->save();
             }
             if ($_POST["txaction"] == "paid") {
                 $payment        = new Payment;
@@ -873,11 +874,11 @@ class PaymentController extends Controller
                     }
                 }
                 $payment->save();
+                echo "TSOK";
 
                 $order          = Order::where('userid', $_POST["userid"])->where('txid', $_POST["txid"])->first();
                 $order->tsok    = 'paid';
-                echo "TSOK";
-                // update your transaction accordingly, e.g. by $_POST["reference"]
+                $order->save();
             }
         }
         else{
