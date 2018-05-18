@@ -1189,18 +1189,6 @@ class CartController extends Controller
                         $booking->updated_at               = Carbon::now();
                         $booking->save();
                         /* Booking end */
-
-                        /* If booking saved in to cart then update cabin invoice auto generation number begin. */
-                        if($booking) {
-                            /* Update cabin invoice_autonum begin */
-                            Cabin::where('is_delete', 0)
-                                ->where('other_cabin', "0")
-                                ->where('name', $cabin->name)
-                                ->where('_id', new \MongoDB\BSON\ObjectID($cabin->_id))
-                                ->update(['invoice_autonum' => $autoNumber]);
-                        }
-                        /* If booking saved in to card then update cabin invoice auto generation number end. */
-
                     }
 
                 }

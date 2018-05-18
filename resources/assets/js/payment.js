@@ -21,7 +21,6 @@ $(function() {
 
             var redeemAmount              = $(this).parents().eq(2).data('redeem'); // We can use parent().parent().parent() also but it is slower.
             var sumPrepayAmount           = $( ".sumPrepayAmount" ).data('sumprepayamount');
-            var serviceTaxBook            = serviceFees(sumPrepayAmount);
 
             if (redeemAmount >= sumPrepayAmount) {
                 var afterRedeemAmount     = redeemAmount - sumPrepayAmount;
@@ -34,13 +33,14 @@ $(function() {
             }
             else {
                 var afterRedeemAmount     = sumPrepayAmount - redeemAmount;
+                var serviceTaxBook        = serviceFees(afterRedeemAmount);
                 var sumPrepayPercentage   = (serviceTaxBook / 100) * afterRedeemAmount;
                 var sumPrepayServiceTotal = afterRedeemAmount + sumPrepayPercentage;
                 $( ".redeemAmount" ).html('<p class="info-listing-booking2">Redeem Amount:</p><p class="info-listing-price-booking2">'+formatter.format(redeemAmount)+'</p>');
                 $( ".moneyBalance" ).html();
                 $( ".afterRedeemAmount" ).html('<p class="info-listing-booking2">Amount:</p><p class="info-listing-price-booking2">'+formatter.format(afterRedeemAmount)+'</p>');
                 $( ".sumPrepayServiceTotal" ).html(formatter.format(sumPrepayServiceTotal));
-                $( ".serviceFee" ).show();
+                $( ".serviceFee" ).html('<p class="info-listing-booking2">Service fee:</p><p class="info-listing-price-booking2">'+serviceTaxBook+'%</p>');
                 $( ".totalPrepayAmount" ).show();
             }
         }

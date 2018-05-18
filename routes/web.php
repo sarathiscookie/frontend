@@ -172,6 +172,9 @@ Route::group(['middleware' => ['auth']], function () {
 
     /* Payment failure */
     Route::get('/payment/error', 'PaymentController@error')->name('payment.error');
+
+    /* Payment failure */
+    Route::get('/payment/prepayment', 'PaymentController@prepayment')->name('payment.prepayment');
 });
 
 /* Response from payone */

@@ -10,6 +10,7 @@ use App\Userlist;
 use App\Booking;
 use App\Order;
 use App\Ordernumber;
+use App\Payment;
 use Auth;
 use Validator;
 use Payone;
@@ -43,23 +44,6 @@ class PaymentController extends Controller
         }
 
         return $serviceTaxBook;
-    }
-
-    /**
-     * Function for order id.
-     *
-     * @param  string  $length
-     * @return \Illuminate\Http\Response
-     */
-    public function uniqidReal($length) {
-        if (function_exists("random_bytes")) {
-            $bytes = random_bytes(ceil($length / 2));
-        } elseif (function_exists("openssl_random_pseudo_bytes")) {
-            $bytes = openssl_random_pseudo_bytes(ceil($length / 2));
-        } else {
-            throw new Exception("no cryptographically secure random function available");
-        }
-        return substr(bin2hex($bytes), 0, $length);
     }
 
     /**
@@ -161,6 +145,7 @@ class PaymentController extends Controller
         $prepayment_amount           = [];
         $cart_ids                    = [];
         $cabin_code                  = '';
+        $payByBillPossible           = [];
         $user                        = Userlist::where('is_delete', 0)->where('usrActive', '1')->find(Auth::user()->_id);
         $carts                       = Booking::where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
             ->where('status', "8")
@@ -169,12 +154,27 @@ class PaymentController extends Controller
             ->get();
 
         if($carts) {
-            /* Amount calculation */
+            /* Loop for amount calculation,  */
             foreach ($carts as $key => $cart) {
                 $prepayment_amount[] = $cart->prepayment_amount;
                 $cart_ids[]          = $cart->_id;
                 $invoice_number      = explode('-', $cart->invoice_number, 2);
                 $cabin_code         .= $invoice_number[0].'-';
+
+                /* Condition to check pay by bill possible begin */
+                // Pay by bill condition works if there is two weeks diff b/w current date and checking from date.
+                $checkingFrom        = $cart->checkin_from->format('Y-m-d');
+                $currentDate         = date('Y-m-d');
+                $d1                  = new DateTime($currentDate);
+                $d2                  = new DateTime($checkingFrom);
+                $dateDifference      = $d2->diff($d1);
+                if($dateDifference->days > 14) {
+                    $payByBillPossible[] = 'yes';
+                }
+                else {
+                    $payByBillPossible[] = 'no';
+                }
+                /* Condition to check pay by bill possible end */
             }
 
             /* Create order number begin */
@@ -200,6 +200,7 @@ class PaymentController extends Controller
                     /* Storing order details */
                     $order                                = new Order;
                     $order->order_id                      = $order_number;
+                    $order->auth_user                     = new \MongoDB\BSON\ObjectID(Auth::user()->_id);
                     $order->order_amount                  = $total_prepayment_amount;
                     $order->order_total_amount            = $total_prepayment_amount;
                     $order->order_money_balance_used      = round($total_prepayment_amount, 2);
@@ -245,25 +246,29 @@ class PaymentController extends Controller
 
                         /* How much money user have in their account after used money balance */
                         $afterRedeemAmount = $total_prepayment_amount - $user->money_balance;
+                        $percentage        = ($this->serviceFees($afterRedeemAmount) / 100) * $afterRedeemAmount;
+                        $total             = round($afterRedeemAmount + $percentage, 2);
 
                         if ($paymentGateway["status"] == "REDIRECT") {
 
                             /* Storing order details */
-                            $order                                = new Order;
-                            $order->order_id                      = $order_number;
-                            $order->order_status                  = "REDIRECT";
-                            $order->txid                          = $paymentGateway["txid"];
-                            $order->userid                        = $paymentGateway["userid"];
-                            $order->order_payment_type            = $request->payment;
-                            $order->order_payment_method          = 2; // 1 => fully paid using money balance, 2 => Partially paid using money balance, 3 => Paid using payment gateway
-                            $order->order_amount                  = round($afterRedeemAmount, 2);
-                            $order->order_delete                  = 0;
+                            $order                        = new Order;
+                            $order->order_id              = $order_number;
+                            $order->auth_user             = new \MongoDB\BSON\ObjectID(Auth::user()->_id);
+                            $order->order_status          = "REDIRECT";
+                            $order->txid                  = $paymentGateway["txid"];
+                            $order->userid                = $paymentGateway["userid"];
+                            $order->order_payment_type    = $request->payment;
+                            $order->order_payment_method  = 2; // 1 => fully paid using money balance, 2 => Partially paid using money balance, 3 => Paid using payment gateway
+                            $order->order_amount          = round($afterRedeemAmount, 2);
+                            $order->order_total_amount    = $total;
+                            $order->order_delete          = 0;
                             $order->save();
                             /* Storing order details end */
 
                             if($order) {
                                 /* Updating user money balance */
-                                $user->userid                     = $paymentGateway["userid"];
+                                $user->userid             = $paymentGateway["userid"];
                                 $user->save();
 
                                 /* Updating order number */
@@ -272,11 +277,11 @@ class PaymentController extends Controller
 
                                 /* Updating booking details */
                                 foreach ($cart_ids as $cart_id) {
-                                    $cartUpdate                   = Booking::where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
+                                    $cartUpdate           = Booking::where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
                                         ->where('status', "8")
                                         ->where('is_delete', 0)
                                         ->find($cart_id);
-                                    $cartUpdate->order_id         = new \MongoDB\BSON\ObjectID($order->_id);
+                                    $cartUpdate->order_id = new \MongoDB\BSON\ObjectID($order->_id);
                                     $cartUpdate->save();
                                 }
 
@@ -287,17 +292,38 @@ class PaymentController extends Controller
                                 return redirect()->back()->with('bookingFailureStatus', 'There has been an error processing your request.');
                             }
                         }
-                        elseif ($paymentGateway["status"] == "APPROVED") { // no 3d secure verification required, transaction went through
+                        elseif ($paymentGateway["status"] == "APPROVED") { // If card is not 3d secure and prepayment(PayByBill) return status is APPROVED and "redirect url" will not return. We manually redirect to success page.
                             /* Storing order details */
-                            $order                                = new Order;
-                            $order->order_id                      = $order_number;
-                            $order->order_status                  = "APPROVED";
-                            $order->txid                          = $paymentGateway["txid"];
-                            $order->userid                        = $paymentGateway["userid"];
-                            $order->order_payment_type            = $request->payment;
-                            $order->order_payment_method          = 2; // 1 => fully paid using money balance, 2 => Partially paid using money balance, 3 => Paid using payment gateway
-                            $order->order_amount                  = round($afterRedeemAmount, 2);
-                            $order->order_delete                  = 0;
+                            $order                        = new Order;
+                            $order->order_id              = $order_number;
+                            $order->auth_user             = new \MongoDB\BSON\ObjectID(Auth::user()->_id);
+                            $order->order_status          = "APPROVED";
+                            $order->txid                  = $paymentGateway["txid"];
+                            $order->userid                = $paymentGateway["userid"];
+                            $order->order_payment_type    = $request->payment;
+                            $order->order_payment_method  = 2; // 1 => fully paid using money balance, 2 => Partially paid using money balance, 3 => Paid using payment gateway
+                            $order->order_amount          = round($afterRedeemAmount, 2);
+                            $order->order_total_amount    = $total;
+                            $order->order_delete          = 0;
+
+                            if($request->payment === 'payByBill') {
+                                if(in_array('yes', $payByBillPossible)) {
+                                    $order->clearing_bankaccount       = $paymentGateway["clearing_bankaccount"];
+                                    $order->clearing_bankcode          = $paymentGateway["clearing_bankcode"];
+                                    $order->clearing_bankcountry       = $paymentGateway["clearing_bankcountry"];
+                                    $order->clearing_bankname          = $paymentGateway["clearing_bankname"];
+                                    $order->clearing_bankaccountholder = $paymentGateway["clearing_bankaccountholder"];
+                                    $order->clearing_bankiban          = $paymentGateway["clearing_bankiban"];
+                                    $order->clearing_bankbic           = $paymentGateway["clearing_bankbic"];
+                                    $order->save();
+                                    $request->session()->flash('bookingSuccessStatusPrepayment', 'Thank you very much for booking with Huetten-Holiday.de.');
+                                    return redirect()->route('payment.prepayment')->with('order', $order);
+                                }
+                                else {
+                                    return redirect()->back()->with('bookingFailureStatus', 'There has been an error processing your request.');
+                                }
+                            }
+
                             $order->save();
                             /* Storing order details end */
 
@@ -328,15 +354,17 @@ class PaymentController extends Controller
                         }
                         else {
                             /* Storing order details begin */
-                            $order                                = new Order;
-                            $order->order_id                      = $order_number;
-                            $order->order_status                  = "ERROR / PENDING";
-                            $order->txid                          = $paymentGateway["txid"];
-                            $order->userid                        = $paymentGateway["userid"];
-                            $order->order_payment_type            = $request->payment;
-                            $order->order_payment_method          = 2; // 1 => fully paid using money balance, 2 => Partially paid using money balance, 3 => Paid using payment gateway
-                            $order->order_amount                  = round($afterRedeemAmount, 2);
-                            $order->order_delete                  = 0;
+                            $order                       = new Order;
+                            $order->order_id             = $order_number;
+                            $order->auth_user            = new \MongoDB\BSON\ObjectID(Auth::user()->_id);
+                            $order->order_status         = "ERROR / PENDING";
+                            $order->txid                 = $paymentGateway["txid"];
+                            $order->userid               = $paymentGateway["userid"];
+                            $order->order_payment_type   = $request->payment;
+                            $order->order_payment_method = 2; // 1 => fully paid using money balance, 2 => Partially paid using money balance, 3 => Paid using payment gateway
+                            $order->order_amount         = round($afterRedeemAmount, 2);
+                            $order->order_total_amount   = $total;
+                            $order->order_delete         = 0;
                             $order->save();
                             /* Storing order details end */
 
@@ -378,24 +406,29 @@ class PaymentController extends Controller
                 if(isset($request->payment)) {
                     // Function call for payment gateway section
                     $paymentGateway = $this->paymentGateway($request->all(), $request->ip(), $total_prepayment_amount, $order_number);
+                    $percentage     = ($this->serviceFees($total_prepayment_amount) / 100) * $total_prepayment_amount;
+                    $total          = round($total_prepayment_amount + $percentage, 2);
+
                     if ($paymentGateway["status"] == "REDIRECT") { // If card is 3d secure return status is REDIRECT and "redirect url" will return.
 
                         /* Storing order details */
-                        $order                                = new Order;
-                        $order->order_id                      = $order_number;
-                        $order->order_status                  = "REDIRECT";
-                        $order->txid                          = $paymentGateway["txid"];
-                        $order->userid                        = $paymentGateway["userid"];
-                        $order->order_payment_type            = $request->payment;
-                        $order->order_payment_method          = 3; // 1 => fully paid using money balance, 2 => Partially paid using money balance, 3 => Paid using payment gateway
-                        $order->order_amount                  = $total_prepayment_amount;
-                        $order->order_delete                  = 0;
+                        $order                       = new Order;
+                        $order->order_id             = $order_number;
+                        $order->auth_user            = new \MongoDB\BSON\ObjectID(Auth::user()->_id);
+                        $order->order_status         = "REDIRECT";
+                        $order->txid                 = $paymentGateway["txid"];
+                        $order->userid               = $paymentGateway["userid"];
+                        $order->order_payment_type   = $request->payment;
+                        $order->order_payment_method = 3; // 1 => fully paid using money balance, 2 => Partially paid using money balance, 3 => Paid using payment gateway
+                        $order->order_amount         = $total_prepayment_amount;
+                        $order->order_total_amount   = $total;
+                        $order->order_delete         = 0;
                         $order->save();
                         /* Storing order details end */
 
                         if($order) {
                             /* Updating user money balance */
-                            $user->userid                     = $paymentGateway["userid"];
+                            $user->userid             = $paymentGateway["userid"];
                             $user->save();
 
                             /* Updating order number */
@@ -404,11 +437,11 @@ class PaymentController extends Controller
 
                             /* Updating booking details */
                             foreach ($cart_ids as $cart_id) {
-                                $cartUpdate                   = Booking::where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
+                                $cartUpdate           = Booking::where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
                                     ->where('status', "8")
                                     ->where('is_delete', 0)
                                     ->find($cart_id);
-                                $cartUpdate->order_id         = new \MongoDB\BSON\ObjectID($order->_id);
+                                $cartUpdate->order_id = new \MongoDB\BSON\ObjectID($order->_id);
                                 $cartUpdate->save();
                             }
 
@@ -419,22 +452,44 @@ class PaymentController extends Controller
                             return redirect()->back()->with('bookingFailureStatus', 'There has been an error processing your request.');
                         }
                     }
-                    elseif ($paymentGateway["status"] == "APPROVED") { // If card is not 3d secure return status is APPROVED and "redirect url" will not return. We manually redirect to success page.
+                    elseif ($paymentGateway["status"] == "APPROVED") { // If card is not 3d secure and prepayment(PayByBill) return status is APPROVED and "redirect url" will not return. We manually redirect to success page.
                         /* Storing order details begin */
-                        $order                                = new Order;
-                        $order->order_id                      = $order_number;
-                        $order->order_status                  = "APPROVED";
-                        $order->txid                          = $paymentGateway["txid"];
-                        $order->userid                        = $paymentGateway["userid"];
-                        $order->order_payment_type            = $request->payment;
-                        $order->order_payment_method          = 3; // 1 => fully paid using money balance, 2 => Partially paid using money balance, 3 => Paid using payment gateway
-                        $order->order_amount                  = $total_prepayment_amount;
-                        $order->order_delete                  = 0;
+                        $order                        = new Order;
+                        $order->order_id              = $order_number;
+                        $order->auth_user             = new \MongoDB\BSON\ObjectID(Auth::user()->_id);
+                        $order->order_status          = "APPROVED";
+                        $order->txid                  = $paymentGateway["txid"];
+                        $order->userid                = $paymentGateway["userid"];
+                        $order->order_payment_type    = $request->payment;
+                        $order->order_payment_method  = 3; // 1 => fully paid using money balance, 2 => Partially paid using money balance, 3 => Paid using payment gateway
+                        $order->order_amount          = $total_prepayment_amount;
+                        $order->order_total_amount    = $total;
+                        $order->order_delete          = 0;
+
+                        if($request->payment === 'payByBill') {
+                            if(in_array('yes', $payByBillPossible)) {
+                                $order->clearing_bankaccount       = $paymentGateway["clearing_bankaccount"];
+                                $order->clearing_bankcode          = $paymentGateway["clearing_bankcode"];
+                                $order->clearing_bankcountry       = $paymentGateway["clearing_bankcountry"];
+                                $order->clearing_bankname          = $paymentGateway["clearing_bankname"];
+                                $order->clearing_bankaccountholder = $paymentGateway["clearing_bankaccountholder"];
+                                $order->clearing_bankiban          = $paymentGateway["clearing_bankiban"];
+                                $order->clearing_bankbic           = $paymentGateway["clearing_bankbic"];
+                                $order->save();
+                                $request->session()->flash('bookingSuccessStatusPrepayment', 'Thank you very much for booking with Huetten-Holiday.de.');
+                                return redirect()->route('payment.prepayment')->with('order', $order);
+                            }
+                            else {
+                                return redirect()->back()->with('bookingFailureStatus', 'There has been an error processing your request.');
+                            }
+                        }
+
                         $order->save();
                         /* Storing order details end */
+
                         if($order) {
                             /* Updating user money balance */
-                            $user->userid                     = $paymentGateway["userid"];
+                            $user->userid             = $paymentGateway["userid"];
                             $user->save();
 
                             /* Updating order number */
@@ -443,11 +498,11 @@ class PaymentController extends Controller
 
                             /* Updating booking details */
                             foreach ($cart_ids as $cart_id) {
-                                $cartUpdate                   = Booking::where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
+                                $cartUpdate           = Booking::where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
                                     ->where('status', "8")
                                     ->where('is_delete', 0)
                                     ->find($cart_id);
-                                $cartUpdate->order_id         = new \MongoDB\BSON\ObjectID($order->_id);
+                                $cartUpdate->order_id = new \MongoDB\BSON\ObjectID($order->_id);
                                 $cartUpdate->save();
                             }
 
@@ -459,21 +514,23 @@ class PaymentController extends Controller
                     }
                     else {
                         /* Storing order details begin */
-                        $order                                = new Order;
-                        $order->order_id                      = $order_number;
-                        $order->order_status                  = "ERROR / PENDING";
-                        $order->txid                          = $paymentGateway["txid"];
-                        $order->userid                        = $paymentGateway["userid"];
-                        $order->order_payment_type            = $request->payment;
-                        $order->order_payment_method          = 3; // 1 => fully paid using money balance, 2 => Partially paid using money balance, 3 => Paid using payment gateway
-                        $order->order_amount                  = $total_prepayment_amount;
-                        $order->order_delete                  = 0;
+                        $order                       = new Order;
+                        $order->order_id             = $order_number;
+                        $order->auth_user            = new \MongoDB\BSON\ObjectID(Auth::user()->_id);
+                        $order->order_status         = "ERROR / PENDING";
+                        $order->txid                 = $paymentGateway["txid"];
+                        $order->userid               = $paymentGateway["userid"];
+                        $order->order_payment_type   = $request->payment;
+                        $order->order_payment_method = 3; // 1 => fully paid using money balance, 2 => Partially paid using money balance, 3 => Paid using payment gateway
+                        $order->order_amount         = $total_prepayment_amount;
+                        $order->order_total_amount   = $total;
+                        $order->order_delete         = 0;
                         $order->save();
                         /* Storing order details end */
 
                         if($order) {
                             /* Updating user money balance */
-                            $user->userid                     = $paymentGateway["userid"];
+                            $user->userid            = $paymentGateway["userid"];
                             $user->save();
 
                             /* Updating order number */
@@ -482,11 +539,11 @@ class PaymentController extends Controller
 
                             /* Updating booking details */
                             foreach ($cart_ids as $cart_id) {
-                                $cartUpdate                   = Booking::where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
+                                $cartUpdate           = Booking::where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
                                     ->where('status', "8")
                                     ->where('is_delete', 0)
                                     ->find($cart_id);
-                                $cartUpdate->order_id         = new \MongoDB\BSON\ObjectID($order->_id);
+                                $cartUpdate->order_id = new \MongoDB\BSON\ObjectID($order->_id);
                                 $cartUpdate->save();
                             }
 
@@ -749,44 +806,45 @@ class PaymentController extends Controller
      */
     public function response(Request $request)
     {
-        // The key from a secret configuration file
+        // you'll need to include the $defaults array somehow, or at least get the key from a secret configuration file
         if ($_POST["key"] == hash("md5", env('KEY'))) {
-            // key is valid, this notification is for payone
-            echo "TSOK";
+            // key is valid, this notification is for us
 
-            $order            = Order::where('userid', $_POST["userid"])->where('txid', $_POST["txid"])->first();
-            foreach($_POST as $key => $value) {
-                if(Schema::hasColumn($order->getTable(), $key)){
-                    if(is_array($value)) {
-                        $order->{$key} = $value[1];
-                    } else {
-                        $order->{$key} = $value;
+            if ($_POST["txaction"] == "appointed") {
+                $payment        = new Payment;
+                foreach($_POST as $key => $value) {
+                    if(Schema::hasColumn($payment->getTable(), $key)){
+                        if(is_array($value)) {
+                            $payment->{$key} = $value[1];
+                        } else {
+                            $payment->{$key} = $value;
+                        }
                     }
                 }
+                $payment->save();
+
+                $order          = Order::where('userid', $_POST["userid"])->where('txid', $_POST["txid"])->first();
+                $order->tsok    = 'appointed';
+                echo "TSOK";
             }
-            $order->save();
+            if ($_POST["txaction"] == "paid") {
+                $payment        = new Payment;
+                foreach($_POST as $key => $value) {
+                    if(Schema::hasColumn($payment->getTable(), $key)){
+                        if(is_array($value)) {
+                            $payment->{$key} = $value[1];
+                        } else {
+                            $payment->{$key} = $value;
+                        }
+                    }
+                }
+                $payment->save();
 
-            $order          = Order::where('userid', $_POST["userid"])->where('txid', $_POST["txid"])->first();
-            switch($_POST['txaction']) {
-                // check email send after purchase is needed or not
-                //dd($cartId); //to update booking data status, payment_status
-                // store order details -> order_id, order_number, order_date, order_amount, order_total_amount, order_money_balance_used, created_at, updated_at, order_delete
-                // update booking details -> order_id, status, payment_status, prepayment amount, total prepayment amount
-                // update user->moneybalance
-                // redirect to success page
-                //history of money balance - money balance used - order number - invoice number - used date - user id
-
-                case 'appointed':
-                    $order->tsok    = 'appointed';
-                    $order->save();
-                    break;
-                case 'paid':
-                    $order->tsok    = 'appointed';
-                    $order->save();
-                    // send invoice to guest
-                    break;
+                $order          = Order::where('userid', $_POST["userid"])->where('txid', $_POST["txid"])->first();
+                $order->tsok    = 'paid';
+                echo "TSOK";
+                // update your transaction accordingly, e.g. by $_POST["reference"]
             }
-
         }
         else{
             abort(404);
@@ -813,9 +871,29 @@ class PaymentController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    public function prepayment()
+    {
+        if(session()->has('bookingSuccessStatusPrepayment') && session()->has('order')) {
+            return view('paymentPrepayment');
+        }
+        else {
+            abort(404);
+        }
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function failure()
     {
-        return view('paymentError');
+        if(session()->has('bookingErrorStatus')) {
+            return view('paymentError');
+        }
+        else {
+            abort(404);
+        }
     }
 
 

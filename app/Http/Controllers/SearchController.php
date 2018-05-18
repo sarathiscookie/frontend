@@ -1374,6 +1374,17 @@ class SearchController extends Controller
                         $booking->cart_expiry_date = date('Y-m-d H:i:s', strtotime('1 hour'));
                         $booking->is_delete        = 0;
                         $booking->save();
+
+                        /* If booking saved in to cart then update cabin invoice auto generation number begin. */
+                        if($booking) {
+                            /* Update cabin invoice_autonum begin */
+                            Cabin::where('is_delete', 0)
+                                ->where('other_cabin', "0")
+                                ->where('name', $cabin->name)
+                                ->where('_id', new \MongoDB\BSON\ObjectID($cabin->_id))
+                                ->update(['invoice_autonum' => $autoNumber]);
+                        }
+                        /* If booking saved in to card then update cabin invoice auto generation number end. */
                     }
                 }
                 /* Condition to check cart count end */

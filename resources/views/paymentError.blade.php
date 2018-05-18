@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Payment Failure')
+@section('title', 'Payment Error')
 
 @section('content')
     <div class="container-fluid container-fluid-booking3 bg-3 text-center">
@@ -21,7 +21,7 @@
                             <div class="row row-booking3">
                                 <div class="col-sm-12 month-opening-booking3 col-sm-12-booking3">
                                     <h2>OOPS! Booing Failed</h2>
-                                    <p id="info-text-booking3">There were problems with the transaction. Take a step back and try again</p>
+                                    <p id="info-text-booking3">@if (session()->has('bookingErrorStatus')) {{ session()->get('bookingErrorStatus') }} @endif</p>
                                 </div>
                             </div>
                         </div>
