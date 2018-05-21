@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\BookingFailed;
+use App\Mail\BookingFailure;
 use App\Mail\BookingSuccess;
 use Illuminate\Http\Request;
 
@@ -154,14 +156,13 @@ class PaymentController extends Controller
             ->get();
 
         if($carts) {
-            /* Loop for amount calculation,  */
+            /* Loop for amount calculation, pay by bill date difference and explode cabin code */
             foreach ($carts as $key => $cart) {
                 $prepayment_amount[] = $cart->prepayment_amount;
                 $cart_ids[]          = $cart->_id;
                 $invoice_number      = explode('-', $cart->invoice_number, 2);
                 $cabin_code         .= $invoice_number[0].'-';
 
-                /* Condition to check pay by bill possible begin */
                 // Pay by bill condition works if there is two weeks diff b/w current date and checking from date.
                 $checkingFrom        = $cart->checkin_from->format('Y-m-d');
                 $currentDate         = date('Y-m-d');
@@ -174,10 +175,9 @@ class PaymentController extends Controller
                 else {
                     $payByBillPossible[] = 'no';
                 }
-                /* Condition to check pay by bill possible end */
             }
 
-            /* Create order number begin */
+            /* Generate order number begin */
             $orderNumber = Ordernumber::first();
             if( !empty ($orderNumber->number) ) {
                 $order_num = (int)$orderNumber->number + 1;
@@ -185,7 +185,7 @@ class PaymentController extends Controller
             else {
                 $order_num = 100000;
             }
-            /* Create order number end */
+            /* Generate order number end */
 
             $order_number            = 'ORDER'.'-'.date('y').'-'.$cabin_code.$order_num;
             $sum_prepayment_amount   = array_sum($prepayment_amount);
@@ -210,7 +210,7 @@ class PaymentController extends Controller
                     $order->save();
 
                     if($order) {
-                        /* Storing userid from payment response in to user collection */
+                        /* Updating money balance */
                         $user->money_balance = round($afterRedeemAmount, 2);
                         $user->save();
 
@@ -249,26 +249,30 @@ class PaymentController extends Controller
                         // Function call for payment gateway section
                         $paymentGateway    = $this->paymentGateway($request->all(), $request->ip(), $total, $order_number);
 
-                        if ($paymentGateway["status"] == "REDIRECT") {
+                        if ($paymentGateway["status"] === "REDIRECT") {
 
                             /* Storing order details */
-                            $order                        = new Order;
-                            $order->order_id              = $order_number;
-                            $order->auth_user             = new \MongoDB\BSON\ObjectID(Auth::user()->_id);
-                            $order->order_status          = "REDIRECT";
-                            $order->txid                  = $paymentGateway["txid"];
-                            $order->userid                = $paymentGateway["userid"];
-                            $order->order_payment_type    = $request->payment;
-                            $order->order_payment_method  = 2; // 1 => fully paid using money balance, 2 => Partially paid using money balance, 3 => Paid using payment gateway
-                            $order->order_amount          = round($afterRedeemAmount, 2);
-                            $order->order_total_amount    = $total;
-                            $order->order_delete          = 0;
+                            $order                                = new Order;
+                            $order->order_id                      = $order_number;
+                            $order->auth_user                     = new \MongoDB\BSON\ObjectID(Auth::user()->_id);
+                            $order->order_status                  = "REDIRECT";
+                            $order->txid                          = $paymentGateway["txid"];
+                            $order->userid                        = $paymentGateway["userid"];
+                            $order->order_payment_type            = $request->payment;
+                            $order->order_payment_method          = 2; // 1 => fully paid using money balance, 2 => Partially paid using money balance, 3 => Paid using payment gateway
+                            $order->order_amount                  = round($afterRedeemAmount, 2);
+                            $order->order_total_amount            = $total;
+                            $order->order_money_balance_used      = round($user->money_balance, 2);
+                            $order->order_money_balance_used_date = Carbon::now();
+                            $order->order_delete                  = 0;
                             $order->save();
                             /* Storing order details end */
 
                             if($order) {
-                                /* Storing userid from payment response in to user collection */
+
+                                /* Storing userid and updating money balance of user collection */
                                 $user->userid        = $paymentGateway["userid"];
+                                $user->money_balance = 0;
                                 $user->save();
 
                                 /* Updating order number in ordernumber collection */
@@ -277,14 +281,16 @@ class PaymentController extends Controller
 
                                 /* Updating booking details */
                                 foreach ($cart_ids as $cart_id) {
-                                    $cartUpdate               = Booking::where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
+                                    $cartUpdate                 = Booking::where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
                                         ->where('status', "8")
                                         ->where('is_delete', 0)
                                         ->find($cart_id);
-                                    $cartUpdate->order_id     = new \MongoDB\BSON\ObjectID($order->_id);
-                                    $cartUpdate->payment_type = $request->payment;
-                                    $cartUpdate->txid         = $paymentGateway["txid"];
-                                    $cartUpdate->userid       = $paymentGateway["userid"];
+                                    $cartUpdate->order_id       = new \MongoDB\BSON\ObjectID($order->_id);
+                                    $cartUpdate->payment_type   = $request->payment;
+                                    $cartUpdate->txid           = $paymentGateway["txid"];
+                                    $cartUpdate->userid         = $paymentGateway["userid"];
+                                    $cartUpdate->status         = '1';
+                                    $cartUpdate->payment_status = '1';
                                     $cartUpdate->save();
                                 }
 
@@ -295,31 +301,31 @@ class PaymentController extends Controller
                                 return redirect()->back()->with('bookingFailureStatus', 'There has been an error processing your request.');
                             }
                         }
-                        elseif ($paymentGateway["status"] == "APPROVED") { // If card is not 3d secure and prepayment(PayByBill) return status is APPROVED and "redirect url" will not return. We manually redirect to success page.
+                        elseif ($paymentGateway["status"] === "APPROVED") { // If card is not 3d secure and prepayment(PayByBill) return status is APPROVED and "redirect url" will not return. We manually redirect to success page.
                             /* Storing order details */
-                            $order                        = new Order;
-                            $order->order_id              = $order_number;
-                            $order->auth_user             = new \MongoDB\BSON\ObjectID(Auth::user()->_id);
-                            $order->order_status          = "APPROVED";
-                            $order->txid                  = $paymentGateway["txid"];
-                            $order->userid                = $paymentGateway["userid"];
-                            $order->order_payment_type    = $request->payment;
-                            $order->order_payment_method  = 2; // 1 => fully paid using money balance, 2 => Partially paid using money balance, 3 => Paid using payment gateway
-                            $order->order_amount          = round($afterRedeemAmount, 2);
-                            $order->order_total_amount    = $total;
-                            $order->order_delete          = 0;
+                            $order                                = new Order;
+                            $order->order_id                      = $order_number;
+                            $order->auth_user                     = new \MongoDB\BSON\ObjectID(Auth::user()->_id);
+                            $order->order_status                  = "APPROVED";
+                            $order->txid                          = $paymentGateway["txid"];
+                            $order->userid                        = $paymentGateway["userid"];
+                            $order->order_payment_type            = $request->payment;
+                            $order->order_payment_method          = 2; // 1 => fully paid using money balance, 2 => Partially paid using money balance, 3 => Paid using payment gateway
+                            $order->order_amount                  = round($afterRedeemAmount, 2);
+                            $order->order_total_amount            = $total;
+                            $order->order_money_balance_used      = round($user->money_balance, 2);
+                            $order->order_money_balance_used_date = Carbon::now();
+                            $order->order_delete                  = 0;
 
                             /* If guest paid using payByBill we need to store bank details. Condition begin */
-                            if($request->payment === 'payByBill') {
-                                if(in_array('yes', $payByBillPossible)) {
-                                    $order->clearing_bankaccount       = $paymentGateway["clearing_bankaccount"];
-                                    $order->clearing_bankcode          = $paymentGateway["clearing_bankcode"];
-                                    $order->clearing_bankcountry       = $paymentGateway["clearing_bankcountry"];
-                                    $order->clearing_bankname          = $paymentGateway["clearing_bankname"];
-                                    $order->clearing_bankaccountholder = $paymentGateway["clearing_bankaccountholder"];
-                                    $order->clearing_bankiban          = $paymentGateway["clearing_bankiban"];
-                                    $order->clearing_bankbic           = $paymentGateway["clearing_bankbic"];
-                                }
+                            if($request->payment === 'payByBill' && in_array('yes', $payByBillPossible)) {
+                                $order->clearing_bankaccount       = $paymentGateway["clearing_bankaccount"];
+                                $order->clearing_bankcode          = $paymentGateway["clearing_bankcode"];
+                                $order->clearing_bankcountry       = $paymentGateway["clearing_bankcountry"];
+                                $order->clearing_bankname          = $paymentGateway["clearing_bankname"];
+                                $order->clearing_bankaccountholder = $paymentGateway["clearing_bankaccountholder"];
+                                $order->clearing_bankiban          = $paymentGateway["clearing_bankiban"];
+                                $order->clearing_bankbic           = $paymentGateway["clearing_bankbic"];
                             }
                             /* If guest paid using payByBill we need to store bank details. Condition end */
 
@@ -327,8 +333,9 @@ class PaymentController extends Controller
                             /* Storing order details end */
 
                             if($order) {
-                                /* Storing userid from payment response in to user collection  */
+                                /* Storing userid and updating money balance of user collection  */
                                 $user->userid        = $paymentGateway["userid"];
+                                $user->money_balance = 0;
                                 $user->save();
 
                                 /* Updating order number in ordernumber collection */
@@ -345,6 +352,17 @@ class PaymentController extends Controller
                                     $cartUpdate->payment_type = $request->payment;
                                     $cartUpdate->txid         = $paymentGateway["txid"];
                                     $cartUpdate->userid       = $paymentGateway["userid"];
+
+                                    /* If guest paid using payByBill we need to update booking and payment status begin */
+                                    if($request->payment === 'payByBill' && in_array('yes', $payByBillPossible)) {
+                                        $cartUpdate->status         = '5';
+                                        $cartUpdate->payment_status = '3';
+                                    }
+                                    else {
+                                        $cartUpdate->status         = '1';
+                                        $cartUpdate->payment_status = '1';
+                                    }
+
                                     $cartUpdate->save();
                                 }
 
@@ -367,45 +385,7 @@ class PaymentController extends Controller
                             }
                         }
                         else {
-                            /* Storing order details begin */
-                            $order                       = new Order;
-                            $order->order_id             = $order_number;
-                            $order->auth_user            = new \MongoDB\BSON\ObjectID(Auth::user()->_id);
-                            $order->order_status         = "ERROR / PENDING";
-                            $order->txid                 = $paymentGateway["txid"];
-                            $order->userid               = $paymentGateway["userid"];
-                            $order->order_payment_type   = $request->payment;
-                            $order->order_payment_method = 2; // 1 => fully paid using money balance, 2 => Partially paid using money balance, 3 => Paid using payment gateway
-                            $order->order_amount         = round($afterRedeemAmount, 2);
-                            $order->order_total_amount   = $total;
-                            $order->order_delete         = 0;
-                            $order->save();
-                            /* Storing order details end */
-
-                            if($order) {
-                                /* Storing userid from payment response in to user collection */
-                                $user->userid        = $paymentGateway["userid"];
-                                $user->save();
-
-                                /* Updating order number in ordernumber collection */
-                                $orderNumber->number = $order_num;
-                                $orderNumber->save();
-
-                                /* Updating booking details */
-                                foreach ($cart_ids as $cart_id) {
-                                    $cartUpdate               = Booking::where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
-                                        ->where('status', "8")
-                                        ->where('is_delete', 0)
-                                        ->find($cart_id);
-                                    $cartUpdate->order_id     = new \MongoDB\BSON\ObjectID($order->_id);
-                                    $cartUpdate->payment_type = $request->payment;
-                                    $cartUpdate->txid         = $paymentGateway["txid"];
-                                    $cartUpdate->userid       = $paymentGateway["userid"];
-                                    $cartUpdate->save();
-                                }
-
-                                return redirect()->route('payment.error')->with('bookingErrorStatus', 'There has been an error or pending processing your request.');
-                            }
+                            return redirect()->route('payment.error')->with('bookingErrorStatus', 'There has been an error or your request.');
                         }
                     }
                     else {
@@ -454,14 +434,16 @@ class PaymentController extends Controller
 
                             /* Updating booking details */
                             foreach ($cart_ids as $cart_id) {
-                                $cartUpdate               = Booking::where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
+                                $cartUpdate                 = Booking::where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
                                     ->where('status', "8")
                                     ->where('is_delete', 0)
                                     ->find($cart_id);
-                                $cartUpdate->order_id     = new \MongoDB\BSON\ObjectID($order->_id);
-                                $cartUpdate->payment_type = $request->payment;
-                                $cartUpdate->txid         = $paymentGateway["txid"];
-                                $cartUpdate->userid       = $paymentGateway["userid"];
+                                $cartUpdate->order_id       = new \MongoDB\BSON\ObjectID($order->_id);
+                                $cartUpdate->payment_type   = $request->payment;
+                                $cartUpdate->txid           = $paymentGateway["txid"];
+                                $cartUpdate->userid         = $paymentGateway["userid"];
+                                $cartUpdate->status         = '1';
+                                $cartUpdate->payment_status = '1';
                                 $cartUpdate->save();
                             }
 
@@ -487,16 +469,14 @@ class PaymentController extends Controller
                         $order->order_delete          = 0;
 
                         /* If guest paid using payByBill we need to store bank details. Condition begin */
-                        if($request->payment === 'payByBill') {
-                            if(in_array('yes', $payByBillPossible)) {
-                                $order->clearing_bankaccount       = $paymentGateway["clearing_bankaccount"];
-                                $order->clearing_bankcode          = $paymentGateway["clearing_bankcode"];
-                                $order->clearing_bankcountry       = $paymentGateway["clearing_bankcountry"];
-                                $order->clearing_bankname          = $paymentGateway["clearing_bankname"];
-                                $order->clearing_bankaccountholder = $paymentGateway["clearing_bankaccountholder"];
-                                $order->clearing_bankiban          = $paymentGateway["clearing_bankiban"];
-                                $order->clearing_bankbic           = $paymentGateway["clearing_bankbic"];
-                            }
+                        if($request->payment === 'payByBill' && in_array('yes', $payByBillPossible)) {
+                            $order->clearing_bankaccount       = $paymentGateway["clearing_bankaccount"];
+                            $order->clearing_bankcode          = $paymentGateway["clearing_bankcode"];
+                            $order->clearing_bankcountry       = $paymentGateway["clearing_bankcountry"];
+                            $order->clearing_bankname          = $paymentGateway["clearing_bankname"];
+                            $order->clearing_bankaccountholder = $paymentGateway["clearing_bankaccountholder"];
+                            $order->clearing_bankiban          = $paymentGateway["clearing_bankiban"];
+                            $order->clearing_bankbic           = $paymentGateway["clearing_bankbic"];
                         }
                         /* If guest paid using payByBill we need to store bank details. Condition end */
 
@@ -522,6 +502,17 @@ class PaymentController extends Controller
                                 $cartUpdate->payment_type = $request->payment;
                                 $cartUpdate->txid         = $paymentGateway["txid"];
                                 $cartUpdate->userid       = $paymentGateway["userid"];
+
+                                /* If guest paid using payByBill we need to update booking and payment status begin */
+                                if($request->payment === 'payByBill' && in_array('yes', $payByBillPossible)) {
+                                    $cartUpdate->status         = '5'; //Waiting for payment
+                                    $cartUpdate->payment_status = '3'; //Prepayment
+                                }
+                                else {
+                                    $cartUpdate->status         = '1';
+                                    $cartUpdate->payment_status = '1';
+                                }
+
                                 $cartUpdate->save();
                             }
 
@@ -544,45 +535,7 @@ class PaymentController extends Controller
                         }
                     }
                     else {
-                        /* Storing order details begin */
-                        $order                       = new Order;
-                        $order->order_id             = $order_number;
-                        $order->auth_user            = new \MongoDB\BSON\ObjectID(Auth::user()->_id);
-                        $order->order_status         = "ERROR / PENDING";
-                        $order->txid                 = $paymentGateway["txid"];
-                        $order->userid               = $paymentGateway["userid"];
-                        $order->order_payment_type   = $request->payment;
-                        $order->order_payment_method = 3; // 1 => fully paid using money balance, 2 => Partially paid using money balance, 3 => Paid using payment gateway
-                        $order->order_amount         = $total_prepayment_amount;
-                        $order->order_total_amount   = $total;
-                        $order->order_delete         = 0;
-                        $order->save();
-                        /* Storing order details end */
-
-                        if($order) {
-                            /* Storing userid from payment response in to user collection */
-                            $user->userid        = $paymentGateway["userid"];
-                            $user->save();
-
-                            /* Updating order number in ordernumber collection */
-                            $orderNumber->number = $order_num;
-                            $orderNumber->save();
-
-                            /* Updating booking details */
-                            foreach ($cart_ids as $cart_id) {
-                                $cartUpdate               = Booking::where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
-                                    ->where('status', "8")
-                                    ->where('is_delete', 0)
-                                    ->find($cart_id);
-                                $cartUpdate->order_id     = new \MongoDB\BSON\ObjectID($order->_id);
-                                $cartUpdate->payment_type = $request->payment;
-                                $cartUpdate->txid         = $paymentGateway["txid"];
-                                $cartUpdate->userid       = $paymentGateway["userid"];
-                                $cartUpdate->save();
-                            }
-
-                            return redirect()->route('payment.error')->with('bookingErrorStatus', 'There has been an error or pending processing your request.');
-                        }
+                        return redirect()->route('payment.error')->with('bookingErrorStatus', 'There has been an error or pending processing your request.');
                     }
                 }
                 else {
@@ -840,9 +793,15 @@ class PaymentController extends Controller
      */
     public function response(Request $request)
     {
+
         // you'll need to include the $defaults array somehow, or at least get the key from a secret configuration file
         if ($_POST["key"] == hash("md5", env('KEY'))) {
             // key is valid, this notification is for us
+
+            $user  = Userlist::where('is_delete', 0)
+                ->where('usrActive', '1')
+                ->where('userid', $_POST["userid"])
+                ->first();
 
             if ($_POST["txaction"] === "appointed") {
                 $payment        = new Payment;
@@ -862,32 +821,17 @@ class PaymentController extends Controller
                 $order->tsok         = 'appointed';
                 $order->reference    = $_POST["reference"];
                 $order->clearingtype = $_POST["clearingtype"];
+                $order->customerid   = $_POST["customerid"];
                 $order->save();
 
-                /* Updating booking status and payment status begin */
-                $carts  = Booking::where('userid', $_POST["userid"])
-                    ->where('txid', $_POST["txid"])
-                    ->where('status', "8")
-                    ->where('is_delete', 0)
-                    ->get();
-                foreach ($carts as $cart) {
-
-                    if($_POST["clearingtype"] === 'vor') {
-                        $cartUpdate = Booking::where('userid', $_POST["userid"])
-                            ->where('txid', $_POST["txid"])
-                            ->where('status', "8")
-                            ->where('is_delete', 0)
-                            ->find($cart->_id);
-                        $cartUpdate->status         = '5';
-                        $cartUpdate->payment_status = '3';
-                        $cartUpdate->save();
+                /* Send email to guest after successful booking */
+                if($_POST["clearingtype"] === 'vor') {
+                    if($user) {
+                        Mail::to($user->usrEmail)->send(new BookingSuccess());
                     }
                 }
-                /* Updating booking status and payment status end */
-                /* Send email to guest after successful booking */
-                //Mail::to($user->usrEmail)->send(new BookingSuccess());
             }
-            if ($_POST["txaction"] === "paid") {
+            else if ($_POST["txaction"] === "paid") {
                 $payment        = new Payment;
                 foreach($_POST as $key => $value) {
                     if(Schema::hasColumn($payment->getTable(), $key)){
@@ -905,28 +849,41 @@ class PaymentController extends Controller
                 $order->tsok         = 'paid';
                 $order->reference    = $_POST["reference"];
                 $order->clearingtype = $_POST["clearingtype"];
+                $order->customerid   = $_POST["customerid"];
                 $order->save();
 
-                /* Updating booking status and payment status begin */
-                $carts  = Booking::where('userid', $_POST["userid"])
-                    ->where('txid', $_POST["txid"])
-                    ->where('status', "8")
-                    ->where('is_delete', 0)
-                    ->get();
-                foreach ($carts as $cart) {
+                /* Send email to guest after successful booking */
+                if($user) {
+                    Mail::to($user->usrEmail)->send(new BookingSuccess());
+                }
+            }
+            else {
+                /* Send email to guest after successful booking */
+                if($user) {
+                    Mail::to($user->usrEmail)->send(new BookingFailed());
+                }
+            }
+
+            /* Updating booking status and payment status begin */
+            /*$carts  = Booking::where('userid', $_POST["userid"])
+                ->where('txid', $_POST["txid"])
+                ->where('status', "8")
+                ->where('is_delete', 0)
+                ->get();
+            foreach ($carts as $cart) {
+
+                if($_POST["clearingtype"] === 'vor') {
                     $cartUpdate = Booking::where('userid', $_POST["userid"])
                         ->where('txid', $_POST["txid"])
                         ->where('status', "8")
                         ->where('is_delete', 0)
                         ->find($cart->_id);
-                    $cartUpdate->status         = '1';
-                    $cartUpdate->payment_status = '1';
+                    $cartUpdate->status         = '5';
+                    $cartUpdate->payment_status = '3';
                     $cartUpdate->save();
                 }
-                /* Updating booking status and payment status end */
-                /* Send email to guest after successful booking */
-                //Mail::to($user->usrEmail)->send(new BookingSuccess());
-            }
+            }*/
+            /* Updating booking status and payment status end */
         }
         else{
             abort(404);
