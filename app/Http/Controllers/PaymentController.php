@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Mail\BookingFailed;
-use App\Mail\BookingFailure;
 use App\Mail\BookingSuccess;
 use Illuminate\Http\Request;
 
@@ -272,7 +271,7 @@ class PaymentController extends Controller
 
                                 /* Storing userid and updating money balance of user collection */
                                 $user->userid        = $paymentGateway["userid"];
-                                $user->money_balance = 0;
+                                $user->money_balance = 0.00;
                                 $user->save();
 
                                 /* Updating order number in ordernumber collection */
@@ -335,7 +334,7 @@ class PaymentController extends Controller
                             if($order) {
                                 /* Storing userid and updating money balance of user collection  */
                                 $user->userid        = $paymentGateway["userid"];
-                                $user->money_balance = 0;
+                                $user->money_balance = 0.00;
                                 $user->save();
 
                                 /* Updating order number in ordernumber collection */
