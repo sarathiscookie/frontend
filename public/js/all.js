@@ -691,6 +691,7 @@ $(function() {
                 $( ".moneyBalance" ).html('<p class="info-listing-booking2">Money Balance:</p><p class="info-listing-price-booking2">'+formatter.format(afterRedeemAmount)+'</p>');
                 $( ".afterRedeemAmount" ).html();
                 $( ".sumPrepayServiceTotal" ).html();
+                $( ".jsServiceFee" ).hide();
                 $( ".serviceFee" ).hide();
                 $( ".totalPrepayAmount" ).hide();
             }
@@ -703,7 +704,9 @@ $(function() {
                 $( ".moneyBalance" ).html();
                 $( ".afterRedeemAmount" ).html('<p class="info-listing-booking2">Amount:</p><p class="info-listing-price-booking2">'+formatter.format(afterRedeemAmount)+'</p>');
                 $( ".sumPrepayServiceTotal" ).html(formatter.format(sumPrepayServiceTotal));
-                $( ".serviceFee" ).html('<p class="info-listing-booking2">Service fee:</p><p class="info-listing-price-booking2">'+serviceTaxBook+'%</p>');
+                $( ".jsServiceFee" ).show();
+                $( ".jsServiceFee" ).html('<p class="info-listing-booking2">Service fee:</p><p class="info-listing-price-booking2">'+serviceTaxBook+'%</p>');
+                $( ".serviceFee" ).hide();
                 $( ".totalPrepayAmount" ).show();
             }
         }
@@ -715,7 +718,8 @@ $(function() {
             var sumPrepaymentServTotal = sumPrepaymentAmount + sumPrepaymentPerc;
 
             $( ".sumPrepayServiceTotal" ).html(formatter.format(sumPrepaymentServTotal));
-            $( ".serviceFee" ).show('<p class="info-listing-booking2">Service fee:</p><p class="info-listing-price-booking2">'+serviceFee+'%</p>');
+            $( ".jsServiceFee" ).hide();
+            $( ".serviceFee" ).show();
             $( ".totalPrepayAmount" ).show();
         }
 
