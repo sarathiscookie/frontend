@@ -79,13 +79,13 @@
                                 </li>
                             @endif
 
-                                <li class="dropdown">
+                                {{--<li class="dropdown">
                                     <a href="#" class="dropdown-toggle dropdown-toggle-home" data-toggle="dropdown">Managed <span class="caret"></span></a>
                                     <ul class="dropdown-menu dropdown-menu-home">
                                         <li class="check-it-list-home"><input type="checkbox" name="managed[]" class="check-it-home"> Cabins to sleep</li>
                                         <li class="check-it-list-home"><input type="checkbox" name="managed[]" class="check-it-home"> Managed</li>
                                     </ul>
-                                </li>
+                                </li>--}}
 
                         </ul>
 
