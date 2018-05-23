@@ -18,6 +18,7 @@ use Payone;
 use DateTime;
 use Carbon\Carbon;
 use Mail;
+use PDF;
 use Illuminate\Support\Facades\Schema;
 
 class PaymentController extends Controller
@@ -58,7 +59,6 @@ class PaymentController extends Controller
             $prepayment_amount           = [];
             $moneyBalance                = 0;
             $payByBillPossible           = [];
-            $cabin_code                  = '';
             $carts                       = Booking::where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
                 ->where('status', "8")
                 ->where('is_delete', 0)
@@ -84,9 +84,6 @@ class PaymentController extends Controller
                         $payByBillPossible[] = 'no';
                     }
                     /* Condition to check pay by bill possible end */
-
-                    $invoice_number      = explode('-', $cart->invoice_number, 2);
-                    $cabin_code         .= $invoice_number[0].'-';
                 }
 
                 /* Get order number */
@@ -98,7 +95,7 @@ class PaymentController extends Controller
                     $order_num           = 100000;
                 }
 
-                $order_number            = 'ORDER'.'-'.date('y').'-'.$cabin_code.$order_num;
+                $order_number            = 'ORDER'.'-'.date('y').'-'.$order_num;
                 $sum_prepayment_amount   = array_sum($prepayment_amount);
                 $serviceTax              = $this->serviceFees($sum_prepayment_amount);
                 $percentage              = ($serviceTax / 100) * $sum_prepayment_amount;
@@ -145,7 +142,6 @@ class PaymentController extends Controller
     {
         $prepayment_amount           = [];
         $cart_ids                    = [];
-        $cabin_code                  = '';
         $payByBillPossible           = [];
         $user                        = Userlist::where('is_delete', 0)->where('usrActive', '1')->find(Auth::user()->_id);
         $carts                       = Booking::where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
@@ -159,8 +155,6 @@ class PaymentController extends Controller
             foreach ($carts as $key => $cart) {
                 $prepayment_amount[] = $cart->prepayment_amount;
                 $cart_ids[]          = $cart->_id;
-                $invoice_number      = explode('-', $cart->invoice_number, 2);
-                $cabin_code         .= $invoice_number[0].'-';
 
                 // Pay by bill condition works if there is two weeks diff b/w current date and checking from date.
                 $checkingFrom        = $cart->checkin_from->format('Y-m-d');
@@ -186,7 +180,7 @@ class PaymentController extends Controller
             }
             /* Generate order number end */
 
-            $order_number            = 'ORDER'.'-'.date('y').'-'.$cabin_code.$order_num;
+            $order_number            = 'ORDER'.'-'.date('y').'-'.$order_num;
             $sum_prepayment_amount   = array_sum($prepayment_amount);
             $total_prepayment_amount = round($sum_prepayment_amount, 2);
 
@@ -859,7 +853,7 @@ class PaymentController extends Controller
             else {
                 /* Send email to guest after successful booking */
                 if($user) {
-                    Mail::to($user->usrEmail)->send(new BookingFailed());
+                    Mail::to($user->usrEmail)->send(new BookingFailed()); //admin email id
                 }
             }
 
@@ -934,7 +928,6 @@ class PaymentController extends Controller
         }
     }
 
-
     /**
      * Display the specified resource.
      *
@@ -944,6 +937,34 @@ class PaymentController extends Controller
     public function show($id)
     {
         //
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function download(Request $request)
+    {
+        $order = Order::where('auth_user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))->where('order_delete', 0)->find($request->order_id);
+
+        if($order) {
+            $carts = Booking::select('invoice_number')
+                ->where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
+                ->where('status', '5')
+                ->where('payment_status', '3')
+                ->where('is_delete', 0)
+                ->where('order_id', new \MongoDB\BSON\ObjectID($order->_id))
+                ->get();
+
+            /* Generating PDF */
+            $html  = view('paymentPrepaymentHTML', ['order' => $order, 'carts' => $carts]);
+
+            $pdf   = PDF::loadHTML($html);
+
+            return $pdf->download($order->order_id. ".pdf");
+        }
     }
 
     /**

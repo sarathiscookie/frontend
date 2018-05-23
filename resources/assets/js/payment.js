@@ -1,5 +1,12 @@
 /* Js for payment module */
 $(function() {
+
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+
     $(".moneyBalance").click(function(){
 
         /* Function for german number formatter. */
@@ -91,6 +98,4 @@ $(function() {
             $("#creditcard").hide();
         }
     });
-
-
 });

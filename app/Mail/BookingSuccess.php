@@ -29,6 +29,6 @@ class BookingSuccess extends Mailable
     public function build()
     {
         return $this->view('emails.bookingSuccessEmail')
-            ->subject('Ihre Gutschein für Ihre Buchung');
+            ->subject('Informationen zu Ihrer Hüttenbuchung');
     }
 }

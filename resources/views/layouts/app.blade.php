@@ -141,6 +141,11 @@
 <!-- Laravel default js -->
 <script src="{{ mix('js/app.js') }}"></script>
 
+<!-- To avoid conflict with jQuery UI -->
+<script>
+    $.fn.btnBootstrap = $.fn.button.noConflict();
+</script>
+
 <!-- jQuery UI 1.12.1 -->
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 

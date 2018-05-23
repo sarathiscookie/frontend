@@ -250,17 +250,13 @@
                                                         <tbody>
                                                         <tr>
                                                             <td valign="top" class="mcnTextContent" style="padding-top:0; padding-right:18px; padding-bottom:9px; padding-left:18px;">
-                                                                <h1>Bitte bestätigen Sie Ihre Anmeldung!</h1>
+                                                                <h1>Informationen zu Ihrer Hüttenbuchung</h1>
                                                                 <p>Sehr geehrter Gast, <br>
                                                                     <br>
                                                                     <br />
-                                                                    im Anhang erhalten Sie Ihren Uebernachtungsgutschein als PDF zum Ausdruck. Bitte legen Sie den Ausdruck dem Huettenwirt bei Ihrer Ankunft vor.
+                                                                    Congratulations!!! You booked cabins.
 
-                                                                    Dieser Gutschein wird dann mit Ihrem Uebernachtungspreis verrechnet.
-
-                                                                    Sollten Sie weitere Fraqen haben schreiben Sie uns: service@huetten-holiday.de
-
-                                                                    Viele Gruesse und eine schoene Wanderung
+                                                                    You will get your vouchers within the next hour.
                                                                     <br /><br />
                                                                     <br /><br />
                                                                     Mit freundlichen Gruessen<br />

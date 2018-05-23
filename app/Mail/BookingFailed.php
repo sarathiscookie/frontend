@@ -29,6 +29,6 @@ class BookingFailed extends Mailable
     public function build()
     {
         return $this->view('emails.bookingFailedEmail')
-            ->subject('Booking failed');
+            ->subject('Informationen zu Ihrer Hüttenbuchung');
     }
 }
