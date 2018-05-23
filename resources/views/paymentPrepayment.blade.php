@@ -63,7 +63,7 @@
                                     <div class="list-group">
                                         <a href="#" class="list-group-item">
                                             <h4 class="list-group-item-heading">Amount</h4>
-                                            <p class="list-group-item-text">{{ number_format($order->order_total_amount, 2, ',', '.') }}</p>
+                                            <p class="list-group-item-text">{{ number_format($order->order_total_amount, 2, ',', '.') }} &euro;</p>
                                         </a>
                                     </div>
                                     <div class="list-group">

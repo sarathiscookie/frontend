@@ -65,8 +65,7 @@ class PaymentController extends Controller
                 ->take(5)
                 ->get();
 
-            if(count($carts) > 0) {
-
+            if($carts) {
                 foreach ($carts as $key => $cart) {
                     $prepayment_amount[] = $cart->prepayment_amount;
 
@@ -542,7 +541,7 @@ class PaymentController extends Controller
                 }
             }
         }
-        return redirect()->back()->with('choosePaymentNullData', 'Something went wrong! Please check your cart.');
+        return redirect()->route('cart');
     }
 
     /**
