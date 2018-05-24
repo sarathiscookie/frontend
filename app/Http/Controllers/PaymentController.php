@@ -821,7 +821,6 @@ class PaymentController extends Controller
                 if($_POST["clearingtype"] === 'vor') {
                     if($user) {
                         Mail::to($user->usrEmail)->send(new BookingSuccess());
-                        Mail::to(env('ADMIN_EMAIL'))->send(new BookingFailed($_POST["txid"], $_POST["userid"]));
                     }
                 }
             }
