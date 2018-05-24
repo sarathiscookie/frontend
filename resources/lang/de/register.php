@@ -15,18 +15,18 @@ return [
     | Language translation for register page
     |
     */
-    'panelHeading'                      => 'Register',
-    'firstname'                         => 'First Name',
-    'firstnamePlaceholder'              => 'Enter your first name',
-    'lastname'                          => 'Last Name',
-    'lastnamePlaceholder'               => 'Enter your last name',
-    'email'                             => 'E-Mail Address',
-    'emailPlaceholder'                  => 'Enter your email address',
-    'password'                          => 'Password',
-    'cpassword'                         => 'Confirm Password',
-    'dataProtection'                    => 'Data protection',
-    'termsOfService'                    => 'Terms of service',
-    'newsletterSignup'                  => 'I want to sign up for the newsletter',
-    'registerButton'                    => 'Register',
+    'panelHeading'                      => 'Registrierung',
+    'firstname'                         => 'Vorname',
+    'firstnamePlaceholder'              => 'Vorname eingeben',
+    'lastname'                          => 'Nachname',
+    'lastnamePlaceholder'               => 'Nachname eingeben',
+    'email'                             => 'E-Mail Adresse',
+    'emailPlaceholder'                  => 'E-Mail Adresse eingeben',
+    'password'                          => 'Passwort',
+    'cpassword'                         => 'Passwort bestätigen',
+    'dataProtection'                    => 'Datenschutz',
+    'termsOfService'                    => 'AGB',
+    'newsletterSignup'                  => 'Unseren Newsletter abonnieren',
+    'registerButton'                    => 'Registrieren',
 ];
 

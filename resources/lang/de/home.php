@@ -15,10 +15,10 @@ return [
     | Language translation for home page
     |
     */
-    'imageLabelFavoriteCabin'         => 'Favorite Cabins',
-    'imageLabelCabinList'             => 'Cabin list',
-    'imageLabelSearchRegion'          => 'Search a Region',
-    'imageHomeHeading'                => 'What means Huetten-Holiday.de - Who is Huetten-Holiday.de for?',
-    'imageHomeDescription'            => 'Huetten-Holiday.de is a reservation and management system for mountain cabins.Our service is for the cabins hosts, but of course also for the hikers, mountaineers as well as mountain schools. We have been working on a reservation system for quite some time to develop that benefits everyone involved.',
+    'imageLabelFavoriteCabin'         => 'Beliebte Hütten',
+    'imageLabelCabinList'             => 'Hüttensuche',
+    'imageLabelSearchRegion'          => 'Regionensuche',
+    'imageHomeHeading'                => 'Was ist Huetten-Holiday.de - Für wen ist Huetten-Holiday.de',
+    'imageHomeDescription'            => 'Huetten-Holiday.de ist das Reservierungs- und Verwaltungssystem für Berghütten. Unser Service richtet sich an Hüttenwirte, aber natürlich auch an Wanderer, Bergsteiger als auch an Bergschulen. Wir arbeiten schon seit geraumer Zeit daran, ein Reservierungssystem zu entwicklen, von dem allen Beteiligten profitieren.',
 
 ];

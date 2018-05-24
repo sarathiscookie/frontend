@@ -27,7 +27,7 @@ return [
     'interiorAccessCar'                      => 'Per Auto erreichbar',
     'interiorDogsAllowed'                    => 'Hunde erlaubt',
     'interiorWheelchairs'                    => 'Rollstuhl geeignet',
-    'interiorPublicPhone'                    => 'Öffentliches Telefon vorahnden',
+    'interiorPublicPhone'                    => 'Öffentliches Telefon vorhanden',
     'interiorPhoneReception'                 => 'Handyempfang',
     'interiorPowerSupply'                    => 'Stromversorgung für eigene Gäste',
     'interiorDustbins'                       => 'Mülltonnen',
@@ -40,15 +40,15 @@ return [
     'interiorHelicopterLand'                 => 'Hubschrauberlandeplatz vorhanden',
 
     /* Labels for particularities */
-    'winterSeasonOpen'                       => 'Open on winter season',
-    'summerSeasonOpen'                       => 'Open on summer season',
+    'winterSeasonOpen'                       => 'Wintersaison',
+    'summerSeasonOpen'                       => 'Sommersaison',
 
     /* Filter Labels*/
     'filter'                                 => 'Filter',
-    'searchPlaceholder'                      => 'Search Cabin',
-    'country'                                => 'Country',
+    'searchPlaceholder'                      => 'Direktsuche',
+    'country'                                => 'Land',
     'region'                                 => 'Region',
-    'facility'                               => 'Facility',
-    'openingHours'                           => 'Opening Hours',
-    'filterButtons'                          => 'Filter Cabins'
+    'facility'                               => 'Ausstattung',
+    'openingHours'                           => 'Geöffnet',
+    'filterButtons'                          => 'Suche starten'
 ];

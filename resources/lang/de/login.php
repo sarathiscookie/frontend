@@ -15,12 +15,12 @@ return [
       | Language translation for login page
       |
       */
-    'panelHeading'                => 'Login',
-    'email'                       => 'Email',
-    'emailPlaceholder'            => 'email',
-    'password'                    => 'Password',
-    'passwordPlaceholder'         => 'password',
-    'rememberMe'                  => 'Remember Me',
-    'loginButton'                 => 'Login',
-    'forgotYourPassword'          => 'Forgot Your Password?'
+    'panelHeading'                => 'Anmelden',
+    'email'                       => 'E-Mail',
+    'emailPlaceholder'            => 'E-Mail',
+    'password'                    => 'Passwort',
+    'passwordPlaceholder'         => 'Passwort',
+    'rememberMe'                  => 'Angemeldet bleiben',
+    'loginButton'                 => 'Anmelden',
+    'forgotYourPassword'          => 'Passwort vergessen?'
 ];
