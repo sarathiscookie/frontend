@@ -240,3 +240,31 @@
     height:34px;
     font-size:16px;
 }
+
+#creditcard fieldset{
+    margin: 0px;
+}
+
+#cardpan{
+    width: 100%;
+    margin-top: 0.3em;
+    border-color: #5F6876 !important;
+    border:none;
+    opacity:1;
+}
+
+#cardcvc2{
+    border-color: #5F6876 !important;
+}
+
+#cardexpiremonth{
+    border-color: #5F6876 !important;
+}
+
+#cardexpireyear{
+    border-color: #5F6876 !important;
+}
+
+#visa, #mastercard{
+    opacity: 0.6;
+}

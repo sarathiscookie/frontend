@@ -54,7 +54,7 @@
                 <li><a href="{{ route('search') }}" class="nav-points left-top-nav">{{ __('app.menuCabin') }}</a></li>
                 <li><a href="#" class="nav-points left-top-nav">{{ __('app.menuHikes') }}</a></li>
                 <li><a href="#" class="nav-points left-top-nav">{{ __('app.menuRegions') }}</a></li>
-                <li><a href="#" class="nav-points left-top-nav">{{ __('app.menuShop') }}</a></li>
+                {{--<li><a href="#" class="nav-points left-top-nav">{{ __('app.menuShop') }}</a></li>--}}
                 <!-- Authentication Links -->
                 @guest
                     <li><a href="{{ route('login') }}" class="nav-points left-top-nav"><span class="glyphicon glyphicon-log-in"></span> {{ __('app.menuLogin') }}</a></li>
@@ -63,7 +63,7 @@
                         <li><a href="#" class="nav-points left-top-nav" data-toggle="dropdown"><span class="glyphicon glyphicon-home"></span> {{ __('app.menuMyHuettenHoliday') }}<span class="caret"></span></a>
                             <ul class="dropdown-menu dropdown-menu-home">
                                 <li class="check-it-list-home"><a href="#" class="dropdown-links"><span class="glyphicon glyphicon-floppy-disk"></span> {{ __('app.menuMyData') }}</a></li>
-                                <li class="check-it-list-home"><a href="#" class="dropdown-links"><span class="glyphicon glyphicon-bed"></span> {{ __('app.menuMyBookingHistory') }}</a></li>
+                                <li class="check-it-list-home"><a href="/booking/history" class="dropdown-links"><span class="glyphicon glyphicon-bed"></span> {{ __('app.menuMyBookingHistory') }}</a></li>
                                 <li class="check-it-list-home">
                                     <a href="{{ route('logout') }}"
                                        onclick="event.preventDefault();

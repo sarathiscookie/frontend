@@ -10,6 +10,7 @@
             border: 1px solid #000;
             width: 400px;
             margin: 10px;
+            border-color: #5F6876 !important;
         }
         .paymentLabel {
             margin-right: 10px;

@@ -81,6 +81,8 @@ btn-filter-home:hover. btn-filter-home:focus, btn-filter-home.focus{
     margin-top:0;
     margin-bottom:0;
     width:100%;
+    padding-right: 0;
+    padding-left: 0;
 }
 
 #cabinname{
@@ -89,6 +91,11 @@ btn-filter-home:hover. btn-filter-home:focus, btn-filter-home.focus{
 }
 
 /*Correct size of the whole filter in tablet and mobile version*/
+@media (min-width:768px) {#filter-line-home{
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}}
+
 @media (min-width:1511px){#filter-line-home {
     padding-top:14px;
 }}
@@ -121,6 +128,7 @@ btn-filter-home:hover. btn-filter-home:focus, btn-filter-home.focus{
 }}
 @media (max-width:858px){ #search-nav-home{
     padding-right:0px;
+    padding-left:0px;
 }}
 @media (max-width:1510px){ .btn-filter-home{
     height:79px;
@@ -254,7 +262,7 @@ btn-filter-home:hover. btn-filter-home:focus, btn-filter-home.focus{
     bottom:40px;
     text-align:center;
     color:rgba(255, 255, 255, 0.9);
-    font-size:300%;
+    font-size:275%;
     width:100%;
 }
 @media (max-width: 991px){.navbar-picture-home{
@@ -265,7 +273,7 @@ btn-filter-home:hover. btn-filter-home:focus, btn-filter-home.focus{
     bottom:40px;
     text-align:center;
     color:rgba(255, 255, 255, 0.9);
-    font-size:225%;
+    font-size:190%;
     width:100%;
 }}
 @media (max-width: 767px){#block_nr_1-home{

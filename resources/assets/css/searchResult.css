@@ -26,6 +26,15 @@ hr {
     margin:0;
 }
 
+.month-opening .col-sm-6 h6{
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.month-opening .col-sm-6{
+    float: left;
+}
+
 .badge{
     background-color: #5F6876;
 }
@@ -94,6 +103,9 @@ hr {
 }}
 @media (max-width:1510px){.navbar-default-cabinlist {
     height:95px;
+}}
+@media(max-width: 1510px){.row-cabinlist .col-sm-7 .row{
+    bottom: 0px;
 }}
 @media (max-width:767px){.navbar-default-cabinlist {
     height:auto;
@@ -194,12 +206,16 @@ hr {
 
 .row-cabinlist .col-sm-7 .row {
     position:absolute;
-    bottom:0px;
+    bottom:15px;
     width:100%;
     float:right;
     text-align:right;
 }
 
+.row-cabinlist > div > img{
+    height: 100%;
+    object-fit:cover;
+}
 /*.row-cabinlist div .row .pull-right{
     position:absolute;
     bottom:0px;
@@ -208,6 +224,10 @@ hr {
     float:none;
     text-align:left;
     margin-top:5px;
+}}
+
+@media(max-width: 767px){.row-cabinlist .button-3-bottom{
+    width: 100%;
 }}
 
 @media (max-width:767px) {.col-sm-6-cabinlist{
@@ -227,6 +247,7 @@ hr {
     padding-left:0;
     margin-right:0;
     margin-left:0;
+    width: 50%;
 }}
 
 /*List*/
@@ -339,7 +360,10 @@ hr {
     width:100%;
 }}
 @media (max-width: 385px){.col-sm-3 {
-    padding:0px !important;
+    padding-left:0px !important;
+    padding-right:0px !important;
+    padding-bottom:0px !important;
+    padding-top:15px !important;
 }}
 @media(max-width: 767px){.booking-box{
     background-color: #D1D1D1;
@@ -476,5 +500,8 @@ hr {
 /* Show more when button click in Search result page end */
 
 /* Adding margin for Beds dorms and sleeps dropdown begin */
-.dropdown-top-buffer { margin-top:20px; }
+.dropdown-top-buffer {
+    margin-top: 5px;
+    margin-bottom: 11px;
+}
 /* Adding margin for Beds dorms and sleeps dropdown end */

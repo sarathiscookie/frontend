@@ -29,7 +29,7 @@
                                         {{ strip_tags(str_replace("&nbsp;", " ", $result->other_details)) }}
                                     </div>
 
-                                    <a href="{{ route('cabin.details', ['id' => base64_encode($result->_id.env('MD5_Key'))]) }}" class="btn btn-default btn-sm btn-details">More details and price</a>
+                                    <a href="{{ route('cabin.details', ['id' => base64_encode($result->_id.env('MD5_Key'))]) }}" class="btn btn-default btn-sm btn-details">More details</a>
 
                                     <div class="row" style="float:none; text-align:right;">
                                         <div class="col-sm-12">
@@ -49,20 +49,15 @@
                                         <div class="panel-body">
                                             <div class="row row-cabinlist">
                                                 <div class="col-sm-12 month-opening">
-                                                    <h5 class="text-capitalize">Expected opening timings:</h5>
-                                                    <?php
-                                                    $firstYear = (int)date('Y');
-                                                    $lastYear  = (int)date('Y', strtotime('+2 year'));
-                                                    for($i = $firstYear; $i <= $lastYear; $i++)
-                                                    {
-                                                    ?>
+                                                    <h5 class="text-capitalize">Expected opening timing:</h5>
+
                                                     @if($cabinServices->seasons($result->_id))
                                                         @foreach ($cabinServices->seasons($result->_id) as $season)
-                                                            @if($season->summerSeasonYear === $i || $season->winterSeasonYear === $i)
-                                                                <h5><span class="badge">{{ $i }}</span></h5>
+                                                            @if($season->summerSeasonYear === (int)date('Y') || $season->winterSeasonYear === (int)date('Y'))
+                                                                <h5><span class="badge">{{ (int)date('Y') }}</span></h5>
                                                             @endif
 
-                                                            @if($season->summerSeason === 1 && $season->summerSeasonStatus === 'open' && $season->summerSeasonYear === $i)
+                                                            @if($season->summerSeason === 1 && $season->summerSeasonStatus === 'open' && $season->summerSeasonYear === (int)date('Y'))
                                                                 <div class="row">
                                                                     <div class="col-sm-6">
                                                                         <h6><b>Summer open: </b><small>{{ $season->earliest_summer_open->format('d.m.y') }}</small></h6>
@@ -73,7 +68,7 @@
                                                                 </div>
                                                             @endif
 
-                                                            @if($season->winterSeason === 1 && $season->winterSeasonStatus === 'open' && $season->winterSeasonYear === $i)
+                                                            @if($season->winterSeason === 1 && $season->winterSeasonStatus === 'open' && $season->winterSeasonYear === (int)date('Y'))
                                                                 <div class="row">
                                                                     <div class="col-sm-6">
                                                                         <h6><b>Winter open: </b><small>{{ $season->earliest_winter_open->format('d.m.y') }}</small></h6>
@@ -86,9 +81,7 @@
 
                                                         @endforeach
                                                     @endif
-                                                    <?php
-                                                    }
-                                                    ?>
+
                                                     <hr>
                                                 </div>
                                             </div>
@@ -99,8 +92,8 @@
 
                                                     <div class="form-group row row-cabinlist calendar" data-id="{{ $result->_id }}">
 
-                                                        <div class="col-sm-12" id="errors_{{ $result->_id }}"></div>
-                                                        <div class="col-sm-12" id="warning_{{ $result->_id }}"></div>
+                                                        <div class="col-sm-12" id="errors_{{ $result->_id }}" style="display: none;"></div>
+                                                        <div class="col-sm-12" id="warning_{{ $result->_id }}" style="display: none;"></div>
 
                                                         @php
                                                             $calendar = $calendarServices->calendar($result->_id);
@@ -122,7 +115,7 @@
 
                                                         @if($result->sleeping_place != 1)
                                                             <div class="col-sm-6-cabinlist col-sm-6 dropdown-top-buffer">
-                                                                <select class="form-control form-control-cabinlist" size="3" id="beds_{{ $result->_id }}" name="beds_{{ $result->_id }}">
+                                                                <select class="form-control form-control-cabinlist" id="beds_{{ $result->_id }}" name="beds_{{ $result->_id }}">
                                                                     <option value="">Choose Bed(s)</option>
                                                                     @for($i = 1; $i <= 30; $i++)
                                                                         <option value="{{ $i }}">{{ $i }}</option>
@@ -131,7 +124,7 @@
                                                             </div>
 
                                                             <div class="col-sm-6-cabinlist col-sm-6 dropdown-top-buffer">
-                                                                <select class="form-control form-control-cabinlist" size="3" id="dorms_{{ $result->_id }}" name="dorms_{{ $result->_id }}">
+                                                                <select class="form-control form-control-cabinlist" id="dorms_{{ $result->_id }}" name="dorms_{{ $result->_id }}">
                                                                     <option value="">Choose Dorm(s)</option>
                                                                     @for($i = 1; $i <= 30; $i++)
                                                                         <option value="{{ $i }}">{{ $i }}</option>
@@ -140,7 +133,7 @@
                                                             </div>
                                                         @else
                                                             <div class="col-sm-6-cabinlist col-sm-6 dropdown-top-buffer">
-                                                                <select class="form-control form-control-cabinlist" size="3" id="sleeps_{{ $result->_id }}" name="sleeps_{{ $result->_id }}">
+                                                                <select class="form-control form-control-cabinlist" id="sleeps_{{ $result->_id }}" name="sleeps_{{ $result->_id }}">
                                                                     <option value="">Choose Sleep(s)</option>
                                                                     @for($i = 1; $i <= 30; $i++)
                                                                         <option value="{{ $i }}">{{ $i }}</option>

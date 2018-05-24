@@ -44,8 +44,13 @@
     padding-right:15px;
 }
 @media (max-width:424px){.navbar-default-booking1{
-    height:105px;
+    height:auto;
 }}
+
+@media (max-width:767px) {.navbar-default-booking1{
+    height: auto !important;
+}}
+
 @media (max-width:1349px){.col-md-8 {
     width:100% !important;
 }}
@@ -76,6 +81,13 @@
     float:none;
 }}
 
+#contact_information{
+    padding-left: 0;
+}
+@media(max-width: 1510px){#contact_information{
+    padding-right: 0;
+}}
+
 /*Main*/
 /*correct sizes for mobile etc. (3 images)*/
 .row-booking1{
@@ -90,10 +102,18 @@
 /*Arrival Depature and Persons fields*/
 .col-sm-4-booking1{
     padding-right:10px;
-    margin-bottom:10px;
+    padding-bottom:10px;
     width:50%;
     padding-left:0;
+    margin-bottom:0;
 }
+
+.halfboard-checkbox {
+   padding: 0;
+    margin: 0;
+    max-height: 40px;
+}
+
 @media (max-width:767px){.col-sm-4-booking1{
     float:left;
 }}
@@ -114,6 +134,12 @@
 }
 .comment-box-booking1{
     height:105px;
+}
+
+.comment-booking1 div div{
+    position: absolute;
+    bottom: 30px;
+    left: 10px;
 }
 
 /*List*/
@@ -154,6 +180,10 @@
     padding:0;
     border:none;
     border-radius:0px;
+}
+.col-sm-2-booking1 .img-thumbnail-booking1{
+    object-fit:cover;
+    height: 318px;
 }
 .col-sm-2-booking1{
     padding:0;
@@ -229,8 +259,8 @@
 @media (min-width: 1511px){.booking-box-booking1 {
     background-color:#D1D1D1;
     margin:0;
+    min-height: 318px;
     padding-bottom:15px;
-    height:280px;
 }}
 .col-sm-12-booking1{
     padding-top:10px;

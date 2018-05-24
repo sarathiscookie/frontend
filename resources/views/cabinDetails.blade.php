@@ -31,46 +31,37 @@
                                     <div class="panel-body panel-body-cabin-details">
                                         <div class="row row-cabin-details">
                                             <div class="col-sm-12 col-sm-12-cabin-details month-opening">
-                                                <h5>Expected opening timings <span class="glyphicon glyphicon-question-sign" title="Here you can see if the cabin is open (green) or closed (white) for the respective month."></span></h5>
-                                                <?php
-                                                $firstYear = (int)date('Y');
-                                                $lastYear  = (int)date('Y', strtotime('+2 year'));
-                                                for($i = $firstYear; $i <= $lastYear; $i++)
-                                                {
-                                                ?>
+                                                <h5 class="text-capitalize">Expected opening timing:</h5>
                                                 @if($service->seasons($cabinDetails->_id))
                                                     @foreach ($service->seasons($cabinDetails->_id) as $season)
-                                                        @if($season->summerSeasonYear === $i || $season->winterSeasonYear === $i)
-                                                            <h5><span class="badge">{{ $i }}</span></h5>
+                                                        @if($season->summerSeasonYear === (int)date('Y') || $season->winterSeasonYear === (int)date('Y'))
+                                                            <h5><span class="badge">{{ (int)date('Y') }}</span></h5>
                                                         @endif
 
-                                                        @if($season->summerSeason === 1 && $season->summerSeasonStatus === 'open' && $season->summerSeasonYear === $i)
+                                                        @if($season->summerSeason === 1 && $season->summerSeasonStatus === 'open' && $season->summerSeasonYear === (int)date('Y'))
                                                             <div class="row">
                                                                 <div class="col-md-6">
-                                                                    <h5><strong>Summer open: </strong><small>{{ $season->earliest_summer_open->format('d.m.y') }}</small></h5>
+                                                                    <h6><b>Summer open: </b><small>{{ $season->earliest_summer_open->format('d.m.y') }}</small></h6>
                                                                 </div>
                                                                 <div class="col-md-6">
-                                                                    <h5><strong>Summer close: </strong><small>{{ $season->latest_summer_close->format('d.m.y') }}</small></h5>
+                                                                    <h6><b>Summer close: </b><small>{{ $season->latest_summer_close->format('d.m.y') }}</small></h6>
                                                                 </div>
                                                             </div>
                                                         @endif
 
-                                                        @if($season->winterSeason === 1 && $season->winterSeasonStatus === 'open' && $season->winterSeasonYear === $i)
+                                                        @if($season->winterSeason === 1 && $season->winterSeasonStatus === 'open' && $season->winterSeasonYear === (int)date('Y'))
                                                             <div class="row">
                                                                 <div class="col-md-6">
-                                                                    <h5><strong>Winter open: </strong><small>{{ $season->earliest_winter_open->format('d.m.y') }}</small></h5>
+                                                                    <h6><b>Winter open: </b><small>{{ $season->earliest_winter_open->format('d.m.y') }}</small></h6>
                                                                 </div>
                                                                 <div class="col-md-6">
-                                                                    <h5><strong>Winter close: </strong><small>{{ $season->latest_winter_close->format('d.m.y') }}</small></h5>
+                                                                    <h6><b>Winter close: </b><small>{{ $season->latest_winter_close->format('d.m.y') }}</small></h6>
                                                                 </div>
                                                             </div>
                                                         @endif
 
                                                     @endforeach
                                                 @endif
-                                                <?php
-                                                }
-                                                ?>
 
                                                 <hr>
                                             </div>
@@ -102,7 +93,7 @@
 
                                                     @if($cabinDetails->sleeping_place != 1)
                                                         <div class="col-sm-6 col-sm-6-cabin-details dropdown-cabin-details-top-buffer">
-                                                            <select class="form-control form-control-cabin-details" size="3" id="beds_{{ $cabinDetails->_id }}" name="beds_{{ $cabinDetails->_id }}">
+                                                            <select class="form-control form-control-cabin-details" id="beds_{{ $cabinDetails->_id }}" name="beds_{{ $cabinDetails->_id }}">
                                                                 <option value="">Choose Bed(s)</option>
                                                                 @for($i = 1; $i <= 30; $i++)
                                                                     <option value="{{ $i }}">{{ $i }}</option>
@@ -111,7 +102,7 @@
                                                         </div>
 
                                                         <div class="col-sm-6 col-sm-6-cabin-details dropdown-cabin-details-top-buffer">
-                                                            <select class="form-control form-control-cabin-details" size="3" id="dorms_{{ $cabinDetails->_id }}" name="dorms_{{ $cabinDetails->_id }}">
+                                                            <select class="form-control form-control-cabin-details" id="dorms_{{ $cabinDetails->_id }}" name="dorms_{{ $cabinDetails->_id }}">
                                                                 <option value="">Choose Dorm(s)</option>
                                                                 @for($i = 1; $i <= 30; $i++)
                                                                     <option value="{{ $i }}">{{ $i }}</option>
@@ -120,7 +111,7 @@
                                                         </div>
                                                     @else
                                                         <div class="col-sm-6 col-sm-6-cabin-details dropdown-cabin-details-top-buffer">
-                                                            <select class="form-control form-control-cabin-details" size="3" id="sleeps_{{ $cabinDetails->_id }}" name="sleeps_{{ $cabinDetails->_id }}">
+                                                            <select class="form-control form-control-cabin-details" id="sleeps_{{ $cabinDetails->_id }}" name="sleeps_{{ $cabinDetails->_id }}">
                                                                 <option value="">Choose Sleep(s)</option>
                                                                 @for($i = 1; $i <= 30; $i++)
                                                                     <option value="{{ $i }}">{{ $i }}</option>

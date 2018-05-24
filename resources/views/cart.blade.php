@@ -138,7 +138,7 @@
                                                         <input type="hidden" name="guest[{{ $cart->_id }}][sleeping_place]" value="{{ $cabinDetails->cabin($cart->cabin_id)->sleeping_place }}">
 
                                                         @if($cabinDetails->cabin($cart->cabin_id)->halfboard == '1' && $cabinDetails->cabin($cart->cabin_id)->halfboard_price != '')
-                                                            <div class="col-sm-4 col-sm-4-booking1">
+                                                            <div class="col-sm-4 halfboard-checkbox">
                                                                 <div class="form-group">
                                                                     <div class="checkbox">
                                                                         <label>
@@ -217,7 +217,7 @@
                             @endphp
 
                             <div class="row content row-booking1">
-                                <div class="col-sm-9">
+                                <div class="col-sm-9" id="contact_information">
                                     <div class="panel panel-default booking-box-booking1 panel-default-booking1 text-left">
                                         <div class="panel-body panel-body-booking1">
                                             <div class="row row-booking1">

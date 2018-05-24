@@ -254,9 +254,9 @@
                                                                 <p>Sehr geehrter Gast, <br>
                                                                     <br>
                                                                     <br />
-                                                                    Congratulations!!! You booked cabins.
+                                                                    Herzlichen Glückwunsch! Sie haben erfolgreich Ihre Hütte(n) gebucht.
 
-                                                                    You will get your vouchers within the next hour.
+                                                                    Sie erhalten Ihre Gutscheine innerhalb der nächsten Stunde.
                                                                     <br /><br />
                                                                     <br /><br />
                                                                     Mit freundlichen Gruessen<br />

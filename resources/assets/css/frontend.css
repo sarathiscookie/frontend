@@ -22,7 +22,7 @@ p{
     color:#5F6876;
 }
 body{
-    font-family:Segoe UI;
+    font-family:Segoe UI, helvetica, arial;
     font-size:16px;
     color:#5F6876;
     background-color:#fff;
@@ -67,6 +67,11 @@ main{
 }
 /*Navigation Top*/
 /*Dropdown Top*/
+.navbar-collapse{
+    padding-left: 0;
+    padding-right: 0;
+}
+
 .navbar-inverse .navbar-collapse, .navbar-inverse .navbar-form {
     border-color:#5F6876;
 }

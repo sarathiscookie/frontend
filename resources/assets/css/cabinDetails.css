@@ -65,6 +65,11 @@
     text-align:left;
     padding-left:15px;
 }
+
+@media (max-width:767px) {.navbar-default-cabin-details{
+    height: auto !important;
+}}
+
 @media (max-width:1349px){.col-md-8-cabin-details {
     width:100% !important;
 }}
