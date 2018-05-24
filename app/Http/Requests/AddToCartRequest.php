@@ -47,11 +47,11 @@ class AddToCartRequest extends FormRequest
     public function messages()
     {
         return [
-            'dateFrom.required'      => 'Arrival date is required',
-            'dateTo.required'        => 'Departure date is required',
-            'beds.required_without'  => 'The beds field is required when dormitory is not present.',
-            'dorms.required_without' => 'The dormitory field is required when beds is not present.',
-            'sleeps.required'        => 'The sleeps field is required.'
+            'dateFrom.required'      => __('searchDetails.dateFromRequired'),
+            'dateTo.required'        => __('searchDetails.dateToRequired'),
+            'beds.required_without'  => __('searchDetails.bedsRequired_without'),
+            'dorms.required_without' => __('searchDetails.dormsRequired_without'),
+            'sleeps.required'        => __('searchDetails.sleepsRequired')
         ];
     }
 }

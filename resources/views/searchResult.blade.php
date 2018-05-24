@@ -29,7 +29,7 @@
                                         {{ strip_tags(str_replace("&nbsp;", " ", $result->other_details)) }}
                                     </div>
 
-                                    <a href="{{ route('cabin.details', ['id' => base64_encode($result->_id.env('MD5_Key'))]) }}" class="btn btn-default btn-sm btn-details">More details</a>
+                                    <a href="{{ route('cabin.details', ['id' => base64_encode($result->_id.env('MD5_Key'))]) }}" class="btn btn-default btn-sm btn-details">{{ __('searchDetails.moreDetails') }}</a>
 
                                     <div class="row" style="float:none; text-align:right;">
                                         <div class="col-sm-12">
@@ -49,7 +49,7 @@
                                         <div class="panel-body">
                                             <div class="row row-cabinlist">
                                                 <div class="col-sm-12 month-opening">
-                                                    <h5 class="text-capitalize">Expected opening timing:</h5>
+                                                    <h5 class="text-capitalize">{{ __('searchDetails.openingTimeHeading') }}:</h5>
 
                                                     @if($cabinServices->seasons($result->_id))
                                                         @foreach ($cabinServices->seasons($result->_id) as $season)
@@ -60,10 +60,10 @@
                                                             @if($season->summerSeason === 1 && $season->summerSeasonStatus === 'open' && $season->summerSeasonYear === (int)date('Y'))
                                                                 <div class="row">
                                                                     <div class="col-sm-6">
-                                                                        <h6><b>Summer open: </b><small>{{ $season->earliest_summer_open->format('d.m.y') }}</small></h6>
+                                                                        <h6><b>{{ __('searchDetails.summerOpenTime') }}: </b><small>{{ $season->earliest_summer_open->format('d.m.y') }}</small></h6>
                                                                     </div>
                                                                     <div class="col-sm-6">
-                                                                        <h6><b>Summer close: </b><small>{{ $season->latest_summer_close->format('d.m.y') }}</small></h6>
+                                                                        <h6><b>{{ __('searchDetails.summerCloseTime') }}: </b><small>{{ $season->latest_summer_close->format('d.m.y') }}</small></h6>
                                                                     </div>
                                                                 </div>
                                                             @endif
@@ -71,10 +71,10 @@
                                                             @if($season->winterSeason === 1 && $season->winterSeasonStatus === 'open' && $season->winterSeasonYear === (int)date('Y'))
                                                                 <div class="row">
                                                                     <div class="col-sm-6">
-                                                                        <h6><b>Winter open: </b><small>{{ $season->earliest_winter_open->format('d.m.y') }}</small></h6>
+                                                                        <h6><b>{{ __('searchDetails.winterOpen') }}: </b><small>{{ $season->earliest_winter_open->format('d.m.y') }}</small></h6>
                                                                     </div>
                                                                     <div class="col-sm-6">
-                                                                        <h6><b>Winter close: </b><small>{{ $season->latest_winter_close->format('d.m.y') }}</small></h6>
+                                                                        <h6><b>{{ __('searchDetails.winterClose') }}: </b><small>{{ $season->latest_winter_close->format('d.m.y') }}</small></h6>
                                                                     </div>
                                                                 </div>
                                                             @endif
@@ -88,7 +88,7 @@
 
                                             <div class="row row-cabinlist">
                                                 <div class="col-sm-12">
-                                                    <h5>Your journey begins here <span class="glyphicon glyphicon-question-sign" title="Please choose your arrival/depature date and the number of persons with whom you would like to visit the cabin. Then enter Booking to get to the next step."></span></h5>
+                                                    <h5>{{ __('searchDetails.journeyBeginsHeading') }} <span class="glyphicon glyphicon-question-sign" title="{{ __('searchDetails.journeyBeginsTitle') }}"></span></h5>
 
                                                     <div class="form-group row row-cabinlist calendar" data-id="{{ $result->_id }}">
 
@@ -106,17 +106,17 @@
                                                         <div class="notSeasonTime_{{ $result->_id }}" data-notseasontime="{{ $calendar[4] }}"></div>
 
                                                         <div class="col-sm-6-cabinlist col-sm-6">
-                                                            <input type="text" class="form-control form-control-cabinlist backButtonDateFrom dateFrom" id="dateFrom_{{ $result->_id }}" name="dateFrom_{{ $result->_id }}" placeholder="Arrival" value="" readonly autocomplete="off">
+                                                            <input type="text" class="form-control form-control-cabinlist backButtonDateFrom dateFrom" id="dateFrom_{{ $result->_id }}" name="dateFrom_{{ $result->_id }}" placeholder="{{ __('searchDetails.arrivalPlaceholder') }}" value="" readonly autocomplete="off">
                                                         </div>
 
                                                         <div class="col-sm-6-cabinlist col-sm-6">
-                                                            <input type="text" class="form-control form-control-cabinlist backButtonDateTo dateTo" id="dateTo_{{ $result->_id }}" name="dateTo_{{ $result->_id }}" placeholder="Departure" value="" readonly autocomplete="off">
+                                                            <input type="text" class="form-control form-control-cabinlist backButtonDateTo dateTo" id="dateTo_{{ $result->_id }}" name="dateTo_{{ $result->_id }}" placeholder="{{ __('searchDetails.departurePlaceholder') }}" value="" readonly autocomplete="off">
                                                         </div>
 
                                                         @if($result->sleeping_place != 1)
                                                             <div class="col-sm-6-cabinlist col-sm-6 dropdown-top-buffer">
                                                                 <select class="form-control form-control-cabinlist" id="beds_{{ $result->_id }}" name="beds_{{ $result->_id }}">
-                                                                    <option value="">Choose Bed(s)</option>
+                                                                    <option value="">{{ __('searchDetails.chooseBeds') }}</option>
                                                                     @for($i = 1; $i <= 30; $i++)
                                                                         <option value="{{ $i }}">{{ $i }}</option>
                                                                     @endfor
@@ -125,7 +125,7 @@
 
                                                             <div class="col-sm-6-cabinlist col-sm-6 dropdown-top-buffer">
                                                                 <select class="form-control form-control-cabinlist" id="dorms_{{ $result->_id }}" name="dorms_{{ $result->_id }}">
-                                                                    <option value="">Choose Dorm(s)</option>
+                                                                    <option value="">{{ __('searchDetails.chooseDorms') }}</option>
                                                                     @for($i = 1; $i <= 30; $i++)
                                                                         <option value="{{ $i }}">{{ $i }}</option>
                                                                     @endfor
@@ -134,7 +134,7 @@
                                                         @else
                                                             <div class="col-sm-6-cabinlist col-sm-6 dropdown-top-buffer">
                                                                 <select class="form-control form-control-cabinlist" id="sleeps_{{ $result->_id }}" name="sleeps_{{ $result->_id }}">
-                                                                    <option value="">Choose Sleep(s)</option>
+                                                                    <option value="">{{ __('searchDetails.chooseSleeps') }}</option>
                                                                     @for($i = 1; $i <= 30; $i++)
                                                                         <option value="{{ $i }}">{{ $i }}</option>
                                                                     @endfor
@@ -153,9 +153,9 @@
                                                     <h4>{!! $cabinServices->bookingPossibleNextDays($result->_id) !!}</h4>
                                                     <!-- Authentication Links -->
                                                     @guest
-                                                        <a href="{{ route('login') }}" class="btn btn-default btn-sm btn-space pull-right btn-booking">Add To Cart</a>
+                                                        <a href="{{ route('login') }}" class="btn btn-default btn-sm btn-space pull-right btn-booking">{{ __('searchDetails.addToCartButton') }}</a>
                                                         @else
-                                                            <button type="button" class="btn btn-default btn-sm btn-space pull-right btn-booking addToCart" name="addToCart" value="addToCart">Add To Cart</button>
+                                                            <button type="button" class="btn btn-default btn-sm btn-space pull-right btn-booking addToCart" name="addToCart" value="addToCart">{{ __('searchDetails.addToCartButton') }}</button>
                                                     @endguest
                                                 </div>
                                             </div>
