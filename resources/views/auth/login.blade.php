@@ -4,8 +4,8 @@
 
 @section('content')
 <div class="container">
-    <div class="row">
-        <div class="col-md-8 col-md-offset-2">
+    <div class="row row-log">
+        <div class="col-md-8 col-md-8-log">
             <div class="panel panel-log panel-default">
                 <div class="panel-heading">{{ __('login.panelHeading') }}</div> <br>
 

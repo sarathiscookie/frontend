@@ -58,7 +58,7 @@ class LoginController extends Controller
      */
     protected function attemptLogin(Request $request)
     {
-        $authUser = User::where('usrEmail', $request->email)
+        $authUser     = User::where('usrEmail', $request->email)
             ->whereIn('usrlId', [1, 2, 5, 6])
             ->first();
 
@@ -73,6 +73,10 @@ class LoginController extends Controller
                 ->first();
 
             if ($user) {
+                $updateLoginTime            = User::find($user->_id);
+                $updateLoginTime->lastlogin = date('Y-m-d H:i:s');
+                $updateLoginTime->save();
+
                 $this->guard()->login($user, $request->has('remember'));
                 return true;
             }

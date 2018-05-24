@@ -81,5 +81,5 @@ class User extends Authenticatable
      * Internally, these dates will be converted to MongoDate objects when saved to the database.
      */
 
-    protected $dates = ['emailConfirmedDate'];
+    protected $dates = ['emailConfirmedDate', 'lastlogin'];
 }

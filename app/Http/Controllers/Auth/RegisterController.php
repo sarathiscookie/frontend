@@ -55,7 +55,12 @@ class RegisterController extends Controller
         return Validator::make($data, [
             'firstName' => 'required|string|max:255',
             'lastName' => 'required|string|max:255',
-            'email' => [ 'required', 'string', 'email', 'max:255', Rule::unique('user', 'usrEmail')->whereIn('usrlId', [1, 2, 5, 6]), new Lowercase ],
+            'email' => [ 'required', 'string', 'email', 'max:255',
+                Rule::unique('user', 'usrEmail')->where(function($query) {
+                    $query->whereIn('usrlId', [1, 2, 5, 6])
+                          ->where('is_delete', 0);
+                }),
+                new Lowercase ],
             'password' => 'required|string|min:6|confirmed',
             'dataProtection' => 'required',
             'termsService' => 'required',
