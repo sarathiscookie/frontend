@@ -821,6 +821,7 @@ class PaymentController extends Controller
                 if($_POST["clearingtype"] === 'vor') {
                     if($user) {
                         Mail::to($user->usrEmail)->send(new BookingSuccess());
+                        Mail::to(env('ADMIN_EMAIL'))->send(new BookingFailed($_POST["txid"], $_POST["userid"]));
                     }
                 }
             }
@@ -853,7 +854,7 @@ class PaymentController extends Controller
             else {
                 /* Send email to guest after successful booking */
                 if($user) {
-                    Mail::to($user->usrEmail)->send(new BookingFailed()); //admin email id
+                    Mail::to(env('ADMIN_EMAIL'))->send(new BookingFailed($_POST["txid"], $_POST["userid"]));
                 }
             }
 
