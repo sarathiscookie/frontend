@@ -55,6 +55,7 @@ class PaymentController extends Controller
      */
     public function index()
     {
+        //dd('test');
         /*if (session()->has('availableStatus') && session()->get('availableStatus') === 'success') {*/
             $prepayment_amount           = [];
             $moneyBalance                = 0;
@@ -65,7 +66,7 @@ class PaymentController extends Controller
                 ->take(5)
                 ->get();
 
-            if($carts) {
+            if(count($carts) > 0 ) {
                 foreach ($carts as $key => $cart) {
                     $prepayment_amount[] = $cart->prepayment_amount;
 
@@ -149,7 +150,7 @@ class PaymentController extends Controller
             ->take(5)
             ->get();
 
-        if($carts) {
+        if(count($carts) > 0) {
             /* Loop for amount calculation, pay by bill date difference and explode cabin code */
             foreach ($carts as $key => $cart) {
                 $prepayment_amount[] = $cart->prepayment_amount;

@@ -34,7 +34,7 @@
                 @endforeach
             </td>
         </tr>
-        <tr><td colspan="1" style="font-weight:bold;">Anzahlungsbetrag</td><td colspan="6">{{$order->order_total_amount}} &euro;</td></tr>
+        <tr><td colspan="1" style="font-weight:bold;">Anzahlungsbetrag</td><td colspan="6">{{ number_format($order->order_total_amount, 2, ',', '.') }} &euro;</td></tr>
         <tr><td colspan="1" style="font-weight:bold;">Kreditinstitut</td><td colspan="6">{{$order->clearing_bankname}}</td></tr>
         <tr><td colspan="1" style="font-weight:bold;">Kontoinhaber</td><td colspan="6">{{$order->clearing_bankaccountholder}}</td></tr>
         <tr><td colspan="1" style="font-weight:bold;">IBAN</td><td colspan="6">{{$order->clearing_bankiban}}</td></tr>
