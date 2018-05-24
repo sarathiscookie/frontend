@@ -20,7 +20,7 @@
         <td colspan="3" style="color:#afca14;font-size:48px;float:right;" ><img  style="margin-top:15px;" width="280px" id="logo" src="{{ public_path('storage/img/pdf_title2.png') }}" alt="Huetten-Holiday.de"></td>
         <td style="text-align: right;padding-top:10px;" colspan="4"><img style="width: 250px;" id="logo" src="{{public_path('storage/img/logo.png')}}" alt="Huetten-Holiday.de"><br><br>Waltenhofen, den {{$order->created_at->format('d.m.Y')}}</td>
     </tr>
-    <tr><td colspan="7" style="color:#afca14;font-size:95px;text-align:center;padding-top:40px;padding-bottom:0px;font-family:Amienne;" ><img width="280px" id="logo" src="{{public_path('storage/img/pdf_title1.png')}}" alt="Huetten-Holiday.de"></td></tr>
+    <tr><td colspan="7" style="color:#afca14;font-size:95px;text-align:center;padding-top:40px;padding-bottom:0px;font-family:Amienne;" ><img width="280px" id="logo" src="{{public_path('storage/img/pdf-headline-paymentinformation.jpg')}}" alt="Huetten-Holiday.de"></td></tr>
     <tr><td colspan="7" style="font-size:25px;font-weight:bold;text-align:center;padding-top:0px;padding-bottom:40px;" >{{ Auth::user()->usrFirstname }} {{ Auth::user()->usrLastname }}</td></tr>
     <tr><td colspan="6" style="font-size:23px;padding-top:40px;padding-bottom:5px;color:#afca14;font-weight:bold;" >Ihre Daten</td></tr>
     <table style="padding:10px 30px;width:100%;font-family:arial,sans-serif;font-size:13px;background-color:#D9D9D9;">
