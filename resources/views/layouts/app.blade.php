@@ -36,7 +36,7 @@
 
             <!-- Collapsed Hamburger -->
             <button type="button" class="navbar-toggle" id="button-nav-top" data-toggle="collapse" data-target="#app-navbar-collapse"><!--Mobile Navigation Burger-->
-                <span class="mobile-menu">Menu</span>
+                <span class="mobile-menu">{{ __('app.mobileMenu') }}</span>
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
@@ -51,25 +51,25 @@
         <div class="collapse navbar-collapse" id="app-navbar-collapse">
 
             <ul class="nav navbar-nav ">
-                <li><a href="{{ route('search') }}" class="nav-points left-top-nav">Cabins</a></li>
-                <li><a href="#" class="nav-points left-top-nav">Hikes</a></li>
-                <li><a href="#" class="nav-points left-top-nav">Regions</a></li>
-                <li><a href="#" class="nav-points left-top-nav">Shop</a></li>
+                <li><a href="{{ route('search') }}" class="nav-points left-top-nav">{{ __('app.menuCabin') }}</a></li>
+                <li><a href="#" class="nav-points left-top-nav">{{ __('app.menuHikes') }}</a></li>
+                <li><a href="#" class="nav-points left-top-nav">{{ __('app.menuRegions') }}</a></li>
+                <li><a href="#" class="nav-points left-top-nav">{{ __('app.menuShop') }}</a></li>
                 <!-- Authentication Links -->
                 @guest
-                    <li><a href="{{ route('login') }}" class="nav-points left-top-nav"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
-                    <li><a href="{{ route('register') }}" class="nav-points left-top-nav">Register</a></li>
+                    <li><a href="{{ route('login') }}" class="nav-points left-top-nav"><span class="glyphicon glyphicon-log-in"></span> {{ __('app.menuLogin') }}</a></li>
+                    <li><a href="{{ route('register') }}" class="nav-points left-top-nav">{{ __('app.menuRegister') }}</a></li>
                     @else
-                        <li><a href="#" class="nav-points left-top-nav" data-toggle="dropdown"><span class="glyphicon glyphicon-home"></span> My Huetten-Holiday<span class="caret"></span></a>
+                        <li><a href="#" class="nav-points left-top-nav" data-toggle="dropdown"><span class="glyphicon glyphicon-home"></span> {{ __('app.menuMyHuettenHoliday') }}<span class="caret"></span></a>
                             <ul class="dropdown-menu dropdown-menu-home">
-                                <li class="check-it-list-home"><a href="#" class="dropdown-links"><span class="glyphicon glyphicon-floppy-disk"></span> My Data</a></li>
-                                <li class="check-it-list-home"><a href="#" class="dropdown-links"><span class="glyphicon glyphicon-bed"></span> My Bookinghistory</a></li>
+                                <li class="check-it-list-home"><a href="#" class="dropdown-links"><span class="glyphicon glyphicon-floppy-disk"></span> {{ __('app.menuMyData') }}</a></li>
+                                <li class="check-it-list-home"><a href="#" class="dropdown-links"><span class="glyphicon glyphicon-bed"></span> {{ __('app.menuMyBookingHistory') }}</a></li>
                                 <li class="check-it-list-home">
                                     <a href="{{ route('logout') }}"
                                        onclick="event.preventDefault();
                                                                           document.getElementById('logout-form').submit();"
                                        class="dropdown-links"><span class="glyphicon glyphicon-log-out"></span>
-                                        Logout
+                                        {{ __('app.menuLogout') }}
                                     </a>
 
                                     <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
@@ -78,15 +78,15 @@
                                 </li>
                             </ul>
                         </li>
-                        <li><a href="{{ route('cart') }}" class="nav-points left-top-nav" id="last-nav-point"> <span class="glyphicon glyphicon-shopping-cart"></span>Cabin-Cart <span class="badge">{!! $service->cart() !!}</span></a></li>
+                        <li><a href="{{ route('cart') }}" class="nav-points left-top-nav" id="last-nav-point"> <span class="glyphicon glyphicon-shopping-cart"></span>{{ __('app.menuCabinCart') }} <span class="badge">{!! $service->cart() !!}</span></a></li>
                 @endguest
             </ul>
 
             <!-- Right Side Of Navbar -->
             <ul class="nav navbar-nav navbar-right" id="right-top-nav">
-                <li><a href="#" class="nav-points nav-points-right"><span class="glyphicon glyphicon-search" title="Search"></span><span class="icons-display"> Search</span></a></li>
-                <li><a href="#" class="nav-points nav-points-right"><span class="glyphicon glyphicon-earphone" title="Phone"></span><span class="icons-display"> Phone</span></a></li>
-                <li><a href="#" class="nav-points nav-points-right" id="last-child"><span class="glyphicon glyphicon-envelope" title="Contact"></span><span class="icons-display"> Contact</span></a></li>
+                <li><a href="#" class="nav-points nav-points-right"><span class="glyphicon glyphicon-search" title="{{ __('app.searchPlaceholder') }}"></span><span class="icons-display"> {{ __('app.search') }}</span></a></li>
+                <li><a href="#" class="nav-points nav-points-right"><span class="glyphicon glyphicon-earphone" title="{{ __('app.menuPhone') }}"></span><span class="icons-display"> {{ __('app.menuPhone') }}</span></a></li>
+                <li><a href="#" class="nav-points nav-points-right" id="last-child"><span class="glyphicon glyphicon-envelope" title="{{ __('app.menuContact') }}"></span><span class="icons-display"> {{ __('app.menuContact') }}</span></a></li>
             </ul>
 
         </div>
@@ -96,7 +96,7 @@
 <div class="jumbotron">
     <div class="container text-center">
         <img src="{{ asset('storage/img/namloser-wetter-spitz.jpg') }}" class="img-responsive titlepicture" alt="Title picture">
-        <h1 id="headliner-home">Find your<br>favorite Cabin</h1>
+        <h1 id="headliner-home">{{ __('app.imageHeadline1') }}<br>{{ __('app.imageHeadline2') }}</h1>
     </div>
 </div>
 
@@ -117,23 +117,23 @@
             <a class="footerinhalt">Deutschland</a>
         </li>
         <li class="footerabschnitte">
-            <h3 class="footerinhalt footer-headliner">Information</h3><br />
-            <a class="footerinhalt" href="">Contact and Help</a><br />
-            <a class="footerinhalt" href="">About Huetten-Holiday.de</a><br />
-            <a class="footerinhalt" href="">Jobs</a>
+            <h3 class="footerinhalt footer-headliner">{{ __('app.footerInformation') }}</h3><br />
+            <a class="footerinhalt" href="">{{ __('app.footerInformationContact') }}</a><br />
+            <a class="footerinhalt" href="">{{ __('app.footerInformationAbout') }}</a><br />
+            <a class="footerinhalt" href="">{{ __('app.footerInformationJob') }}</a>
         </li>
         <li class="footerabschnitte">
-            <h3 class="footerinhalt footer-headliner">Media</h3><br />
+            <h3 class="footerinhalt footer-headliner">{{ __('app.footerMedia') }}</h3><br />
             <a class="footerinhalt" href="https://www.facebook.com/HuettenHoliday">Facebook</a><br />
             <a class="footerinhalt" href="https://blog.huetten-holiday.de/wordpress/">Blog</a><br />
-            <a class="footerinhalt" href="">Media data</a>
+            <a class="footerinhalt" href="">{{ __('app.footerMediaData') }}</a>
         </li>
         <li class="footerabschnitte">
-            <h3 class="footerinhalt footer-headliner">Legal</h3><br />
-            <a class="footerinhalt" href="">Imprint</a><br />
-            <a class="footerinhalt" href="">Data protection</a><br />
-            <a class="footerinhalt" href="">Terms of Service</a><br />
-            <a class="footerinhalt" href="">Image rights</a>
+            <h3 class="footerinhalt footer-headliner">{{ __('app.footerLegal') }}</h3><br />
+            <a class="footerinhalt" href="">{{ __('app.footerImprint') }}</a><br />
+            <a class="footerinhalt" href="">{{ __('app.footerDataProtection') }}</a><br />
+            <a class="footerinhalt" href="">{{ __('app.footerTermsOfService') }}</a><br />
+            <a class="footerinhalt" href="">{{ __('app.footerImageRights') }}</a>
         </li>
     </ul>
 </footer>

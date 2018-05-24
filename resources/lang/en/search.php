@@ -7,6 +7,14 @@
  */
 
 return[
+    /*
+    |--------------------------------------------------------------------------
+    | Search Page
+    |--------------------------------------------------------------------------
+    |
+    | Language translation for search page
+    |
+    */
     /* Labels for interior */
     'interiorWifi'                           => 'Wifi',
     'interiorShower'                         => 'Shower',
@@ -34,4 +42,13 @@ return[
     /* Labels for particularities */
     'winterSeasonOpen'                       => 'Open on winter season',
     'summerSeasonOpen'                       => 'Open on summer season',
+
+    /* Filter Labels*/
+    'filter'                                 => 'Filter',
+    'searchPlaceholder'                      => 'Search Cabin',
+    'country'                                => 'Country',
+    'region'                                 => 'Region',
+    'facility'                               => 'Facility',
+    'openingHours'                           => 'Opening Hours',
+    'filterButtons'                          => 'Filter Cabins'
 ];
