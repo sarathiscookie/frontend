@@ -127,7 +127,7 @@ class RegisterController extends Controller
     protected function registered(Request $request, $user)
     {
         $this->guard()->logout();
-        return redirect('/login')->with('status', 'We sent you an activation code. Check your email and click on the link to verify.');
+        return redirect('/login')->with('status', __('register.sentActivationCode'));
     }
 
     /**
@@ -145,14 +145,14 @@ class RegisterController extends Controller
                 $verifyUser->usrActive          = '1';
                 $verifyUser->emailConfirmedDate = date('Y-m-d H:i:s');
                 $verifyUser->save();
-                $status = "Your e-mail is verified. You can now login.";
+                $status = __('register.emailVerified');
             }
             else{
-                $status = "Your e-mail is already verified. You can now login.";
+                $status = __('register.emailAlreadyVerified');
             }
         }
         else{
-            return redirect('/login')->with('warning', "Sorry your email cannot be identified.");
+            return redirect('/login')->with('warning', __('register.verificationWarning'));
         }
 
         return redirect('/login')->with('status', $status);
