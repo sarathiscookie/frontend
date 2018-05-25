@@ -33,12 +33,13 @@ return[
 
     /* Error messages */
     'holidayIncludedAlert'      => 'Booking not possible because holidays included',
-    'bedsNotAvailable'          => 'Beds are not available on 4.5.18',
-    'dormsNotAvailable'         => 'Dorms are not available on 4.5.18',
-    'alreadyFilledBedsDorms'    => 'Beds and Dorms are already filled on 4.5.18',
+    'bedsNotAvailable'          => 'Beds are not available on',
+    'dormsNotAvailable'         => 'Dorms are not available on',
+    'alreadyFilledBedsDorms'    => 'Beds and Dorms are already filled on',
     'sixtyDaysExceed'           => 'Quota exceeded! Maximum 60 days you can book.',
     'dateGreater'               => 'Arrival date should be less than departure date.',
-    'Alert'                     => 'On 4.5.18 booking is possible if sum of beds and dorms is less than 5. But you can send enquiry. Please click here for inquiry',
+    'inquiryAlert'              => 'On',
+    'inquiryAlert1'             => 'booking is possible if sum of beds and dorms is less than 5. But you can send enquiry. Please click here for inquiry',
     'tomorrowClosed'            => 'Tomorrow sleeping place: Closed',
     'tomorrowLimited'           => 'Tomorrow sleeping place: Limited',
     'tomorrowAvailable'         => 'Tomorrow sleeping place: Available',
