@@ -30,7 +30,8 @@ mix.styles([
     'resources/assets/css/payment.css',
     'resources/assets/css/paymentSuccess.css',
     'resources/assets/css/login.css',
-    'resources/assets/css/register.css'
+    'resources/assets/css/register.css',
+    'resources/assets/css/bookingHistory.css'
 ], 'public/css/all.css').version();
 
 mix.scripts([
@@ -41,7 +42,8 @@ mix.scripts([
     'resources/assets/js/cabinDetails.js',
     'resources/assets/js/cart.js',
     'resources/assets/js/inquiry.js',
-    'resources/assets/js/payment.js'
+    'resources/assets/js/payment.js',
+    'resources/assets/js/bookingHistory.js'
 ], 'public/js/all.js').version();
 
 /* Js and css for plugins */

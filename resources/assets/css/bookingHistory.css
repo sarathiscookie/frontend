@@ -1,0 +1,213 @@
+/* Booking history css begins */
+
+/*width for most containers*/
+@media (max-width: 767px){.container-fluid-history {
+    padding-right:5px;
+    padding-left:5px;
+}}
+/*Checkboxes*/
+.dropdown-menu-history>li>a{
+    color:#5F6876;
+    font-size:15px;
+}
+/*Checkboxes*/
+.check-it-history{
+    height:17px;
+    width:17px;
+    margin-left:10px !important;
+    white-space:nowrap;
+}
+.check-it-list-history{
+    white-space:nowrap;
+    padding-right:10px;
+    padding-bottom:15px;
+}
+.check-it-list-history:hover {
+    background-color:#EFEFEF;
+}
+/*Headline under titlepicture*/
+/*kind of opacity background (the text is not opacity with rgba)*/
+.navbar-default-history{
+    background-color: #D1D1D1;
+    border: none;
+    height:75px;
+    text-align:left;
+    padding-left:15px;
+    padding-right:15px;
+}
+@media (max-width:424px){.navbar-default-history{
+    height:105px;
+}}
+@media (max-width:1349px){.col-md-8-history {
+    width:100% !important;
+}}
+@media (min-width:1511px){ div .container-fluid-history{
+    padding-left:0px;
+    padding-right:0px;
+    margin:0;
+}}
+@media (min-width:992px){#list-filter-history{
+    width:80%;
+}}
+#list-filter-history{
+    padding-left:0;
+    padding-right:0;
+}
+.col-md-2-history{width:10% !important
+}
+.cabin-head-history{
+    float:left;
+}
+@media (max-width:424px){.cabin-head-history{
+    float:none;
+}}
+
+/*Main*/
+
+/*correct sizes for mobile etc. (3 images)*/
+.row-history{
+    width:100%;
+}
+.row-history{
+    margin:0;
+}
+/*List*/
+/*Whole list*/
+.panel-body-history{
+    padding:0;
+}
+.panel-history{
+    border:none;
+    border-radius:0px;
+}
+@media (min-width: 768px){.panel-history{
+    margin-bottom:20px;
+    background-color:#EFEFEF;
+}}
+@media (max-width: 767px){.panel-history{
+    background-color:#EFEFEF;
+    margin-bottom:20px;
+}}
+@media (min-width: 768px){.panel-default-history{
+    border:none;
+}}
+/*Images on the left side*/
+@media (min-width: 768px){.col-sm-2-history{
+    width:35%;
+}}
+@media (max-width: 1510px) and (min-width: 768px){.col-sm-2-history{
+    padding-top:15px !important;
+    padding-left:15px !important;
+}}
+@media (max-width: 1680px) and (min-width: 1511px){.col-sm-2-history{
+    width:30%
+}}
+@media (min-width: 1681px){.col-sm-2-history{
+    width:25%;
+}}
+.img-thumbnail-history{
+    padding:0;
+    border:none;
+    border-radius:0px;
+}
+.col-sm-2-history{
+    padding:0;
+}
+/*Middle-boxes*/
+@media (min-width: 1680px){.col-sm-7-history{
+    width:50% !important;
+}}
+@media (max-width: 1680px) and (min-width: 1511px){.col-sm-7-history{
+    width:45% !important;
+}}
+@media (min-width: 768px){.col-sm-7-history{
+    width:65%;
+}}
+@media (max-width: 768px){.col-sm-7-history{
+    padding-left:15px;
+    padding-right:15px;
+}}
+/*Details box*/
+.col-sm-3-history{
+    padding-right:0;
+}
+@media (min-width: 768px){.col-sm-3-history {
+    width:100%;
+    padding-left:0;
+    padding-top:15px;
+    padding-bottom:15px;
+}}
+@media (min-width: 1511px){.col-sm-3-history {
+    width:25%;
+    padding-top:0;
+    padding-bottom:0px;
+}}
+@media (max-width: 767px){.col-sm-3-history {
+    padding:0 !important;
+}}
+.booking-box-history{
+    padding-left:10px;
+    padding-right:10px;
+}
+@media (min-width: 768px) and (max-width:1510px){.booking-box-history {
+    background-color:#D1D1D1;
+    margin:0;
+    padding-bottom:15px;
+    margin-left:15px;
+    margin-right:15px;
+    height:auto;
+}}
+@media (max-width: 767px){.booking-box-history {
+    background-color:#D1D1D1;
+    padding-bottom:15px;
+}}
+@media (min-width: 1511px){.booking-box-history {
+    background-color:#D1D1D1;
+    margin:0;
+    padding-bottom:15px;
+    height:280px;
+}}
+.col-sm-12-history{
+    padding-left:0;
+}
+.check-it-list-spe-history{
+    float:left;
+    margin-bottom:5px;
+    padding-bottom:2px;
+    padding-top:2px;
+}
+.in-info-history{
+    float:none;
+    margin-left:150px;
+    margin-right:150px;
+    text-align:left;
+    background-color:#fff;
+    padding-left:5px;
+}
+@media (max-width:1510px){.in-info-history{
+    margin-right:0;
+}}
+.info-listing-history{
+    background-color:#A2C617;
+    color:#fff;
+    padding-left:12px;
+    margin-bottom:20px;
+    padding-top:2px;
+    padding-bottom:2px;
+}
+.btn-list-history{
+    border-radius:0px;
+    background-color:#fff;
+    border:none;
+    font-weight:normal;
+    font-size:16px;
+    margin-bottom:5px;
+    padding-top:2px;
+    padding-bottom:2px;
+    width:100%;
+    text-align:left;
+}
+.btn-list-history:hover{
+    background-color:#e6e6e6;
+    color:#333;
+}

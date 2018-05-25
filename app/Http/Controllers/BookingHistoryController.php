@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Booking;
+use App\Cabin;
+use Auth;
 
 class BookingHistoryController extends Controller
 {
@@ -13,7 +16,32 @@ class BookingHistoryController extends Controller
      */
     public function index()
     {
-        return view('bookingHistory');
+        $bookings          = Booking::where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
+            ->where('is_delete', 0)
+            ->whereIn('status', ['1', '2', '3', '4', '5', '7']) /* 1=> Fix, 2=> Cancel, 3=> Completed, 4=> Request (Reservation), 5=> Waiting for payment, 7=> Inquiry */
+            ->orderBy('bookingdate', 'desc')
+            ->simplePaginate(10);
+
+        return view('bookingHistory', ['bookings' => $bookings]);
+    }
+
+    /**
+     * Return cabin details when injection occur.
+     *
+     * @param  string  $name
+     * @return \Illuminate\Http\Response
+     */
+    public function cabin($name)
+    {
+        $cabin     = '';
+        if($name) {
+            $cabin = Cabin::select('name', 'region', 'sleeping_place')
+                ->where('is_delete', 0)
+                ->where('other_cabin', "0")
+                ->where('name', $name)
+                ->first();
+        }
+        return $cabin;
     }
 
     /**
