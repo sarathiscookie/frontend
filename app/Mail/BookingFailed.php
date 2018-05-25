@@ -6,6 +6,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use App\Userlist;
 
 class BookingFailed extends Mailable
 {
@@ -39,11 +40,17 @@ class BookingFailed extends Mailable
      */
     public function build()
     {
-        return $this->view('emails.bookingFailedEmail')
-            ->subject('Informationen zu Ihrer Hüttenbuchung')
-            ->with([
-                'transactionId' => $this->txId,
-                'userId' => $this->userId
-            ]);
+        $user         = Userlist::select('usrEmail')->where('is_delete', 0)
+            ->where('usrActive', '1')
+            ->where('userid', $this->userId)
+            ->first();
+        if(!empty($user)) {
+            return $this->view('emails.bookingFailedEmail')
+                ->subject('Informationen zu Ihrer Hüttenbuchung')
+                ->with([
+                    'transactionId' => $this->txId,
+                    'userEmail' => $user->usrEmail
+                ]);
+        }
     }
 }

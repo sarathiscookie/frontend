@@ -254,7 +254,7 @@
                                                                 <p>Dear Admin, <br>
                                                                     <br>
                                                                     <br />
-                                                                    Booking failed. Transaction Id is {{$transactionId}} and user id is {{$userId}}
+                                                                    Buchung für die TX Id {{$transactionId}}. Die Buchung ist von Gast mit der ID {{$userEmail}}")
                                                                     <br /><br />
                                                                     <br /><br />
                                                                     Mit freundlichen Gruessen<br />
