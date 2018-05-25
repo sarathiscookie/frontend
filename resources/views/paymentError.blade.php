@@ -30,7 +30,7 @@
             </div>
             <div>
                 <div id="btn-ground-2-booking3">
-                    <button type="button" class="btn btn-default btn-default-booking3 btn-sm btn-details-booking3">Bookinghistory</button>
+                    <a href="/booking/history" class="btn btn-default btn-default-booking3 btn-sm btn-details-booking3">Bookinghistory</a>
                 </div>
             </div>
         </div><br><br>
