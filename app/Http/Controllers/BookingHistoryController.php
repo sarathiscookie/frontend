@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Booking;
 use App\Cabin;
 use Auth;
+use PDF;
+use DateTime;
 
 class BookingHistoryController extends Controller
 {
@@ -102,11 +104,60 @@ class BookingHistoryController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request)
     {
-        //
+        $cart      = Booking::where('status', '2')
+            ->where('is_delete', 0)
+            ->where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
+            ->find($request->delId);
+
+        if($cart){
+            //Booking::destroy($cart->_id);
+            return response()->json(['status' => 'success'] ,201);
+        }
+        else {
+            return response()->json(['status' => 'failure'] ,500);
+        }
+    }
+
+    /**
+     * Download the specified resource.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function downloadVoucher(Request $request)
+    {
+        $cart      = Booking::where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
+            ->whereIn('status', ['1', '4'])
+            ->where('is_delete', 0)
+            ->find($request->book_id);
+
+        if(!empty($cart)) {
+            /* Generating PDF */
+            $cabin = Cabin::select('sleeping_place')
+                ->where('name', $cart->cabinname)
+                ->where('is_delete', 0)
+                ->first();
+
+            /* Date difference */
+            $checkin_from = $cart->checkin_from->format('Y-m-d');
+            $reserve_to   = $cart->reserve_to->format('Y-m-d');
+            $d1           = new DateTime($checkin_from);
+            $d2           = new DateTime($reserve_to);
+            $dateDiff     = $d2->diff($d1);
+
+            $html  = view('bookingHistoryPDF', ['cart' => $cart, 'sleeping_place' => $cabin, 'dateDifference' => $dateDiff->days]);
+
+            $pdf   = PDF::loadHTML($html);
+
+            return $pdf->download($cart->invoice_number. ".pdf");
+        }
+        else{
+            abort(404);
+        }
     }
 }

@@ -153,6 +153,12 @@ Route::group(['middleware' => ['auth']], function () {
     /* View booking history */
     Route::get('/booking/history', 'BookingHistoryController@index')->name('booking.history');
 
+    /* Download voucher */
+    Route::post('/booking/history/voucher/download', 'BookingHistoryController@downloadVoucher')->name('booking.history.voucher.download');
+
+    /* Delete booking */
+    Route::post('/booking/history/delete', 'BookingHistoryController@destroy')->name('booking.history.delete');
+
     /*
     |--------------------------------------------------------------------------
     | Payment
