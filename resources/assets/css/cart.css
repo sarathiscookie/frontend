@@ -86,12 +86,18 @@
 }
 @media(max-width: 1510px){#contact_information{
     padding-right: 0;
+    width: 100%;
 }}
+
+.contact_information > div{
+    margin: 0 !important;
+}
 
 /*Main*/
 /*correct sizes for mobile etc. (3 images)*/
 .row-booking1{
     width:100%;
+    padding-bottom: 15px;
 }
 .row-booking1{
     margin:0;

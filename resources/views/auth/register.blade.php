@@ -5,7 +5,7 @@
 @section('content')
 <div class="container">
     <div class="row">
-        <div class="col-md-8 col-md-offset-2">
+        <div class="col-md-8 col-md-offset-2 col-register">
             <div class="panel panel-default panel-register">
                 <div class="panel-heading">{{ __('register.panelHeading') }}</div> <br>
 

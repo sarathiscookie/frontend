@@ -1627,12 +1627,18 @@ hr {
 }
 @media(max-width: 1510px){#contact_information{
     padding-right: 0;
+    width: 100%;
 }}
+
+.contact_information > div{
+    margin: 0 !important;
+}
 
 /*Main*/
 /*correct sizes for mobile etc. (3 images)*/
 .row-booking1{
     width:100%;
+    padding-bottom: 15px;
 }
 .row-booking1{
     margin:0;
@@ -2403,6 +2409,20 @@ hr {
 .col-md-8-register{
     width:100%;
 }
+
+@media (max-width: 1350px){.col-register{
+    margin-left: 0 !important;
+    width: 100% !important;
+}}
+@media (max-width: 1350px){.panel-register{
+    margin-left: 15px;
+    margin-right: 15px;
+}}
+@media (max-width: 767px){.panel-register{
+    margin-left: 5px;
+    margin-right: 5px;
+}}
+
 .panel-register>.panel-heading{
     background-color:rgba(161, 197, 24, 0.5);
     color:#5F6876;
@@ -2421,6 +2441,11 @@ hr {
     margin-left:5%;
     margin-right:0;
 }}
+
+@media (min-width: 992px){.check-register{
+    margin-left: 33%;
+}}
+
 .terms-headliner-register{
     border-top:1px solid #5F6876;
 }
@@ -2460,11 +2485,11 @@ hr {
     background-color:#e6e6e6;
 }
 .div-btn-register{
-    margin-left:35%;
+    margin-left:33%;
     margin-top:15px;
     margin-bottom:30px;
     padding-top:15px;
-    width:20%;
+    width: 50%;
 }
 @media (max-width:991px){.div-btn-register{
     width:auto;
@@ -2475,7 +2500,7 @@ hr {
     float:none;
     width:50%;
     margin-left:5%;
-    margin-right:45%;
+    margin-right:0;
 }
 @media (max-width:991px){.check-register{
     width:90%;
@@ -2715,3 +2740,44 @@ hr {
     background-color:#e6e6e6;
     color:#333;
 }
+/* Css for prepayment*/
+.panel-heading-bill{
+    background-color: #A2C617;
+    border-color: #A2C617;
+}
+@media (min-width: 1351px){.container-fluid-booking3{
+    padding-right: 0 !important;
+    padding-left: 0 !important;
+}}
+@media (max-width: 1350px){.container-fluid-booking3{
+    padding-right: 15px;
+    padding-left: 15px;
+}}
+@media (max-width: 767px){.container-fluid-booking3{
+    padding-right: 5px;
+    padding-left: 5px;
+}}
+.download-bill{
+    background-color: #fff;
+    color: #636b6f;
+}
+.bill-list{
+    padding-bottom: 0;
+}
+.bill-list a{
+    border-radius: 0;
+}
+@media (max-width: 1350px){.bill-container{
+    margin-left: 15px;
+    margin-right: 15px;
+}}
+@media (max-width: 767px){.bill-container{
+    margin-left: 5px;
+    margin-right: 5px;
+}}
+@media (max-width: 1350px){#btn-ground-bill{
+    padding-right: 15px;
+}}
+@media (max-width: 767px){#btn-ground-bill{
+    padding-right: 5px;
+}}

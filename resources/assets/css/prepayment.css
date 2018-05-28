@@ -1,0 +1,41 @@
+/* Css for prepayment*/
+.panel-heading-bill{
+    background-color: #A2C617;
+    border-color: #A2C617;
+}
+@media (min-width: 1351px){.container-fluid-booking3{
+    padding-right: 0 !important;
+    padding-left: 0 !important;
+}}
+@media (max-width: 1350px){.container-fluid-booking3{
+    padding-right: 15px;
+    padding-left: 15px;
+}}
+@media (max-width: 767px){.container-fluid-booking3{
+    padding-right: 5px;
+    padding-left: 5px;
+}}
+.download-bill{
+    background-color: #fff;
+    color: #636b6f;
+}
+.bill-list{
+    padding-bottom: 0;
+}
+.bill-list a{
+    border-radius: 0;
+}
+@media (max-width: 1350px){.bill-container{
+    margin-left: 15px;
+    margin-right: 15px;
+}}
+@media (max-width: 767px){.bill-container{
+    margin-left: 5px;
+    margin-right: 5px;
+}}
+@media (max-width: 1350px){#btn-ground-bill{
+    padding-right: 15px;
+}}
+@media (max-width: 767px){#btn-ground-bill{
+    padding-right: 5px;
+}}
