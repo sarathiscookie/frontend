@@ -168,7 +168,8 @@
                     </div>
                 @endforeach
             </div>
-            {!! $cabinSearchResult->links() !!}
+
+            {{ $cabinSearchResult->appends($next_query)->links() }}
 
         </main>
 

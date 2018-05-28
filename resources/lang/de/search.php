@@ -38,6 +38,8 @@ return [
     'interiorSmokeDetector'                  => 'Rauchmelder',
     'interiorCarbMonoDetector'               => 'Kohlenmonoxid-Detektor',
     'interiorHelicopterLand'                 => 'Hubschrauberlandeplatz vorhanden',
+    'interiorPaymentMethodCottage'           => 'Zahlungsarten auf der Hütte',
+    'interiorReachablePeakHut'               => 'Reachable peaks from hut',
 
     /* Labels for particularities */
     'winterSeasonOpen'                       => 'Wintersaison',

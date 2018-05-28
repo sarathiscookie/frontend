@@ -91,7 +91,9 @@ class CabinDetailsController extends Controller
             'Smoking (allowed, forbidden)'              => __("cabinDetails.interiorSmokingAllowed"),
             'smoke detector'                            => __("cabinDetails.interiorSmokeDetector"),
             'Carbon monoxide detector'                  => __("cabinDetails.interiorCarbMonoDetector"),
-            'Helicopter land available'                 => __("cabinDetails.interiorHelicopterLand")
+            'Helicopter land available'                 => __("cabinDetails.interiorHelicopterLand"),
+            'Payment methods at the cottage'            => __("cabinDetails.interiorPaymentMethodCottage"),
+            'Reachable peaks from hut'                  => __("cabinDetails.interiorReachablePeakHut")
         );
 
         if($interior != null) {

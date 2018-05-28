@@ -42,6 +42,8 @@ return [
     'interiorSmokeDetector'                  => 'Smoke Detector',
     'interiorCarbMonoDetector'               => 'Carbon Monoxide Detector',
     'interiorHelicopterLand'                 => 'Helicopter land available',
+    'interiorPaymentMethodCottage'           => 'Payment methods at the cottage',
+    'interiorReachablePeakHut'               => 'Reachable peaks from hut',
 
     /* Translation for labels and headings */
     'openingTimeHeading'                     => 'Expected opening timing',

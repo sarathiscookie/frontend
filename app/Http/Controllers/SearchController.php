@@ -48,6 +48,8 @@ class SearchController extends Controller
             'smoke detector'                            => __("search.interiorSmokeDetector"),
             'Carbon monoxide detector'                  => __("search.interiorCarbMonoDetector"),
             'Helicopter land available'                 => __("search.interiorHelicopterLand"),
+            'Payment methods at the cottage'            => __("search.interiorPaymentMethodCottage"),
+            'Reachable peaks from hut'                  => __("search.interiorReachablePeakHut")
         );
 
         return $facilities;
@@ -108,6 +110,8 @@ class SearchController extends Controller
      */
     public function index(SearchRequest $request)
     {
+        $data  = $request->all();
+
         $cabin = Cabin::select('_id', 'name', 'country', 'region', 'interior', 'sleeping_place', 'height', 'other_details', 'interior')
             ->where('is_delete', 0)
             ->where('other_cabin', "0");
@@ -117,26 +121,20 @@ class SearchController extends Controller
         }
 
         if(isset($request->country)){
-            foreach ($request->country as $land){
-                $cabin->where('country', $land);
-            }
+            $cabin->whereIn('country', $data['country']);
         }
 
         if(isset($request->region)){
-            foreach ($request->region as $region){
-                $cabin->where('region', $region);
-            }
+            $cabin->whereIn('region', $data['region']);
         }
 
         if(isset($request->facility)){
-            foreach ($request->facility as $facility){
-                $cabin->whereIn('interior', [$facility]);
-            }
+            $cabin->whereIn('interior', $data['facility']);
         }
 
         $cabinSearchResult = $cabin->simplePaginate(5);
 
-        return view('searchResult', ['cabinSearchResult' => $cabinSearchResult]);
+        return view('searchResult', ['cabinSearchResult' => $cabinSearchResult, 'next_query' => $data]);
     }
 
     /**
