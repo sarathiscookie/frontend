@@ -786,10 +786,9 @@ class PaymentController extends Controller
      */
     public function response(Request $request)
     {
-
-        // you'll need to include the $defaults array somehow, or at least get the key from a secret configuration file
         if ($_POST["key"] == hash("md5", env('KEY'))) {
-            // key is valid, this notification is for us
+
+            // If key is valid, TSOK notification is for PAYONE
 
             $user  = Userlist::where('is_delete', 0)
                 ->where('usrActive', '1')
@@ -851,32 +850,25 @@ class PaymentController extends Controller
                 }
             }
             else {
-                /* Send email to guest after successful booking */
+                /* Payment failure functionality begin */
+                $carts  = Booking::where('userid', $_POST["userid"])
+                    ->where('txid', $_POST["txid"])
+                    ->where('is_delete', 0)
+                    ->get();
+
+                foreach ($carts as $cart) {
+                    Booking::where('userid', $_POST["userid"])
+                        ->where('txid', $_POST["txid"])
+                        ->where('is_delete', 0)
+                        ->update([$cart->status => '5', $cart->payment_status => '0']);
+                }
+                /* Payment failure functionality end */
+
+                /* Send notification email to admin if $_POST["txaction"] is not appointed or paid */
                 if($user) {
                     Mail::to(env('ADMIN_EMAIL'))->send(new BookingFailed($_POST["txid"], $_POST["userid"]));
                 }
             }
-
-            /* Updating booking status and payment status begin */
-            /*$carts  = Booking::where('userid', $_POST["userid"])
-                ->where('txid', $_POST["txid"])
-                ->where('status', "8")
-                ->where('is_delete', 0)
-                ->get();
-            foreach ($carts as $cart) {
-
-                if($_POST["clearingtype"] === 'vor') {
-                    $cartUpdate = Booking::where('userid', $_POST["userid"])
-                        ->where('txid', $_POST["txid"])
-                        ->where('status', "8")
-                        ->where('is_delete', 0)
-                        ->find($cart->_id);
-                    $cartUpdate->status         = '5';
-                    $cartUpdate->payment_status = '3';
-                    $cartUpdate->save();
-                }
-            }*/
-            /* Updating booking status and payment status end */
         }
         else{
             abort(404);
@@ -940,7 +932,7 @@ class PaymentController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Download the specified resource.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
@@ -959,7 +951,7 @@ class PaymentController extends Controller
                 ->get();
 
             /* Generating PDF */
-            $html  = view('paymentPrepaymentHTML', ['order' => $order, 'carts' => $carts]);
+            $html  = view('paymentPrepaymentPDF', ['order' => $order, 'carts' => $carts]);
 
             $pdf   = PDF::loadHTML($html);
 
