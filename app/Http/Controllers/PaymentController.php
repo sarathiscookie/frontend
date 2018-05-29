@@ -827,12 +827,12 @@ class PaymentController extends Controller
                             ->get();
 
                         foreach ($carts as $cart) {
-                            $order               = Order::where('userid', $_POST["userid"])->where('txid', $_POST["txid"])->first();
+                            $order               = Order::where('userid', $cart->userid)->where('txid', $cart->txid)->first();
                             $order->tsok         = 'failed';
                             $order->save();
 
-                            Booking::where('userid', $_POST["userid"])
-                                ->where('txid', $_POST["txid"])
+                            Booking::where('userid', $cart->userid)
+                                ->where('txid', $cart->txid)
                                 ->where('is_delete', 0)
                                 ->update([$cart->status => '5', $cart->payment_status => '0', $cart->tsok => 'failed']);
                         }
@@ -874,12 +874,12 @@ class PaymentController extends Controller
                     ->get();
 
                 foreach ($carts as $cart) {
-                    $order               = Order::where('userid', $_POST["userid"])->where('txid', $_POST["txid"])->first();
+                    $order               = Order::where('userid', $cart->userid)->where('txid', $cart->txid)->first();
                     $order->tsok         = 'failed';
                     $order->save();
 
-                    Booking::where('userid', $_POST["userid"])
-                        ->where('txid', $_POST["txid"])
+                    Booking::where('userid', $cart->userid)
+                        ->where('txid', $cart->txid)
                         ->where('is_delete', 0)
                         ->update([$cart->status => '5', $cart->payment_status => '0', $cart->tsok => 'failed']);
                 }
