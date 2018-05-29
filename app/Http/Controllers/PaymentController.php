@@ -820,23 +820,6 @@ class PaymentController extends Controller
                 if($_POST["clearingtype"] === 'vor') {
                     if($user) {
                         Mail::to($user->usrEmail)->send(new BookingSuccess());
-                        /* Payment failure functionality begin */
-                        $carts  = Booking::where('userid', $_POST["userid"])
-                            ->where('txid', $_POST["txid"])
-                            ->where('is_delete', 0)
-                            ->get();
-
-                        foreach ($carts as $cart) {
-                            $order               = Order::where('userid', $cart->userid)->where('txid', $cart->txid)->first();
-                            $order->tsok         = 'failed';
-                            $order->save();
-
-                            Booking::where('userid', $cart->userid)
-                                ->where('txid', $cart->txid)
-                                ->where('is_delete', 0)
-                                ->update([$cart->status => '5', $cart->payment_status => '0', $cart->tsok => 'failed']);
-                        }
-                        /* Payment failure functionality end */
                     }
                 }
             }
@@ -868,21 +851,9 @@ class PaymentController extends Controller
             }
             else {
                 /* Payment failure functionality begin */
-                $carts  = Booking::where('userid', $_POST["userid"])
-                    ->where('txid', $_POST["txid"])
-                    ->where('is_delete', 0)
-                    ->get();
-
-                foreach ($carts as $cart) {
-                    $order               = Order::where('userid', $cart->userid)->where('txid', $cart->txid)->first();
-                    $order->tsok         = 'failed';
-                    $order->save();
-
-                    Booking::where('userid', $cart->userid)
-                        ->where('txid', $cart->txid)
-                        ->where('is_delete', 0)
-                        ->update([$cart->status => '5', $cart->payment_status => '0', $cart->tsok => 'failed']);
-                }
+                $order               = Order::where('userid', $_POST["userid"])->where('txid', $_POST["txid"])->first();
+                $order->tsok         = 'failed';
+                $order->save();
                 /* Payment failure functionality end */
 
                 /* Send notification email to admin if $_POST["txaction"] is not appointed or paid */
