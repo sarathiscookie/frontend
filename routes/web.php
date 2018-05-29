@@ -79,6 +79,49 @@ Route::get('/cabin/details/{id}', 'CabinDetailsController@index')->name('cabin.d
 
 /*
 |--------------------------------------------------------------------------
+| Footer
+|--------------------------------------------------------------------------
+|
+| Route for footer links
+|
+*/
+/* About page */
+Route::get('/about', function(){
+    return view('about');
+});
+
+/* Contact page */
+Route::get('/contact', function(){
+    return view('contact');
+});
+
+/* Media page */
+Route::get('/media', function(){
+    return view('media');
+});
+
+/* Jobs page */
+Route::get('/jobs', function(){
+    return view('jobs');
+});
+
+/* Jobs: media page */
+Route::get('/job/media', function(){
+    return view('jobMedia');
+});
+
+/* Jobs: php page */
+Route::get('/job/programmer', function(){
+    return view('jobProgrammer');
+});
+
+/* Jobs: trainee page */
+Route::get('/job/trainee', function(){
+    return view('jobTrainee');
+});
+
+/*
+|--------------------------------------------------------------------------
 | Middleware group for authentication
 |--------------------------------------------------------------------------
 |

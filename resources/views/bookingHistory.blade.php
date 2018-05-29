@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Cabin Details')
+@section('title', 'Booking history')
 
 @inject('service', 'App\Http\Controllers\BookingHistoryController')
 

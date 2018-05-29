@@ -248,4 +248,137 @@ footer {
     border-bottom:2px solid;
     border-top:2px solid;
 }
-/*end for all*/	
+/*end for all*/
+
+/* Footer link pages */
+/* About page */
+.row-simple{
+    width: 100%;
+    margin: 0;
+}
+@media (max-width: 1350px){.col-simple{
+    padding-left: 15px;
+    padding-right: 15px;
+}}
+@media (max-width: 767px){.col-simple{
+    padding-left: 5px;
+    padding-right: 5px;
+}}
+
+/*contact and help*/
+.contactandhelp h3{
+    text-decoration: underline;
+}
+
+/*Jobs*/
+#jobs h3{
+    margin: 0;
+    text-align: center;
+    font-size: 27px;
+}
+#jobs > article{
+    width: 50%;
+    position: relative;
+    overflow: hidden;
+    float: left;
+}
+@media (max-width: 850px){#jobs > article{
+    width: 100%;
+}}
+#jobs article > div{
+    margin: 10px;
+    padding: 315px 10px 10px;
+    overflow: hidden;
+    background-repeat: repeat-y;
+    background-size: cover;
+    color: white;
+}
+#jobs article > div > div {
+    background-color: rgba(50,50,50,.9);
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: -100%;
+    height: 75%;
+    padding: 10px 20px;
+    color: #FFF;
+    -webkit-transition: top .8s;
+    transition: top .8s;
+    z-index: 98;
+    margin: 10px;
+}
+#jobs article > div > div p{
+    color: white;
+    font-size: 20px;
+}
+#jobs article > div > div a{
+    font-size: 20px;
+}
+#jobs article > div:hover > div {
+    top: 0;
+}
+#jobs article > div:hover h3{
+    -webkit-transition: 1s;
+    transition: 1s;
+    top:0;
+}
+#jobs article > div h3{
+    background-color: rgba(50, 50, 50, 0.55);
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+#job-intro{
+    margin-top: 20px;
+}
+@media (max-width: 450px){#job-intro{
+    display: none;
+}}
+#job-intro > div{
+    float: left;
+    width: 33.3333%;
+    margin-bottom: 20px;
+}
+#job-intro > div > div{
+    padding-right: 15px;
+    padding-left: 15px;
+    text-align: center;
+}
+#job-intro > div > div:before{
+    font-size: 50px;
+}
+#job-intro h3{
+    margin-bottom: 20px;
+    margin-top: 20px;
+}
+#php-work{
+    background-image: url("/storage/img/php.jpg");
+}
+#team-work{
+    background-image: url("/storage/img/team.jpg");
+}
+#trainee-work{
+    background-image: url("/storage/img/ausbildung.jpg");
+}
+#media-work{
+    background-image: url("/storage/img/medien.jpg");
+}
+
+.job-image img{
+    float: right;
+    border-radius: 5px;
+    transition: transform .2s ease-in;
+    width: 100%;
+    max-width: 640px;
+}
+.job-image img:hover{
+    position: relative;
+    transform: scale(.97);
+    transition: transform .05s ease-in;
+}
+@media (max-width: 1200px){ .job-image img{
+    float: none;
+}}
+@media (max-width: 1200px){ .job-image{
+    text-align: center;
+    margin-bottom: 10px;
+}}

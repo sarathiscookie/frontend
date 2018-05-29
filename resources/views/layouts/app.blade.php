@@ -86,19 +86,25 @@
             <ul class="nav navbar-nav navbar-right" id="right-top-nav">
                 <li><a href="#" class="nav-points nav-points-right"><span class="glyphicon glyphicon-search" title="{{ __('app.searchPlaceholder') }}"></span><span class="icons-display"> {{ __('app.search') }}</span></a></li>
                 <li><a href="#" class="nav-points nav-points-right"><span class="glyphicon glyphicon-earphone" title="{{ __('app.menuPhone') }}"></span><span class="icons-display"> {{ __('app.menuPhone') }}</span></a></li>
-                <li><a href="#" class="nav-points nav-points-right" id="last-child"><span class="glyphicon glyphicon-envelope" title="{{ __('app.menuContact') }}"></span><span class="icons-display"> {{ __('app.menuContact') }}</span></a></li>
+                <li><a href="/contact" class="nav-points nav-points-right" id="last-child"><span class="glyphicon glyphicon-envelope" title="{{ __('app.menuContact') }}"></span><span class="icons-display"> {{ __('app.menuContact') }}</span></a></li>
             </ul>
 
         </div>
     </div>
 </nav>
 
-<div class="jumbotron">
-    <div class="container text-center">
-        <img src="{{ asset('storage/img/namloser-wetter-spitz.jpg') }}" class="img-responsive titlepicture" alt="Title picture">
-        <h1 id="headliner-home">{{ __('app.imageHeadline1') }}<br>{{ __('app.imageHeadline2') }}</h1>
+@hasSection('jumbotron')
+    @yield('jumbotron')
+
+    <div class="clearfix"></div>
+@else
+    <div class="jumbotron">
+        <div class="container text-center">
+            <img src="{{ asset('storage/img/namloser-wetter-spitz.jpg') }}" class="img-responsive titlepicture" alt="Title picture">
+            <h1 id="headliner-home">{{ __('app.imageHeadline1') }}<br>{{ __('app.imageHeadline2') }}</h1>
+        </div>
     </div>
-</div>
+@endif
 
 @yield('content')
 
@@ -118,15 +124,15 @@
         </li>
         <li class="footerabschnitte">
             <h3 class="footerinhalt footer-headliner">{{ __('app.footerInformation') }}</h3><br />
-            <a class="footerinhalt" href="">{{ __('app.footerInformationContact') }}</a><br />
-            <a class="footerinhalt" href="">{{ __('app.footerInformationAbout') }}</a><br />
-            <a class="footerinhalt" href="">{{ __('app.footerInformationJob') }}</a>
+            <a class="footerinhalt" href="/contact">{{ __('app.footerInformationContact') }}</a><br />
+            <a class="footerinhalt" href="/about">{{ __('app.footerInformationAbout') }}</a><br />
+            <a class="footerinhalt" href="/jobs">{{ __('app.footerInformationJob') }}</a>
         </li>
         <li class="footerabschnitte">
             <h3 class="footerinhalt footer-headliner">{{ __('app.footerMedia') }}</h3><br />
-            <a class="footerinhalt" href="https://www.facebook.com/HuettenHoliday">Facebook</a><br />
-            <a class="footerinhalt" href="https://blog.huetten-holiday.de/wordpress/">Blog</a><br />
-            <a class="footerinhalt" href="">{{ __('app.footerMediaData') }}</a>
+            <a target="_blank" class="footerinhalt" href="https://www.facebook.com/HuettenHoliday">Facebook</a><br />
+            <a target="_blank" class="footerinhalt" href="https://blog.huetten-holiday.de/wordpress/">Blog</a><br />
+            <a class="footerinhalt" href="/media">{{ __('app.footerMediaData') }}</a>
         </li>
         <li class="footerabschnitte">
             <h3 class="footerinhalt footer-headliner">{{ __('app.footerLegal') }}</h3><br />
