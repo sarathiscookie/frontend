@@ -105,6 +105,9 @@
 @media (min-width: 1681px){.col-sm-2-history{
     width:25%;
 }}
+@media (min-width: 1511px){.img-thumbnail-history{
+    height: 280px;
+}}
 .img-thumbnail-history{
     padding:0;
     border:none;
@@ -156,6 +159,12 @@
     margin-left:15px;
     margin-right:15px;
     height:auto;
+}}
+.payment-options{
+    list-style: none;
+}
+@media (max-width: 767px){.payment-options{
+    margin-top: 60px;
 }}
 @media (max-width: 767px){.booking-box-history {
     background-color:#D1D1D1;

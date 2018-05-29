@@ -97,7 +97,7 @@
 /*correct sizes for mobile etc. (3 images)*/
 .row-booking1{
     width:100%;
-    padding-bottom: 15px;
+    padding-bottom:0;
 }
 .row-booking1{
     margin:0;

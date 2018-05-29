@@ -156,8 +156,20 @@ Route::group(['middleware' => ['auth']], function () {
     /* Download voucher */
     Route::post('/booking/history/voucher/download', 'BookingHistoryController@downloadVoucher')->name('booking.history.voucher.download');
 
-    /* Delete booking */
-    Route::post('/booking/history/delete', 'BookingHistoryController@destroy')->name('booking.history.delete');
+    /* Delete cancelled booking */
+    Route::post('/booking/history/delete/cancelled/booking', 'BookingHistoryController@destroyCancelledBooking')->name('booking.history.delete.cancelled.booking');
+
+    /* Delete waiting prepay booking */
+    Route::post('/booking/history/delete/waiting/prepay', 'BookingHistoryController@destroyWaitingPrepayBooking')->name('booking.history.delete.waiting.prepay');
+
+    /* Delete approved inquiry booking */
+    Route::post('/booking/history/delete/approved/inquiry', 'BookingHistoryController@destroyApprovedInquiry')->name('booking.history.delete.approved.inquiry');
+
+    /* Delete waiting inquiry booking */
+    Route::post('/booking/history/delete/waiting/inquiry', 'BookingHistoryController@destroyWaitingInquiry')->name('booking.history.delete.waiting.inquiry');
+
+    /* Delete rejected inquiry booking */
+    Route::post('/booking/history/delete/rejected/inquiry', 'BookingHistoryController@destroyRejectedInquiry')->name('booking.history.delete.rejected.inquiry');
 
     /*
     |--------------------------------------------------------------------------
