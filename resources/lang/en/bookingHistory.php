@@ -41,5 +41,8 @@ return [
     'editInquiry'                                           => 'Edit Inquiry',
     'cancelInquiry'                                         => 'Cancel Inquiry',
     'deleteInquiry'                                         => 'Delete Inquiry',
-    'doYourPayment'                                         => 'Do your payment!'
+    'doYourPayment'                                         => 'Do your payment!',
+    'confirmDeleteBooking'                                  => 'Are you sure you want to delete this booking?',
+    'deleteFailed'                                          => 'Unfortunately did not work.',
+    'noBookingHistory'                                      => 'No bookings history',
 ];

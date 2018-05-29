@@ -103,11 +103,12 @@ class BookingHistoryController extends Controller
 
     /**
      * Remove the specified resource from storage.
+     * Cancelled booking
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Request $request)
+    public function destroyCancelledBooking(Request $request)
     {
         $cart      = Booking::where('status', '2')
             ->where('is_delete', 0)
@@ -115,7 +116,55 @@ class BookingHistoryController extends Controller
             ->find($request->delId);
 
         if($cart){
-            //Booking::destroy($cart->_id);
+            Booking::destroy($cart->_id);
+            return response()->json(['status' => 'success'] ,201);
+        }
+        else {
+            return response()->json(['status' => 'failure'] ,500);
+        }
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     * Waiting for payment (Failed)
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function destroyPaymentFailedBooking(Request $request)
+    {
+        $cart      = Booking::where('status', '5')
+            ->where('payment_status', '0')
+            ->where('is_delete', 0)
+            ->where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
+            ->find($request->delId);
+
+        if($cart){
+            Booking::destroy($cart->_id);
+            return response()->json(['status' => 'success'] ,201);
+        }
+        else {
+            return response()->json(['status' => 'failure'] ,500);
+        }
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     * Waiting for payment (prepayment)
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function destroyWaitingPrepayBooking(Request $request)
+    {
+        $cart      = Booking::where('status', '5')
+            ->where('payment_status', '3')
+            ->where('is_delete', 0)
+            ->where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
+            ->find($request->delId);
+
+        if($cart){
+            Booking::destroy($cart->_id);
             return response()->json(['status' => 'success'] ,201);
         }
         else {

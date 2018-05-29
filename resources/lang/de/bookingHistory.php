@@ -41,5 +41,8 @@ return [
     'editInquiry'                                           => 'Anfrage bearbeiten',
     'cancelInquiry'                                         => 'Anfrage stornieren',
     'deleteInquiry'                                         => 'Anfrage löschen',
-    'doYourPayment'                                         => 'Zahlung durchführen'
+    'doYourPayment'                                         => 'Zahlung durchführen',
+    'confirmDeleteBooking'                                  => 'Sind Sie sicher, dass Sie die Buchung löschen möchten?',
+    'deleteFailed'                                          => 'Hat leider nicht geklappt.',
+    'noBookingHistory'                                      => 'Keine Buchungshistorie',
 ];

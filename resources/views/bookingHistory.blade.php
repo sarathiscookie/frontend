@@ -11,6 +11,8 @@
             <nav class="navbar navbar-default navbar-default-history">
                 <h2 class="cabin-head-history">{{ __('bookingHistory.overviewHeading') }}</h2>
             </nav>
+            <br>
+            <div class="responseMessage"></div>
         </div>
         <div class="col-md-2 col-md-2-history"></div>
     </div>
@@ -65,7 +67,7 @@
 
                                                     @if($booking->status === '2') <!-- Cancel -->
                                                         <span class="label label-danger label-cabinlist">{{ __('bookingHistory.cancelStatus') }}</span> <br>
-                                                        <button type="button" class="btn btn-list-history deleteBookingHistory" data-del="{{ $booking->_id }}" data-loading-text="{{ __('bookingHistory.deleteBookingLoader') }}" class="btn btn-primary" autocomplete="off">{{ __('bookingHistory.deleteBooking') }} <span class="glyphicon glyphicon-trash"></span></button>
+                                                        <button type="button" class="btn btn-list-history deleteCancelledBookingHistory" data-del="{{ $booking->_id }}" data-loading-text="{{ __('bookingHistory.deleteBookingLoader') }}" autocomplete="off">{{ __('bookingHistory.deleteBooking') }} <span class="glyphicon glyphicon-trash"></span></button>
                                                     @endif
 
                                                     @if($booking->status === '4' && $booking->payment_status === '2') <!-- Reservation -->
@@ -82,12 +84,12 @@
                                                     @if($booking->status === '5' && $booking->payment_status === '3') <!-- Waiting for payment (prepayment)-->
                                                         <span class="label label-warning label-cabinlist">{{ __('bookingHistory.waitingStatus') }}</span> <br>
                                                         <button type="button" class="btn btn-list-history">{{ __('bookingHistory.downloadBill') }} <span class="glyphicon glyphicon-cloud-download"></span></button>
-                                                        <button type="button" class="btn btn-list-history">{{ __('bookingHistory.deleteBooking') }} <span class="glyphicon glyphicon-trash"></span></button>
+                                                        <button type="button" class="btn btn-list-history deleteWaitingPrepaymentBookingHistory" data-delwaitingprepay="{{ $booking->_id }}" data-loading-text="{{ __('bookingHistory.deleteBookingLoader') }}" autocomplete="off">{{ __('bookingHistory.deleteBooking') }} <span class="glyphicon glyphicon-trash"></span></button>
                                                     @endif
 
                                                     @if($booking->status === '5' && $booking->payment_status === '0') <!-- Waiting for payment (Failed)-->
                                                         <span class="label label-danger label-cabinlist">{{ __('bookingHistory.failedStatus') }}</span> <br>
-                                                        <button type="button" class="btn btn-list-history">{{ __('bookingHistory.deleteBooking') }} <span class="glyphicon glyphicon-trash"></span></button>
+                                                        <button type="button" class="btn btn-list-history deletePaymentFailedBookingHistory" data-delpaymentfailed="{{ $booking->_id }}" data-loading-text="{{ __('bookingHistory.deleteBookingLoader') }}" autocomplete="off">{{ __('bookingHistory.deleteBooking') }} <span class="glyphicon glyphicon-trash"></span></button>
                                                     @endif
 
                                                     @if($booking->status === '7' && $booking->typeofbooking === 1) <!-- Inquiry -->
@@ -116,7 +118,7 @@
                         </div>
                     </div>
                 @empty
-                    <p>No booking history</p>
+                    <p>{{ __('bookingHistory.noBookingHistory') }}</p>
                 @endforelse
 
                     {!! $bookings->links() !!}
@@ -124,4 +126,13 @@
         </div><br><br>
     </main>
 @endsection
+
+@push('scripts')
+    <script>
+        window.environment = {
+            confirmDeleteBooking: '<?php echo __('bookingHistory.confirmDeleteBooking'); ?>',
+            deleteFailed: '<?php echo __('bookingHistory.deleteFailed'); ?>'
+        }
+    </script>
+@endpush
 
