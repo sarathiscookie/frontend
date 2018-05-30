@@ -42,7 +42,7 @@
                 <tr><td colspan="1" style="font-weight:bold;">Personen</td><td colspan="6">{{ $cart->guests }}</td></tr>
                 <tr><td colspan="1" style="font-weight:bold;">Nächte</td><td colspan="6">{{ $dateDifference }}</td></tr>
                 @if($cart->status === '4' && $cart->payment_status === '2')
-                    <tr><td colspan="1" style="font-weight:bold;">Gutscheinwert</td><td colspan="6">Nicht bezahlt</td></tr>
+                    <tr><td colspan="1" style="font-weight:bold;">Gutscheinwert</td><td colspan="6">Ohne Zahlung</td></tr>
                 @else
                     <tr><td colspan="1" style="font-weight:bold;">Gutscheinwert</td><td colspan="6">{{ number_format($cart->prepayment_amount, 2, ',', '.') }} &euro;</td></tr>
                 @endif

@@ -15,14 +15,14 @@ return [
     | Language translation for headings, labels and error messages
     |
     */
-    'overviewHeading'                                       => 'Buchungshistorie',
-    'bookingNumber'                                         => 'Buchungsnummer',
+    'overviewHeading'                                       => 'Buchungs historie',
+    'bookingNumber'                                         => 'Buchungs nummer',
     'arrival'                                               => 'Anreise',
     'departure'                                             => 'Abreise',
     'beds'                                                  => 'Betten',
     'dorms'                                                 => 'Lager',
     'sleeps'                                                => 'Schlafplätze',
-    'bookingStatusHeading'                                  => 'Buchungsstatus',
+    'bookingStatusHeading'                                  => 'Buchungs status',
     'successStatus'                                         => 'Buchung erfolgreich',
     'waitingStatus'                                         => 'Warten auf Zahlung',
     'inquiryAcceptedStatus'                                 => 'Anfrage bestätigt',
