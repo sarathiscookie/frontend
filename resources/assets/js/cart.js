@@ -6,12 +6,6 @@ $(function(){
         }
     });
 
-    /* Set time count down */
-    //https://www.w3schools.com/howto/howto_js_countdown.asp
-
-    /* Delete booking from cart automatically */
-
-
     /* Character limit for comments begin */
 
     if($(".forComments").length > 0) {
@@ -22,13 +16,13 @@ $(function(){
         $.each(cartCommentsId, function(key, item) {
             var text_max = 300;
             $('#textarea_feedback_'+item).css('color', 'red');
-            $('#textarea_feedback_'+item).html(text_max + ' characters remaining');
+            $('#textarea_feedback_'+item).html('noch '+ text_max + ' Zeichen');
 
             $('#comments_'+item).keyup(function() {
                 var text_length = $('#comments_'+item).val().length;
                 var text_remaining = text_max - text_length;
 
-                $('#textarea_feedback_'+item).html(text_remaining + ' characters remaining');
+                $('#textarea_feedback_'+item).html('noch '+ text_remaining + ' Zeichen');
             });
         })
     }

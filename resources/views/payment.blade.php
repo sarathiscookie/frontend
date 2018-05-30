@@ -54,7 +54,7 @@
         <div class="col-md-2 col-md-2-booking2"></div>
         <div class="col-md-8 col-md-8-booking2" id="list-filter-booking2">
             <nav class="navbar navbar-default navbar-default-booking2">
-                <h2 class="cabin-head-booking2">Choose a payment</h2><h2 class="cabin-head-booking2">Step 1 of 3<span class="glyphicon glyphicon-booking2 glyphicon-question-sign" title="You are on the first of three steps to book a cabin night. Control your data and enter next step to get to the next step."></span></h2>
+                <h2 class="cabin-head-booking2">{{ __('payment.choosePaymentHeading') }}</h2><h2 class="cabin-head-booking2">Step 1 of 3<span class="glyphicon glyphicon-booking2 glyphicon-question-sign" title="You are on the first of three steps to book a cabin night. Control your data and enter next step to get to the next step."></span></h2>
             </nav>
         </div>
         <div class="col-md-2 col-md-2-booking2"></div>
@@ -86,7 +86,7 @@
             @if (session()->has('availableStatus') && session()->get('availableStatus') === 'success')
                 <div class="alert alert-success alert-dismissible" role="alert">
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <strong>Well done!</strong> Here you can choose your payment.
+                    <strong>{{ __('payment.wellDone') }}</strong> {{ __('payment.wellDoneMsg') }}
                 </div>
             @endif
 
@@ -102,10 +102,10 @@
                                     <div class="col-sm-12 month-opening-booking2 col-sm-12-booking2">
                                         <div class="form-group row row-booking2">
                                             <ul class="payment-options-booking2">
-                                                <li class="li-head-booking2">Kind of payment</li>
+                                                <li class="li-head-booking2">{{ __('payment.kindOfPayment') }}</li>
 
                                                 <li class="check-it-list-booking2 check-it-list-spe-booking2 line-col-booking2" id="bill-booking2">
-                                                    <input type="radio" name="payment" class="check-it-booking2 radio-payment" value="payByBill" @if(in_array('no', $payByBillPossible)) disabled @endif> Pay by bill <span class="glyphicon glyphicon-booking2 glyphicon-question-sign" title="This button will enable if there is three weeks diff b/w current date and checking from date."></span>
+                                                    <input type="radio" name="payment" class="check-it-booking2 radio-payment" value="payByBill" @if(in_array('no', $payByBillPossible)) disabled @endif> {{ __('payment.payByBill') }} <span class="glyphicon glyphicon-booking2 glyphicon-question-sign" title="This button will enable if there is three weeks diff b/w current date and checking from date."></span>
                                                 </li>
 
                                                 <li class="check-it-list-booking2 check-it-list-spe-booking2">
@@ -133,7 +133,7 @@
                                                 </li>
 
                                                 <li class="check-it-list-booking2 check-it-list-spe-booking2 line-col-booking2">
-                                                    <input type="radio" name="payment" class="check-it-booking2 radio-payment" id="creditCard" value="creditCard"> Creditcard
+                                                    <input type="radio" name="payment" class="check-it-booking2 radio-payment" id="creditCard" value="creditCard"> {{ __('payment.creditcard') }}
                                                 </li>
 
                                                 <li class="pay-logo-booking2 line-col-booking2">
@@ -185,15 +185,15 @@
                                             </ul>
 
                                             <ul class="payment-options-booking2">
-                                                <li class="li-head-booking2">Terms and conditions</li>
-                                                <li class="check-it-list-booking2"><input class="check-it-booking2" type="checkbox"><a href="#"> Please confirm the privacy of Huetten-Holiday.de</a></li>
-                                                <li class="check-it-list-booking2"><input class="check-it-booking2" type="checkbox"><a href="#"> Please confirm the terms and conditions of Huetten-Holiday.de</a></li>
+                                                <li class="li-head-booking2">{{ __('payment.termsConditions') }}</li>
+                                                <li class="check-it-list-booking2"><input class="check-it-booking2" type="checkbox"><a href="#"> {{ __('payment.confirmThePrivacy') }}</a></li>
+                                                <li class="check-it-list-booking2"><input class="check-it-booking2" type="checkbox"><a href="#"> {{ __('payment.confirmTheTerms') }}</a></li>
                                             </ul>
                                             <ul class="payment-options-booking2">
-                                                <li class="li-head-booking2">Newscenter</li>
-                                                <li class="check-it-list-booking2"><input class="check-it-booking2" type="checkbox" checked="checked" disabled=""> Informations about your booking</li>
-                                                <li class="check-it-list-booking2"><input class="check-it-booking2" type="checkbox" checked="checked"> Updates about our system</li>
-                                                <li class="check-it-list-booking2"><input class="check-it-booking2" type="checkbox" checked="checked"> Subscribe to Newsletter</li>
+                                                <li class="li-head-booking2">{{ __('payment.newscenter') }}</li>
+                                                <li class="check-it-list-booking2"><input class="check-it-booking2" type="checkbox" checked="checked" disabled=""> {{ __('payment.informationBooking') }}</li>
+                                                <li class="check-it-list-booking2"><input class="check-it-booking2" type="checkbox" checked="checked"> {{ __('payment.updatedAboutSystem') }}</li>
+                                                <li class="check-it-list-booking2"><input class="check-it-booking2" type="checkbox" checked="checked"> {{ __('payment.subscribeNewsletter') }}</li>
                                             </ul>
                                         </div>
                                     </div>
@@ -216,12 +216,12 @@
                                         @isset($sumPrepaymentAmount)
                                             <div class="row row-booking2 sumPrepayAmount" data-sumprepayamount="{{ $sumPrepaymentAmount }}">
                                                 <div class="col-sm-12 month-opening-booking2 col-sm-12-booking2">
-                                                    <h5>Complete Payment<span class="glyphicon glyphicon-booking2 glyphicon-question-sign" title="Here all costs are listed again. The service fee helps us operate Huetten-Holiday and offer services like our live-chat for your trip. It contains sales tax."></span></h5>
+                                                    <h5>{{ __('payment.completePayment') }}<span class="glyphicon glyphicon-booking2 glyphicon-question-sign" title="Here all costs are listed again. The service fee helps us operate Huetten-Holiday and offer services like our live-chat for your trip. It contains sales tax."></span></h5>
                                                 </div>
                                             </div>
                                             <div class="row row-booking2">
                                                 <div class="col-sm-12 col-sm-12-extra-booking2 col-sm-12-booking2-booking2">
-                                                    <p class="info-listing-booking2">Deposit:</p><p class="info-listing-price-booking2">{{ number_format($sumPrepaymentAmount, 2, ',', '.') }}&euro;</p>
+                                                    <p class="info-listing-booking2">{{ __('payment.deposit') }}:</p><p class="info-listing-price-booking2">{{ number_format($sumPrepaymentAmount, 2, ',', '.') }}&euro;</p>
                                                     <div class="afterRedeem" style="display: none">
                                                         <div class="redeemAmount"></div>
                                                         <div class="moneyBalance"></div>
@@ -230,13 +230,13 @@
 
                                                     <div class="jsServiceFee"></div>
                                                     <div class="serviceFee">
-                                                        <p class="info-listing-booking2">Service fee:</p><p class="info-listing-price-booking2">{{ $serviceTax }}%</p>
+                                                        <p class="info-listing-booking2">{{ __('payment.serviceFee') }}:</p><p class="info-listing-price-booking2">{{ $serviceTax }}%</p>
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="row row-booking2">
                                                 <div class="col-sm-12 col-sm-12-extra-booking2 col-sm-12-booking2 totalPrepayAmount">
-                                                    <h5 class="info-listing-booking2">Payment incl.<br /> Service fee:</h5><h5 class="info-listing-price-booking2 sumPrepayServiceTotal">{{ number_format($prepayServiceTotal, 2, ',', '.') }}&euro;</h5>
+                                                    <h5 class="info-listing-booking2">{{ __('payment.paymentIncl') }}.<br /> {{ __('payment.paymentInclServiceFee') }}:</h5><h5 class="info-listing-price-booking2 sumPrepayServiceTotal">{{ number_format($prepayServiceTotal, 2, ',', '.') }}&euro;</h5>
                                                 </div>
                                             </div>
                                         @endisset
@@ -249,8 +249,8 @@
 
                 <div>
                     <div id="btn-ground-2-booking2">
-                        <button type="submit" class="btn btn-default btn-default-booking2 btn-sm btn-details-booking2 nonCreditCardButton">Book the Cabin</button>
-                        <input id="paymentsubmit" class="btn btn-default btn-default-booking2 btn-sm btn-details-booking2" type="button" value="Book the Cabin" onclick="check();" style="display: none;">
+                        <button type="submit" class="btn btn-default btn-default-booking2 btn-sm btn-details-booking2 nonCreditCardButton">{{ __('payment.bookCabin') }}</button>
+                        <input id="paymentsubmit" class="btn btn-default btn-default-booking2 btn-sm btn-details-booking2" type="button" value="{{ __('payment.bookCabin') }}" onclick="check();" style="display: none;">
                     </div>
                 </div>
             </form>
