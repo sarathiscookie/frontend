@@ -136,10 +136,10 @@
         </li>
         <li class="footerabschnitte">
             <h3 class="footerinhalt footer-headliner">{{ __('app.footerLegal') }}</h3><br />
-            <a class="footerinhalt" href="">{{ __('app.footerImprint') }}</a><br />
-            <a class="footerinhalt" href="">{{ __('app.footerDataProtection') }}</a><br />
-            <a class="footerinhalt" href="">{{ __('app.footerTermsOfService') }}</a><br />
-            <a class="footerinhalt" href="">{{ __('app.footerImageRights') }}</a>
+            <a class="footerinhalt" href="/impress">{{ __('app.footerImprint') }}</a><br />
+            <a class="footerinhalt" href="/data/protection">{{ __('app.footerDataProtection') }}</a><br />
+            <a class="footerinhalt" href="/terms">{{ __('app.footerTermsOfService') }}</a><br />
+            <a class="footerinhalt" href="/image/rights">{{ __('app.footerImageRights') }}</a>
         </li>
     </ul>
 </footer>

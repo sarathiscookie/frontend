@@ -120,6 +120,26 @@ Route::get('/job/trainee', function(){
     return view('jobTrainee');
 });
 
+/* Terms and Conditions */
+Route::get('/terms', function(){
+    return view('termsConditions');
+});
+
+/* Impress */
+Route::get('/impress', function(){
+    return view('impress');
+});
+
+/* image Rights */
+Route::get('/image/rights', function(){
+    return view('imageRights');
+});
+
+/* Data protection */
+Route::get('/data/protection', function(){
+    return view('dataProtection');
+});
+
 /*
 |--------------------------------------------------------------------------
 | Middleware group for authentication
