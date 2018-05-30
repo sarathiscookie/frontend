@@ -924,7 +924,7 @@ class PaymentController extends Controller
     }
 
     /**
-     * Download the specified resource.
+     * Download prepayment bill.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response

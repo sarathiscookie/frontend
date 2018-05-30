@@ -102,7 +102,13 @@
 
                                                     @if($booking->status === '5' && $booking->payment_status === '3') <!-- Waiting for payment (prepayment)-->
                                                         <span class="label label-warning label-cabinlist">{{ __('bookingHistory.waitingStatus') }}</span> <br>
-                                                        <button type="button" class="btn btn-list-history">{{ __('bookingHistory.downloadBill') }} <span class="glyphicon glyphicon-cloud-download"></span></button>
+                                                        @if(!empty($booking->order_id))
+                                                            <form action="{{route('payment.prepayment.download')}}" method="POST">
+                                                                {{ csrf_field() }}
+                                                                <input type="hidden" name="order_id" id="order_id" value="{{ $booking->order_id }}">
+                                                                <button type="submit" class="btn btn-list-history">{{ __('bookingHistory.downloadBill') }} <span class="glyphicon glyphicon-cloud-download"></span></button>
+                                                            </form>
+                                                        @endif
                                                         <button type="button" class="btn btn-list-history deleteWaitingPrepaymentBookingHistory" data-delwaitingprepay="{{ $booking->_id }}" data-loading-text="{{ __('bookingHistory.deleteBookingLoader') }}" autocomplete="off">{{ __('bookingHistory.deleteBooking') }} <span class="glyphicon glyphicon-trash"></span></button>
                                                     @endif
                                                 </div>

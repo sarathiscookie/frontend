@@ -227,7 +227,7 @@ class BookingHistoryController extends Controller
     }
 
     /**
-     * Download the specified resource.
+     * Download the booking voucher.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
