@@ -7,6 +7,7 @@ use App\Cabin;
 use App\Country;
 use App\Booking;
 use App\Userlist;
+use App\PrivateMessage;
 use App\Http\Requests\InquiryRequest;
 use Carbon\Carbon;
 use DateTime;
@@ -492,7 +493,7 @@ class InquiryController extends Controller
                     }
                     /* Create invoice number end */
 
-                    /* Inquiry booking begin */
+                    /* Inquiry booking */
                     $inquiry                          = new Booking;
                     $inquiry->cabinname               = $request->session()->get('cabin_name');
                     $inquiry->cabin_id                = new \MongoDB\BSON\ObjectID($request->session()->get('cabin_id'));
@@ -505,7 +506,6 @@ class InquiryController extends Controller
                     $inquiry->sleeps                  = ($cabin->sleeping_place === 1) ? $sleepsRequest : $requestBedsSumDorms;
                     $inquiry->guests                  = ($cabin->sleeping_place === 1) ? $sleepsRequest : $requestBedsSumDorms;
                     $inquiry->halfboard               = ($request->halfboard === '1') ? $request->halfboard : '0';
-                    $inquiry->comments                = $request->comments;
                     $inquiry->invoice_number          = $invoiceNumber;
                     $inquiry->typeofbooking           = 1;  // 1 = Inquiry
                     $inquiry->read                    = 0;
@@ -516,10 +516,9 @@ class InquiryController extends Controller
                     $inquiry->payment_status          = "0";
                     $inquiry->is_delete               = 0;
                     $inquiry->save();
-                    /* Inquiry booking end*/
 
-                    /* If inquiry saved then update cabin invoice auto generation number, delete session and user details begin. */
-                    if($inquiry) {
+                    /*If inquiry saved then update cabin invoice auto generation number, delete session, update user details and store message*/
+                    if(!empty($inquiry)) {
                         /* Update cabin invoice_autonum begin */
                         Cabin::where('is_delete', 0)
                             ->where('other_cabin', "0")
@@ -540,7 +539,7 @@ class InquiryController extends Controller
                         $request->session()->forget('guests');
 
                         /* Store user details begin */
-                        $userDetails               = Userlist::find(Auth::user()->_id);
+                        $userDetails               = Userlist::where('usrActive', '1')->where('is_delete', 0)->find(Auth::user()->_id);
                         $userDetails->usrAddress   = $request->street;
                         $userDetails->usrCity      = $request->city;
                         $userDetails->usrCountry   = $request->country;
@@ -548,11 +547,20 @@ class InquiryController extends Controller
                         $userDetails->usrMobile    = $request->mobile;
                         $userDetails->usrTelephone = $request->phone;
                         $userDetails->save();
+
+                        /* Store message */
+                        $privateMessage              = new PrivateMessage;
+                        $privateMessage->sender_id   = new \MongoDB\BSON\ObjectID(Auth::user()->_id);
+                        $privateMessage->receiver_id = new \MongoDB\BSON\ObjectID($cabin->cabin_owner);
+                        $privateMessage->booking_id  = new \MongoDB\BSON\ObjectID($inquiry->_id);
+                        $privateMessage->subject     = $invoiceNumber;
+                        $privateMessage->text        = $request->comments;
+                        $privateMessage->read        = 0;
+                        $privateMessage->save();
                     }
                     else {
                         abort(404);
                     }
-                    /* If inquiry saved then update cabin invoice auto generation number, delete session and user details end. */
 
                 }
             }
