@@ -16,7 +16,7 @@ return [
       |
       */
     'panelHeading'                => 'Login',
-    'email'                       => 'Email',
+    'email'                       => 'E-Mail Address',
     'emailPlaceholder'            => 'email',
     'password'                    => 'Password',
     'passwordPlaceholder'         => 'password',
