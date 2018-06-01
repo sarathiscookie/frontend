@@ -265,7 +265,7 @@
                                                                                         <table border="0" cellpadding="0" cellspacing="0">
                                                                                             <tr>
                                                                                                 <td>
-                                                                                                    <a href="{{url('user/verify', $user['token'])}}" class="button button-blue" target="_blank">Konto bestätigen</a>
+                                                                                                    <a href="{{url('user/verify', $user['token'])}}" target="_blank">Konto bestätigen</a>
                                                                                                 </td>
                                                                                             </tr>
                                                                                         </table>

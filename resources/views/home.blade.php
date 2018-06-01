@@ -18,7 +18,7 @@
                 </div>
                 <br>
                 <div class="col-sm-4 col-sm-4-home col-2 col-2-home" id="list-col4-home">
-                    <a href="#"><img src="{{ asset('storage/img/huette.jpg') }}" class="img-responsive" alt="image"></a>
+                    <a href="/search"><img src="{{ asset('storage/img/huette.jpg') }}" class="img-responsive" alt="image"></a>
                     <div class="navbar-picture-home"><strong>{{ __('home.imageLabelCabinList') }}</strong></div>
                 </div>
                 <div class="col-sm-4 col-sm-4-home col-2 col-2-home" id="region-col4-home">
