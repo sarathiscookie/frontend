@@ -37,5 +37,7 @@ return[
     'bookingSuccessStatus'                             => 'Thank you very much for booking with Huetten-Holiday.de.',
     'bookingFailureStatus'                             => 'There has been an error on your request.',
     'bookingErrorStatus'                               => 'There has been an error on your request.',
-    'bookingFailed'                                    => 'Buchung fehlgeschlagen',
+    'bookingFailed'                                    => 'Booking Failed',
+    'bookingSuccess'                                   => 'Booking Successful',
+    'voucherMsg'                                       => 'You will get a voucher in the next minutes per Mail. Enjoy your trip!',
 ];
