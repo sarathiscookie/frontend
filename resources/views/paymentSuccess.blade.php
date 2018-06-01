@@ -22,7 +22,7 @@
                                 <div class="col-sm-12 month-opening-booking3 col-sm-12-booking3">
                                     <h2>Well Done! Successfully booked</h2>
                                     <p id="info-text-booking3">@if (session()->has('bookingSuccessStatus')) {{ session()->get('bookingSuccessStatus') }} @endif</p>
-                                    <p id="info-text-booking3">You will get a Voucher in the next minutes per Mail. Enjoy your trip!</p>
+                                    <p id="info-text-booking3">You will get a voucher in the next minutes per Mail. Enjoy your trip!</p>
                                 </div>
                             </div>
                         </div>

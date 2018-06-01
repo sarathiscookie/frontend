@@ -228,10 +228,10 @@ class PaymentController extends Controller
                         /* Send email to guest after successful booking */
                         Mail::to($user->usrEmail)->send(new BookingSuccess());
 
-                        return redirect()->route('payment.success')->with('bookingSuccessStatus', 'Thank you very much for booking with Huetten-Holiday.de.');
+                        return redirect()->route('payment.success')->with('bookingSuccessStatus', __('payment.bookingSuccessStatus'));
                     }
                     else {
-                        return redirect()->back()->with('bookingFailureStatus', 'There has been an error processing your request.');
+                        return redirect()->back()->with('bookingFailureStatus', __('payment.bookingFailureStatus'));
                     }
                 }
                 else {
@@ -290,11 +290,11 @@ class PaymentController extends Controller
                                 $orderNumber->number = $order_num;
                                 $orderNumber->save();
 
-                                $request->session()->flash('bookingSuccessStatus', 'Thank you very much for booking with Huetten-Holiday.de.');
+                                $request->session()->flash('bookingSuccessStatus', __('payment.bookingSuccessStatus'));
                                 return redirect()->away($paymentGateway["redirecturl"]);
                             }
                             else {
-                                return redirect()->back()->with('bookingFailureStatus', 'There has been an error processing your request.');
+                                return redirect()->back()->with('bookingFailureStatus', __('payment.bookingFailureStatus'));
                             }
                         }
                         elseif ($paymentGateway["status"] === "APPROVED") { // If card is not 3d secure and prepayment(PayByBill) return status is APPROVED and "redirect url" will not return. We manually redirect to success page.
@@ -366,23 +366,23 @@ class PaymentController extends Controller
                                 /* If guest paid using payByBill it will redirect to bank details listing page. Condition begin*/
                                 if($request->payment === 'payByBill') {
                                     if(in_array('yes', $payByBillPossible)) {
-                                        $request->session()->flash('bookingSuccessStatusPrepayment', 'Thank you very much for booking with Huetten-Holiday.de.');
+                                        $request->session()->flash('bookingSuccessStatusPrepayment', __('payment.bookingSuccessStatus'));
                                         return redirect()->route('payment.prepayment')->with('order', $order);
                                     }
                                     else {
-                                        return redirect()->back()->with('bookingFailureStatus', 'There has been an error processing your request.');
+                                        return redirect()->back()->with('bookingFailureStatus', __('payment.bookingFailureStatus'));
                                     }
                                 }
                                 /* If guest paid using payByBill it will redirect to bank details listing page. Condition end*/
 
-                                return redirect()->route('payment.success')->with('bookingSuccessStatus', 'Thank you very much for booking with Huetten-Holiday.de.');
+                                return redirect()->route('payment.success')->with('bookingSuccessStatus', __('payment.bookingSuccessStatus'));
                             }
                             else {
-                                return redirect()->back()->with('bookingFailureStatus', 'There has been an error processing your request.');
+                                return redirect()->back()->with('bookingFailureStatus', __('payment.bookingFailureStatus'));
                             }
                         }
                         else {
-                            return redirect()->route('payment.error')->with('bookingErrorStatus', 'There has been an error or your request.');
+                            return redirect()->route('payment.error')->with('bookingErrorStatus', __('payment.bookingErrorStatus'));
                         }
                     }
                     else {
@@ -444,11 +444,11 @@ class PaymentController extends Controller
                                 $cartUpdate->save();
                             }
 
-                            $request->session()->flash('bookingSuccessStatus', 'Thank you very much for booking with Huetten-Holiday.de.');
+                            $request->session()->flash('bookingSuccessStatus', __('payment.bookingSuccessStatus'));
                             return redirect()->away($paymentGateway["redirecturl"]);
                         }
                         else {
-                            return redirect()->back()->with('bookingFailureStatus', 'There has been an error processing your request.');
+                            return redirect()->back()->with('bookingFailureStatus', __('payment.bookingFailureStatus'));
                         }
                     }
                     elseif ($paymentGateway["status"] == "APPROVED") { // If card is not 3d secure and prepayment(PayByBill) return status is APPROVED and "redirect url" will not return. We manually redirect to success page.
@@ -516,23 +516,23 @@ class PaymentController extends Controller
                             /* If guest paid using payByBill it will redirect to bank details listing page. Condition begin*/
                             if($request->payment === 'payByBill') {
                                 if(in_array('yes', $payByBillPossible)) {
-                                    $request->session()->flash('bookingSuccessStatusPrepayment', 'Thank you very much for booking with Huetten-Holiday.de.');
+                                    $request->session()->flash('bookingSuccessStatusPrepayment', __('payment.bookingSuccessStatus'));
                                     return redirect()->route('payment.prepayment')->with('order', $order);
                                 }
                                 else {
-                                    return redirect()->back()->with('bookingFailureStatus', 'There has been an error processing your request.');
+                                    return redirect()->back()->with('bookingFailureStatus', __('payment.bookingFailureStatus'));
                                 }
                             }
                             /* If guest paid using payByBill it will redirect to bank details listing page. Condition end*/
 
-                            return redirect()->route('payment.success')->with('bookingSuccessStatus', 'Thank you very much for booking with Huetten-Holiday.de.');
+                            return redirect()->route('payment.success')->with('bookingSuccessStatus', __('payment.bookingSuccessStatus'));
                         }
                         else {
-                            return redirect()->back()->with('bookingFailureStatus', 'There has been an error processing your request.');
+                            return redirect()->back()->with('bookingFailureStatus', __('payment.bookingFailureStatus'));
                         }
                     }
                     else {
-                        return redirect()->route('payment.error')->with('bookingErrorStatus', 'There has been an error or pending processing your request.');
+                        return redirect()->route('payment.error')->with('bookingErrorStatus', __('payment.bookingErrorStatus'));
                     }
                 }
                 else {

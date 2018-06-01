@@ -20,7 +20,7 @@
                         <div class="col-sm-10 text-left">
                             <div class="row row-booking3">
                                 <div class="col-sm-12 month-opening-booking3 col-sm-12-booking3">
-                                    <h2>OOPS! Booing Failed</h2>
+                                    <h2>OOPS! {{ __('payment.bookingFailed') }}</h2>
                                     <p id="info-text-booking3">@if (session()->has('bookingErrorStatus')) {{ session()->get('bookingErrorStatus') }} @endif</p>
                                 </div>
                             </div>
@@ -30,7 +30,7 @@
             </div>
             <div>
                 <div id="btn-ground-2-booking3">
-                    <a href="/booking/history" class="btn btn-default btn-default-booking3 btn-sm btn-details-booking3">Bookinghistory</a>
+                    <a href="/booking/history" class="btn btn-default btn-default-booking3 btn-sm btn-details-booking3">{{ __('prepayment.bookingHistoryLink') }}</a>
                 </div>
             </div>
         </div><br><br>

@@ -33,5 +33,9 @@ return[
     'serviceFee'                                       => 'Service Fee',
     'paymentIncl'                                      => 'Payment Incl.',
     'paymentInclServiceFee'                            => 'Service Fee',
-    'bookCabin'                                        => 'Book Cabin'
+    'bookCabin'                                        => 'Book Cabin',
+    'bookingSuccessStatus'                             => 'Thank you very much for booking with Huetten-Holiday.de.',
+    'bookingFailureStatus'                             => 'There has been an error on your request.',
+    'bookingErrorStatus'                               => 'There has been an error on your request.',
+    'bookingFailed'                                    => 'Buchung fehlgeschlagen',
 ];

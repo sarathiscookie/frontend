@@ -234,6 +234,9 @@ Route::group(['middleware' => ['auth']], function () {
     /* Delete rejected inquiry booking */
     Route::post('/booking/history/delete/rejected/inquiry', 'BookingHistoryController@destroyRejectedInquiry')->name('booking.history.delete.rejected.inquiry');
 
+    /* Cancel normal booking */
+    Route::post('/booking/history/cancel', 'BookingHistoryController@cancelNormalBooking')->name('booking.history.cancel');
+
     /*
     |--------------------------------------------------------------------------
     | Payment

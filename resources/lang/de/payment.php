@@ -34,5 +34,9 @@ return[
     'serviceFee'                                       => 'Servicegebühr',
     'paymentIncl'                                      => 'Anzahlung inkl.',
     'paymentInclServiceFee'                            => 'Servicegebühr',
-    'bookCabin'                                        => 'Hütte Buchen'
+    'bookCabin'                                        => 'Hütte Buchen',
+    'bookingSuccessStatus'                             => 'Vielen Dank für die Buchung mit Huetten-Holiday.de.',
+    'bookingFailureStatus'                             => 'Ein Fehler bei der Ihrer Anfrage.',
+    'bookingErrorStatus'                               => 'Ein Fehler bei der Ihrer Anfrage.',
+    'bookingFailed'                                    => 'Buchung fehlgeschlagen',
 ];
