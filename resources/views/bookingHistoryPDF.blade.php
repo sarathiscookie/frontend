@@ -25,7 +25,7 @@
     <tr>
         <td colspan="3">
             <h2 style="font-size:20px;padding-top:40px;padding-bottom:5px;color:#afca14;font-weight:bold;" >Ihre Daten</h2>
-            <table style="padding:10px 30px;width:100%;font-family:arial,sans-serif;font-size:13px;background-color:#D9D9D9;">
+            <table style="padding:12px 30px;width:100%;font-family:arial,sans-serif;font-size:13px;background-color:#D9D9D9;">
                 <tr><td colspan="1" style="font-weight:bold;">Name</td><td colspan="6">{{ Auth::user()->usrFirstname }}</td></tr>
                 <tr><td colspan="1" style="font-weight:bold;">Vorname</td><td colspan="6">{{ Auth::user()->usrLastname }}</td></tr>
                 <tr><td colspan="1" style="font-weight:bold;">Wohnort</td><td colspan="6">{{ Auth::user()->usrAddress }} <br> {{ Auth::user()->usrZip }} {{ Auth::user()->usrCity }}</td></tr>
@@ -34,7 +34,7 @@
         </td>
         <td colspan="4">
             <h2 style="font-size:20px;padding-top:40px;padding-bottom:5px;color:#afca14;font-weight:bold;" >Ihre Buchungsübersicht</h2>
-            <table style="padding:10px 30px;width:100%;font-family:arial,sans-serif;font-size:13px;background-color:#D9D9D9;">
+            <table style="padding:0px 30px;width:100%;font-family:arial,sans-serif;font-size:13px;background-color:#D9D9D9;">
                 <tr><td colspan="1" style="font-weight:bold;">Hütte</td><td colspan="6">{{ $cart->cabinname }}</td></tr>
                 <tr><td colspan="1" style="font-weight:bold;">Buchungsnr</td><td colspan="6">{{ $cart->invoice_number }}</td></tr>
                 <tr><td colspan="1" style="font-weight:bold;">Anreise</td><td colspan="6">{{ $cart->checkin_from->format('d.m.Y') }}</td></tr>
