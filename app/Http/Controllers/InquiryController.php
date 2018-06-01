@@ -510,6 +510,7 @@ class InquiryController extends Controller
                     $inquiry->typeofbooking           = 1;  // 1 = Inquiry
                     $inquiry->read                    = 0;
                     $inquiry->status                  = '7';
+                    $inquiry->reservation_cancel      = $cabin->reservation_cancel;
                     $inquiry->inquirystatus           = 0; //0 = waiting, 1 = Approved, 2 = Rejected
                     $inquiry->prepayment_amount       = round($sumPrepaymentAmount, 2);
                     $inquiry->total_prepayment_amount = round($sumPrepaymentAmountServiceTotal, 2);

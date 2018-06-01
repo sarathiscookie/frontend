@@ -1356,21 +1356,22 @@ class SearchController extends Controller
                             $invoiceNumber = $invoiceCode . "-" . date("y") . "-" . $autoNumber;
                         }
                         /* Create invoice number end */
-                        $booking                   = new Booking;
-                        $booking->cabinname        = $cabin->name;
-                        $booking->cabin_id         = new \MongoDB\BSON\ObjectID($cabin->_id);
-                        $booking->checkin_from     = $this->getDateUtc($request->dateFrom);
-                        $booking->reserve_to       = $this->getDateUtc($request->dateTo);
-                        $booking->user             = new \MongoDB\BSON\ObjectID(Auth::user()->_id);
-                        $booking->beds             = $bedsRequest;
-                        $booking->dormitory        = $dormsRequest;
-                        $booking->invoice_number   = $invoiceNumber;
-                        $booking->sleeps           = ($cabin->sleeping_place === 1) ? $sleepsRequest : $requestBedsSumDorms;
-                        $booking->guests           = ($cabin->sleeping_place === 1) ? $sleepsRequest : $requestBedsSumDorms;
-                        $booking->bookingdate      = date('Y-m-d H:i:s');
-                        $booking->status           = "8"; //1=> Fix, 2=> Cancel, 3=> Completed, 4=> Request (Reservation), 5=> Waiting for payment, 6=> Expired, 7=> Inquiry, 8=> Cart
-                        $booking->cart_expiry_date = date('Y-m-d H:i:s', strtotime('1 hour'));
-                        $booking->is_delete        = 0;
+                        $booking                     = new Booking;
+                        $booking->cabinname          = $cabin->name;
+                        $booking->cabin_id           = new \MongoDB\BSON\ObjectID($cabin->_id);
+                        $booking->checkin_from       = $this->getDateUtc($request->dateFrom);
+                        $booking->reserve_to         = $this->getDateUtc($request->dateTo);
+                        $booking->user               = new \MongoDB\BSON\ObjectID(Auth::user()->_id);
+                        $booking->beds               = $bedsRequest;
+                        $booking->dormitory          = $dormsRequest;
+                        $booking->invoice_number     = $invoiceNumber;
+                        $booking->sleeps             = ($cabin->sleeping_place === 1) ? $sleepsRequest : $requestBedsSumDorms;
+                        $booking->guests             = ($cabin->sleeping_place === 1) ? $sleepsRequest : $requestBedsSumDorms;
+                        $booking->bookingdate        = date('Y-m-d H:i:s');
+                        $booking->status             = "8"; //1=> Fix, 2=> Cancel, 3=> Completed, 4=> Request (Reservation), 5=> Waiting for payment, 6=> Expired, 7=> Inquiry, 8=> Cart
+                        $booking->reservation_cancel = $cabin->reservation_cancel;
+                        $booking->cart_expiry_date   = date('Y-m-d H:i:s', strtotime('+1 day'));
+                        $booking->is_delete          = 0;
                         $booking->save();
 
                         /* If booking saved in to cart then update cabin invoice auto generation number begin. */
