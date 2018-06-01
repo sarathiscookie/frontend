@@ -29,7 +29,7 @@ class CartRequest extends FormRequest
             'city'    => 'required|max:255',
             'country' => 'required|not_in:0',
             'zipcode' => 'required|max:25',
-            'mobile'  => 'required|max:20',
+            'mobile'  => 'max:20',
             'phone'   => 'required|max:20'
         ];
 
