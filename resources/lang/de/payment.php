@@ -39,6 +39,7 @@ return[
     'bookingFailureStatus'                             => 'Ein Fehler bei der Ihrer Anfrage.',
     'bookingErrorStatus'                               => 'Ein Fehler bei der Ihrer Anfrage.',
     'bookingFailed'                                    => 'Buchung fehlgeschlagen',
-    'bookingSuccess'                                   => 'Erfolgreich gebucht',
+    'bookingSuccess'                                   => 'Gut gemacht! Erfolgreich gebucht',
     'voucherMsg'                                       => 'Sie erhalten einen Gutschein in den nächsten Minuten pro Meile. Viel Spaß bei deiner Reise!',
+    'booked'                                           => 'Gebucht!'
 ];

@@ -38,6 +38,7 @@ return[
     'bookingFailureStatus'                             => 'There has been an error on your request.',
     'bookingErrorStatus'                               => 'There has been an error on your request.',
     'bookingFailed'                                    => 'Booking Failed',
-    'bookingSuccess'                                   => 'Booking Successful',
+    'bookingSuccess'                                   => 'Well Done! Booking Successful',
     'voucherMsg'                                       => 'You will get a voucher in the next minutes per Mail. Enjoy your trip!',
+    'booked'                                           => 'Booked!'
 ];
