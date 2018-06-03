@@ -16,6 +16,7 @@ return[
     |
     */
 
+    'clickHere'                 => 'Click Here',
     'moreDetails'               => 'More details',
     'openingTimeHeading'        => 'Expected opening timing',
     'summerOpenTime'            => 'Summer open',
@@ -32,14 +33,20 @@ return[
     'addToCartButton'           => 'Add To Cart',
 
     /* Error messages */
+    'cartLimit'                 => 'Cart limit reached. You can add maximum 5',
+    'notSeasonTime'             => 'Sorry selected dates are not in a season time.',
     'holidayIncludedAlert'      => 'Booking not possible because holidays included',
-    'bedsNotAvailable'          => 'Beds are not available on',
-    'dormsNotAvailable'         => 'Dorms are not available on',
-    'alreadyFilledBedsDorms'    => 'Beds and Dorms are already filled on',
+    'bedsNotAvailable'          => ' Beds are not available on ',
+    'dormsNotAvailable'         => ' Dorms are not available on ',
+    'sleepsNotAvailable'        => ' Sleeps are not available on ',
+    'alreadyFilledBedsDorms'    => ' Beds and Dorms are already filled on ',
+    'alreadyFilledSleeps'       => ' Sleeps are already filled on ',
     'sixtyDaysExceed'           => 'Quota exceeded! Maximum 60 days you can book.',
     'dateGreater'               => 'Arrival date should be less than departure date.',
-    'inquiryAlert'              => 'On',
-    'inquiryAlert1'             => 'booking is possible if sum of beds and dorms is less than 5. But you can send enquiry. Please click here for inquiry',
+    'inquiryAlert'              => 'On ',
+    'inquiryAlert1'             => ' booking is possible if sum of beds and dorms is less than ',
+    'inquiryAlert2'             => ' But you can send enquiry. Please ',
+    'inquiryAlert3'             => ' for inquiry',
     'tomorrowLabel'             => 'Tomorrow sleeping place:',
     'tomorrowClosed'            => 'Closed',
     'tomorrowLimited'           => 'Limited',

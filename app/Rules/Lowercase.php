@@ -35,6 +35,6 @@ class Lowercase implements Rule
      */
     public function message()
     {
-        return 'The :attribute must be lowercase.';
+        return 'Die :attribute muss in Kleinbuchstaben geschrieben sein.';
     }
 }

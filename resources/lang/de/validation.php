@@ -112,8 +112,36 @@ return [
         ],
         'guest.*.comments' => [
             'max'   => 'The comments may not be greater than :max characters.'
+        ],
+        'password' => [
+            'required'      => 'Das passwort muss ausgefüllt sein.',
+            'string'        => 'Der passwort muss eine Zeichenfolge sein.',
+            'min'           => 'Das Passwort muss länger als 6 Zeichen sein',
+            'confirmed'     => 'Das passwort bestätigung stimmt nicht überein.',
+        ],
+        'firstName' => [
+            'required'      => 'Das vorname muss ausgefüllt sein.',
+            'string'        => 'Der vorname muss eine Zeichenfolge sein.',
+            'max'           => 'Die vorname dürfen nicht länger als :max Zeichen sein.'
+        ],
+        'lastName' => [
+            'required'      => 'Das nachname muss ausgefüllt sein.',
+            'string'        => 'Der nachname muss eine Zeichenfolge sein.',
+            'max'           => 'Die nachname dürfen nicht länger als :max Zeichen sein.'
+        ],
+        'email' => [
+            'required'      => 'Das E-Mail muss ausgefüllt sein.',
+            'string'        => 'Der E-Mail muss eine Zeichenfolge sein.',
+            'max'           => 'Die E-Mail dürfen nicht länger als :max Zeichen sein.',
+            'email'         => 'Die E-Mail muss eine gültige E-Mail-Adresse sein.',
+            'unique'        => 'Diese E-Mail wird bereits verwendet',
+        ],
+        'dataProtection' => [
+            'required'      => 'Der Datenschutz muss bestätigt werden'
+        ],
+        'termsService' => [
+            'required'      => 'Der AGB muss bestätigt werden'
         ]
-
     ],
 
     /*

@@ -16,6 +16,7 @@ return[
     |
     */
 
+    'clickHere'                 => 'klicken Sie hier',
     'moreDetails'               => 'Mehr Details',
     'openingTimeHeading'        => 'Vorraussichtliche Öffnungszeiten',
     'summerOpenTime'            => 'Öffnung Sommer',
@@ -32,14 +33,22 @@ return[
     'addToCartButton'           => 'Hüttenkorb hinzufügen',
 
     /* Error messages */
+    'cartLimit'                 => 'Cart limit reached. You can add maximum 5',
+    'notSeasonTime'             => 'Sorry selected dates are not in a season time.',
     'holidayIncludedAlert'      => 'Buchung nicht möglich, da ein Ruhetag dazwischen liegt',
-    'bedsNotAvailable'          => 'Keine freien Betten am',
-    'dormsNotAvailable'         => 'Keine freien Lager am',
-    'alreadyFilledBedsDorms'    => 'Betten und Lager sind ausgebucht am',
+    'bedsNotAvailable'          => ' Keine freien Betten am ',
+    'dormsNotAvailable'         => ' Keine freien Lager am ',
+    'sleepsNotAvailable'        => ' Keine freien Schlafplatz am ',
+    'alreadyFilledBedsDorms'    => ' Betten und Lager sind ausgebucht am ',
+    'alreadyFilledSleeps'       => ' Schlafplatz sind ausgebucht am ',
     'sixtyDaysExceed'           => 'Es können maximal 60 Tage gebucht werden',
     'dateGreater'               => 'Ankunftsdatum muss vor dem Abreisedatum liegen.',
     'inquiryAlert'              => 'Am',
-    'inquiryAlert1'             => 'können Sie ab einer Personenanzahl von 5 Personen nur eine Anfrage senden. Bitte klicken Sie hier für eine Anfrage',
+    'inquiryAlert1'             => 'können Sie ab einer Personenanzahl von ',
+    'inquiryAlert2'             => ' Personen nur eine Anfrage senden. Bitte ',
+    'inquiryAlert3'             => ' für eine Anfrage',
+
+
     'tomorrowLabel'             => 'Schlafplätze morgen:',
     'tomorrowClosed'            => 'geschlossen',
     'tomorrowLimited'           => 'begrenzt',
