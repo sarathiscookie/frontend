@@ -101,18 +101,19 @@ return [
 
     'custom' => [
         'guest.*.sleeps' => [
-            'required' => 'The sleeps field is required.',
+            'required' => 'Ein Schlafplatz erforderlich.',
             'not_in' => 'The selected :attribute is invalid.',
         ],
         'guest.*.beds' => [
-            'required_without' => 'The beds field is required when dormitory is not present.'
+            'required_without' => 'Betten werden benötigt, wenn kein Lager vorhanden ist.'
         ],
         'guest.*.dormitory' => [
-            'required_without' => 'The dormitory field is required when beds is not present.'
+            'required_without' => 'Lager werden benötigt, wenn kein Betten vorhanden ist.'
         ],
         'guest.*.comments' => [
             'max'   => 'The comments may not be greater than :max characters.'
         ],
+        /* Custom errors in login & registration page */
         'password' => [
             'required'      => 'Das passwort muss ausgefüllt sein.',
             'string'        => 'Der passwort muss eine Zeichenfolge sein.',
@@ -137,10 +138,38 @@ return [
             'unique'        => 'Diese E-Mail wird bereits verwendet',
         ],
         'dataProtection' => [
-            'required'      => 'Der Datenschutz muss bestätigt werden'
+            'required'      => 'Der datenschutz muss bestätigt werden'
         ],
         'termsService' => [
             'required'      => 'Der AGB muss bestätigt werden'
+        ],
+        /* Custom errors in cart page */
+        'street' => [
+            'required'      => 'Das straße muss ausgefüllt sein.',
+            'string'        => 'Der straße muss eine Zeichenfolge sein.',
+            'max'           => 'Die straße dürfen nicht länger als :max Zeichen sein.'
+        ],
+        'city' => [
+            'required'      => 'Das stadt muss ausgefüllt sein.',
+            'string'        => 'Der stadt muss eine Zeichenfolge sein.',
+            'max'           => 'Die stadt dürfen nicht länger als :max Zeichen sein.'
+        ],
+        'country' => [
+            'required'      => 'Das land muss ausgefüllt sein.',
+            'not_in'        => 'The selected :attribute is invalid.',
+        ],
+        'zipcode' => [
+            'required'      => 'Das postleizahl muss ausgefüllt sein.',
+            'string'        => 'Der postleizahl muss eine Zeichenfolge sein.',
+            'max'           => 'Die postleizahl dürfen nicht länger als :max Zeichen sein.'
+        ],
+        'mobile' => [
+            'max'           => 'Die handy dürfen nicht länger als :max Zeichen sein.'
+        ],
+        'phone' => [
+            'required'      => 'Das telefon muss ausgefüllt sein.',
+            'string'        => 'Der telefon muss eine Zeichenfolge sein.',
+            'max'           => 'Die telefon dürfen nicht länger als :max Zeichen sein.'
         ]
     ],
 

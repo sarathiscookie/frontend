@@ -1331,7 +1331,7 @@ class SearchController extends Controller
                                 }
                                 else {
                                     $availableStatus[] = 'notAvailable';
-                                    return response()->json(['error' => __('searchDetails.alreadyFilledSleeps').$generateBookingDate->format("jS F")], 422);
+                                    return response()->json(['error' => __("searchDetails.alreadyFilledSleeps").$generateBookingDate->format("jS F")], 422);
                                     /*print_r(' ----normal_regular_data---- ');
                                     print_r(' not_available_dates '. $dates);*/
                                 }

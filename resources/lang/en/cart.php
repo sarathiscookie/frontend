@@ -45,4 +45,8 @@ return [
     'continueBookingButton'                     => 'Continue Booking',
     'paymentButton'                             => 'Payment',
     'noBookingsCart'                            => 'No bookings in your cart',
+    'step1'                                     => 'Step 1 of 3',
+    'headingTitle'                              => 'You are on the first of three steps to book a cabin night.',
+    'headingThreeTitle'                         => 'Please check your data and correct if necessary.',
+    'bookingDeleted'                            => 'Booking deleted from your cart.',
 ];

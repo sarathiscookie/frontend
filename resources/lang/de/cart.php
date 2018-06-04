@@ -45,4 +45,8 @@ return [
     'continueBookingButton'             => 'Weitere Hütten aussuchen',
     'paymentButton'                     => 'Weiter zur Kasse',
     'noBookingsCart'                    => 'Keine Buchung in Ihrem Hüttenkorb',
+    'step1'                             => 'Step 1 of 3',
+    'headingTitle'                      => 'You are on the first of three steps to book a cabin night.',
+    'headingThreeTitle'                 => 'Please check your data and correct if necessary.',
+    'bookingDeleted'                    => 'Booking deleted from your cart.',
 ];

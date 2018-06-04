@@ -25,12 +25,12 @@ class CartRequest extends FormRequest
     {
         $rules = [
             'guest'   => 'array',
-            'street'  => 'required|max:255',
-            'city'    => 'required|max:255',
+            'street'  => 'required|string|max:255',
+            'city'    => 'required|string|max:255',
             'country' => 'required|not_in:0',
-            'zipcode' => 'required|max:25',
+            'zipcode' => 'required|string|max:25',
             'mobile'  => 'max:20',
-            'phone'   => 'required|max:20'
+            'phone'   => 'required|string|max:20'
         ];
 
         foreach($this->request->get('guest') as $key => $val){
