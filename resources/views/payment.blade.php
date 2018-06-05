@@ -54,7 +54,7 @@
         <div class="col-md-2 col-md-2-booking2"></div>
         <div class="col-md-8 col-md-8-booking2" id="list-filter-booking2">
             <nav class="navbar navbar-default navbar-default-booking2">
-                <h2 class="cabin-head-booking2">{{ __('payment.choosePaymentHeading') }}</h2><h2 class="cabin-head-booking2">Step 1 of 3<span class="glyphicon glyphicon-booking2 glyphicon-question-sign" title="You are on the first of three steps to book a cabin night. Control your data and enter next step to get to the next step."></span></h2>
+                <h2 class="cabin-head-booking2">{{ __('payment.choosePaymentHeading') }}</h2><h2 class="cabin-head-booking2">{{ __('payment.step2') }}<span class="glyphicon glyphicon-booking2 glyphicon-question-sign" title="{{ __('payment.step2Title') }}"></span></h2>
             </nav>
         </div>
         <div class="col-md-2 col-md-2-booking2"></div>
@@ -105,7 +105,7 @@
                                                 <li class="li-head-booking2">{{ __('payment.kindOfPayment') }}</li>
 
                                                 <li class="check-it-list-booking2 check-it-list-spe-booking2 line-col-booking2" id="bill-booking2">
-                                                    <input type="radio" name="payment" class="check-it-booking2 radio-payment" value="payByBill" @if(in_array('no', $payByBillPossible)) disabled @endif> {{ __('payment.payByBill') }} <span class="glyphicon glyphicon-booking2 glyphicon-question-sign" title="This button will enable if there is three weeks diff b/w current date and checking from date."></span>
+                                                    <input type="radio" name="payment" class="check-it-booking2 radio-payment" value="payByBill" @if(in_array('no', $payByBillPossible)) disabled @endif> {{ __('payment.payByBill') }} <span class="glyphicon glyphicon-booking2 glyphicon-question-sign" title="{{ __('payment.payByBillTitle') }}"></span>
                                                 </li>
 
                                                 <li class="check-it-list-booking2 check-it-list-spe-booking2">
@@ -216,7 +216,7 @@
                                         @isset($sumPrepaymentAmount)
                                             <div class="row row-booking2 sumPrepayAmount" data-sumprepayamount="{{ $sumPrepaymentAmount }}">
                                                 <div class="col-sm-12 month-opening-booking2 col-sm-12-booking2">
-                                                    <h5>{{ __('payment.completePayment') }}<span class="glyphicon glyphicon-booking2 glyphicon-question-sign" title="Here all costs are listed again. The service fee helps us operate Huetten-Holiday and offer services like our live-chat for your trip. It contains sales tax."></span></h5>
+                                                    <h5>{{ __('payment.completePayment') }}<span class="glyphicon glyphicon-booking2 glyphicon-question-sign" title="{{ __('cart.amountTitle') }}"></span></h5>
                                                 </div>
                                             </div>
                                             <div class="row row-booking2">

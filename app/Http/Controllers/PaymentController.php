@@ -55,7 +55,6 @@ class PaymentController extends Controller
      */
     public function index()
     {
-        //dd('test');
         /*if (session()->has('availableStatus') && session()->get('availableStatus') === 'success') {*/
             $prepayment_amount           = [];
             $moneyBalance                = 0;

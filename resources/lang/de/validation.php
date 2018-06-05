@@ -170,6 +170,9 @@ return [
             'required'      => 'Das telefon muss ausgefüllt sein.',
             'string'        => 'Der telefon muss eine Zeichenfolge sein.',
             'max'           => 'Die telefon dürfen nicht länger als :max Zeichen sein.'
+        ],
+        'payment' => [
+            'required'      => 'Das Zahlungs muss ausgefüllt sein.'
         ]
     ],
 

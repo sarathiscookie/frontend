@@ -41,5 +41,8 @@ return[
     'bookingFailed'                                    => 'Buchung fehlgeschlagen',
     'bookingSuccess'                                   => 'Gut gemacht! Erfolgreich gebucht',
     'voucherMsg'                                       => 'Sie erhalten einen Gutschein in den nächsten Minuten pro Meile. Viel Spaß bei deiner Reise!',
-    'booked'                                           => 'Gebucht!'
+    'booked'                                           => 'Gebucht!',
+    'step2'                                            => 'Step 2 of 3',
+    'step2Title'                                       => 'You are on the second of three steps to book a cabin night.',
+    'payByBillTitle'                                   => 'This button will enable if there is three weeks diff b/w current date and checking from date.',
 ];
