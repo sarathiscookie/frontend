@@ -48,5 +48,7 @@ return [
     'step1'                             => 'Step 1 of 3',
     'headingTitle'                      => 'You are on the first of three steps to book a cabin night.',
     'headingThreeTitle'                 => 'Please check your data and correct if necessary.',
+    'deleteButtonTitle'                 => 'Delete your Booking.',
+    'amountTitle'                       => 'Here all costs are listed again. The service fee helps us operate Huetten-Holiday and offer services like our live-chat for your trip. It contains sales tax.',
     'bookingDeleted'                    => 'Booking deleted from your cart.',
 ];

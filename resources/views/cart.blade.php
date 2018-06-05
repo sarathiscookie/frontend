@@ -11,7 +11,7 @@
         <div class="col-md-2 col-md-2-booking1"></div>
         <div class="col-md-8" id="list-filter-booking1">
             <nav class="navbar navbar-default navbar-default-booking1">
-                <h2 class="cabin-head-booking1">{{__('cart.cartHeading')}}</h2><h2 class="cabin-head-booking1">{{__('cart.step1')}}<span class="glyphicon glyphicon-question-sign" title={{__('cart.headingTitle')}}></span></h2>
+                <h2 class="cabin-head-booking1">{{__('cart.cartHeading')}}</h2><h2 class="cabin-head-booking1">{{__('cart.step1')}}<span class="glyphicon glyphicon-question-sign" title="{{__('cart.headingTitle')}}"></span></h2>
             </nav>
         </div>
         <div class="col-md-2 col-md-2-booking1"></div>
@@ -66,7 +66,7 @@
                                         </div>
                                         <div class="col-sm-7 text-left col-sm-7-booking1">
 
-                                            <h3 class="headliner-cabinname">{{ $cabinDetails->cabin($cart->cabin_id)->name }} - {{ $cabinDetails->cabin($cart->cabin_id)->region }}<span class="glyphicon glyphicon-question-sign" title={{__('cart.headingThreeTitle')}}></span></h3>
+                                            <h3 class="headliner-cabinname">{{ $cabinDetails->cabin($cart->cabin_id)->name }} - {{ $cabinDetails->cabin($cart->cabin_id)->region }}<span class="glyphicon glyphicon-question-sign" title="{{__('cart.headingThreeTitle')}}"></span></h3>
 
                                             @if (session()->has($notAvailStatus))
                                                 <div id="flash" class="alert alert-danger">
@@ -169,7 +169,7 @@
                                                 <div class="panel-body panel-body-booking1">
                                                     <div class="row row-booking1">
                                                         <div class="col-sm-12 col-sm-12-booking1 month-opening-booking1">
-                                                            <h5>{{__('cart.depositForCabin')}} <a href="/cart/delete/{{ $cart->cabin_id }}/{{ $cart->_id }}" class="pull-right"><span class="glyphicon glyphicon-trash" title="Delete your Booking"></span></a></h5>
+                                                            <h5>{{__('cart.depositForCabin')}} <a href="/cart/delete/{{ $cart->cabin_id }}/{{ $cart->_id }}" class="pull-right"><span class="glyphicon glyphicon-trash" title="{{__('cart.deleteButtonTitle')}}"></span></a></h5>
                                                         </div>
                                                     </div>
                                                     <div class="row row-booking1">
@@ -309,7 +309,7 @@
                                         <div class="panel-body panel-body-booking1">
                                             <div class="row row-booking1">
                                                 <div class="col-sm-12 col-sm-12-booking1 month-opening-booking1">
-                                                    <h5>{{ __('cart.completePayment') }}<span class="glyphicon glyphicon-question-sign" title="Here all costs are listed again. The service fee helps us operate Huetten-Holiday and offer services like our live-chat for your trip. It contains sales tax."></span></h5>
+                                                    <h5>{{ __('cart.completePayment') }}<span class="glyphicon glyphicon-question-sign" title="{{ __('cart.amountTitle') }}"></span></h5>
                                                 </div>
                                             </div>
 

@@ -24,12 +24,12 @@ class InquiryRequest extends FormRequest
     public function rules()
     {
         $rules =  [
-            'street'        => 'required|max:255',
-            'city'          => 'required|max:255',
+            'street'        => 'required|string|max:255',
+            'city'          => 'required|string|max:255',
             'country'       => 'required|not_in:0',
-            'zipcode'       => 'required|max:25',
-            'mobile'        => 'required|max:20',
-            'phone'         => 'required|max:20',
+            'zipcode'       => 'required|string|max:25',
+            'mobile'        => 'max:20',
+            'phone'         => 'required|string|max:20',
             'comments'      => 'max:300'
         ];
         if(session()->get('sleeping_place') === 1) {
@@ -40,5 +40,19 @@ class InquiryRequest extends FormRequest
             $rules['dormitory'] = 'required_without:beds';
         }
         return $rules;
+    }
+
+    /**
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array
+     */
+    public function messages()
+    {
+        return [
+            'beds.required_without'      => __('searchDetails.bedsRequired_without'),
+            'dormitory.required_without' => __('searchDetails.dormsRequired_without'),
+            'sleeps.required'            => __('searchDetails.sleepsRequired')
+        ];
     }
 }

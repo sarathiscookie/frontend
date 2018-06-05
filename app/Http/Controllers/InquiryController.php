@@ -157,7 +157,7 @@ class InquiryController extends Controller
                                 }
                                 else {
                                     $availableStatus[] = 'notPossible';
-                                    return redirect()->back()->with('error', 'You can select greater than values from select box');
+                                    return redirect()->back()->with('error', __("inquiry.alertChooseGreater"));
                                 }
                             }
                         }
@@ -176,7 +176,7 @@ class InquiryController extends Controller
                                     }
                                     else {
                                         $availableStatus[] = 'notPossible';
-                                        return redirect()->back()->with('error', 'You can select greater than values from select box');
+                                        return redirect()->back()->with('error', __("inquiry.alertChooseGreater"));
                                     }
                                 }
                             }
@@ -192,7 +192,7 @@ class InquiryController extends Controller
                                     }
                                     else {
                                         $availableStatus[] = 'notPossible';
-                                        return redirect()->back()->with('error', 'You can select greater than values from select box');
+                                        return redirect()->back()->with('error', __("inquiry.alertChooseGreater"));
                                     }
                                 }
                             }
@@ -208,7 +208,7 @@ class InquiryController extends Controller
                                     }
                                     else {
                                         $availableStatus[] = 'notPossible';
-                                        return redirect()->back()->with('error', 'You can select greater than values from select box');
+                                        return redirect()->back()->with('error', __("inquiry.alertChooseGreater"));
                                     }
                                 }
                             }
@@ -224,7 +224,7 @@ class InquiryController extends Controller
                                     }
                                     else {
                                         $availableStatus[] = 'notPossible';
-                                        return redirect()->back()->with('error', 'You can select greater than values from select box');
+                                        return redirect()->back()->with('error', __("inquiry.alertChooseGreater"));
                                     }
                                 }
                             }
@@ -240,7 +240,7 @@ class InquiryController extends Controller
                                     }
                                     else {
                                         $availableStatus[] = 'notPossible';
-                                        return redirect()->back()->with('error', 'You can select greater than values from select box');
+                                        return redirect()->back()->with('error', __("inquiry.alertChooseGreater"));
                                     }
                                 }
                             }
@@ -256,7 +256,7 @@ class InquiryController extends Controller
                                     }
                                     else {
                                         $availableStatus[] = 'notPossible';
-                                        return redirect()->back()->with('error', 'You can select greater than values from select box');
+                                        return redirect()->back()->with('error', __("inquiry.alertChooseGreater"));
                                     }
                                 }
                             }
@@ -272,7 +272,7 @@ class InquiryController extends Controller
                                     }
                                     else {
                                         $availableStatus[] = 'notPossible';
-                                        return redirect()->back()->with('error', 'You can select greater than values from select box');
+                                        return redirect()->back()->with('error', __("inquiry.alertChooseGreater"));
                                     }
                                 }
                             }
@@ -286,7 +286,7 @@ class InquiryController extends Controller
                             }
                             else {
                                 $availableStatus[] = 'notPossible';
-                                return redirect()->back()->with('error', 'You can select greater than values from select box');
+                                return redirect()->back()->with('error', __("inquiry.alertChooseGreater"));
                             }
                         }
 
@@ -313,7 +313,7 @@ class InquiryController extends Controller
                                 }
                                 else {
                                     $availableStatus[] = 'notPossible';
-                                    return redirect()->back()->with('error', 'You can select greater than values from select box');
+                                    return redirect()->back()->with('error', __("inquiry.alertChooseGreater"));
                                 }
                             }
                         }
@@ -332,7 +332,7 @@ class InquiryController extends Controller
                                     }
                                     else {
                                         $availableStatus[] = 'notPossible';
-                                        return redirect()->back()->with('error', 'You can select greater than values from select box');
+                                        return redirect()->back()->with('error', __("inquiry.alertChooseGreater"));
                                     }
                                 }
                             }
@@ -348,7 +348,7 @@ class InquiryController extends Controller
                                     }
                                     else {
                                         $availableStatus[] = 'notPossible';
-                                        return redirect()->back()->with('error', 'You can select greater than values from select box');
+                                        return redirect()->back()->with('error', __("inquiry.alertChooseGreater"));
                                     }
                                 }
                             }
@@ -364,7 +364,7 @@ class InquiryController extends Controller
                                     }
                                     else {
                                         $availableStatus[] = 'notPossible';
-                                        return redirect()->back()->with('error', 'You can select greater than values from select box');
+                                        return redirect()->back()->with('error', __("inquiry.alertChooseGreater"));
                                     }
                                 }
                             }
@@ -380,7 +380,7 @@ class InquiryController extends Controller
                                     }
                                     else {
                                         $availableStatus[] = 'notPossible';
-                                        return redirect()->back()->with('error', 'You can select greater than values from select box');
+                                        return redirect()->back()->with('error', __("inquiry.alertChooseGreater"));
                                     }
                                 }
                             }
@@ -396,7 +396,7 @@ class InquiryController extends Controller
                                     }
                                     else {
                                         $availableStatus[] = 'notPossible';
-                                        return redirect()->back()->with('error', 'You can select greater than values from select box');
+                                        return redirect()->back()->with('error', __("inquiry.alertChooseGreater"));
                                     }
                                 }
                             }
@@ -412,7 +412,7 @@ class InquiryController extends Controller
                                     }
                                     else {
                                         $availableStatus[] = 'notPossible';
-                                        return redirect()->back()->with('error', 'You can select greater than values from select box');
+                                        return redirect()->back()->with('error', __("inquiry.alertChooseGreater"));
                                     }
                                 }
                             }
@@ -428,7 +428,7 @@ class InquiryController extends Controller
                                     }
                                     else {
                                         $availableStatus[] = 'notPossible';
-                                        return redirect()->back()->with('error', 'You can select greater than values from select box');
+                                        return redirect()->back()->with('error', __("inquiry.alertChooseGreater"));
                                     }
                                 }
                             }
@@ -442,7 +442,7 @@ class InquiryController extends Controller
                             }
                             else {
                                 $availableStatus[] = 'notPossible';
-                                return redirect()->back()->with('error', 'You can select greater than values from select box');
+                                return redirect()->back()->with('error', __("inquiry.alertChooseGreater"));
                             }
 
                         }
@@ -566,14 +566,14 @@ class InquiryController extends Controller
                 }
             }
             else {
-                return redirect()->back()->with('error', 'Arrival date should be less than departure date.');
+                return redirect()->back()->with('error', __('searchDetails.dateGreater'));
             }
 
             if($available === 'success') {
                 return redirect()->route('booking.history')->with('response', $available);
             }
             else {
-                return redirect()->back()->with('error', 'Change a few things up and try submitting again');
+                return redirect()->back()->with('error', __('inquiry.errorTwo'));
             }
 
         }
