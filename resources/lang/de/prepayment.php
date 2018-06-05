@@ -27,5 +27,4 @@ return [
     'accountHolder'                                    => 'Kontoinhaber',
     'downloadBill'                                     => 'Herunterladen Ihre Zahlungsinformationen',
     'bookingHistoryLink'                               => 'Buchungs historie',
-    'booked'                                           => 'Gebucht'
 ];

@@ -27,5 +27,4 @@ return [
     'accountHolder'                                    => 'Account Holder',
     'downloadBill'                                     => 'Download your payment information',
     'bookingHistoryLink'                               => 'Booking History',
-    'booked'                                           => 'Booked'
 ];

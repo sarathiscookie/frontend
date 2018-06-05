@@ -7,7 +7,7 @@
         <div class="col-md-2 col-md-2-booking3"></div>
         <div class="col-md-8 col-md-8-booking3" id="list-filter-booking3">
             <nav class="navbar navbar-default navbar-default-booking3">
-                <h2 class="cabin-head-booking3">Booked!</h2><h2 class="cabin-head-booking3">Step 3 of 3</h2>
+                <h2 class="cabin-head-booking3">{{ __('payment.bookingFailed') }}</h2><h2 class="cabin-head-booking3">{{ __('payment.step3') }}</h2>
             </nav>
         </div>
         <div class="col-md-2 col-md-2-booking3"></div>
