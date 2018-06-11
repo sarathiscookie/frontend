@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Booking history')
+@section('title', 'Booking History')
 
 @inject('service', 'App\Http\Controllers\BookingHistoryController')
 
@@ -20,6 +20,14 @@
         <div class="container-fluid text-center container-fluid-history">
             @isset($bookings)
                 @forelse($bookings as $booking)
+                    @php
+                        $begin              = date('Y-m-d');
+                        $end                = $booking->checkin_from->format('Y-m-d');
+                        $d1                 = new DateTime($begin);
+                        $d2                 = new DateTime($end);
+                        $dateDifference     = $d2->diff($d1);
+                        $reservation_cancel = (int)$booking->reservation_cancel;
+                    @endphp
                     <div class="panel panel-default text-left panel-history panel-default-history">
                         <div class="panel-body panel-body-history">
                             <div class="row row-history content">
@@ -29,6 +37,7 @@
                                 <div class="col-sm-7 text-left col-sm-7-history">
                                     <h3 class="headliner-cabinname">{{ $service->cabin($booking->cabinname)->name }} - {{ $service->cabin($booking->cabinname)->region }}</h3>
                                     <div class="row row-history">
+                                        <div class="responseCancelMessage_{{ $booking->_id }}"></div>
                                         <div class="col-sm-12 col-sm-12-history">
                                             <div class="form-group row row-history">
                                                 <ul class="payment-options">
@@ -62,7 +71,13 @@
                                                             <button type="submit" class="btn btn-list-history">{{ __('bookingHistory.downloadVoucher') }} <span class="glyphicon glyphicon-cloud-download"></span></button>
                                                         </form>
                                                         <button type="button" class="btn btn-list-history">{{ __('bookingHistory.editBooking') }} <span class="glyphicon glyphicon-wrench"></span></button>
-                                                        <button type="button" class="btn btn-list-history">{{ __('bookingHistory.cancelBooking') }} <span class="glyphicon glyphicon-remove"></span></button>
+                                                        @if(($begin < $end))
+                                                            @if($reservation_cancel <= $dateDifference->days)
+                                                                <button type="button" class="btn btn-list-history cancelMoneyReturn" data-cancel="{{ $booking->_id }}" data-return="yes" data-loading-text="{{ __('bookingHistory.cancelingLoader') }}" autocomplete="off">{{ __('bookingHistory.cancelBooking') }} <span class="glyphicon glyphicon-remove"></span></button>
+                                                            @else
+                                                                <button type="button" class="btn btn-list-history cancelMoneyReturn" data-cancel="{{ $booking->_id }}" data-return="no" data-loading-text="{{ __('bookingHistory.cancelingLoader') }}" autocomplete="off">{{ __('bookingHistory.cancelBooking') }} <span class="glyphicon glyphicon-remove"></span></button>
+                                                            @endif
+                                                        @endif
                                                     @endif
 
                                                     @if($booking->status === '2') <!-- Cancel -->
@@ -133,7 +148,9 @@
     <script>
         window.environment = {
             confirmDeleteBooking: '<?php echo __('bookingHistory.confirmDeleteBooking'); ?>',
-            deleteFailed: '<?php echo __('bookingHistory.deleteFailed'); ?>'
+            deleteFailed: '<?php echo __('bookingHistory.deleteFailed'); ?>',
+            cancelBookingMoneyReturnConfirm: '<?php echo __('bookingHistory.cancelBookingMoneyReturnConfirm'); ?>',
+            cancelBookingMoneyNotReturnConfirm: '<?php echo __('bookingHistory.cancelBookingMoneyNotReturnConfirm'); ?>'
         }
     </script>
 @endpush

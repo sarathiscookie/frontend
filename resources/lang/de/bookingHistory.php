@@ -45,4 +45,7 @@ return [
     'confirmDeleteBooking'                                  => 'Sind Sie sicher, dass Sie die Buchung löschen möchten?',
     'deleteFailed'                                          => 'Hat leider nicht geklappt.',
     'noBookingHistory'                                      => 'Keine Buchungshistorie',
+    'cancelingLoader'                                       => 'Stornieren...',
+    'cancelBookingMoneyReturnConfirm'                       => 'Möchten Sie Ihre Buchung wirklich stornieren? Ihr Geld wird Ihrem Kundenkonto gutgeschrieben, dort sehen Sie Ihren verfügbaren Betrag, den Sie für die nächste Buchung verwenden können. In Ihrem Kundenkonto haben Sie auch die Möglichkeit, das Geld zurück überweisen zu lassen.',
+    'cancelBookingMoneyNotReturnConfirm'                    => 'You will not get your money back. This booking is not meeting the cancellation policy of this cabin.',
 ];

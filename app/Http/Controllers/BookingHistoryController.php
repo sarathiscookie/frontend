@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Booking;
 use App\Cabin;
 use App\Order;
+use App\Userlist;
 use Auth;
 use PDF;
 use DateTime;
@@ -118,7 +119,7 @@ class BookingHistoryController extends Controller
             ->where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
             ->find($request->delId);
 
-        if($cart){
+        if(!empty($cart)){
             Booking::destroy($cart->_id);
             return response()->json(['status' => 'success'] ,201);
         }
@@ -142,7 +143,7 @@ class BookingHistoryController extends Controller
             ->where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
             ->find($request->delId);
 
-        if($cart){
+        if(!empty($cart)){
             Booking::destroy($cart->_id);
             return response()->json(['status' => 'success'] ,201);
         }
@@ -167,7 +168,7 @@ class BookingHistoryController extends Controller
             ->where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
             ->find($request->delId);
 
-        if($cart){
+        if(!empty($cart)){
             Booking::destroy($cart->_id);
             return response()->json(['status' => 'success'] ,201);
         }
@@ -192,7 +193,7 @@ class BookingHistoryController extends Controller
             ->where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
             ->find($request->delId);
 
-        if($cart){
+        if(!empty($cart)){
             Booking::destroy($cart->_id);
             return response()->json(['status' => 'success'] ,201);
         }
@@ -217,7 +218,7 @@ class BookingHistoryController extends Controller
             ->where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
             ->find($request->delId);
 
-        if($cart){
+        if(!empty($cart)){
             Booking::destroy($cart->_id);
             return response()->json(['status' => 'success'] ,201);
         }
@@ -263,4 +264,65 @@ class BookingHistoryController extends Controller
             abort(404);
         }
     }
+
+    /**
+     * Download the booking voucher.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function cancelNormalBooking(Request $request)
+    {
+        $cart      = Booking::where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
+            ->where('status', '1')
+            ->where('is_delete', 0)
+            ->find($request->cancelId);
+
+        if(!empty($cart)) {
+            $begin              = date('Y-m-d');
+            $end                = $cart->checkin_from->format('Y-m-d');
+            $d1                 = new DateTime($begin);
+            $d2                 = new DateTime($end);
+            $dateDifference     = $d2->diff($d1);
+            $reservation_cancel = (int)$cart->reservation_cancel;
+
+            if(($begin < $end)) {
+
+                if($reservation_cancel <= $dateDifference->days) {
+                    /* Cancelled booking and refund money */
+                    $cart->refund_eligible = 1;
+                    $cart->cancel_status   = 1;
+                    $cart->money_refunded  = (float)$cart->prepayment_amount;
+
+                    $user = Userlist::where('is_delete', 0)
+                        ->where('usrActive', '1')
+                        ->find(Auth::user()->_id);
+
+                    $total_money_balance   = Auth::user()->money_balance + (float)$cart->money_refunded;
+
+                    $user->money_balance   = round($total_money_balance, 2);
+                    $user->save();
+                }
+                else {
+                    /* Cancelled booking and not return money */
+                    $cart->refund_eligible = 0;
+                    $cart->cancel_status   = 0;
+                    $cart->money_refunded  = 0;
+                }
+
+                $cart->status      = "2";
+                $cart->cancel_date = date('Y-m-d H:i:s');
+                $cart->save();
+
+                return response()->json(['status' => 'success'], 201);
+            }
+            else{
+                return response()->json(['status' => 'failure'], 500);
+            }
+        }
+        else{
+            return response()->json(['status' => 'failure'], 500);
+        }
+    }
+
 }

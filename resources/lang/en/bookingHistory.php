@@ -45,4 +45,7 @@ return [
     'confirmDeleteBooking'                                  => 'Are you sure you want to delete this booking?',
     'deleteFailed'                                          => 'Unfortunately did not work.',
     'noBookingHistory'                                      => 'No bookings history',
+    'cancelingLoader'                                       => 'Canceling...',
+    'cancelBookingMoneyReturnConfirm'                       => 'Do you really want to cancel your booking? Your money will be credited to your customer account, where you will see your available amount, which you can use for your next booking. In your customer account you also have the possibility to have the money transferred back.',
+    'cancelBookingMoneyNotReturnConfirm'                    => 'You will not get your money back. This booking is not meeting the cancellation policy of this cabin.',
 ];
