@@ -47,6 +47,7 @@ return[
     'inquiryAlert1'             => ' you can only send one request for a minimum of ',
     'inquiryAlert2'             => ' persons. Please ',
     'inquiryAlert3'             => ' for a request',
+    'menuRegister'              => 'Book Now',
     'tomorrowLabel'             => 'Tomorrow sleeping place:',
     'tomorrowClosed'            => 'Closed',
     'tomorrowLimited'           => 'Limited',

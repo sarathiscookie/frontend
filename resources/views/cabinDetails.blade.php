@@ -130,7 +130,7 @@
                                                 <h4>{!! $cabinServices->bookingPossibleNextDays($cabinDetails->_id) !!}</h4>
                                                 <!-- Authentication Links -->
                                                 @guest
-                                                    <a href="{{ route('login') }}" class="btn btn-default btn-sm btn-space pull-right btn-booking">{{ __('cabinDetails.addToCartButton') }}</a>
+                                                    <a href="{{ route('register') }}" class="btn btn-default btn-sm btn-space pull-right btn-booking">{{ __('searchDetails.menuRegister') }}</a>
                                                     @else
                                                         <button type="button" class="btn btn-default btn-sm btn-space pull-right btn-booking addToCart" name="addToCart" value="addToCart">{{ __('cabinDetails.addToCartButton') }}</button>
                                                 @endguest

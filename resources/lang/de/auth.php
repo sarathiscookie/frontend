@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'failed' => 'Das passwort oder die email adresse stimmen nicht',
+    'failed' => 'Die Kombination aus Passwort und E-Mailadresse stimmt nicht überein',
     'throttle' => 'Too many login attempts. Please try again in :seconds seconds.',
 
 ];

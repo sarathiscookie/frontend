@@ -47,8 +47,7 @@ return[
     'inquiryAlert1'             => 'können Sie ab einer Personenanzahl von ',
     'inquiryAlert2'             => ' Personen nur eine Anfrage senden. Bitte ',
     'inquiryAlert3'             => ' für eine Anfrage',
-
-
+    'menuRegister'              => 'Jetzt buchen',
     'tomorrowLabel'             => 'Schlafplätze morgen:',
     'tomorrowClosed'            => 'geschlossen',
     'tomorrowLimited'           => 'begrenzt',
