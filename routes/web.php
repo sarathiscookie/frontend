@@ -213,6 +213,7 @@ Route::group(['middleware' => ['auth']], function () {
     | Route for view booking history
     |
     */
+
     /* View booking history */
     Route::get('/booking/history', 'BookingHistoryController@index')->name('booking.history');
 
@@ -234,8 +235,16 @@ Route::group(['middleware' => ['auth']], function () {
     /* Delete rejected inquiry booking */
     Route::post('/booking/history/delete/rejected/inquiry', 'BookingHistoryController@destroyRejectedInquiry')->name('booking.history.delete.rejected.inquiry');
 
-    /* Cancel normal booking */
-    Route::post('/booking/history/cancel', 'BookingHistoryController@cancelNormalBooking')->name('booking.history.cancel');
+    /* Cancel booking */
+    Route::post('/booking/history/cancel', 'BookingHistoryController@cancelBooking')->name('booking.history.cancel');
+
+    /* Edit booking history */
+    Route::get('/booking/history/edit/{id}', 'BookingHistoryController@edit')->name('edit.booking.history');
+
+    /* Update booking history */
+    Route::post('/booking/history/edit/{id}', 'BookingHistoryController@update')->name('update.booking.history');
+
+
 
     /*
     |--------------------------------------------------------------------------
