@@ -96,12 +96,11 @@
 /*Main*/
 /*correct sizes for mobile etc. (3 images)*/
 .row-booking1{
+    margin:0;
     width:100%;
     padding-bottom:0;
 }
-.row-booking1{
-    margin:0;
-}
+
 @media (max-width:767px) {.col-sm-4-booking1{
     padding-bottom:30px;
 }}
