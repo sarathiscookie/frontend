@@ -112,6 +112,7 @@
     padding:0;
     border:none;
     border-radius:0px;
+    object-fit: cover;
 }
 .col-sm-2-history{
     padding:0;

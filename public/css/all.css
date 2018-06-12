@@ -337,6 +337,7 @@ footer {
     float: left;
     width: 33.3333%;
     margin-bottom: 20px;
+    text-algin:center;
 }
 #job-intro > div > div{
     padding-right: 15px;
@@ -1770,12 +1771,11 @@ hr {
 /*Main*/
 /*correct sizes for mobile etc. (3 images)*/
 .row-booking1{
+    margin:0;
     width:100%;
     padding-bottom:0;
 }
-.row-booking1{
-    margin:0;
-}
+
 @media (max-width:767px) {.col-sm-4-booking1{
     padding-bottom:30px;
 }}
@@ -2774,6 +2774,7 @@ hr {
     padding:0;
     border:none;
     border-radius:0px;
+    object-fit: cover;
 }
 .col-sm-2-history{
     padding:0;

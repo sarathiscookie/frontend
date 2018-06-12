@@ -42,10 +42,10 @@ return[
     'bookingSuccess'                                   => 'Gut gemacht! Erfolgreich gebucht',
     'voucherMsg'                                       => 'Sie erhalten einen Gutschein in den nächsten Minuten pro Meile. Viel Spaß bei deiner Reise!',
     'booked'                                           => 'Gebucht!',
-    'step2'                                            => 'Step 2 of 3',
+    'step2'                                            => 'Schritt 2 von 3',
     'step2Title'                                       => 'You are on the second of three steps to book a cabin night.',
     'payByBillTitle'                                   => 'This button will enable if there is three weeks diff b/w current date and checking from date.',
     'paymentErrorHeading'                              => 'Booking Failed!',
-    'step3'                                            => 'Step 3 of 3',
+    'step3'                                            => 'Schritt 3 von 3',
     'bookingSuccessHeading'                            => 'Booked!',
 ];
