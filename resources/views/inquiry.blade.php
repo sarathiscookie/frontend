@@ -25,10 +25,10 @@
                     $d1                      = new DateTime($monthBegin);
                     $d2                      = new DateTime($monthEnd);
                     $dateDifference          = $d2->diff($d1);
-                    $amount                  = ($cabinDetails->prepayment_amount * $dateDifference->days) * session()->get('guests');
+                    $amount                  = round(($cabinDetails->prepayment_amount * $dateDifference->days) * session()->get('guests'), 2);
 
                     /* For javascript cal */
-                    $amountDays              = $cabinDetails->prepayment_amount * $dateDifference->days;
+                    $amountDays              = round($cabinDetails->prepayment_amount * $dateDifference->days, 2);
                 @endphp
             <form action="{{ route('inquiry.store') }}" method="post">
 
@@ -165,7 +165,7 @@
                                         </div><br />
                                         <div class="row row-booking1">
                                             <div class="col-sm-12 col-sm-12-booking1 col-sm-12-extra-booking1 depsit-booking1">
-                                                <p class="info-listing-booking1">{{__('cart.deposit')}}:</p><p class="info-listing-price-booking1 replaceInquiryDeposit">{{ number_format($amount, 2, ',', '.') }}&euro;</p>
+                                                <p class="info-listing-booking1">{{__('cart.deposit')}}:</p><p class="info-listing-price-booking1 replaceInquiryDeposit">{{ number_format($amount, 2, ',', '.') }} &euro;</p>
                                             </div>
                                         </div>
                                     </div>
@@ -296,14 +296,14 @@
                                     <div class="normalCalculation">
                                         <div class="row row-booking1">
                                             <div class="col-sm-12 col-sm-12-booking1 col-sm-12-extra-booking1">
-                                                <p class="info-listing-booking1">{{ __('cart.deposit') }}:</p><p class="info-listing-price-booking1 replaceInquiryCompleteDeposit">{{ number_format($sumPrepaymentAmount, 2, ',', '.') }}&euro;</p>
-                                                <p class="info-listing-booking1">{{ __('cart.serviceFee') }}:</p><p class="info-listing-price-booking1 replaceInquiryServiceFee">{{ $serviceTax }}%</p>
+                                                <p class="info-listing-booking1">{{ __('cart.deposit') }}:</p><p class="info-listing-price-booking1 replaceInquiryCompleteDeposit">{{ number_format($sumPrepaymentAmount, 2, ',', '.') }} &euro;</p>
+                                                <p class="info-listing-booking1">{{ __('cart.serviceFee') }}:</p><p class="info-listing-price-booking1 replaceInquiryServiceFee">{{ $serviceTax }} %</p>
                                             </div>
                                         </div>
 
                                         <div class="row row-booking1">
                                             <div class="col-sm-12 col-sm-12-booking1 col-sm-12-extra-booking1">
-                                                <h5 class="info-listing-booking1">{{ __('cart.paymentIncl') }}<br /> {{ __('cart.paymentInclServiceFee') }}:</h5><h5 class="info-listing-price-booking1 replaceInquiryCompletePayment">{{ number_format($sumPrepaymentAmountServiceTotal, 2, ',', '.') }}&euro;</h5>
+                                                <h5 class="info-listing-booking1">{{ __('cart.paymentIncl') }}<br /> {{ __('cart.paymentInclServiceFee') }}:</h5><h5 class="info-listing-price-booking1 replaceInquiryCompletePayment">{{ number_format($sumPrepaymentAmountServiceTotal, 2, ',', '.') }} &euro;</h5>
                                             </div>
                                         </div>
                                     </div>

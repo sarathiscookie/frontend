@@ -16,7 +16,7 @@ return [
       |
       */
     'inquiryHeading'                => 'Inquiry',
-    'step1'                         => 'Step 1 of 1',
+    'step1'                         => 'Schritt 1 von 1',
     'sendInquiryButton'             => 'Send Inquiry',
     'errorOne'                      => 'Oh snap!',
     'errorTwo'                      => 'Change a few things up and try submitting again.',

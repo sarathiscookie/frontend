@@ -20,7 +20,7 @@ $(function(){
     /* Character limit for comments end */
 
     /* Amount calc of sleeps, beds & dorms */
-    // Create our number formatter.
+    // Euro number formatter.
     var formatter = new Intl.NumberFormat('de-DE', {
         style: 'currency',
         currency: 'EUR',

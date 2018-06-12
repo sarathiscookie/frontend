@@ -308,7 +308,7 @@ class InquiryController extends Controller
 
                                 $dates_array[] = $dates;
 
-                                if($sleepsRequest >= $cabin->not_regular_sleeps) {
+                                if($sleepsRequest >= $cabin->not_regular_inquiry_guest) {
                                     $availableStatus[] = 'possible';
                                 }
                                 else {
@@ -318,7 +318,7 @@ class InquiryController extends Controller
                             }
                         }
 
-                        /* Calculating sleeps for regular */
+                        /*  Checking sleeps is greater or equal to regular inquiry */
                         if($cabin->regular === 1) {
 
                             if($mon_day === $day) {
@@ -434,7 +434,7 @@ class InquiryController extends Controller
                             }
                         }
 
-                        /* Calculating sleeps for normal */
+                        /* Checking requested sleeps is greater or equal to normal inquiry */
                         if(!in_array($dates, $dates_array)) {
 
                             if($sleepsRequest >= $cabin->inquiry_starts) {
@@ -449,7 +449,7 @@ class InquiryController extends Controller
 
                     }
 
-                    /* Checking bookings available ends */
+                    /* Checking inquiry possible ends */
                 }
 
                 if(!in_array('notPossible', $availableStatus)) {
