@@ -48,4 +48,13 @@ return [
     'cancelingLoader'                                       => 'Canceling...',
     'cancelBookingMoneyReturnConfirm'                       => 'Do you really want to cancel your booking? Your money will be credited to your customer account, where you will see your available amount, which you can use for your next booking. In your customer account you also have the possibility to have the money transferred back.',
     'cancelBookingMoneyNotReturnConfirm'                    => 'You will not get your money back. This booking is not meeting the cancellation policy of this cabin.',
+
+    /* Edit booking*/
+    'editBookingHeading'                                    => 'Edit Booking',
+    'step1'                                                 => 'Step 1 of 1',
+    'updateButton'                                          => 'Update Booking',
+    'errorOne'                                              => 'Oh snap!',
+    'errorTwo'                                              => 'Change a few things up and try submitting again.',
+    'alertChooseGreater'                                    => 'You can select greater than values from select box.',
+    'oldAmount'                                             => 'Old Voucher Amount',
 ];

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Booking;
 use App\Cabin;
+use App\Country;
 use App\Order;
 use App\Userlist;
 use Auth;
@@ -90,7 +91,27 @@ class BookingHistoryController extends Controller
      */
     public function edit($id)
     {
-        //
+        $booking          = Booking::where('status', '1')
+            ->where('is_delete', 0)
+            ->where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
+            ->find($id);
+
+        if(!empty($booking)) {
+            $cabinDetails = Cabin::select('name', 'region', 'prepayment_amount', 'sleeping_place', 'halfboard', 'halfboard_price')
+                ->where('is_delete', 0)
+                ->where('other_cabin', "0")
+                ->where('name', $booking->cabinname)
+                ->first();
+
+            $country      = Country::select('name')
+                ->where('is_delete', 0)
+                ->get();
+
+            return view('bookingHistoryEdit', ['booking' => $booking, 'cabinDetails' => $cabinDetails, 'country' => $country]);
+        }
+        else {
+            return redirect()->back();
+        }
     }
 
     /**
@@ -236,7 +257,7 @@ class BookingHistoryController extends Controller
     public function downloadVoucher(Request $request)
     {
         $cart      = Booking::where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
-            ->whereIn('status', ['1', '4'])
+            ->whereIn('status', ['1', '3', '4'])
             ->where('is_delete', 0)
             ->find($request->book_id);
 
@@ -271,7 +292,7 @@ class BookingHistoryController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function cancelNormalBooking(Request $request)
+    public function cancelBooking(Request $request)
     {
         $cart      = Booking::where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
             ->where('status', '1')
@@ -298,7 +319,7 @@ class BookingHistoryController extends Controller
                         ->where('usrActive', '1')
                         ->find(Auth::user()->_id);
 
-                    $total_money_balance   = Auth::user()->money_balance + (float)$cart->money_refunded;
+                    $total_money_balance   = Auth::user()->money_balance + $cart->money_refunded;
 
                     $user->money_balance   = round($total_money_balance, 2);
                     $user->save();
