@@ -20,7 +20,7 @@
                 <div id="job-intro">
                     <div>
                         <div class="glyphicon glyphicon-pencil">
-                            <h3>Gestallte</h3>
+                            <h3>Gestalte</h3>
                             <p>Immer auf dem neuesten Stand arbeiten - als Team.</p>
                         </div>
                     </div>
