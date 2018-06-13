@@ -13,6 +13,12 @@
             </nav>
             <br>
             <div class="responseMessage"></div>
+            @if (session()->has('updateBookingSuccessStatus'))
+                <div class="alert alert-success alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <strong>{{ __('bookingHistory.updateBookingSuccessOne') }}</strong> {{ session()->get('updateBookingSuccessStatus') }}
+                </div>
+            @endif
         </div>
         <div class="col-md-2 col-md-2-history"></div>
     </div>

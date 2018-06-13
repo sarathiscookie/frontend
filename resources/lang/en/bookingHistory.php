@@ -57,4 +57,6 @@ return [
     'errorTwo'                                              => 'Change a few things up and try submitting again.',
     'alertChooseGreater'                                    => 'You can select greater than values from select box.',
     'oldAmount'                                             => 'Old Voucher Amount',
+    'updateBookingSuccessOne'                               => 'Well Done!',
+    'updateBookingSuccessTwo'                               => 'Booking updated successfully.',
 ];

@@ -15,7 +15,7 @@ return [
     | Language translation for headings, labels and error messages
     |
     */
-    'overviewHeading'                                       => 'Buchungs historie',
+    'overviewHeading'                                       => 'Buchungshistorie',
     'bookingNumber'                                         => 'Buchungs nummer',
     'arrival'                                               => 'Anreise',
     'departure'                                             => 'Abreise',
@@ -47,14 +47,16 @@ return [
     'noBookingHistory'                                      => 'Keine Buchungshistorie',
     'cancelingLoader'                                       => 'Stornieren...',
     'cancelBookingMoneyReturnConfirm'                       => 'Möchten Sie Ihre Buchung wirklich stornieren? Ihr Geld wird Ihrem Kundenkonto gutgeschrieben, dort sehen Sie Ihren verfügbaren Betrag, den Sie für die nächste Buchung verwenden können. In Ihrem Kundenkonto haben Sie auch die Möglichkeit, das Geld zurück überweisen zu lassen.',
-    'cancelBookingMoneyNotReturnConfirm'                    => 'You will not get your money back. This booking is not meeting the cancellation policy of this cabin.',
+    'cancelBookingMoneyNotReturnConfirm'                    => 'Sie erhalten Ihre Anzahlung nicht erstattet, da Sie die Stornierungsfrist nicht eingehalten haben. Ihre Anzahlung steht lt. unseren AGB dem Hüttenwirt als Umsatzausfallgebühr zu.',
 
     /* Edit booking*/
-    'editBookingHeading'                                    => 'Edit Booking',
+    'editBookingHeading'                                    => 'Buchung bearbeiten',
     'step1'                                                 => 'Schritt 1 von 1',
-    'updateButton'                                          => 'Update Booking',
-    'errorOne'                                              => 'Oh snap!',
-    'errorTwo'                                              => 'Change a few things up and try submitting again.',
-    'alertChooseGreater'                                    => 'You can select greater than values from select box.',
+    'updateButton'                                          => 'Buchung speichern',
+    'errorOne'                                              => 'Whoooops!',
+    'errorTwo'                                              => 'Ändern Sie ein paar Dinge und versuchen Sie es erneut.',
+    'alertChooseGreater'                                    => 'Sie können im Auswahlfeld größere Werte auswählen.',
     'oldAmount'                                             => 'Old Voucher Amount',
+    'updateBookingSuccessOne'                               => 'Gut gemacht!',
+    'updateBookingSuccessTwo'                               => 'Booking updated successfully.',
 ];

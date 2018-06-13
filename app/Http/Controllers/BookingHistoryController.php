@@ -123,7 +123,80 @@ class BookingHistoryController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        if($request->has('updateBooking') && $request->updateBooking === 'updateBooking') {
+
+            $sleepsRequest                = 0;
+            $requestBedsSumDorms          = 0;
+            $sleeps                       = 0;
+            $bedsSumDorms                 = 0;
+
+            $booking                      = Booking::select('cabinname', 'beds', 'dormitory', 'sleeps','prepayment_amount', 'checkin_from', 'reserve_to')
+                ->where('status', '1')
+                ->where('is_delete', 0)
+                ->where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
+                ->find($id);
+
+            if(!empty($booking)) {
+
+                $cabin                    = Cabin::select('prepayment_amount', 'sleeping_place')
+                    ->where('is_delete', 0)
+                    ->where('other_cabin', "0")
+                    ->where('name', $booking->cabinname)
+                    ->first();
+
+                /* Form request begin */
+                $commentsRequest          = $request->comments;
+                if($request->has('halfboard'))
+                {
+                    $halfBoard            = $request->halfboard;
+                }
+                else {
+                    $halfBoard            = '0';
+                }
+
+                if ($cabin->sleeping_place === 1) {
+                    $sleepsRequest        = (int)$request->sleeps;
+                    $sleeps               = (int)$booking->sleeps;
+                }
+                else {
+                    $bedsRequest          = (int)$request->beds;
+                    $beds                 = (int)$booking->beds;
+                    $dormsRequest         = (int)$request->dormitory;
+                    $dorms                = (int)$booking->dormitory;
+                    $requestBedsSumDorms  = $bedsRequest + $dormsRequest;
+                    $bedsSumDorms         = $beds + $dorms;
+                }
+                /* Form request end */
+
+                /* Payment calculation begin */
+                $monthBegin               = $booking->checkin_from->format('Y-m-d');
+                $monthEnd                 = $booking->reserve_to->format('Y-m-d');
+                $d1                       = new DateTime($monthBegin);
+                $d2                       = new DateTime($monthEnd);
+                $dateDifference           = $d2->diff($d1);
+                $guestSleepsTypeCondition = ($cabin->sleeping_place === 1) ? $sleepsRequest : $requestBedsSumDorms;
+                $sleepsTypeCondition      = ($cabin->sleeping_place === 1) ? $sleeps : $bedsSumDorms;
+                $amount                   = round(($cabin->prepayment_amount * $dateDifference->days) * $guestSleepsTypeCondition, 2);
+                $amountDifference         = round($amount - $booking->prepayment_amount , 2);
+
+                if($amountDifference > 0 && $guestSleepsTypeCondition > $sleepsTypeCondition) {
+                    dd('redirect to payment page');
+                    // availability checking of beds dorms and sleeps
+                    //redirect to payment
+                    // After payment use redirection "return redirect()->route('booking.history')->with('updateBookingSuccessStatus', __('bookingHistory.updateBookingSuccessTwo'))";
+                }
+                else {
+                    return redirect()->back()->with('updateBookingFailedStatus', __('bookingHistory.errorTwo'));
+                }
+                /* Payment calculation end */
+            }
+            else {
+                return redirect()->back()->with('updateBookingFailedStatus', __('bookingHistory.errorTwo'));
+            }
+        }
+        else {
+            return redirect()->back()->with('updateBookingFailedStatus', __('bookingHistory.errorTwo'));
+        }
     }
 
     /**

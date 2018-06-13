@@ -236,13 +236,9 @@ $(function(){
 
     /* Amount calc of sleeps, beds & dorms begins */
     // Euro number formatter.
-    var formatter = new Intl.NumberFormat('de-DE', {
-        style: 'currency',
-        currency: 'EUR',
-        minimumFractionDigits: 2
-    });
+    var formatter = new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR', minimumFractionDigits: 2 });
 
-    function editCartTotalDepositCalc(total)
+    function editCartTotalDepositCalc(total, oldAmount)
     {
         // Helping objects for env variables
         var env_for_edit_booking = {
@@ -252,23 +248,24 @@ $(function(){
         };
 
         var serviceTaxEditBooking = '';
+        var newAmount             = total - oldAmount;
 
-        if(total <= 30) {
+        if(newAmount <= 30) {
             serviceTaxEditBooking = env_for_edit_booking.tax_one_for_edit_booking;
         }
 
-        if(total > 30 && total <= 100) {
+        if(newAmount > 30 && newAmount <= 100) {
             serviceTaxEditBooking = env_for_edit_booking.tax_two_for_edit_booking;
         }
 
-        if(total > 100) {
+        if(newAmount > 100) {
             serviceTaxEditBooking = env_for_edit_booking.tax_three_for_edit_booking;
         }
 
-        var sumPrepayAmountPerc   = (serviceTaxEditBooking / 100) * total;
-        var sumPrepayAmountServiceTotal = total + sumPrepayAmountPerc;
+        var sumPrepayAmountPerc   = (serviceTaxEditBooking / 100) * newAmount;
+        var sumPrepayAmountServiceTotal = newAmount + sumPrepayAmountPerc;
 
-        $( '.replaceEditBookingCompleteDeposit' ).html(formatter.format(total));
+        $( '.replaceEditBookingCompleteDeposit' ).html(formatter.format(newAmount));
         $( '.replaceEditBookingServiceFee' ).html(serviceTaxEditBooking+' %');
         $( '.replaceEditBookingCompletePayment' ).html(formatter.format(sumPrepayAmountServiceTotal));
     }
@@ -277,20 +274,21 @@ $(function(){
     $('.jsEditBookSleep').change(function() {
 
         // Days multiply with prepayment_amount
-        var amountDays    = $('.amountDaysEditBook').data('amountdayseditbook');
+        var amountDays = $('.amountDaysEditBook').data('amountdayseditbook');
+        var oldAmount  = $('.amountDaysEditBook').data('prepayamounteditbook');
 
         // Sleeps select box value is null for validation purpose. So value is set as 0
-        var sleeps        = 0;
+        var sleeps     = 0;
 
         if($(this).val() !== ''){
-            sleeps    = $(this).val()
+            sleeps     = $(this).val()
         }
 
-        var total     = amountDays * sleeps;
-        $( '.replaceEditBookingGuest' ).html(sleeps);
-        $( '.replaceEditBookingDeposit' ).html(formatter.format(total));
+        var total      = amountDays * sleeps;
 
-        editCartTotalDepositCalc(total);
+        $( '.replaceEditBookingGuest' ).html(sleeps);
+
+        editCartTotalDepositCalc(total, oldAmount);
     });
 
     // Beds calculation
@@ -298,15 +296,17 @@ $(function(){
 
         // Days multiply with prepayment_amount
         var amountDays = $('.amountDaysEditBook').data('amountdayseditbook');
+        var oldAmount  = $('.amountDaysEditBook').data('prepayamounteditbook');
 
         // Beds & Dorms select box value is null for validation purpose. So value is set as 0
         var dorms      = 0;
         var beds       = 0;
+
         if($(this).val() !== ''){
             beds       = $(this).val();
         }
 
-        if($('.jsCalDorm').val() !== ''){
+        if($('.jsEditBookDorm').val() !== ''){
             dorms      = $('.jsEditBookDorm').val();
         }
 
@@ -314,9 +314,8 @@ $(function(){
         var total      = (parseInt(beds) + parseInt(dorms)) * amountDays;
 
         $( '.replaceEditBookingGuest' ).html(guest);
-        $( '.replaceEditBookingDeposit' ).html(formatter.format(total));
 
-        editCartTotalDepositCalc(total);
+        editCartTotalDepositCalc(total, oldAmount);
     });
 
     // Dorms calculation
@@ -324,6 +323,7 @@ $(function(){
 
         // Days multiply with prepayment_amount
         var amountDays = $('.amountDaysEditBook').data('amountdayseditbook');
+        var oldAmount  = $('.amountDaysEditBook').data('prepayamounteditbook');
 
         // Beds & Dorms select box value is null for validation purpose. So value is set as 0
         var dorms      = 0;
@@ -332,7 +332,7 @@ $(function(){
             dorms      = $(this).val();
         }
 
-        if($('.jsCalBed').val() !== ''){
+        if($('.jsEditBookBed').val() !== ''){
             beds       = $('.jsEditBookBed').val();
         }
 
@@ -340,9 +340,8 @@ $(function(){
         var total      = (parseInt(dorms) + parseInt(beds)) * amountDays;
 
         $( '.replaceEditBookingGuest' ).html(guest);
-        $( '.replaceEditBookingDeposit' ).html(formatter.format(total));
 
-        editCartTotalDepositCalc(total);
+        editCartTotalDepositCalc(total, oldAmount);
     });
     /* Amount calc of sleeps, beds & dorms end */
 
