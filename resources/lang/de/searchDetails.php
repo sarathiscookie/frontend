@@ -33,8 +33,8 @@ return[
     'addToCartButton'           => 'Hüttenkorb hinzufügen',
 
     /* Error messages */
-    'cartLimit'                 => 'Cart limit reached. You can add maximum 5',
-    'notSeasonTime'             => 'Sorry selected dates are not in a season time.',
+    'cartLimit'                 => 'Warenkorb-Limit erreicht',
+    'notSeasonTime'             => 'Ausgewählte Termine sind leider außerhalb der Saisonzeit.',
     'holidayIncludedAlert'      => 'Buchung nicht möglich, da ein Ruhetag dazwischen liegt',
     'bedsNotAvailable'          => ' Keine freien Betten am ',
     'dormsNotAvailable'         => ' Keine freien Lager am ',

@@ -14,6 +14,6 @@ return [
     */
 
     'failed' => 'Die Kombination aus Passwort und E-Mailadresse stimmt nicht überein',
-    'throttle' => 'Too many login attempts. Please try again in :seconds seconds.',
+    'throttle' => 'Zu viele Anmeldefehlversuche. Bitte versuchen Sie es in :seconds Sekunden erneut.',
 
 ];

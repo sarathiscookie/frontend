@@ -45,10 +45,10 @@ return [
     'continueBookingButton'             => 'Weitere Hütten aussuchen',
     'paymentButton'                     => 'Weiter zur Kasse',
     'noBookingsCart'                    => 'Keine Buchung in Ihrem Hüttenkorb',
-    'step1'                             => 'Schritt 1 von 3',
-    'headingTitle'                      => 'Sie sind am ersten von drei Schritten. Bitte überprüfen Sie Ihre Eingaben und gehen weiter zu Schritt zwei.',
+    'step1'                             => 'Schritt 1 von 2',
+    'headingTitle'                      => 'Sie sind am ersten von zwei Schritten. Bitte überprüfen Sie Ihre Eingaben und gehen weiter zu Schritt zwei.',
     'headingThreeTitle'                 => 'Bitte überprüfen Sie Ihre Daten und korrigieren Sie diese gegebenfalls.',
     'deleteButtonTitle'                 => 'Hier können Sie die Hütte aus dem Warenkorb löschen.',
     'amountTitle'                       => 'Alle Kosten und Anzahlungen in der Übersicht. Die Servicegebühr hilft uns das Portal zu betreiben.',
-    'bookingDeleted'                    => 'Booking deleted from your cart.',
+    'bookingDeleted'                    => 'Buchung aus dem Warenkorb gelöscht.',
 ];

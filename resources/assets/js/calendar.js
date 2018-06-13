@@ -81,19 +81,19 @@ $(function(){
         $this.datepicker("option", "beforeShowDay", function(date) {
             var string = jQuery.datepicker.formatDate('yy-mm-dd', date);
             if( greenDates.indexOf(string) >=0 ) {
-                returnResult = [true, "greenDates", "Available"];
+                returnResult = [true, "greenDates", "Verfügbar"];
             }
             if( orangeDates.indexOf(string) >=0 ) {
-                returnResult = [true, "orangeDates", "Few are available"];
+                returnResult = [true, "orangeDates", "Begrenzt"];
             }
             if( redDates.indexOf(string) >=0 ) {
-                returnResult = [true, "redDates", "Not available"];
+                returnResult = [true, "redDates", "Ausgebucht"];
             }
             if( not_season_time.indexOf(string) >=0 ) {
-                returnResult = [false, "", "Not season time"];
+                returnResult = [false, "", "Geschlossen"];
             }
             if( holidayDates.indexOf(string) >=0 ) {
-                returnResult = [false, "", "Holiday"];
+                returnResult = [false, "", "Ruhetag"];
             }
             return returnResult;
         });
@@ -165,19 +165,19 @@ $(function(){
         $this.datepicker("option", "beforeShowDay", function(date) {
             var string = jQuery.datepicker.formatDate('yy-mm-dd', date);
             if( greenDates.indexOf(string) >=0 ) {
-                returnResults = [true, "greenDates", "Available"];
+                returnResults = [true, "greenDates", "Verfügbar"];
             }
             if( orangeDates.indexOf(string) >=0 ) {
-                returnResults = [true, "orangeDates", "Few are available"];
+                returnResults = [true, "orangeDates", "Begrenzt"];
             }
             if( redDates.indexOf(string) >=0 ) {
-                returnResults = [true, "redDates", "Not available"];
+                returnResults = [true, "redDates", "Ausgebucht"];
             }
             if( not_season_time.indexOf(string) >=0 ) {
-                returnResults = [false, "", "Not season time"];
+                returnResults = [false, "", "Geschlossen"];
             }
             if( holidayDates.indexOf(string) >=0 ) {
-                returnResults = [false, "", "Holiday"];
+                returnResults = [false, "", "Ruhetag"];
             }
             return returnResults;
         });

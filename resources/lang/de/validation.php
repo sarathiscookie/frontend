@@ -102,7 +102,7 @@ return [
     'custom' => [
         'guest.*.sleeps' => [
             'required' => 'Ein Schlafplatz erforderlich.',
-            'not_in' => 'The selected :attribute is invalid.',
+            'not_in' => 'Das ausgewählte Schlafplätzen ist nicht verfügbar.',
         ],
         'guest.*.beds' => [
             'required_without' => 'Betten werden benötigt, wenn kein Lager vorhanden ist.'
@@ -111,7 +111,7 @@ return [
             'required_without' => 'Lager werden benötigt, wenn kein Betten vorhanden ist.'
         ],
         'guest.*.comments' => [
-            'max'   => 'The comments may not be greater than :max characters.'
+            'max'   => 'Das Kommentar darf nicht länger als :max Zeichen sein.'
         ],
         /* Custom errors in login & registration page */
         'password' => [
@@ -156,7 +156,7 @@ return [
         ],
         'country' => [
             'required'      => 'Das land muss ausgefüllt sein.',
-            'not_in'        => 'The selected :attribute is invalid.',
+            'not_in'        => 'Das ausgewählte Land ist nicht verfügbar.',
         ],
         'zipcode' => [
             'required'      => 'Das postleizahl muss ausgefüllt sein.',
