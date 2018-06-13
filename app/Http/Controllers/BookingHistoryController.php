@@ -186,7 +186,7 @@ class BookingHistoryController extends Controller
                     // After payment use redirection "return redirect()->route('booking.history')->with('updateBookingSuccessStatus', __('bookingHistory.updateBookingSuccessTwo'))";
                 }
                 else {
-                    return redirect()->back()->with('updateBookingFailedStatus', __('bookingHistory.errorTwo'));
+                    return redirect()->back()->with('updateBookingFailedStatus', __('bookingHistory.errorThree'));
                 }
                 /* Payment calculation end */
             }

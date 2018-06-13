@@ -55,8 +55,9 @@ return [
     'updateButton'                                          => 'Update Booking',
     'errorOne'                                              => 'Oh snap!',
     'errorTwo'                                              => 'Change a few things up and try submitting again.',
+    'errorThree'                                            => 'You have not changed the booking.',
     'alertChooseGreater'                                    => 'You can select greater than values from select box.',
-    'oldAmount'                                             => 'Old Voucher Amount',
+    'oldAmount'                                             => 'Previous Voucher Amount',
     'updateBookingSuccessOne'                               => 'Well Done!',
-    'updateBookingSuccessTwo'                               => 'Booking updated successfully.',
+    'updateBookingSuccessTwo'                               => 'Your booking has been successfully changed.',
 ];

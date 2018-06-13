@@ -44,7 +44,7 @@ return[
     'booked'                                           => 'Gebucht!',
     'step2'                                            => 'Schritt 2 von 2',
     'step2Title'                                       => 'Sie sind auf dem zweiten von zwei Schritten, um eine Hüttenübernachtung zu buchen.',
-    'payByBillTitle'                                   => 'This button will enable if there is three weeks diff b/w current date and checking from date.',
+    'payByBillTitle'                                   => 'Sie können nur bis mindestens zwei Wochen vor der Anreise per Rechnung bezahlen.',
     'paymentErrorHeading'                              => 'Buchung fehlgeschlagen!',
     'bookingSuccessHeading'                            => 'Gebucht!',
 ];

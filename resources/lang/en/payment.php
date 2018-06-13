@@ -43,7 +43,7 @@ return[
     'booked'                                           => 'Booked!',
     'step2'                                            => 'Step 2 of 2',
     'step2Title'                                       => 'You are on the second of two steps to book a cabin night.',
-    'payByBillTitle'                                   => 'This button will enable if there is three weeks diff b/w current date and checking from date.',
+    'payByBillTitle'                                   => 'This button will enable if there is two weeks diff b/w current date and checking from date.',
     'paymentErrorHeading'                              => 'Booking Failed!',
     'bookingSuccessHeading'                            => 'Booked!',
 ];
