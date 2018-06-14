@@ -2,7 +2,7 @@
 
 @section('title', 'Edit Booking')
 
-@inject('inquiryServices', 'App\Http\Controllers\InquiryController')
+@inject('calendarServices', 'App\Http\Controllers\CalendarController')
 
 @section('content')
     <div class="container-fluid container-fluid-booking1 bg-3 text-center">
@@ -25,13 +25,10 @@
                     $d1                      = new DateTime($monthBegin);
                     $d2                      = new DateTime($monthEnd);
                     $dateDifference          = $d2->diff($d1);
-
-                    /* For javascript cal */
-                    $amountDays              = round($cabinDetails->prepayment_amount * $dateDifference->days, 2);
                 @endphp
 
                 @if (session()->has('updateBookingFailedStatus'))
-                    <div class="alert alert-warning alert-dismissible" role="alert">
+                    <div class="alert alert-danger alert-dismissible" role="alert">
                         <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                         <strong>{{ __('bookingHistory.errorOne') }}</strong> {{ session()->get('updateBookingFailedStatus') }}
                     </div>
@@ -41,7 +38,7 @@
 
                     {{ csrf_field() }}
 
-                    <div class="amountDaysEditBook" data-amountdayseditbook="{{ $amountDays }}" data-prepayamounteditbook="{{ $booking->prepayment_amount }}"></div>
+                    <div class="daysEditBook" data-days="{{ $dateDifference->days }}" data-prepaymentamount="{{ $booking->prepayment_amount }}" data-cabinprepaymentamount="{{ $cabinDetails->prepayment_amount }}"></div>
 
                     <div class="panel panel-default text-left panel-booking1 panel-default-booking1">
                         <div class="panel-body panel-body-booking1">
@@ -63,21 +60,39 @@
                                         @endif
 
                                         <div class="col-sm-12 col-sm-12-booking1 month-opening-booking1">
-                                            <div class="row row-booking1">
-                                                <div class="col-sm-4 col-sm-4-booking1">
-                                                    <div class="form-group">
-                                                        <input type="text" class="form-control form-control-booking1" name="dateFrom" value="{{ $booking->checkin_from->format('d.m.y') }}" readonly>
-                                                    </div>
+                                            <div class="row row-booking1" data-id="{{ $cabinDetails->_id }}">
+
+                                                <div class="col-sm-12" id="errors_{{ $cabinDetails->_id }}"></div>
+                                                <div class="col-sm-12" id="warning_{{ $cabinDetails->_id }}"></div>
+
+                                                @php
+                                                    $calendar = $calendarServices->calendar($cabinDetails->_id)
+                                                @endphp
+
+                                                <div class="holidayEditBook_{{ $cabinDetails->_id }}" data-holiday="{{ $calendar[0] }}"></div>
+                                                <div class="greenEditBook_{{ $cabinDetails->_id }}" data-green="{{ $calendar[1] }}"></div>
+                                                <div class="orangeEditBook_{{ $cabinDetails->_id }}" data-orange="{{ $calendar[2] }}"></div>
+                                                <div class="redEditBook_{{ $cabinDetails->_id }}" data-red="{{ $calendar[3] }}"></div>
+                                                <div class="notSeasonTimeEditBook_{{ $cabinDetails->_id }}" data-notseasontime="{{ $calendar[4] }}"></div>
+
+                                                <div class="col-sm-4 col-sm-4-booking1 form-group {{ $errors->has('dateFrom') ? ' has-error' : '' }}">
+                                                    <input type="text" class="form-control form-control-booking1 dateFromEditBook" id="dateFromEditBook_{{ $cabinDetails->_id }}" name="dateFrom" value="{{ $booking->checkin_from->format('d.m.y') }}" readonly>
+
+                                                    @if ($errors->has('dateFrom'))
+                                                        <span class="help-block"><strong>{{ $errors->first('dateFrom') }}</strong></span>
+                                                    @endif
                                                 </div>
 
-                                                <div class="col-sm-4 col-sm-4-booking1">
-                                                    <div class="form-group">
-                                                        <input type="text" class="form-control form-control-booking1" name="dateTo" value="{{ $booking->reserve_to->format('d.m.y') }}" readonly>
-                                                    </div>
+                                                <div class="col-sm-4 col-sm-4-booking1 form-group {{ $errors->has('dateTo') ? ' has-error' : '' }}">
+                                                    <input type="text" class="form-control form-control-booking1 dateToEditBook" id="dateToEditBook_{{ $cabinDetails->_id }}" name="dateTo" value="{{ $booking->reserve_to->format('d.m.y') }}" readonly>
+                                                    @if ($errors->has('dateTo'))
+                                                        <span class="help-block"><strong>{{ $errors->first('dateTo') }}</strong></span>
+                                                    @endif
                                                 </div>
                                             </div>
 
                                             <div class="row row-booking1">
+                                                <input type="hidden" name="sleeping_place" value="{{ $cabinDetails->sleeping_place }}">
                                                 @if($cabinDetails->sleeping_place != 1)
                                                     <div class="col-sm-4 col-sm-4-f-booking1 col-sm-4-booking1">
                                                         <div class="form-group {{ $errors->has('beds') ? ' has-error' : '' }}">
@@ -167,7 +182,7 @@
                                             <div class="row row-booking1">
                                                 <div class="col-sm-12 col-sm-12-booking1 col-sm-12-extra-booking1">
                                                     <p class="info-listing-booking1">{{ __('cart.guests') }}:</p><p class="info-listing-price-booking1 replaceEditBookingGuest">{{ $booking->guests }}</p>
-                                                    <p class="info-listing-booking1">{{ __('cart.numberOfNights') }}:</p><p class="info-listing-price-booking1">{{ $dateDifference->days }}</p>
+                                                    <p class="info-listing-booking1">{{ __('cart.numberOfNights') }}:</p><p class="info-listing-price-booking1 replaceNumberOfNights">{{ $dateDifference->days }}</p>
                                                 </div>
                                             </div><br />
                                             <div class="row row-booking1">

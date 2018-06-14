@@ -60,4 +60,5 @@ return [
     'oldAmount'                                             => 'Previous Voucher Amount',
     'updateBookingSuccessOne'                               => 'Well Done!',
     'updateBookingSuccessTwo'                               => 'Your booking has been successfully changed.',
+    'commentsMax'                                           => 'The comments may not be greater than :max characters.'
 ];

@@ -60,4 +60,5 @@ return [
     'oldAmount'                                             => 'Bisheriger Gutscheinwert',
     'updateBookingSuccessOne'                               => 'Gut gemacht!',
     'updateBookingSuccessTwo'                               => 'Ihre Buchung wurde erfolgreich geändert.',
+    'commentsMax'                                           => 'Das Kommentar darf nicht länger als :max Zeichen sein.'
 ];

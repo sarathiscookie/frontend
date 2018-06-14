@@ -764,6 +764,221 @@ $(function(){
         }
     });
 
+    // Convert date format (d.m.y to mm/dd/yyyy)
+    function convertDate(dateString){
+        var p = dateString.split(/\D/g);
+        return [p[1],p[0],p[2] ].join("-");
+    }
+
+    /* Calendar availability check begin */
+    $("body").on("mousedown", ".dateFromEditBook", function() {
+        var dataId          = $(this).parent().parent().data("id");
+        var $this           = $("#dateFromEditBook_"+dataId);
+        var returnResult    = [];
+
+        var holidayDates    = $(".holidayEditBook_"+dataId).data("holiday");
+        var greenDates      = $(".greenEditBook_"+dataId).data("green");
+        var orangeDates     = $(".orangeEditBook_"+dataId).data("orange");
+        var redDates        = $(".redEditBook_"+dataId).data("red");
+        var not_season_time = $(".notSeasonTimeEditBook_"+dataId).data("notseasontime");
+        var start_date      = '';
+
+        $this.datepicker({
+            showAnim: "drop",
+            dateFormat: "dd.mm.y",
+            changeMonth: true,
+            changeYear: true,
+            monthNames: ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'],
+            monthNamesShort: ["Jan", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"],
+            dayNamesMin: ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"],
+            minDate: '+1d',
+            yearRange: "0:+2"
+        });
+
+        $this.datepicker("option", "onSelect", function(date) {
+            var dt2       = $("#dateToEditBook_"+dataId);
+            var startDate = $this.datepicker('getDate');
+            var minDate   = $this.datepicker('getDate');
+            dt2.datepicker('setDate', minDate);
+            startDate.setDate(startDate.getDate() + 60); //sets dt2 maxDate to the last day of 60 days window
+            minDate.setDate(minDate.getDate() + 1); //sets dt2 minDate to the +1 day of from date
+            dt2.datepicker('option', 'maxDate', startDate);
+            dt2.datepicker('option', 'minDate', minDate);
+
+            $( ".dateFromEditBook" ).attr( "data-editbookdatefrom", date );
+            $( ".dateToEditBook" ).attr( "data-editbookdateto", dt2.val() );
+
+            // Taking date difference
+            var dateFromEditBooking = $( ".dateFromEditBook" ).attr( "data-editbookdatefrom" );
+            var dateToEditBooking   = $( ".dateToEditBook" ).attr( "data-editbookdateto" );
+            var dateOne             = new Date(convertDate(dateFromEditBooking));
+            var dateTwo             = new Date(convertDate(dateToEditBooking));
+            var timeDiff            = Math.abs(dateTwo.getTime() - dateOne.getTime());
+            var diffDays            = Math.ceil(timeDiff / (1000 * 3600 * 24));
+
+            if(dateOne < dateTwo) {
+                $('.daysEditBook').attr("data-days", diffDays);
+                $('.replaceNumberOfNights').html(diffDays);
+
+                var oldVoucherAmount  = $('.daysEditBook').data('prepaymentamount');
+                var cabinPrepayAmount = $('.daysEditBook').data('cabinprepaymentamount');
+            }
+
+        });
+
+        $this.datepicker("option", "onChangeMonthYear", function(year,month,inst) {
+            if (year != undefined && month != undefined) {
+                start_date = year +'-';
+                start_date += month +'-';
+                start_date += '01';
+            }
+            $.ajax({
+                url: '/calendar/ajax',
+                dataType: 'JSON',
+                type: 'POST',
+                data: { dateFrom: start_date, dataId: dataId },
+                success: function (response) {
+                    for (var i = 0; i < response.holidayDates.length; i++) {
+                        holidayDates.push(response.holidayDates[i]);
+                    }
+
+                    for (var i = 0; i < response.greenDates.length; i++) {
+                        greenDates.push(response.greenDates[i]);
+                    }
+
+                    for (var i = 0; i < response.orangeDates.length; i++) {
+                        orangeDates.push(response.orangeDates[i]);
+                    }
+
+                    for (var i = 0; i < response.redDates.length; i++) {
+                        redDates.push(response.redDates[i]);
+                    }
+
+                    for (var i = 0; i < response.not_season_time.length; i++) {
+                        not_season_time.push(response.not_season_time[i]);
+                    }
+
+                    $this.datepicker("refresh");
+                }
+            });
+        });
+
+        $this.datepicker("option", "beforeShowDay", function(date) {
+            var string = jQuery.datepicker.formatDate('yy-mm-dd', date);
+            if( greenDates.indexOf(string) >=0 ) {
+                returnResult = [true, "greenDates", "Verfügbar"];
+            }
+            if( orangeDates.indexOf(string) >=0 ) {
+                returnResult = [true, "orangeDates", "Begrenzt"];
+            }
+            if( redDates.indexOf(string) >=0 ) {
+                returnResult = [true, "redDates", "Ausgebucht"];
+            }
+            if( not_season_time.indexOf(string) >=0 ) {
+                returnResult = [false, "", "Geschlossen"];
+            }
+            if( holidayDates.indexOf(string) >=0 ) {
+                returnResult = [false, "", "Ruhetag"];
+            }
+            return returnResult;
+        });
+
+        $this.datepicker("show");
+    });
+
+
+    $("body").on("mousedown", ".dateToEditBook", function() {
+        var dataId          = $(this).parent().parent().data("id");
+        var $this           = $("#dateToEditBook_"+dataId);
+        var returnResults   = [];
+
+        var holidayDates    = $(".holidayEditBook_"+dataId).data("holiday");
+        var greenDates      = $(".greenEditBook_"+dataId).data("green");
+        var orangeDates     = $(".orangeEditBook_"+dataId).data("orange");
+        var redDates        = $(".redEditBook_"+dataId).data("red");
+        var not_season_time = $(".notSeasonTimeEditBook_"+dataId).data("notseasontime");
+        var start_date      = '';
+
+        $this.datepicker({
+            showAnim: "drop",
+            dateFormat: "dd.mm.y",
+            changeMonth: true,
+            changeYear: true,
+            monthNames: ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'],
+            monthNamesShort: ["Jan", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"],
+            dayNamesMin: ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"],
+            yearRange: "0:+2"
+        });
+
+        $this.datepicker("option", "onSelect", function(date) {
+            var dt1 = $("#dateFromEditBook_"+dataId);
+            $( ".dateFromEditBook" ).attr( "data-editbookdatefrom", dt1.val() );
+            $( ".dateToEditBook" ).attr( "data-editbookdateto", date );
+            console.log($('.daysEditBook').data('prepaymentamount'));
+        });
+
+        $this.datepicker("option", "onChangeMonthYear", function(year,month,inst) {
+            if (year != undefined && month != undefined) {
+                start_date = year +'-';
+                start_date += month +'-';
+                start_date += '01';
+            }
+            $.ajax({
+                url: '/calendar/ajax',
+                dataType: 'JSON',
+                type: 'POST',
+                data: { dateFrom: start_date, dataId: dataId },
+                success: function (response) {
+                    for (var i = 0; i < response.holidayDates.length; i++) {
+                        holidayDates.push(response.holidayDates[i]);
+                    }
+
+                    for (var i = 0; i < response.greenDates.length; i++) {
+                        greenDates.push(response.greenDates[i]);
+                    }
+
+                    for (var i = 0; i < response.orangeDates.length; i++) {
+                        orangeDates.push(response.orangeDates[i]);
+                    }
+
+                    for (var i = 0; i < response.redDates.length; i++) {
+                        redDates.push(response.redDates[i]);
+                    }
+
+                    for (var i = 0; i < response.not_season_time.length; i++) {
+                        not_season_time.push(response.not_season_time[i]);
+                    }
+
+                    $this.datepicker("refresh");
+                }
+            });
+        });
+
+        $this.datepicker("option", "beforeShowDay", function(date) {
+            var string = jQuery.datepicker.formatDate('yy-mm-dd', date);
+            if( greenDates.indexOf(string) >=0 ) {
+                returnResults = [true, "greenDates", "Verfügbar"];
+            }
+            if( orangeDates.indexOf(string) >=0 ) {
+                returnResults = [true, "orangeDates", "Begrenzt"];
+            }
+            if( redDates.indexOf(string) >=0 ) {
+                returnResults = [true, "redDates", "Ausgebucht"];
+            }
+            if( not_season_time.indexOf(string) >=0 ) {
+                returnResults = [false, "", "Geschlossen"];
+            }
+            if( holidayDates.indexOf(string) >=0 ) {
+                returnResults = [false, "", "Ruhetag"];
+            }
+            return returnResults;
+        });
+
+        $this.datepicker("show");
+
+    });
+    /* Calendar availability check end */
+
     /* Character limit for comments begin */
     var text_max = 300;
     $('#update_book_comment').css('color', 'red');
@@ -996,7 +1211,7 @@ $(function(){
     // Euro number formatter.
     var formatter = new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR', minimumFractionDigits: 2 });
 
-    function editCartTotalDepositCalc(total, oldAmount)
+    function editCartTotalDepositCalc(total)
     {
         // Helping objects for env variables
         var env_for_edit_booking = {
@@ -1006,24 +1221,23 @@ $(function(){
         };
 
         var serviceTaxEditBooking = '';
-        var newAmount             = total - oldAmount;
 
-        if(newAmount <= 30) {
+        if(total <= 30) {
             serviceTaxEditBooking = env_for_edit_booking.tax_one_for_edit_booking;
         }
 
-        if(newAmount > 30 && newAmount <= 100) {
+        if(total > 30 && total <= 100) {
             serviceTaxEditBooking = env_for_edit_booking.tax_two_for_edit_booking;
         }
 
-        if(newAmount > 100) {
+        if(total > 100) {
             serviceTaxEditBooking = env_for_edit_booking.tax_three_for_edit_booking;
         }
 
-        var sumPrepayAmountPerc   = (serviceTaxEditBooking / 100) * newAmount;
-        var sumPrepayAmountServiceTotal = newAmount + sumPrepayAmountPerc;
+        var sumPrepayAmountPerc   = (serviceTaxEditBooking / 100) * total;
+        var sumPrepayAmountServiceTotal = total + sumPrepayAmountPerc;
 
-        $( '.replaceEditBookingCompleteDeposit' ).html(formatter.format(newAmount));
+        $( '.replaceEditBookingCompleteDeposit' ).html(formatter.format(total));
         $( '.replaceEditBookingServiceFee' ).html(serviceTaxEditBooking+' %');
         $( '.replaceEditBookingCompletePayment' ).html(formatter.format(sumPrepayAmountServiceTotal));
     }
@@ -1031,30 +1245,31 @@ $(function(){
     // Sleeps calculation
     $('.jsEditBookSleep').change(function() {
 
-        // Days multiply with prepayment_amount
-        var amountDays = $('.amountDaysEditBook').data('amountdayseditbook');
-        var oldAmount  = $('.amountDaysEditBook').data('prepayamounteditbook');
+        var days             = $('.daysEditBook').data('days');
+        var oldVoucherAmount = $('.daysEditBook').data('prepaymentamount');
+        var cabinPrepay      = $('.daysEditBook').data('cabinprepaymentamount');
 
         // Sleeps select box value is null for validation purpose. So value is set as 0
-        var sleeps     = 0;
+        var sleeps           = 0;
 
         if($(this).val() !== ''){
-            sleeps     = $(this).val()
+            sleeps           = $(this).val()
         }
 
-        var total      = amountDays * sleeps;
+        var amount           = (cabinPrepay * days) * sleeps;
+        var total            = amount - oldVoucherAmount;
 
         $( '.replaceEditBookingGuest' ).html(sleeps);
 
-        editCartTotalDepositCalc(total, oldAmount);
+        editCartTotalDepositCalc(total);
     });
 
     // Beds calculation
     $('.jsEditBookBed').change(function() {
 
-        // Days multiply with prepayment_amount
-        var amountDays = $('.amountDaysEditBook').data('amountdayseditbook');
-        var oldAmount  = $('.amountDaysEditBook').data('prepayamounteditbook');
+        var days              = $('.daysEditBook').data('days');
+        var oldVoucherAmount  = $('.daysEditBook').data('prepaymentamount');
+        var cabinPrepayAmount = $('.daysEditBook').data('cabinprepaymentamount');
 
         // Beds & Dorms select box value is null for validation purpose. So value is set as 0
         var dorms      = 0;
@@ -1069,23 +1284,25 @@ $(function(){
         }
 
         var guest      = parseInt(beds) + parseInt(dorms);
-        var total      = (parseInt(beds) + parseInt(dorms)) * amountDays;
+        var amount     = (cabinPrepayAmount * days) * guest;
+        var total      = amount - oldVoucherAmount;
 
         $( '.replaceEditBookingGuest' ).html(guest);
 
-        editCartTotalDepositCalc(total, oldAmount);
+        editCartTotalDepositCalc(total);
     });
 
     // Dorms calculation
     $('.jsEditBookDorm').change(function() {
 
-        // Days multiply with prepayment_amount
-        var amountDays = $('.amountDaysEditBook').data('amountdayseditbook');
-        var oldAmount  = $('.amountDaysEditBook').data('prepayamounteditbook');
+        var days              = $('.daysEditBook').data('days');
+        var oldVoucherAmount  = $('.daysEditBook').data('prepaymentamount');
+        var cabinPrepayAmount = $('.daysEditBook').data('cabinprepaymentamount');
 
         // Beds & Dorms select box value is null for validation purpose. So value is set as 0
         var dorms      = 0;
         var beds       = 0;
+
         if($(this).val() !== ''){
             dorms      = $(this).val();
         }
@@ -1095,11 +1312,12 @@ $(function(){
         }
 
         var guest      = parseInt(dorms) + parseInt(beds);
-        var total      = (parseInt(dorms) + parseInt(beds)) * amountDays;
+        var amount     = (cabinPrepayAmount * days) * guest;
+        var total      = amount - oldVoucherAmount;
 
         $( '.replaceEditBookingGuest' ).html(guest);
 
-        editCartTotalDepositCalc(total, oldAmount);
+        editCartTotalDepositCalc(total);
     });
     /* Amount calc of sleeps, beds & dorms end */
 
