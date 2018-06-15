@@ -38,7 +38,7 @@
 
                     {{ csrf_field() }}
 
-                    <div class="daysEditBook" data-days="{{ $dateDifference->days }}" data-prepaymentamount="{{ $booking->prepayment_amount }}" data-cabinprepaymentamount="{{ $cabinDetails->prepayment_amount }}"></div>
+                    <div class="daysEditBook" data-sleepingplace="{{ $cabinDetails->sleeping_place }}" data-days="{{ $dateDifference->days }}" data-prepaymentamount="{{ $booking->prepayment_amount }}" data-cabinprepaymentamount="{{ $cabinDetails->prepayment_amount }}"></div>
 
                     <div class="panel panel-default text-left panel-booking1 panel-default-booking1">
                         <div class="panel-body panel-body-booking1">
@@ -97,7 +97,7 @@
                                                     <div class="col-sm-4 col-sm-4-f-booking1 col-sm-4-booking1">
                                                         <div class="form-group {{ $errors->has('beds') ? ' has-error' : '' }}">
                                                             <select class="form-control form-control-booking1 jsEditBookBed" name="beds">
-                                                                <option value="" disabled>{{ __('cart.chooseBeds') }}</option>
+                                                                <option value="" @if($booking->beds) disabled @endif>{{ __('cart.chooseBeds') }}</option>
                                                                 @for($i = 1; $i <= 30; $i++)
                                                                     <option value="{{ $i }}" @if($booking->beds === $i) selected @endif @if($i < $booking->beds) disabled @endif>{{ $i }}</option>
                                                                 @endfor
@@ -111,7 +111,7 @@
                                                     <div class="col-sm-4 col-sm-4-booking1">
                                                         <div class="form-group {{ $errors->has('dormitory') ? ' has-error' : '' }}">
                                                             <select class="form-control form-control-booking1 jsEditBookDorm" name="dormitory">
-                                                                <option value="" disabled>{{ __('cart.chooseDorms') }}</option>
+                                                                <option value="" @if($booking->dormitory) disabled @endif>{{ __('cart.chooseDorms') }}</option>
                                                                 @for($i = 1; $i <= 30; $i++)
                                                                     <option value="{{ $i }}" @if($booking->dormitory === $i) selected @endif @if($i < $booking->dormitory) disabled @endif>{{ $i }}</option>
                                                                 @endfor

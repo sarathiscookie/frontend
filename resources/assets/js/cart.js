@@ -44,7 +44,7 @@ $(function(){
         var sleepsBook     = 0; // Select box value of sleeps is null for validation purpose. So value is set as 0
         var amountDaysBook = $('.amountBookingDays_'+cartIdBook).data('amountbookingdays'); // Prepayment amount multiply with no of nights
         if($(this).val() !== ''){
-            sleepsBook     = $(this).val()
+            sleepsBook     = $(this).val();
         }
 
         var totalBook      = amountDaysBook * sleepsBook;
@@ -65,7 +65,7 @@ $(function(){
         var amountDaysBook = $('.amountBookingDays_'+cartIdBook).data('amountbookingdays'); // Prepayment amount multiply with no of nights
 
         if($(this).val() !== ''){
-            bedsBook       = $(this).val()
+            bedsBook       = $(this).val();
         }
 
         if($(this).closest('div').next('div').find('select').val() !== ''){
@@ -91,7 +91,7 @@ $(function(){
         var amountDaysBook = $('.amountBookingDays_'+cartIdBook).data('amountbookingdays'); // Prepayment amount multiply with no of nights
 
         if($(this).val() !== ''){
-            dormsBook      = $(this).val()
+            dormsBook      = $(this).val();
         }
 
         if($(this).closest('div').prev('div').find('select').val() !== ''){

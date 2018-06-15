@@ -418,7 +418,7 @@ $(function(){
         var sleepsBook     = 0; // Select box value of sleeps is null for validation purpose. So value is set as 0
         var amountDaysBook = $('.amountBookingDays_'+cartIdBook).data('amountbookingdays'); // Prepayment amount multiply with no of nights
         if($(this).val() !== ''){
-            sleepsBook     = $(this).val()
+            sleepsBook     = $(this).val();
         }
 
         var totalBook      = amountDaysBook * sleepsBook;
@@ -439,7 +439,7 @@ $(function(){
         var amountDaysBook = $('.amountBookingDays_'+cartIdBook).data('amountbookingdays'); // Prepayment amount multiply with no of nights
 
         if($(this).val() !== ''){
-            bedsBook       = $(this).val()
+            bedsBook       = $(this).val();
         }
 
         if($(this).closest('div').next('div').find('select').val() !== ''){
@@ -465,7 +465,7 @@ $(function(){
         var amountDaysBook = $('.amountBookingDays_'+cartIdBook).data('amountbookingdays'); // Prepayment amount multiply with no of nights
 
         if($(this).val() !== ''){
-            dormsBook      = $(this).val()
+            dormsBook      = $(this).val();
         }
 
         if($(this).closest('div').prev('div').find('select').val() !== ''){
@@ -562,7 +562,7 @@ $(function(){
         var sleeps        = 0;
 
         if($(this).val() !== ''){
-            sleeps    = $(this).val()
+            sleeps    = $(this).val();
         }
 
         var total     = amountDays * sleeps;
@@ -805,23 +805,18 @@ $(function(){
             dt2.datepicker('option', 'maxDate', startDate);
             dt2.datepicker('option', 'minDate', minDate);
 
-            $( ".dateFromEditBook" ).attr( "data-editbookdatefrom", date );
-            $( ".dateToEditBook" ).attr( "data-editbookdateto", dt2.val() );
-
-            // Taking date difference
-            var dateFromEditBooking = $( ".dateFromEditBook" ).attr( "data-editbookdatefrom" );
-            var dateToEditBooking   = $( ".dateToEditBook" ).attr( "data-editbookdateto" );
-            var dateOne             = new Date(convertDate(dateFromEditBooking));
-            var dateTwo             = new Date(convertDate(dateToEditBooking));
+            // Taking date difference and calculating amount while changing dates
+            var dateOne             = new Date(convertDate(date));
+            var dateTwo             = new Date(convertDate(dt2.val()));
             var timeDiff            = Math.abs(dateTwo.getTime() - dateOne.getTime());
             var diffDays            = Math.ceil(timeDiff / (1000 * 3600 * 24));
+            var previousDiffDays    = parseInt($( ".daysEditBook" ).data("days"));
 
-            if(dateOne < dateTwo) {
-                $('.daysEditBook').attr("data-days", diffDays);
-                $('.replaceNumberOfNights').html(diffDays);
-
-                var oldVoucherAmount  = $('.daysEditBook').data('prepaymentamount');
-                var cabinPrepayAmount = $('.daysEditBook').data('cabinprepaymentamount');
+            if( (dateOne < dateTwo) && (previousDiffDays < diffDays) ) {
+                calculateAmount(diffDays);
+            }
+            else {
+                alert('Arrival date must be less than and departure date and current date difference is greater than previous date.')
             }
 
         });
@@ -911,10 +906,20 @@ $(function(){
         });
 
         $this.datepicker("option", "onSelect", function(date) {
-            var dt1 = $("#dateFromEditBook_"+dataId);
-            $( ".dateFromEditBook" ).attr( "data-editbookdatefrom", dt1.val() );
-            $( ".dateToEditBook" ).attr( "data-editbookdateto", date );
-            console.log($('.daysEditBook').data('prepaymentamount'));
+            var dt1         = $("#dateFromEditBook_"+dataId);
+            var dateOne     = new Date(convertDate(dt1.val()));
+            var dateTwo     = new Date(convertDate(date));
+            var timeDiff    = Math.abs(dateTwo.getTime() - dateOne.getTime());
+            var diffDays    = Math.ceil(timeDiff / (1000 * 3600 * 24));
+            var previousDiffDays = parseInt($( ".daysEditBook" ).data("days"));
+
+            if( (dateOne < dateTwo) && (previousDiffDays < diffDays) ) {
+                calculateAmount(diffDays);
+            }
+            else {
+                alert('Arrival date must be less than and departure date and current date difference is greater than previous date.')
+            }
+
         });
 
         $this.datepicker("option", "onChangeMonthYear", function(year,month,inst) {
@@ -977,6 +982,50 @@ $(function(){
         $this.datepicker("show");
 
     });
+
+    /* Function begins to calculate amount while changing dates */
+    function calculateAmount(diffDays) {
+        $( ".replaceNumberOfNights" ).html(diffDays);
+
+        var oldVoucherAmount  = $( ".daysEditBook" ).data('prepaymentamount');
+        var cabinPrepayAmount = $( ".daysEditBook" ).data('cabinprepaymentamount');
+        var sleepingPlace     = $( ".daysEditBook" ).data('sleepingplace');
+        var sumBedsDorms      = 0;
+
+        if(sleepingPlace !== 1){
+            // Beds & Dorms select box value is null for validation purpose. So value is set as 0
+            var dorms         = 0;
+            var beds          = 0;
+
+            if($( ".jsEditBookBed" ).val() !== ''){
+                beds          = $( ".jsEditBookBed" ).val();
+            }
+
+            if($( ".jsEditBookDorm" ).val() !== ''){
+                dorms         = $( ".jsEditBookDorm" ).val();
+            }
+
+            sumBedsDorms      = parseInt(beds) + parseInt(dorms);
+        }
+        else {
+            // Sleeps select box value is null for validation purpose. So value is set as 0
+            var sleeps        = 0;
+
+            if($( ".jsEditBookSleep" ).val() !== ''){
+                sleeps        = $( ".jsEditBookSleep" ).val();
+            }
+        }
+
+        var guest             = (sleepingPlace === 1) ? sleeps : sumBedsDorms;
+        var amount            = (cabinPrepayAmount * diffDays) * guest;
+        var total             = amount - oldVoucherAmount;
+
+        $( '.replaceEditBookingGuest' ).html(guest);
+
+        editCartTotalDepositCalc(total);
+    }
+    /* Function ends to calculate amount while changing dates */
+
     /* Calendar availability check end */
 
     /* Character limit for comments begin */
@@ -1188,7 +1237,6 @@ $(function(){
                 data: { cancelId: cancelId }
             })
                 .done(function( result ) {
-                    console.log(result);
                     if(result.status === 'success') {
                         $btn.btnBootstrap('reset');
                         window.location.href = '/booking/history/';
@@ -1253,7 +1301,7 @@ $(function(){
         var sleeps           = 0;
 
         if($(this).val() !== ''){
-            sleeps           = $(this).val()
+            sleeps           = $(this).val();
         }
 
         var amount           = (cabinPrepay * days) * sleeps;

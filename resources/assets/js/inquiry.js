@@ -37,7 +37,7 @@ $(function(){
         var sleeps        = 0;
 
         if($(this).val() !== ''){
-            sleeps    = $(this).val()
+            sleeps    = $(this).val();
         }
 
         var total     = amountDays * sleeps;
