@@ -1239,7 +1239,7 @@ hr {
 .btn-booking{
     border-radius:0px;
     border:none;
-    padding:5px 0px 0px 0px;
+    padding:0px;
     background-color: #A2C617;
     width:100%;
     height:34px;

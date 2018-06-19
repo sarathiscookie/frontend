@@ -336,7 +336,7 @@
 
                             </div>
                             <div class="col-sm-6 col-sm-6-cabin-details" id="div-advertising-cabin-details">
-                                <a href="#"><img src="{{ asset('storage/img/Werbung.jpg') }}" class="img-responsive" id="advertising" alt="advertising"></a>
+                                <a href="https://www.bockstark.de/" target="_blank"><img src="{{ asset('storage/img/Werbung.jpg') }}" class="img-responsive" id="advertising" alt="advertising"></a>
                             </div>
                         </div>
                     </div>
