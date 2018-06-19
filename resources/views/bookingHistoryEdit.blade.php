@@ -38,7 +38,7 @@
 
                     {{ csrf_field() }}
 
-                    <div class="daysEditBook" data-sleepingplace="{{ $cabinDetails->sleeping_place }}" data-days="{{ $dateDifference->days }}" data-prepaymentamount="{{ $booking->prepayment_amount }}" data-cabinprepaymentamount="{{ $cabinDetails->prepayment_amount }}"></div>
+                    <div class="daysEditBook" data-sleepingplace="{{ $cabinDetails->sleeping_place }}" data-prevdays="{{ $dateDifference->days }}" data-days="{{ $dateDifference->days }}" data-prepaymentamount="{{ $booking->prepayment_amount }}" data-cabinprepaymentamount="{{ $cabinDetails->prepayment_amount }}"></div>
 
                     <div class="panel panel-default text-left panel-booking1 panel-default-booking1">
                         <div class="panel-body panel-body-booking1">
@@ -97,9 +97,9 @@
                                                     <div class="col-sm-4 col-sm-4-f-booking1 col-sm-4-booking1">
                                                         <div class="form-group {{ $errors->has('beds') ? ' has-error' : '' }}">
                                                             <select class="form-control form-control-booking1 jsEditBookBed" name="beds">
-                                                                <option value="" @if($booking->beds) disabled @endif>{{ __('cart.chooseBeds') }}</option>
+                                                                <option value="">{{ __('cart.chooseBeds') }}</option>
                                                                 @for($i = 1; $i <= 30; $i++)
-                                                                    <option value="{{ $i }}" @if($booking->beds === $i) selected @endif @if($i < $booking->beds) disabled @endif>{{ $i }}</option>
+                                                                    <option value="{{ $i }}" @if($booking->beds === $i) selected @endif>{{ $i }}</option>
                                                                 @endfor
                                                             </select>
 
@@ -111,9 +111,9 @@
                                                     <div class="col-sm-4 col-sm-4-booking1">
                                                         <div class="form-group {{ $errors->has('dormitory') ? ' has-error' : '' }}">
                                                             <select class="form-control form-control-booking1 jsEditBookDorm" name="dormitory">
-                                                                <option value="" @if($booking->dormitory) disabled @endif>{{ __('cart.chooseDorms') }}</option>
+                                                                <option value="">{{ __('cart.chooseDorms') }}</option>
                                                                 @for($i = 1; $i <= 30; $i++)
-                                                                    <option value="{{ $i }}" @if($booking->dormitory === $i) selected @endif @if($i < $booking->dormitory) disabled @endif>{{ $i }}</option>
+                                                                    <option value="{{ $i }}" @if($booking->dormitory === $i) selected @endif>{{ $i }}</option>
                                                                 @endfor
                                                             </select>
 
@@ -126,9 +126,9 @@
                                                     <div class="col-sm-4 col-sm-4-booking1">
                                                         <div class="form-group {{ $errors->has('sleeps') ? ' has-error' : '' }}">
                                                             <select class="form-control form-control-booking1 jsEditBookSleep" name="sleeps">
-                                                                <option value="" disabled>{{ __('cart.chooseSleeps') }}</option>
+                                                                <option value="">{{ __('cart.chooseSleeps') }}</option>
                                                                 @for($i = 1; $i <= 30; $i++)
-                                                                    <option value="{{ $i }}" @if($booking->sleeps === $i) selected @endif @if($i < $booking->sleeps) disabled @endif>{{ $i }}</option>
+                                                                    <option value="{{ $i }}" @if($booking->sleeps === $i) selected @endif>{{ $i }}</option>
                                                                 @endfor
                                                             </select>
 
@@ -207,10 +207,11 @@
                                         </div>
                                     </div>
 
-                                    <div class="normalEditBookingCalculation">
+                                    <!-- This div shows if amount is greater than voucher amount -->
+                                    <div class="amountGreater" style="display: block;">
                                         <div class="row row-booking1">
                                             <div class="col-sm-12 col-sm-12-booking1 col-sm-12-extra-booking1">
-                                                <p class="info-listing-booking1">{{ __('cart.deposit') }}:</p><p class="info-listing-price-booking1 replaceEditBookingCompleteDeposit">0,00 &euro;</p>
+                                                <p class="info-listing-booking1">{{ __('bookingHistory.newVoucherAmount') }}:</p><p class="info-listing-price-booking1 replaceEditBookingCompleteDeposit">0,00 &euro;</p>
                                                 <p class="info-listing-booking1">{{ __('cart.serviceFee') }}:</p><p class="info-listing-price-booking1 replaceEditBookingServiceFee">0 %</p>
                                             </div>
                                         </div>
@@ -222,6 +223,16 @@
                                         </div>
                                     </div>
 
+                                    <!-- This div shows if voucher amount is greater than amount -->
+                                    <div class="voucherGreater" style="display: none;">
+                                        <div class="row row-booking1">
+                                            <div class="col-sm-12 col-sm-12-booking1 col-sm-12-extra-booking1">
+                                                <p class="info-listing-booking1">{{ __('bookingHistory.newVoucherAmount') }}:</p><p class="info-listing-price-booking1 replaceEditBookingCompleteDeposit"></p>
+                                                <p class="info-listing-booking1">{{ __('bookingHistory.storeToWallet') }}:</p><p class="info-listing-price-booking1 replaceEditBookingToWallet"></p>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                 </div>
                             </div>
                         </div>
@@ -229,7 +240,7 @@
 
                     <div class="row content row-booking1">
                         <div id="btn-ground-2-booking1">
-                            <button type="submit" class="btn-default-booking1 btn-sm btn-details-booking1" name="updateBooking" value="updateBooking"><span class="glyphicon glyphicon-credit-card" style="font-size: 14px;" aria-hidden="true"></span> {{ __('cart.paymentButton') }}</button>
+                            <button type="submit" class="btn-default-booking1 btn-sm btn-details-booking1" name="updateBooking" value="updateBooking"><span class="glyphicon glyphicon-credit-card" style="font-size: 14px;" aria-hidden="true"></span> {{ __('bookingHistory.updateButton') }}</button>
                         </div>
                     </div>
                 </form>

@@ -17,6 +17,8 @@ return [
     */
     'overviewHeading'                                       => 'Buchungshistorie',
     'bookingNumber'                                         => 'Buchungs nummer',
+    'newVoucherAmount'                                      => 'Neuer Gutscheinwert',
+    'storeToWallet'                                         => 'Guthaben hinzufügen',
     'arrival'                                               => 'Anreise',
     'departure'                                             => 'Abreise',
     'beds'                                                  => 'Betten',

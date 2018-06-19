@@ -17,6 +17,8 @@ return [
     */
     'overviewHeading'                                       => 'History of your bookings',
     'bookingNumber'                                         => 'Booking Number',
+    'newVoucherAmount'                                      => 'New Voucher Amount',
+    'storeToWallet'                                         => 'Save To Wallet',
     'arrival'                                               => 'Arrival',
     'departure'                                             => 'Departure',
     'beds'                                                  => 'Bed(s)',

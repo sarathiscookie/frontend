@@ -806,17 +806,16 @@ $(function(){
             dt2.datepicker('option', 'minDate', minDate);
 
             // Taking date difference and calculating amount while changing dates
-            var dateOne             = new Date(convertDate(date));
-            var dateTwo             = new Date(convertDate(dt2.val()));
-            var timeDiff            = Math.abs(dateTwo.getTime() - dateOne.getTime());
-            var diffDays            = Math.ceil(timeDiff / (1000 * 3600 * 24));
-            var previousDiffDays    = parseInt($( ".daysEditBook" ).data("days"));
+            var dateOne   = new Date(convertDate(date));
+            var dateTwo   = new Date(convertDate(dt2.val()));
+            var timeDiff  = Math.abs(dateTwo.getTime() - dateOne.getTime());
+            var diffDays  = Math.ceil(timeDiff / (1000 * 3600 * 24));
 
-            if( (dateOne < dateTwo) && (previousDiffDays < diffDays) ) {
-                calculateAmount(diffDays);
-            }
-            else {
-                alert('Arrival date must be less than and departure date and current date difference is greater than previous date.')
+            if(dateOne < dateTwo) {
+                $( ".daysEditBook" ).attr("data-days", diffDays);
+                $( ".replaceNumberOfNights" ).html(diffDays);
+                var newDiffDays = $( ".daysEditBook" ).attr("data-days");
+                calculateAmount(newDiffDays);
             }
 
         });
@@ -911,13 +910,12 @@ $(function(){
             var dateTwo     = new Date(convertDate(date));
             var timeDiff    = Math.abs(dateTwo.getTime() - dateOne.getTime());
             var diffDays    = Math.ceil(timeDiff / (1000 * 3600 * 24));
-            var previousDiffDays = parseInt($( ".daysEditBook" ).data("days"));
 
-            if( (dateOne < dateTwo) && (previousDiffDays < diffDays) ) {
-                calculateAmount(diffDays);
-            }
-            else {
-                alert('Arrival date must be less than and departure date and current date difference is greater than previous date.')
+            if(dateOne < dateTwo) {
+                $( ".daysEditBook" ).attr("data-days", diffDays);
+                $( ".replaceNumberOfNights" ).html(diffDays);
+                var newDiffDays = $( ".daysEditBook" ).attr("data-days");
+                calculateAmount(newDiffDays);
             }
 
         });
@@ -985,7 +983,6 @@ $(function(){
 
     /* Function begins to calculate amount while changing dates */
     function calculateAmount(diffDays) {
-        $( ".replaceNumberOfNights" ).html(diffDays);
 
         var oldVoucherAmount  = $( ".daysEditBook" ).data('prepaymentamount');
         var cabinPrepayAmount = $( ".daysEditBook" ).data('cabinprepaymentamount');
@@ -1018,11 +1015,11 @@ $(function(){
 
         var guest             = (sleepingPlace === 1) ? sleeps : sumBedsDorms;
         var amount            = (cabinPrepayAmount * diffDays) * guest;
-        var total             = amount - oldVoucherAmount;
+        var total             = (amount > oldVoucherAmount) ? amount - oldVoucherAmount : amount;
 
         $( '.replaceEditBookingGuest' ).html(guest);
 
-        editCartTotalDepositCalc(total);
+        editCartTotalDepositCalc(total, oldVoucherAmount, amount);
     }
     /* Function ends to calculate amount while changing dates */
 
@@ -1169,12 +1166,12 @@ $(function(){
                         window.location.href = '/booking/history/';
                     }
                     else {
-                        $('.responseMessage').html('<div class="alert alert-warning alert-dismissible response" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><strong>OOPS! </strong>'+translation().deleteFailed+'</div>');
+                        $('.responseMessage').html('<div class="alert alert-warning alert-dismissible response" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><strong>Whoops! </strong>'+translation().deleteFailed+'</div>');
                     }
                 })
                 .fail(function() {
                     $btn.btnBootstrap('reset');
-                    $('.responseMessage').html('<div class="alert alert-warning alert-dismissible response" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><strong>OOPS! </strong>'+translation().deleteFailed+'</div>');
+                    $('.responseMessage').html('<div class="alert alert-warning alert-dismissible response" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><strong>Whoops! </strong>'+translation().deleteFailed+'</div>');
                 });
         }
         else {
@@ -1259,7 +1256,7 @@ $(function(){
     // Euro number formatter.
     var formatter = new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR', minimumFractionDigits: 2 });
 
-    function editCartTotalDepositCalc(total)
+    function editCartTotalDepositCalc(total, oldVoucherAmount, amount)
     {
         // Helping objects for env variables
         var env_for_edit_booking = {
@@ -1285,9 +1282,29 @@ $(function(){
         var sumPrepayAmountPerc   = (serviceTaxEditBooking / 100) * total;
         var sumPrepayAmountServiceTotal = total + sumPrepayAmountPerc;
 
-        $( '.replaceEditBookingCompleteDeposit' ).html(formatter.format(total));
-        $( '.replaceEditBookingServiceFee' ).html(serviceTaxEditBooking+' %');
-        $( '.replaceEditBookingCompletePayment' ).html(formatter.format(sumPrepayAmountServiceTotal));
+        if(amount > oldVoucherAmount) {
+            console.log('Total: ' +amount+ ' Old: '+oldVoucherAmount);
+            $( ".amountGreater" ).show();
+            $( ".voucherGreater" ).hide();
+            $( ".replaceEditBookingCompleteDeposit" ).html(formatter.format(total));
+            $( ".replaceEditBookingServiceFee" ).html(serviceTaxEditBooking+' %');
+            $( ".replaceEditBookingCompletePayment" ).html(formatter.format(sumPrepayAmountServiceTotal));
+        }
+        else if(amount === oldVoucherAmount) {
+            console.log('Total: ' +amount+ ' Old: '+oldVoucherAmount);
+            $( ".amountGreater" ).show();
+            $( ".voucherGreater" ).hide();
+            $( ".replaceEditBookingCompleteDeposit" ).html(formatter.format(0));
+            $( ".replaceEditBookingServiceFee" ).html(0+' %');
+            $( ".replaceEditBookingCompletePayment" ).html(formatter.format(0));
+        }
+        else {
+            console.log('Old: ' +oldVoucherAmount+ ' Total: ' +amount);
+            $( ".voucherGreater" ).show();
+            $( ".amountGreater" ).hide();
+            $( '.replaceEditBookingCompleteDeposit' ).html(formatter.format(total));
+            $( '.replaceEditBookingToWallet' ).html(formatter.format(oldVoucherAmount - total));
+        }
     }
 
     // Sleeps calculation
@@ -1305,11 +1322,11 @@ $(function(){
         }
 
         var amount           = (cabinPrepay * days) * sleeps;
-        var total            = amount - oldVoucherAmount;
+        var total            = (amount > oldVoucherAmount) ? amount - oldVoucherAmount : amount;
 
         $( '.replaceEditBookingGuest' ).html(sleeps);
 
-        editCartTotalDepositCalc(total);
+        editCartTotalDepositCalc(total, oldVoucherAmount, amount);
     });
 
     // Beds calculation
@@ -1333,11 +1350,11 @@ $(function(){
 
         var guest      = parseInt(beds) + parseInt(dorms);
         var amount     = (cabinPrepayAmount * days) * guest;
-        var total      = amount - oldVoucherAmount;
+        var total      = (amount > oldVoucherAmount) ? amount - oldVoucherAmount : amount;
 
         $( '.replaceEditBookingGuest' ).html(guest);
 
-        editCartTotalDepositCalc(total);
+        editCartTotalDepositCalc(total, oldVoucherAmount, amount);
     });
 
     // Dorms calculation
@@ -1361,11 +1378,11 @@ $(function(){
 
         var guest      = parseInt(dorms) + parseInt(beds);
         var amount     = (cabinPrepayAmount * days) * guest;
-        var total      = amount - oldVoucherAmount;
+        var total      = (amount > oldVoucherAmount) ? amount - oldVoucherAmount : amount;
 
         $( '.replaceEditBookingGuest' ).html(guest);
 
-        editCartTotalDepositCalc(total);
+        editCartTotalDepositCalc(total, oldVoucherAmount, amount);
     });
     /* Amount calc of sleeps, beds & dorms end */
 
