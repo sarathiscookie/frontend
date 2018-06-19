@@ -66,7 +66,7 @@
                                                 <div class="col-sm-12" id="warning_{{ $cabinDetails->_id }}"></div>
 
                                                 @php
-                                                    $calendar = $calendarServices->calendar($cabinDetails->_id)
+                                                    $calendar = $calendarServices->calendar($cabinDetails->_id, $booking->checkin_from->format('Y-m'))
                                                 @endphp
 
                                                 <div class="holidayEditBook_{{ $cabinDetails->_id }}" data-holiday="{{ $calendar[0] }}"></div>

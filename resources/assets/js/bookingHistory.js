@@ -59,6 +59,9 @@ $(function(){
                 var newDiffDays = $( ".daysEditBook" ).attr("data-days");
                 calculateAmount(newDiffDays);
             }
+            /*else {
+                alert('Ankunftsdatum muss vor dem Abreisedatum liegen.')
+            }*/
 
         });
 
@@ -159,6 +162,9 @@ $(function(){
                 var newDiffDays = $( ".daysEditBook" ).attr("data-days");
                 calculateAmount(newDiffDays);
             }
+            /*else {
+                alert('Ankunftsdatum muss vor dem Abreisedatum liegen.')
+            }*/
 
         });
 
@@ -525,7 +531,7 @@ $(function(){
         var sumPrepayAmountServiceTotal = total + sumPrepayAmountPerc;
 
         if(amount > oldVoucherAmount) {
-            console.log('Total: ' +amount+ ' Old: '+oldVoucherAmount);
+            console.log('Amount: ' +amount+ ' Old: '+oldVoucherAmount+' Total: '+total);
             $( ".amountGreater" ).show();
             $( ".voucherGreater" ).hide();
             $( ".replaceEditBookingCompleteDeposit" ).html(formatter.format(total));
@@ -533,7 +539,7 @@ $(function(){
             $( ".replaceEditBookingCompletePayment" ).html(formatter.format(sumPrepayAmountServiceTotal));
         }
         else if(amount === oldVoucherAmount) {
-            console.log('Total: ' +amount+ ' Old: '+oldVoucherAmount);
+            console.log('Amount: ' +amount+ ' Old: '+oldVoucherAmount+' Total: '+total);
             $( ".amountGreater" ).show();
             $( ".voucherGreater" ).hide();
             $( ".replaceEditBookingCompleteDeposit" ).html(formatter.format(0));
@@ -541,7 +547,7 @@ $(function(){
             $( ".replaceEditBookingCompletePayment" ).html(formatter.format(0));
         }
         else {
-            console.log('Old: ' +oldVoucherAmount+ ' Total: ' +amount);
+            console.log('Amount: ' +amount+ ' Old: '+oldVoucherAmount+' Total: '+total);
             $( ".voucherGreater" ).show();
             $( ".amountGreater" ).hide();
             $( '.replaceEditBookingCompleteDeposit' ).html(formatter.format(total));

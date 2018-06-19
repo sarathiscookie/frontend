@@ -60,12 +60,21 @@ class CalendarController extends Controller
      * Show the data when page initial loads.
      *
      * @param  string  $cabinId
+     * @param  string  $checkingFrom
      * @return array
      */
 
-    public function calendar($cabinId)
+    public function calendar($cabinId, $checkingFrom = null)
     {
-        $monthBegin              = date("Y-m-d", strtotime(' +1 day'));
+        // $checkingFrom: In booking history edit booking section, If guest clicked on calendar we will pass previous voucher arrival year and month to generate and show whole month availability in calendar.
+        // If there is no $checkingFrom, current month availability will show in calendar. $checkingFrom value is getting from booking history booking edit page. Other calendar listing page doesn't have $checkingFrom values.
+        if($checkingFrom === null) {
+            $monthBegin          = date("Y-m-d", strtotime(' +1 day'));
+        }
+        else{
+            $monthBegin          = date("$checkingFrom-01", strtotime(' +1 day'));
+        }
+
         $monthEnd                = date("Y-m-t 23:59:59", strtotime($monthBegin));
 
         $holiday_prepare         = [];
