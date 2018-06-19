@@ -20,7 +20,11 @@ $(function() {
         var envBook = {
             tax_one: window.environment.service_tax_one,
             tax_two: window.environment.service_tax_two,
-            tax_three: window.environment.service_tax_three
+            tax_three: window.environment.service_tax_three,
+            redeemedAmountPayment: window.environment.redeemedAmountPayment,
+            moneyBalancePayment: window.environment.moneyBalancePayment,
+            serviceFeePayment: window.environment.serviceFeePayment,
+            amountPayment: window.environment.amountPayment
         };
 
         if($(this).is(":checked")) {
@@ -31,8 +35,8 @@ $(function() {
 
             if (redeemAmount >= sumPrepayAmount) {
                 var afterRedeemAmount     = redeemAmount - sumPrepayAmount;
-                $( ".redeemAmount" ).html('<p class="info-listing-booking2">Redeem Amount:</p><p class="info-listing-price-booking2">'+formatter.format(redeemAmount)+'</p>');
-                $( ".moneyBalance" ).html('<p class="info-listing-booking2">Money Balance:</p><p class="info-listing-price-booking2">'+formatter.format(afterRedeemAmount)+'</p>');
+                $( ".redeemAmount" ).html('<p class="info-listing-booking2">'+envBook.redeemedAmountPayment+':</p><p class="info-listing-price-booking2">'+formatter.format(redeemAmount)+'</p>');
+                $( ".moneyBalance" ).html('<p class="info-listing-booking2">'+envBook.moneyBalancePayment+':</p><p class="info-listing-price-booking2">'+formatter.format(afterRedeemAmount)+'</p>');
                 $( ".afterRedeemAmount" ).html();
                 $( ".sumPrepayServiceTotal" ).html();
                 $( ".jsServiceFee" ).hide();
@@ -44,12 +48,12 @@ $(function() {
                 var serviceTaxBook        = serviceFees(afterRedeemAmount);
                 var sumPrepayPercentage   = (serviceTaxBook / 100) * afterRedeemAmount;
                 var sumPrepayServiceTotal = afterRedeemAmount + sumPrepayPercentage;
-                $( ".redeemAmount" ).html('<p class="info-listing-booking2">Redeem Amount:</p><p class="info-listing-price-booking2">'+formatter.format(redeemAmount)+'</p>');
+                $( ".redeemAmount" ).html('<p class="info-listing-booking2">'+envBook.redeemedAmountPayment+':</p><p class="info-listing-price-booking2">'+formatter.format(redeemAmount)+'</p>');
                 $( ".moneyBalance" ).html();
-                $( ".afterRedeemAmount" ).html('<p class="info-listing-booking2">Amount:</p><p class="info-listing-price-booking2">'+formatter.format(afterRedeemAmount)+'</p>');
+                $( ".afterRedeemAmount" ).html('<p class="info-listing-booking2">'+envBook.amountPayment+':</p><p class="info-listing-price-booking2">'+formatter.format(afterRedeemAmount)+'</p>');
                 $( ".sumPrepayServiceTotal" ).html(formatter.format(sumPrepayServiceTotal));
                 $( ".jsServiceFee" ).show();
-                $( ".jsServiceFee" ).html('<p class="info-listing-booking2">Service fee:</p><p class="info-listing-price-booking2">'+serviceTaxBook+'%</p>');
+                $( ".jsServiceFee" ).html('<p class="info-listing-booking2">'+envBook.serviceFeePayment+':</p><p class="info-listing-price-booking2">'+serviceTaxBook+'%</p>');
                 $( ".serviceFee" ).hide();
                 $( ".totalPrepayAmount" ).show();
             }

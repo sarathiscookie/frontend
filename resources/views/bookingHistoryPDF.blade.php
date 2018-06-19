@@ -38,7 +38,7 @@
                 <tr><td colspan="1" style="font-weight:bold;">Hütte</td><td colspan="6">{{ $cart->cabinname }}</td></tr>
                 <tr><td colspan="1" style="font-weight:bold;">Buchungsnr</td><td colspan="6">{{ $cart->invoice_number }}</td></tr>
                 <tr><td colspan="1" style="font-weight:bold;">Anreise</td><td colspan="6">{{ $cart->checkin_from->format('d.m.Y') }}</td></tr>
-                <tr><td colspan="1" style="font-weight:bold;">Ankunft</td><td colspan="6">{{ $cart->reserve_to->format('d.m.Y') }}</td></tr>
+                <tr><td colspan="1" style="font-weight:bold;">Abreise</td><td colspan="6">{{ $cart->reserve_to->format('d.m.Y') }}</td></tr>
                 <tr><td colspan="1" style="font-weight:bold;">Personen</td><td colspan="6">{{ $cart->guests }}</td></tr>
                 <tr><td colspan="1" style="font-weight:bold;">Nächte</td><td colspan="6">{{ $dateDifference }}</td></tr>
                 @if($cart->status === '4' && $cart->payment_status === '2')

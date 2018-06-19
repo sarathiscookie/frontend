@@ -46,4 +46,9 @@ return[
     'payByBillTitle'                                   => 'This button will enable if there is two weeks diff b/w current date and checking from date.',
     'paymentErrorHeading'                              => 'Booking Failed!',
     'bookingSuccessHeading'                            => 'Booked!',
+    'yourAmount'                                       => 'Your Amount',
+    'redeemNow'                                        => 'Redeem now!',
+    'redeemAmount'                                     => 'Redeem Amount',
+    'moneyBalance'                                     => 'Money Balance',
+    'amountPayment'                                    => 'Amount',
 ];

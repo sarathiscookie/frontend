@@ -47,4 +47,9 @@ return[
     'payByBillTitle'                                   => 'Sie können nur bis mindestens zwei Wochen vor der Anreise per Rechnung bezahlen.',
     'paymentErrorHeading'                              => 'Buchung fehlgeschlagen!',
     'bookingSuccessHeading'                            => 'Gebucht!',
+    'yourAmount'                                       => 'Ihr Guthaben',
+    'redeemNow'                                        => 'Jetzt einlösen!',
+    'redeemAmount'                                     => 'Bisheriges Guthaben',
+    'moneyBalance'                                     => 'Aktuelles Guthaben',
+    'amountPayment'                                    => 'Amount',
 ];

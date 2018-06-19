@@ -22,6 +22,11 @@
     <!-- Css for all modules -->
     <link href="{{ mix('css/all.css') }}" rel="stylesheet">
 
+    <style>
+        a.removestyles{
+            text-decoration: none !important;
+        }
+    </style>
     @yield('styles')
 
 </head>
@@ -84,8 +89,8 @@
 
             <!-- Right Side Of Navbar -->
             <ul class="nav navbar-nav navbar-right" id="right-top-nav">
-                <li><a href="#" class="nav-points nav-points-right"><span class="glyphicon glyphicon-search" title="{{ __('app.searchPlaceholder') }}"></span><span class="icons-display"> {{ __('app.search') }}</span></a></li>
-                <li><a href="#" class="nav-points nav-points-right"><span class="glyphicon glyphicon-earphone" title="{{ __('app.menuPhone') }}"></span><span class="icons-display"> {{ __('app.menuPhone') }}</span></a></li>
+                <li><a href="{{ route('search') }}" class="nav-points nav-points-right"><span class="glyphicon glyphicon-search" title="{{ __('app.searchPlaceholder') }}"></span><span class="icons-display"> {{ __('app.search') }}</span></a></li>
+                <li><a href="tel:+499001329999" class="nav-points nav-points-right"><span class="glyphicon glyphicon-earphone" title="{{ __('app.menuPhone') }}"></span><span class="icons-display"> {{ __('app.menuPhone') }}</span></a></li>
                 <li><a href="/contact" class="nav-points nav-points-right" id="last-child"><span class="glyphicon glyphicon-envelope" title="{{ __('app.menuContact') }}"></span><span class="icons-display"> {{ __('app.menuContact') }}</span></a></li>
             </ul>
 
@@ -117,10 +122,10 @@
     <ul  id="footerbalcken">
         <li class="footerabschnitte">
             <h3 class="footerinhalt footer-headliner">Huetten-Holiday.de</h3><br />
-            <a class="footerinhalt">Huetten-Holiday.de GmbH</a><br />
-            <a class="footerinhalt">Nebelhornstraße 3</a><br />
-            <a class="footerinhalt">87448 Waltenhofen</a><br />
-            <a class="footerinhalt">Deutschland</a>
+            <a class="footerinhalt removestyles">Huetten-Holiday.de GmbH</a><br />
+            <a class="footerinhalt removestyles">Nebelhornstraße 3</a><br />
+            <a class="footerinhalt removestyles">87448 Waltenhofen</a><br />
+            <a class="footerinhalt removestyles">Deutschland</a>
         </li>
         <li class="footerabschnitte">
             <h3 class="footerinhalt footer-headliner">{{ __('app.footerInformation') }}</h3><br />

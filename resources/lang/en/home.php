@@ -20,5 +20,6 @@ return [
     'imageLabelSearchRegion'          => 'Search a Region',
     'imageHomeHeading'                => 'What means Huetten-Holiday.de - Who is Huetten-Holiday.de for?',
     'imageHomeDescription'            => 'Huetten-Holiday.de is a reservation and management system for mountain cabins.Our service is for the cabins hosts, but of course also for the hikers, mountaineers as well as mountain schools. We have been working on a reservation system for quite some time to develop that benefits everyone involved.',
+    'readMoreLink'                    => 'Read more here ...',
 
 ];

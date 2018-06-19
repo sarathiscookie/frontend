@@ -72,7 +72,7 @@ class CalendarController extends Controller
             $monthBegin          = date("Y-m-d", strtotime(' +1 day'));
         }
         else{
-            $monthBegin          = date("$checkingFrom-01", strtotime(' +1 day'));
+            $monthBegin          = date("$checkingFrom-01");
         }
 
         $monthEnd                = date("Y-m-t 23:59:59", strtotime($monthBegin));

@@ -145,31 +145,31 @@ return [
         ],
         /* Custom errors in cart page */
         'street' => [
-            'required'      => 'Das straße muss ausgefüllt sein.',
-            'string'        => 'Der straße muss eine Zeichenfolge sein.',
-            'max'           => 'Die straße dürfen nicht länger als :max Zeichen sein.'
+            'required'      => 'Die Straße muss eingegeben werden.',
+            'string'        => 'Der Straße muss eine Zeichenfolge sein.',
+            'max'           => 'Die Straße dürfen nicht länger als :max Zeichen sein.'
         ],
         'city' => [
-            'required'      => 'Das stadt muss ausgefüllt sein.',
-            'string'        => 'Der stadt muss eine Zeichenfolge sein.',
-            'max'           => 'Die stadt dürfen nicht länger als :max Zeichen sein.'
+            'required'      => 'Die Stadt muss eingegeben werden.',
+            'string'        => 'Der Stadt muss eine Zeichenfolge sein.',
+            'max'           => 'Die Stadt dürfen nicht länger als :max Zeichen sein.'
         ],
         'country' => [
-            'required'      => 'Das land muss ausgefüllt sein.',
+            'required'      => 'Das Land muss eingegeben werden.',
             'not_in'        => 'Das ausgewählte Land ist nicht verfügbar.',
         ],
         'zipcode' => [
-            'required'      => 'Das postleizahl muss ausgefüllt sein.',
-            'string'        => 'Der postleizahl muss eine Zeichenfolge sein.',
-            'max'           => 'Die postleizahl dürfen nicht länger als :max Zeichen sein.'
+            'required'      => 'Die Postleizahl muss eingegeben werden.',
+            'string'        => 'Der Postleizahl muss eine Zeichenfolge sein.',
+            'max'           => 'Die Postleizahl dürfen nicht länger als :max Zeichen sein.'
         ],
         'mobile' => [
-            'max'           => 'Die handy dürfen nicht länger als :max Zeichen sein.'
+            'max'           => 'Die Handy dürfen nicht länger als :max Zeichen sein.'
         ],
         'phone' => [
-            'required'      => 'Das telefon muss ausgefüllt sein.',
-            'string'        => 'Der telefon muss eine Zeichenfolge sein.',
-            'max'           => 'Die telefon dürfen nicht länger als :max Zeichen sein.'
+            'required'      => 'Die Telefonnummer muss eingegeben werden.',
+            'string'        => 'Der Telefonnummer muss eine Zeichenfolge sein.',
+            'max'           => 'Die Telefonnummer dürfen nicht länger als :max Zeichen sein.'
         ],
         'payment' => [
             'required'      => 'Das Zahlungs muss ausgefüllt sein.'

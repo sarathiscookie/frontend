@@ -16,7 +16,7 @@ return [
     */
 
     'cartHeading'                               => 'Booking(s)',
-    'chooseBeds'                                =>  'Choose Beds',
+    'chooseBeds'                                => 'Choose Beds',
     'chooseDorms'                               => 'Choose Dorms',
     'chooseSleeps'                              => 'Choose Sleeps',
     'halfBoard'                                 => 'Half Board Available',

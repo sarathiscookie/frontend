@@ -9,8 +9,8 @@ $(function(){
     /* Button click show more details */
     var showChar = 375;
     var ellipsestext = "...";
-    var moretext = "View more";
-    var lesstext = "View less";
+    var moretext = "Mehr anzeigen";
+    var lesstext = "Weniger anzeigen";
 
     var content = $(".more").html();
 

@@ -33,7 +33,7 @@
                 <p>
                     {{ __('home.imageHomeDescription') }}
                 </p>
-                <a href="#">Read more here ...</a>
+                <a href="#">{{ __('home.readMoreLink') }}</a>
             </div>
         </div><br /><br />
     </main>
