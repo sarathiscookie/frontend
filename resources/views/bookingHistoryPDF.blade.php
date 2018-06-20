@@ -80,7 +80,7 @@
             <td colspan="1"><img style="width: 10px" id="logo" src="{{ public_path('storage/img/plus.png') }}"></td><td colspan="6">Der Gutschein wird auf die Person, welche die Buchung veranlasst hat, verrechnet..</td>
         </tr>
         <tr>
-            <td colspan="1"><img style="width: 10px" id="logo" src="{{ public_path('storage/img/plus.png') }}"></td><td colspan="6">Der Wertgutschein hat 4 Jahre nach Ausstellung Gültigkeit.</td>
+            <td colspan="1"><img style="width: 10px" id="logo" src="{{ public_path('storage/img/plus.png') }}"></td><td colspan="6">Der Wertgutschein hat 4 Jahre nach Ausstellung Gültigkeit. Weitere Informationen finden Sie in unseren AGB.</td>
         </tr>
     </table>
 </table>

@@ -40,7 +40,7 @@ return[
     'dormsNotAvailable'         => ' Keine freien Lager am ',
     'sleepsNotAvailable'        => ' Keine freien Schlafplatz am ',
     'alreadyFilledBedsDorms'    => ' Betten und Lager sind ausgebucht am ',
-    'alreadyFilledSleeps'       => ' Schlafplatz sind ausgebucht am ',
+    'alreadyFilledSleeps'       => ' Schlafplätze sind ausgebucht am ',
     'sixtyDaysExceed'           => 'Es können maximal 60 Tage gebucht werden',
     'dateGreater'               => 'Ankunftsdatum muss vor dem Abreisedatum liegen.',
     'inquiryAlert'              => 'Am',
@@ -53,9 +53,9 @@ return[
     'tomorrowLimited'           => 'begrenzt',
     'tomorrowAvailable'         => 'verfügbar',
     'tomorrowBookedOut'         => 'ausgebucht',
-    'dateFromRequired'          => 'Das Ankunftsdatum ist erforderlich',
+    'dateFromRequired'          => 'Das Anreisedatum ist erforderlich',
     'dateToRequired'            => 'Das Abreisedatum ist erforderlich',
-    'bedsRequired_without'      => 'Betten werden benötigt, wenn kein Lager vorhanden ist',
-    'dormsRequired_without'     => 'Lager werden benötigt, wenn kein Betten vorhanden ist',
+    'bedsRequired_without'      => 'Betten auswählen, falls kein Lager ausgewählt ist.',
+    'dormsRequired_without'     => 'Lager auswählen, falls kein Bett ausgewählt ist.',
     'sleepsRequired'            => 'Ein Schlafplatz erforderlich'
 ];

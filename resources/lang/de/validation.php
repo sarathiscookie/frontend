@@ -105,10 +105,10 @@ return [
             'not_in' => 'Das ausgewählte Schlafplätzen ist nicht verfügbar.',
         ],
         'guest.*.beds' => [
-            'required_without' => 'Betten werden benötigt, wenn kein Lager vorhanden ist.'
+            'required_without' => 'Betten auswählen, falls kein Lager ausgewählt ist.'
         ],
         'guest.*.dormitory' => [
-            'required_without' => 'Lager werden benötigt, wenn kein Betten vorhanden ist.'
+            'required_without' => 'Lager auswählen, falls kein Bett ausgewählt ist.'
         ],
         'guest.*.comments' => [
             'max'   => 'Das Kommentar darf nicht länger als :max Zeichen sein.'

@@ -664,25 +664,46 @@ $(function() {
         }
     });
 
-    $(".moneyBalance").click(function(){
+    /* Function for german number formatter. */
+    var formatterPayment = new Intl.NumberFormat('de-DE', {
+        style: 'currency',
+        currency: 'EUR',
+        minimumFractionDigits: 2
+    });
 
-        /* Function for german number formatter. */
-        var formatter = new Intl.NumberFormat('de-DE', {
-            style: 'currency',
-            currency: 'EUR',
-            minimumFractionDigits: 2
-        });
-
-        /* Helping objects for env variables */
+    /* Helping objects for env variables */
+    function variables() {
         var envBook = {
             tax_one: window.environment.service_tax_one,
             tax_two: window.environment.service_tax_two,
             tax_three: window.environment.service_tax_three,
+            service_tax_paybybill_one: window.environment.service_tax_paybybill_one,
+            service_tax_paybybill_two: window.environment.service_tax_paybybill_two,
+            service_tax_paybybill_three: window.environment.service_tax_paybybill_three,
+            service_tax_sofort_one: window.environment.service_tax_sofort_one,
+            service_tax_sofort_two: window.environment.service_tax_sofort_two,
+            service_tax_sofort_three: window.environment.service_tax_sofort_three,
+            service_tax_paydirect_one: window.environment.service_tax_paydirect_one,
+            service_tax_paydirect_two: window.environment.service_tax_paydirect_two,
+            service_tax_paydirect_three: window.environment.service_tax_paydirect_three,
+            service_tax_paypal_one: window.environment.service_tax_paypal_one,
+            service_tax_paypal_two: window.environment.service_tax_paypal_two,
+            service_tax_paypal_three: window.environment.service_tax_paypal_three,
+            service_tax_creditcard_one: window.environment.service_tax_creditcard_one,
+            service_tax_creditcard_two: window.environment.service_tax_creditcard_two,
+            service_tax_creditcard_three: window.environment.service_tax_creditcard_three,
             redeemedAmountPayment: window.environment.redeemedAmountPayment,
             moneyBalancePayment: window.environment.moneyBalancePayment,
             serviceFeePayment: window.environment.serviceFeePayment,
             amountPayment: window.environment.amountPayment
         };
+
+        return envBook;
+    }
+
+    var paymentChoosePassAmount = $( ".sumPrepayAmount" ).data('sumprepayamount'); // If click on any payment method, pass amount to function to calculate service fee.
+
+    $(".moneyBalance").click(function(){
 
         if($(this).is(":checked")) {
             $( ".afterRedeem" ).show();
@@ -692,73 +713,150 @@ $(function() {
 
             if (redeemAmount >= sumPrepayAmount) {
                 var afterRedeemAmount     = redeemAmount - sumPrepayAmount;
-                $( ".redeemAmount" ).html('<p class="info-listing-booking2">'+envBook.redeemedAmountPayment+':</p><p class="info-listing-price-booking2">'+formatter.format(redeemAmount)+'</p>');
-                $( ".moneyBalance" ).html('<p class="info-listing-booking2">'+envBook.moneyBalancePayment+':</p><p class="info-listing-price-booking2">'+formatter.format(afterRedeemAmount)+'</p>');
+                $( ".redeemAmount" ).html('<p class="info-listing-booking2">'+variables().redeemedAmountPayment+':</p><p class="info-listing-price-booking2">'+formatterPayment.format(redeemAmount)+'</p>');
+                $( ".moneyBalance" ).html('<p class="info-listing-booking2">'+variables().moneyBalancePayment+':</p><p class="info-listing-price-booking2">'+formatterPayment.format(afterRedeemAmount)+'</p>');
                 $( ".afterRedeemAmount" ).html();
                 $( ".sumPrepayServiceTotal" ).html();
-                $( ".jsServiceFee" ).hide();
                 $( ".serviceFee" ).hide();
                 $( ".totalPrepayAmount" ).hide();
             }
             else {
                 var afterRedeemAmount     = sumPrepayAmount - redeemAmount;
-                var serviceTaxBook        = serviceFees(afterRedeemAmount);
+                var paymentMethod         = $( ".serviceFee" ).attr('data-paymentmethod');
+                var serviceTaxBook        = serviceFees(afterRedeemAmount, paymentMethod);
+                paymentChoosePassAmount   = afterRedeemAmount; // If click on any payment method, pass amount to function to calculate service fee.
                 var sumPrepayPercentage   = (serviceTaxBook / 100) * afterRedeemAmount;
                 var sumPrepayServiceTotal = afterRedeemAmount + sumPrepayPercentage;
-                $( ".redeemAmount" ).html('<p class="info-listing-booking2">'+envBook.redeemedAmountPayment+':</p><p class="info-listing-price-booking2">'+formatter.format(redeemAmount)+'</p>');
+                $( ".redeemAmount" ).html('<p class="info-listing-booking2">'+variables().redeemedAmountPayment+':</p><p class="info-listing-price-booking2">'+formatterPayment.format(redeemAmount)+'</p>');
                 $( ".moneyBalance" ).html();
-                $( ".afterRedeemAmount" ).html('<p class="info-listing-booking2">'+envBook.amountPayment+':</p><p class="info-listing-price-booking2">'+formatter.format(afterRedeemAmount)+'</p>');
-                $( ".sumPrepayServiceTotal" ).html(formatter.format(sumPrepayServiceTotal));
-                $( ".jsServiceFee" ).show();
-                $( ".jsServiceFee" ).html('<p class="info-listing-booking2">'+envBook.serviceFeePayment+':</p><p class="info-listing-price-booking2">'+serviceTaxBook+'%</p>');
-                $( ".serviceFee" ).hide();
+                $( ".afterRedeemAmount" ).html('<p class="info-listing-booking2">'+variables().amountPayment+':</p><p class="info-listing-price-booking2">'+formatterPayment.format(afterRedeemAmount)+'</p>');
+                $( ".sumPrepayServiceTotal" ).html(formatterPayment.format(sumPrepayServiceTotal));
+                $( ".serviceFee" ).html('<p class="info-listing-booking2">'+variables().serviceFeePayment+':</p><p class="info-listing-price-booking2">'+serviceTaxBook+' %</p>');
                 $( ".totalPrepayAmount" ).show();
             }
         }
         else {
             $( ".afterRedeem" ).hide();
             var sumPrepaymentAmount    = $( ".sumPrepayAmount" ).data('sumprepayamount');
-            var serviceFee             = serviceFees(sumPrepaymentAmount);
+            var paymentMethod         = $( ".serviceFee" ).attr('data-paymentmethod');
+            var serviceFee             = serviceFees(sumPrepaymentAmount, paymentMethod);
+            paymentChoosePassAmount    = sumPrepaymentAmount; // If click on any payment method, pass amount to function to calculate service fee.
             var sumPrepaymentPerc      = (serviceFee / 100) * sumPrepaymentAmount;
             var sumPrepaymentServTotal = sumPrepaymentAmount + sumPrepaymentPerc;
 
-            $( ".sumPrepayServiceTotal" ).html(formatter.format(sumPrepaymentServTotal));
-            $( ".jsServiceFee" ).hide();
-            $( ".serviceFee" ).show();
+            $( ".sumPrepayServiceTotal" ).html(formatterPayment.format(sumPrepaymentServTotal));
+            $( ".serviceFee" ).html('<p class="info-listing-booking2">'+variables().serviceFeePayment+':</p><p class="info-listing-price-booking2">'+serviceFee+' %</p>');
             $( ".totalPrepayAmount" ).show();
-        }
-
-        /* Function for service tax calculation */
-        function serviceFees(sumPrepayAmount)
-        {
-            var serviceTaxBook = 0;
-
-            if(sumPrepayAmount <= 30) {
-                serviceTaxBook = envBook.tax_one;
-            }
-
-            if(sumPrepayAmount > 30 && sumPrepayAmount <= 100) {
-                serviceTaxBook = envBook.tax_two;
-            }
-
-            if(sumPrepayAmount > 100) {
-                serviceTaxBook = envBook.tax_three;
-            }
-
-            return serviceTaxBook;
         }
 
     });
 
-    /* Credit card functionality */
+    /* When click on payment method pass amount and calculate service fee. Open hide credit card iframe */
     $("input[name='payment']").on("click", function(){
+
+        $( ".serviceFee" ).attr('data-paymentmethod', $(this).val());
+
         if($(this).val() === 'creditCard') {
             $("#creditcard").show();
         }
         else {
             $("#creditcard").hide();
         }
+
+        var serviceFeePayMethod   = serviceFees(paymentChoosePassAmount, $(this).val());
+        var sumPayMethodPerc      = (serviceFeePayMethod / 100) * paymentChoosePassAmount;
+        var sumPayMethodServTotal = paymentChoosePassAmount + sumPayMethodPerc;
+        $( ".serviceFee" ).html('<p class="info-listing-booking2">'+variables().serviceFeePayment+':</p><p class="info-listing-price-booking2">'+serviceFeePayMethod+' %</p>');
+        $( ".sumPrepayServiceTotal" ).html(formatterPayment.format(sumPayMethodServTotal));
     });
+
+    /* Function to service tax calculation */
+    function serviceFees(sumPrepayAmount, paymentMethod)
+    {
+        paymentMethod = paymentMethod || '';
+
+        var serviceTaxBook = 0;
+
+        if(paymentMethod === 'payByBill') {
+            if(sumPrepayAmount <= 30) {
+                serviceTaxBook = variables().service_tax_paybybill_one;
+            }
+
+            if(sumPrepayAmount > 30 && sumPrepayAmount <= 100) {
+                serviceTaxBook = variables().service_tax_paybybill_two;
+            }
+
+            if(sumPrepayAmount > 100) {
+                serviceTaxBook = variables().service_tax_paybybill_three;
+            }
+        }
+        else if(paymentMethod === 'sofort') {
+            if(sumPrepayAmount <= 30) {
+                serviceTaxBook = variables().service_tax_sofort_one;
+            }
+
+            if(sumPrepayAmount > 30 && sumPrepayAmount <= 100) {
+                serviceTaxBook = variables().service_tax_sofort_two;
+            }
+
+            if(sumPrepayAmount > 100) {
+                serviceTaxBook = variables().service_tax_sofort_three;
+            }
+        }
+        else if(paymentMethod === 'payDirect') {
+            if(sumPrepayAmount <= 30) {
+                serviceTaxBook = variables().service_tax_paydirect_one;
+            }
+
+            if(sumPrepayAmount > 30 && sumPrepayAmount <= 100) {
+                serviceTaxBook = variables().service_tax_paydirect_two;
+            }
+
+            if(sumPrepayAmount > 100) {
+                serviceTaxBook = variables().service_tax_paydirect_three;
+            }
+        }
+        else if(paymentMethod === 'payPal') {
+            if(sumPrepayAmount <= 30) {
+                serviceTaxBook = variables().service_tax_paypal_one;
+            }
+
+            if(sumPrepayAmount > 30 && sumPrepayAmount <= 100) {
+                serviceTaxBook = variables().service_tax_paypal_two;
+            }
+
+            if(sumPrepayAmount > 100) {
+                serviceTaxBook = variables().service_tax_paypal_three;
+            }
+        }
+        else if(paymentMethod === 'creditCard') {
+            if(sumPrepayAmount <= 30) {
+                serviceTaxBook = variables().service_tax_creditcard_one;
+            }
+
+            if(sumPrepayAmount > 30 && sumPrepayAmount <= 100) {
+                serviceTaxBook = variables().service_tax_creditcard_two;
+            }
+
+            if(sumPrepayAmount > 100) {
+                serviceTaxBook = variables().service_tax_creditcard_three;
+            }
+        }
+        else {
+            if(sumPrepayAmount <= 30) {
+                serviceTaxBook = variables().tax_one;
+            }
+
+            if(sumPrepayAmount > 30 && sumPrepayAmount <= 100) {
+                serviceTaxBook = variables().tax_two;
+            }
+
+            if(sumPrepayAmount > 100) {
+                serviceTaxBook = variables().tax_three;
+            }
+        }
+        return serviceTaxBook;
+    }
 });
 /* Js for booking history module */
 $(function(){

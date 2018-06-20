@@ -806,6 +806,7 @@ hr {
 }
 .month-opening{
     padding-top:20px !important;
+    width: 100%;
 }
 
 .month-opening .text-capitalize {
@@ -1247,7 +1248,6 @@ hr {
     font-size:16px;
 }
 @media (max-width:767px) {.btn-booking{
-    padding-top:8px;
     height:42px;
 }}
 .btn-booking:hover{
