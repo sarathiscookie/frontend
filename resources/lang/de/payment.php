@@ -52,4 +52,6 @@ return[
     'redeemAmount'                                     => 'Bisheriges Guthaben',
     'moneyBalance'                                     => 'Aktuelles Guthaben',
     'amountPayment'                                    => 'Amount',
+    'cardPan'                                          => 'Kartennummer',
+    'expireDate'                                       => 'Auslaufdatum',
 ];

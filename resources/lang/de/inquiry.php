@@ -18,7 +18,7 @@ return [
     'inquiryHeading'                => 'Anfrage',
     'step1'                         => 'Schritt 1 von 1',
     'sendInquiryButton'             => 'Anfrage senden',
-    'errorOne'                      => 'Whooops!',
+    'errorOne'                      => 'Whoops!',
     'errorTwo'                      => 'Ändern Sie ein paar Dinge und versuchen Sie es erneut.',
     'alertChooseGreater'            => 'Sie können im Auswahlfeld größere Werte auswählen.',
 

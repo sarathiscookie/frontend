@@ -27,22 +27,90 @@ class PaymentController extends Controller
      * Function for service fee
      *
      * @param  string  $sumPrepayAmount
+     * @param  string  $paymentMethod
      * @return \Illuminate\Http\Response
      */
-    public function serviceFees($sumPrepayAmount)
+    public function serviceFees($sumPrepayAmount, $paymentMethod = null)
     {
         $serviceTaxBook = 0;
 
-        if($sumPrepayAmount <= 30) {
-            $serviceTaxBook = env('SERVICE_TAX_ONE');
-        }
+        if($paymentMethod === 'payByBill'){
+            if($sumPrepayAmount <= 30) {
+                $serviceTaxBook = env('SERVICE_TAX_PAYBYBILL_ONE');
+            }
 
-        if($sumPrepayAmount > 30 && $sumPrepayAmount <= 100) {
-            $serviceTaxBook = env('SERVICE_TAX_TWO');
-        }
+            if($sumPrepayAmount > 30 && $sumPrepayAmount <= 100) {
+                $serviceTaxBook = env('SERVICE_TAX_PAYBYBILL_TWO');
+            }
 
-        if($sumPrepayAmount > 100) {
-            $serviceTaxBook = env('SERVICE_TAX_THREE');
+            if($sumPrepayAmount > 100) {
+                $serviceTaxBook = env('SERVICE_TAX_PAYBYBILL_THREE');
+            }
+        }
+        elseif($paymentMethod === 'sofort'){
+            if($sumPrepayAmount <= 30) {
+                $serviceTaxBook = env('SERVICE_TAX_SOFORT_ONE');
+            }
+
+            if($sumPrepayAmount > 30 && $sumPrepayAmount <= 100) {
+                $serviceTaxBook = env('SERVICE_TAX_SOFORT_TWO');
+            }
+
+            if($sumPrepayAmount > 100) {
+                $serviceTaxBook = env('SERVICE_TAX_SOFORT_THREE');
+            }
+        }
+        elseif($paymentMethod === 'payDirect'){
+            if($sumPrepayAmount <= 30) {
+                $serviceTaxBook = env('SERVICE_TAX_PAYDIRECT_ONE');
+            }
+
+            if($sumPrepayAmount > 30 && $sumPrepayAmount <= 100) {
+                $serviceTaxBook = env('SERVICE_TAX_PAYDIRECT_TWO');
+            }
+
+            if($sumPrepayAmount > 100) {
+                $serviceTaxBook = env('SERVICE_TAX_PAYDIRECT_THREE');
+            }
+        }
+        elseif($paymentMethod === 'payPal'){
+            if($sumPrepayAmount <= 30) {
+                $serviceTaxBook = env('SERVICE_TAX_PAYPAL_ONE');
+            }
+
+            if($sumPrepayAmount > 30 && $sumPrepayAmount <= 100) {
+                $serviceTaxBook = env('SERVICE_TAX_PAYPAL_TWO');
+            }
+
+            if($sumPrepayAmount > 100) {
+                $serviceTaxBook = env('SERVICE_TAX_PAYPAL_THREE');
+            }
+        }
+        elseif($paymentMethod === 'creditCard'){
+            if($sumPrepayAmount <= 30) {
+                $serviceTaxBook = env('SERVICE_TAX_CREDITCARD_ONE');
+            }
+
+            if($sumPrepayAmount > 30 && $sumPrepayAmount <= 100) {
+                $serviceTaxBook = env('SERVICE_TAX_CREDITCARD_TWO');
+            }
+
+            if($sumPrepayAmount > 100) {
+                $serviceTaxBook = env('SERVICE_TAX_CREDITCARD_THREE');
+            }
+        }
+        else {
+            if($sumPrepayAmount <= 30) {
+                $serviceTaxBook = env('SERVICE_TAX_ONE');
+            }
+
+            if($sumPrepayAmount > 30 && $sumPrepayAmount <= 100) {
+                $serviceTaxBook = env('SERVICE_TAX_TWO');
+            }
+
+            if($sumPrepayAmount > 100) {
+                $serviceTaxBook = env('SERVICE_TAX_THREE');
+            }
         }
 
         return $serviceTaxBook;
@@ -96,7 +164,7 @@ class PaymentController extends Controller
 
                 $order_number            = 'ORDER'.'-'.date('y').'-'.$order_num;
                 $sum_prepayment_amount   = array_sum($prepayment_amount);
-                $serviceTax              = $this->serviceFees($sum_prepayment_amount);
+                $serviceTax              = $this->serviceFees($sum_prepayment_amount, $paymentMethod = null);
                 $percentage              = ($serviceTax / 100) * $sum_prepayment_amount;
                 $prepay_service_total    = $sum_prepayment_amount + $percentage;
 
@@ -237,7 +305,7 @@ class PaymentController extends Controller
                     if(isset($request->payment)) {
                         /* How much money user have in their account after used money balance */
                         $afterRedeemAmount = $total_prepayment_amount - $user->money_balance;
-                        $percentage        = ($this->serviceFees($afterRedeemAmount) / 100) * $afterRedeemAmount;
+                        $percentage        = ($this->serviceFees($afterRedeemAmount, $request->payment) / 100) * $afterRedeemAmount;
                         $total             = round($afterRedeemAmount + $percentage, 2);
                         $cartMoneyBalance  = $user->money_balance / $countCarts; // To store how much money balance used for each booking
 
@@ -397,7 +465,7 @@ class PaymentController extends Controller
             }
             else {
                 if(isset($request->payment)) {
-                    $percentage     = ($this->serviceFees($total_prepayment_amount) / 100) * $total_prepayment_amount;
+                    $percentage     = ($this->serviceFees($total_prepayment_amount, $request->payment) / 100) * $total_prepayment_amount;
                     $total          = round($total_prepayment_amount + $percentage, 2);
                     // Function call for payment gateway section
                     $paymentGateway = $this->paymentGateway($request->all(), $request->ip(), $total, $order_number);

@@ -65,21 +65,21 @@
             @if (session()->has('bookingFailureStatus'))
                 <div class="alert alert-danger alert-dismissible" role="alert">
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <strong>OOPS!</strong> {{ session()->get('bookingFailureStatus') }}
+                    <strong>Whoops!</strong> {{ session()->get('bookingFailureStatus') }}
                 </div>
             @endif
 
             @if (session()->has('choosePaymentNullData'))
                 <div class="alert alert-danger alert-dismissible" role="alert">
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <strong>OOPS!</strong> {{ session()->get('choosePaymentNullData') }}
+                    <strong>Whoops!</strong> {{ session()->get('choosePaymentNullData') }}
                 </div>
             @endif
 
             @if ($errors->has('payment'))
                 <div class="alert alert-danger alert-dismissible" role="alert">
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <strong>OOPS!</strong> {{ $errors->first('payment') }}
+                    <strong>Whoops!</strong> {{ $errors->first('payment') }}
                 </div>
             @endif
 
@@ -156,7 +156,7 @@
                                                             </div>
 
                                                             <div class="form-group">
-                                                                <label class="paymentLabel" for="cardpanInput">Cardpan:</label>
+                                                                <label class="paymentLabel" for="cardpanInput">{{ __('payment.cardPan') }}:</label>
                                                                 <span class="inputIframe" id="cardpan"></span>
                                                             </div>
 
@@ -166,7 +166,7 @@
                                                             </div>
 
                                                             <div class="form-group">
-                                                                <label class="paymentLabel" for="expireInput">Expire Date:</label>
+                                                                <label class="paymentLabel" for="expireInput">{{ __('payment.expireDate') }}:</label>
                                                                 <span id="expireInput" class="inputIframe">
                                                                     <span id="cardexpiremonth"></span>
                                                                     <span id="cardexpireyear"></span>
@@ -186,14 +186,30 @@
 
                                             <ul class="payment-options-booking2">
                                                 <li class="li-head-booking2">{{ __('payment.termsConditions') }}</li>
-                                                <li class="check-it-list-booking2"><input class="check-it-booking2" type="checkbox"><a href="#"> {{ __('payment.confirmThePrivacy') }}</a></li>
-                                                <li class="check-it-list-booking2"><input class="check-it-booking2" type="checkbox"><a href="#"> {{ __('payment.confirmTheTerms') }}</a></li>
+                                                <li class="check-it-list-booking2{{ $errors->has('confirmThePrivacy') ? ' has-error' : '' }}">
+                                                    <input type="checkbox" name="confirmThePrivacy" class="check-it-booking2"><a href="/data/protection"> {{ __('payment.confirmThePrivacy') }}</a>
+                                                    @if ($errors->has('confirmThePrivacy'))
+                                                        <span class="help-block">
+                                                            <strong>{{ $errors->first('confirmThePrivacy') }}</strong>
+                                                        </span>
+                                                    @endif
+                                                </li>
+                                                <li class="check-it-list-booking2{{ $errors->has('confirmTheTerms') ? ' has-error' : '' }}">
+                                                    <input type="checkbox" name="confirmTheTerms" class="check-it-booking2"><a href="/terms"> {{ __('payment.confirmTheTerms') }}</a>
+                                                    @if ($errors->has('confirmTheTerms'))
+                                                        <span class="help-block">
+                                                            <strong>{{ $errors->first('confirmTheTerms') }}</strong>
+                                                        </span>
+                                                    @endif
+                                                </li>
                                             </ul>
                                             <ul class="payment-options-booking2">
                                                 <li class="li-head-booking2">{{ __('payment.newscenter') }}</li>
                                                 <li class="check-it-list-booking2"><input class="check-it-booking2" type="checkbox" checked="checked" disabled=""> {{ __('payment.informationBooking') }}</li>
                                                 <li class="check-it-list-booking2"><input class="check-it-booking2" type="checkbox" checked="checked"> {{ __('payment.updatedAboutSystem') }}</li>
-                                                <li class="check-it-list-booking2"><input class="check-it-booking2" type="checkbox" checked="checked"> {{ __('payment.subscribeNewsletter') }}</li>
+                                                @if(Auth::user()->usrNewsletter !== 1)
+                                                    <li class="check-it-list-booking2"><input class="check-it-booking2" type="checkbox" checked="checked"> {{ __('payment.subscribeNewsletter') }}</li>
+                                                @endif
                                             </ul>
                                         </div>
                                     </div>
@@ -221,22 +237,21 @@
                                             </div>
                                             <div class="row row-booking2">
                                                 <div class="col-sm-12 col-sm-12-extra-booking2 col-sm-12-booking2-booking2">
-                                                    <p class="info-listing-booking2">{{ __('payment.deposit') }}:</p><p class="info-listing-price-booking2">{{ number_format($sumPrepaymentAmount, 2, ',', '.') }}&euro;</p>
+                                                    <p class="info-listing-booking2">{{ __('payment.deposit') }}:</p><p class="info-listing-price-booking2">{{ number_format($sumPrepaymentAmount, 2, ',', '.') }} &euro;</p>
                                                     <div class="afterRedeem" style="display: none">
                                                         <div class="redeemAmount"></div>
                                                         <div class="moneyBalance"></div>
                                                         <div class="afterRedeemAmount"></div>
                                                     </div>
 
-                                                    <div class="jsServiceFee"></div>
                                                     <div class="serviceFee">
-                                                        <p class="info-listing-booking2">{{ __('payment.serviceFee') }}:</p><p class="info-listing-price-booking2">{{ $serviceTax }}%</p>
+                                                        <p class="info-listing-booking2">{{ __('payment.serviceFee') }}:</p><p class="info-listing-price-booking2">{{ $serviceTax }} %</p>
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="row row-booking2">
                                                 <div class="col-sm-12 col-sm-12-extra-booking2 col-sm-12-booking2 totalPrepayAmount">
-                                                    <h5 class="info-listing-booking2">{{ __('payment.paymentIncl') }}.<br /> {{ __('payment.paymentInclServiceFee') }}:</h5><h5 class="info-listing-price-booking2 sumPrepayServiceTotal">{{ number_format($prepayServiceTotal, 2, ',', '.') }}&euro;</h5>
+                                                    <h5 class="info-listing-booking2">{{ __('payment.paymentIncl') }}.<br /> {{ __('payment.paymentInclServiceFee') }}:</h5><h5 class="info-listing-price-booking2 sumPrepayServiceTotal">{{ number_format($prepayServiceTotal, 2, ',', '.') }} &euro;</h5>
                                                 </div>
                                             </div>
                                         @endisset
@@ -546,6 +561,21 @@
             service_tax_one: '{{ env('SERVICE_TAX_ONE') }}',
             service_tax_two: '{{ env('SERVICE_TAX_TWO') }}',
             service_tax_three: '{{ env('SERVICE_TAX_THREE') }}',
+            service_tax_paybybill_one: '{{ env('SERVICE_TAX_PAYBYBILL_ONE') }}',
+            service_tax_paybybill_two: '{{ env('SERVICE_TAX_PAYBYBILL_TWO') }}',
+            service_tax_paybybill_three: '{{ env('SERVICE_TAX_PAYBYBILL_THREE') }}',
+            service_tax_sofort_one: '{{ env('SERVICE_TAX_SOFORT_ONE') }}',
+            service_tax_sofort_two: '{{ env('SERVICE_TAX_SOFORT_TWO') }}',
+            service_tax_sofort_three: '{{ env('SERVICE_TAX_SOFORT_THREE') }}',
+            service_tax_paydirect_one: '{{ env('SERVICE_TAX_PAYDIRECT_ONE') }}',
+            service_tax_paydirect_two: '{{ env('SERVICE_TAX_PAYDIRECT_TWO') }}',
+            service_tax_paydirect_three: '{{ env('SERVICE_TAX_PAYDIRECT_THREE') }}',
+            service_tax_paypal_one: '{{ env('SERVICE_TAX_PAYPAL_ONE') }}',
+            service_tax_paypal_two: '{{ env('SERVICE_TAX_PAYPAL_TWO') }}',
+            service_tax_paypal_three: '{{ env('SERVICE_TAX_PAYPAL_THREE') }}',
+            service_tax_creditcard_one: '{{ env('SERVICE_TAX_CREDITCARD_ONE') }}',
+            service_tax_creditcard_two: '{{ env('SERVICE_TAX_CREDITCARD_TWO') }}',
+            service_tax_creditcard_three: '{{ env('SERVICE_TAX_CREDITCARD_THREE') }}',
             redeemedAmountPayment: '{{ __('payment.redeemAmount') }}',
             moneyBalancePayment: '{{ __('payment.moneyBalance') }}',
             serviceFeePayment: '{{ __('payment.serviceFee') }}',

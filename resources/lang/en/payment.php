@@ -51,4 +51,6 @@ return[
     'redeemAmount'                                     => 'Redeem Amount',
     'moneyBalance'                                     => 'Money Balance',
     'amountPayment'                                    => 'Amount',
+    'cardPan'                                          => 'Cardpan',
+    'expireDate'                                       => 'Exp1reDate',
 ];
