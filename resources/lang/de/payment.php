@@ -54,4 +54,6 @@ return[
     'amountPayment'                                    => 'Amount',
     'cardPan'                                          => 'Kartennummer',
     'expireDate'                                       => 'Auslaufdatum',
+    'confirmThePrivacyMsg'                             => 'Bitte akzeptieren unseren "Datenschutz"',
+    'confirmTheTermsMsg'                               => 'Bitte bestätigen Sie die Reservierungsbedingungen von Huetten-Holiday.de',
 ];

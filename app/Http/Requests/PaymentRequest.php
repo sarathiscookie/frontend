@@ -28,4 +28,17 @@ class PaymentRequest extends FormRequest
             'confirmTheTerms'   => 'required'
         ];
     }
+
+    /**
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array
+     */
+    public function messages()
+    {
+        return [
+            'confirmThePrivacy.required'  => __('searchDetails.sleepsRequired'),
+            'confirmTheTerms.required'    => __('searchDetails.sleepsRequired')
+        ];
+    }
 }

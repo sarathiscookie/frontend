@@ -52,5 +52,7 @@ return[
     'moneyBalance'                                     => 'Money Balance',
     'amountPayment'                                    => 'Amount',
     'cardPan'                                          => 'Cardpan',
-    'expireDate'                                       => 'Exp1reDate',
+    'expireDate'                                       => 'ExpireDate',
+    'confirmThePrivacyMsg'                             => 'Please accept our privacy policy',
+    'confirmTheTermsMsg'                               => 'Please confirm the reservation conditions of Huetten-Holiday.de',
 ];
