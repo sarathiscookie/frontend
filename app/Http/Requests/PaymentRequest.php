@@ -37,8 +37,8 @@ class PaymentRequest extends FormRequest
     public function messages()
     {
         return [
-            'confirmThePrivacy.required'  => __('searchDetails.sleepsRequired'),
-            'confirmTheTerms.required'    => __('searchDetails.sleepsRequired')
+            'confirmThePrivacy.required'  => __('payment.confirmThePrivacyMsg'),
+            'confirmTheTerms.required'    => __('payment.confirmTheTermsMsg')
         ];
     }
 }
