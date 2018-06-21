@@ -118,6 +118,7 @@
     -webkit-transform: translate3d(0px, 0px, 0px);
     -o-transform: translate3d(0px, 0px, 0px);
     -webkit-transition-property: -webkit-transform;
+    -webkit-filter: sepia(100%);
     -moz-transition-property: -moz-transform;
     -webkit-touch-callout: none;
     -webkit-user-select: none;

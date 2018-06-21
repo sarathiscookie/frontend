@@ -6,7 +6,6 @@
     <div class="jumbotron">
         <div class="container text-center">
             <img src="{{ asset('storage/img/rappenseehuette_titelbild.jpg') }}" class="img-responsive titlepicture" alt="titlepicture">
-            <h1 id="headliner-home">{{ __('app.imageHeadline1') }}<br>{{ __('app.imageHeadline2') }}</h1>
         </div>
     </div>
 
@@ -274,9 +273,7 @@
                                         @endforeach
                                     </p>
 
-                                    <strong class="details-underheadline-cabin-details">{{ __('cabinDetails.checkIn') }}: </strong><p class="inh-cabin-details">{{ $cabinDetails->checkin_from }}</p>
-
-                                    <strong class="details-underheadline-cabin-details">{{ __('cabinDetails.checkOut') }}: </strong><p class="inh-cabin-details">{{ $cabinDetails->reservation_to }}</p>
+                                    <strong class="details-underheadline-cabin-details">{{ __('cabinDetails.checkIn') }}: </strong><p class="inh-cabin-details">{{ $cabinDetails->checkin_from }} - {{ $cabinDetails->reservation_to }}</p>
 
                                     @if($cabinDetails->halfboard == '1' && $cabinDetails->halfboard_price != '')
                                         <div>

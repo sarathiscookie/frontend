@@ -1008,10 +1008,9 @@ hr {
     height: 100%;
     object-fit:cover;
 }
-/*.row-cabinlist div .row .pull-right{
-    position:absolute;
-    bottom:0px;
-}*/
+.button-3-bottom > a{
+    padding-top:5px;
+}
 @media(max-width: 851px){ .row-cabinlist .col-sm-7 .row {
     float:none;
     text-align:left;

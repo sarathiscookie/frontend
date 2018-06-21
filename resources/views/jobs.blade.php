@@ -41,7 +41,7 @@
                     <div id="team-work">
                         <h3>Arbeiten bei Huetten-Holiday</h3>
                         <div>
-                            <p>Ständig an der Entwicklung neuer Ideen arbeiten und dabei immer mit den modernsten Techniken arbeiten? Dann bewirb dich jetzt. Wir freuen uns auf dich!
+                            <p>Ständig an der Entwicklung neuer Ideen arbeiten und dabei immer mit den modernsten Techniken arbeiten? Dann bewerben Sie sich jetzt. Wir freuen uns auf Sie!
                             </p>
                         </div>
                     </div>
@@ -50,7 +50,7 @@
                     <div id="trainee-work">
                         <h3>Ausbildung</h3>
                         <div>
-                            <p>Wo andere begeistert an ihren Mofas und Autos herumschrauben, programierst du lieber den ganzen Tag an diverser Tools, mit denen du deinen Rechner immer schneller machen willst? Dann ist eine Ausbildung für dich bei uns genau richtig!
+                            <p>Wo andere begeistert an ihren Mofas und Autos herumschrauben, programieren Sie lieber den ganzen Tag an diverser Tools, mit denen Sie Ihren Rechner immer schneller machen wollen? Dann ist eine Ausbildung für Sie bei uns genau richtig!
                             </p>
                             <a href="/job/trainee">Mehr erfahren Sie hier...</a>
                         </div>
