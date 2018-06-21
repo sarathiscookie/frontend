@@ -2,6 +2,17 @@
 
 @section('title', 'Cabin Details')
 
+@section('jumbotron')
+    <div class="jumbotron">
+        <div class="container text-center">
+            <img src="{{ asset('storage/img/rappenseehuette_titelbild.jpg') }}" class="img-responsive titlepicture" alt="titlepicture">
+            {{--<h1 id="headliner-home">Finde deinen<br>Traumjob</h1>--}}
+        </div>
+    </div>
+
+    <div class="clearfix"></div>
+@endsection
+
 @section('content')
 
     @inject('service', 'App\Http\Controllers\CabinDetailsController')
@@ -295,41 +306,41 @@
 
                                 <div class="thumbnail" style="border:none; border-radius:0px; background-color: #EFEFEF;">
                                     <ul id="image-gallery" class="gallery list-unstyled cS-hidden">
-                                        <li data-thumb="https://placehold.it/250x180">
-                                            <img src="https://placehold.it/600x400" class="img-responsive">
+                                        <li data-thumb="{{ asset('storage/img/rappenseehuette_profilbild_1_außenansicht.jpg') }}">
+                                            <img src="{{ asset('storage/img/rappenseehuette_profilbild_1_außenansicht.jpg') }}" class="img-responsive">
                                         </li>
-                                        <li data-thumb="https://placehold.it/250x180">
-                                            <img src="https://placehold.it/600x400" class="img-responsive">
+                                        <li data-thumb="{{ asset('storage/img/rappenseehuette_profilbild_1_außenansicht.jpg') }}">
+                                            <img src="{{ asset('storage/img/rappenseehuette_profilbild_1_außenansicht.jpg') }}" class="img-responsive">
                                         </li>
-                                        <li data-thumb="https://placehold.it/250x180">
-                                            <img src="https://placehold.it/600x400" class="img-responsive">
+                                        <li data-thumb="{{ asset('storage/img/rappenseehuette_profilbild_1_außenansicht.jpg') }}">
+                                            <img src="{{ asset('storage/img/rappenseehuette_profilbild_1_außenansicht.jpg') }}" class="img-responsive">
                                         </li>
-                                        <li data-thumb="https://placehold.it/250x180">
-                                            <img src="https://placehold.it/600x400" class="img-responsive">
+                                        <li data-thumb="{{ asset('storage/img/rappenseehuette_profilbild_1_außenansicht.jpg') }}">
+                                            <img src="{{ asset('storage/img/rappenseehuette_profilbild_1_außenansicht.jpg') }}" class="img-responsive">
                                         </li>
-                                        <li data-thumb="https://placehold.it/250x180">
-                                            <img src="https://placehold.it/600x400" class="img-responsive">
+                                        <li data-thumb="{{ asset('storage/img/rappenseehuette_profilbild_1_außenansicht.jpg') }}">
+                                            <img src="{{ asset('storage/img/rappenseehuette_profilbild_1_außenansicht.jpg') }}" class="img-responsive">
                                         </li>
-                                        <li data-thumb="https://placehold.it/250x180">
-                                            <img src="https://placehold.it/600x400" class="img-responsive">
+                                        <li data-thumb="{{ asset('storage/img/rappenseehuette_profilbild_1_außenansicht.jpg') }}">
+                                            <img src="{{ asset('storage/img/rappenseehuette_profilbild_1_außenansicht.jpg') }}" class="img-responsive">
                                         </li>
-                                        <li data-thumb="https://placehold.it/250x180">
-                                            <img src="https://placehold.it/600x400" class="img-responsive">
+                                        <li data-thumb="{{ asset('storage/img/rappenseehuette_profilbild_1_außenansicht.jpg') }}">
+                                            <img src="{{ asset('storage/img/rappenseehuette_profilbild_1_außenansicht.jpg') }}" class="img-responsive">
                                         </li>
-                                        <li data-thumb="https://placehold.it/250x180">
-                                            <img src="https://placehold.it/600x400" class="img-responsive">
+                                        <li data-thumb="{{ asset('storage/img/rappenseehuette_profilbild_1_außenansicht.jpg') }}">
+                                            <img src="{{ asset('storage/img/rappenseehuette_profilbild_1_außenansicht.jpg') }}" class="img-responsive">
                                         </li>
-                                        <li data-thumb="https://placehold.it/250x180">
-                                            <img src="https://placehold.it/600x400" class="img-responsive">
+                                        <li data-thumb="{{ asset('storage/img/rappenseehuette_profilbild_1_außenansicht.jpg') }}">
+                                            <img src="{{ asset('storage/img/rappenseehuette_profilbild_1_außenansicht.jpg') }}" class="img-responsive">
                                         </li>
-                                        <li data-thumb="https://placehold.it/250x180">
-                                            <img src="https://placehold.it/600x400" class="img-responsive">
+                                        <li data-thumb="{{ asset('storage/img/rappenseehuette_profilbild_1_außenansicht.jpg') }}">
+                                            <img src="{{ asset('storage/img/rappenseehuette_profilbild_1_außenansicht.jpg') }}" class="img-responsive">
                                         </li>
-                                        <li data-thumb="https://placehold.it/250x180">
-                                            <img src="https://placehold.it/600x400" class="img-responsive">
+                                        <li data-thumb="{{ asset('storage/img/rappenseehuette_profilbild_1_außenansicht.jpg') }}">
+                                            <img src="{{ asset('storage/img/rappenseehuette_profilbild_1_außenansicht.jpg') }}" class="img-responsive">
                                         </li>
-                                        <li data-thumb="https://placehold.it/250x180">
-                                            <img src="https://placehold.it/600x400" class="img-responsive">
+                                        <li data-thumb="{{ asset('storage/img/rappenseehuette_profilbild_1_außenansicht.jpg') }}">
+                                            <img src="{{ asset('storage/img/rappenseehuette_profilbild_1_außenansicht.jpg') }}" class="img-responsive">
                                         </li>
                                     </ul>
                                 </div>
