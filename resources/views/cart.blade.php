@@ -175,7 +175,7 @@
                                                     <div class="row row-booking1">
                                                         <div class="col-sm-12 col-sm-12-booking1 col-sm-12-extra-booking1">
                                                             <p class="info-listing-booking1">{{__('cart.guests')}}:</p><p class="info-listing-price-booking1 replaceBookingGuest_{{ $cart->_id }}">{{ $cart->guests }}</p>
-                                                            <p class="info-listing-booking1">{{__('cart.numberOfNights')}}:</p><p class="info-listing-price-booking1">{{ date_diff(date_create($cart->checkin_from->format('Y-m-d')), date_create($cart->reserve_to->format('Y-m-d')))->format('%R%a days') }}</p>
+                                                            <p class="info-listing-booking1">{{__('cart.numberOfNights')}}:</p><p class="info-listing-price-booking1">{{ date_diff(date_create($cart->checkin_from->format('Y-m-d')), date_create($cart->reserve_to->format('Y-m-d')))->format('%R%a '.__("cart.days")) }}</p>
                                                         </div>
                                                     </div><br />
                                                     <div class="row row-booking1">

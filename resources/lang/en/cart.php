@@ -51,4 +51,5 @@ return [
     'deleteButtonTitle'                         => 'Delete your Booking.',
     'amountTitle'                               => 'Here all costs are listed again. The service fee helps us operate Huetten-Holiday and offer services like our live-chat for your trip. It contains sales tax.',
     'bookingDeleted'                            => 'Booking deleted from your cart.',
+    'days'                                      => 'Day(s)',
 ];

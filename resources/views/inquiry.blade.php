@@ -160,7 +160,7 @@
                                         <div class="row row-booking1">
                                             <div class="col-sm-12 col-sm-12-booking1 col-sm-12-extra-booking1">
                                                 <p class="info-listing-booking1">{{__('cart.guests')}}:</p><p class="info-listing-price-booking1 replaceInquiryGuest">{{ session()->get('guests') }}</p>
-                                                <p class="info-listing-booking1">{{__('cart.numberOfNights')}}:</p><p class="info-listing-price-booking1">{{ $dateDifference->days }}</p>
+                                                <p class="info-listing-booking1">{{__('cart.numberOfNights')}}:</p><p class="info-listing-price-booking1">{{ $dateDifference->days }} {{ __("cart.days") }}</p>
                                             </div>
                                         </div><br />
                                         <div class="row row-booking1">
@@ -197,7 +197,7 @@
                     @endphp
 
                     <div class="row content row-booking1">
-                        <div class="col-sm-9">
+                        <div class="col-sm-9" id="contact_information">
                             <div class="panel panel-default booking-box-booking1 panel-default-booking1 text-left">
                                 <div class="panel-body panel-body-booking1">
                                     <div class="row row-booking1">

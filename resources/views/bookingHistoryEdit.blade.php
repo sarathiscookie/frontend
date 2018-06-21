@@ -182,7 +182,7 @@
                                             <div class="row row-booking1">
                                                 <div class="col-sm-12 col-sm-12-booking1 col-sm-12-extra-booking1">
                                                     <p class="info-listing-booking1">{{ __('cart.guests') }}:</p><p class="info-listing-price-booking1 replaceEditBookingGuest">{{ $booking->guests }}</p>
-                                                    <p class="info-listing-booking1">{{ __('cart.numberOfNights') }}:</p><p class="info-listing-price-booking1 replaceNumberOfNights">{{ $dateDifference->days }}</p>
+                                                    <p class="info-listing-booking1">{{ __('cart.numberOfNights') }}:</p><p class="info-listing-price-booking1 replaceNumberOfNights">{{ $dateDifference->days }} {{ __("cart.days") }}</p>
                                                 </div>
                                             </div><br />
                                             <div class="row row-booking1">

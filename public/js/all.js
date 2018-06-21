@@ -915,7 +915,7 @@ $(function(){
 
             if(dateOne < dateTwo) {
                 $( ".daysEditBook" ).attr("data-days", diffDays);
-                $( ".replaceNumberOfNights" ).html(diffDays);
+                $( ".replaceNumberOfNights" ).html(diffDays+' Tag(e)');
                 var newDiffDays = $( ".daysEditBook" ).attr("data-days");
                 calculateAmount(newDiffDays);
             }
@@ -1018,7 +1018,7 @@ $(function(){
 
             if(dateOne < dateTwo) {
                 $( ".daysEditBook" ).attr("data-days", diffDays);
-                $( ".replaceNumberOfNights" ).html(diffDays);
+                $( ".replaceNumberOfNights" ).html(diffDays+' Tag(e)');
                 var newDiffDays = $( ".daysEditBook" ).attr("data-days");
                 calculateAmount(newDiffDays);
             }

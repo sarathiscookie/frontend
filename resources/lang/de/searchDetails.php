@@ -43,7 +43,7 @@ return[
     'alreadyFilledSleeps'       => ' Schlafplätze sind ausgebucht am ',
     'sixtyDaysExceed'           => 'Es können maximal 60 Tage gebucht werden',
     'dateGreater'               => 'Ankunftsdatum muss vor dem Abreisedatum liegen.',
-    'inquiryAlert'              => 'Am',
+    'inquiryAlert'              => 'Am ',
     'inquiryAlert1'             => 'können Sie ab einer Personenanzahl von ',
     'inquiryAlert2'             => ' Personen nur eine Anfrage senden. Bitte ',
     'inquiryAlert3'             => ' für eine Anfrage',

@@ -51,4 +51,5 @@ return [
     'deleteButtonTitle'                 => 'Hier können Sie die Hütte aus dem Warenkorb löschen.',
     'amountTitle'                       => 'Alle Kosten und Anzahlungen in der Übersicht. Die Servicegebühr hilft uns das Portal zu betreiben.',
     'bookingDeleted'                    => 'Buchung aus dem Warenkorb gelöscht.',
+    'days'                              => 'Tag(e)',
 ];

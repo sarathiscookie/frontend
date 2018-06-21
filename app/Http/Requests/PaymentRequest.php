@@ -24,8 +24,8 @@ class PaymentRequest extends FormRequest
     public function rules()
     {
         return [
-            'confirmThePrivacy' => 'required',
-            'confirmTheTerms'   => 'required'
+            'confirmThePrivacy' => 'required|string',
+            'confirmTheTerms'   => 'required|string'
         ];
     }
 
