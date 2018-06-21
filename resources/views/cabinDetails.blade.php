@@ -6,7 +6,7 @@
     <div class="jumbotron">
         <div class="container text-center">
             <img src="{{ asset('storage/img/rappenseehuette_titelbild.jpg') }}" class="img-responsive titlepicture" alt="titlepicture">
-            {{--<h1 id="headliner-home">Finde deinen<br>Traumjob</h1>--}}
+            <h1 id="headliner-home">{{ __('app.imageHeadline1') }}<br>{{ __('app.imageHeadline2') }}</h1>
         </div>
     </div>
 
@@ -309,38 +309,29 @@
                                         <li data-thumb="{{ asset('storage/img/rappenseehuette_profilbild_1_außenansicht.jpg') }}">
                                             <img src="{{ asset('storage/img/rappenseehuette_profilbild_1_außenansicht.jpg') }}" class="img-responsive">
                                         </li>
-                                        <li data-thumb="{{ asset('storage/img/rappenseehuette_profilbild_1_außenansicht.jpg') }}">
-                                            <img src="{{ asset('storage/img/rappenseehuette_profilbild_1_außenansicht.jpg') }}" class="img-responsive">
+                                        <li data-thumb="{{ asset('storage/img/rappenseehuette_profilbild_2_außenansicht.jpg') }}">
+                                            <img src="{{ asset('storage/img/rappenseehuette_profilbild_2_außenansicht.jpg') }}" class="img-responsive">
                                         </li>
-                                        <li data-thumb="{{ asset('storage/img/rappenseehuette_profilbild_1_außenansicht.jpg') }}">
-                                            <img src="{{ asset('storage/img/rappenseehuette_profilbild_1_außenansicht.jpg') }}" class="img-responsive">
+                                        <li data-thumb="{{ asset('storage/img/rappenseehuette_profilbild_3_außenansicht.jpg') }}">
+                                            <img src="{{ asset('storage/img/rappenseehuette_profilbild_3_außenansicht.jpg') }}" class="img-responsive">
                                         </li>
-                                        <li data-thumb="{{ asset('storage/img/rappenseehuette_profilbild_1_außenansicht.jpg') }}">
-                                            <img src="{{ asset('storage/img/rappenseehuette_profilbild_1_außenansicht.jpg') }}" class="img-responsive">
+                                        <li data-thumb="{{ asset('storage/img/rappenseehuette_profilbild_4_innenansicht.jpg') }}">
+                                            <img src="{{ asset('storage/img/rappenseehuette_profilbild_4_innenansicht.jpg') }}" class="img-responsive">
                                         </li>
-                                        <li data-thumb="{{ asset('storage/img/rappenseehuette_profilbild_1_außenansicht.jpg') }}">
-                                            <img src="{{ asset('storage/img/rappenseehuette_profilbild_1_außenansicht.jpg') }}" class="img-responsive">
+                                        <li data-thumb="{{ asset('storage/img/rappenseehuette_profilbild_5_innenansicht.jpg') }}">
+                                            <img src="{{ asset('storage/img/rappenseehuette_profilbild_5_innenansicht.jpg') }}" class="img-responsive">
                                         </li>
-                                        <li data-thumb="{{ asset('storage/img/rappenseehuette_profilbild_1_außenansicht.jpg') }}">
-                                            <img src="{{ asset('storage/img/rappenseehuette_profilbild_1_außenansicht.jpg') }}" class="img-responsive">
+                                        <li data-thumb="{{ asset('storage/img/rappenseehuette_profilbild_6_innenansicht.jpg') }}">
+                                            <img src="{{ asset('storage/img/rappenseehuette_profilbild_6_innenansicht.jpg') }}" class="img-responsive">
                                         </li>
-                                        <li data-thumb="{{ asset('storage/img/rappenseehuette_profilbild_1_außenansicht.jpg') }}">
-                                            <img src="{{ asset('storage/img/rappenseehuette_profilbild_1_außenansicht.jpg') }}" class="img-responsive">
+                                        <li data-thumb="{{ asset('storage/img/rappenseehuette_profilbild_7_natur.jpg') }}">
+                                            <img src="{{ asset('storage/img/rappenseehuette_profilbild_7_natur.jpg') }}" class="img-responsive">
                                         </li>
-                                        <li data-thumb="{{ asset('storage/img/rappenseehuette_profilbild_1_außenansicht.jpg') }}">
-                                            <img src="{{ asset('storage/img/rappenseehuette_profilbild_1_außenansicht.jpg') }}" class="img-responsive">
+                                        <li data-thumb="{{ asset('storage/img/rappenseehuette_profilbild_8_natur.jpg') }}">
+                                            <img src="{{ asset('storage/img/rappenseehuette_profilbild_8_natur.jpg') }}" class="img-responsive">
                                         </li>
-                                        <li data-thumb="{{ asset('storage/img/rappenseehuette_profilbild_1_außenansicht.jpg') }}">
-                                            <img src="{{ asset('storage/img/rappenseehuette_profilbild_1_außenansicht.jpg') }}" class="img-responsive">
-                                        </li>
-                                        <li data-thumb="{{ asset('storage/img/rappenseehuette_profilbild_1_außenansicht.jpg') }}">
-                                            <img src="{{ asset('storage/img/rappenseehuette_profilbild_1_außenansicht.jpg') }}" class="img-responsive">
-                                        </li>
-                                        <li data-thumb="{{ asset('storage/img/rappenseehuette_profilbild_1_außenansicht.jpg') }}">
-                                            <img src="{{ asset('storage/img/rappenseehuette_profilbild_1_außenansicht.jpg') }}" class="img-responsive">
-                                        </li>
-                                        <li data-thumb="{{ asset('storage/img/rappenseehuette_profilbild_1_außenansicht.jpg') }}">
-                                            <img src="{{ asset('storage/img/rappenseehuette_profilbild_1_außenansicht.jpg') }}" class="img-responsive">
+                                        <li data-thumb="{{ asset('storage/img/rappenseehuette_profilbild_9_natur.jpg') }}">
+                                            <img src="{{ asset('storage/img/rappenseehuette_profilbild_9_natur.jpg') }}" class="img-responsive">
                                         </li>
                                     </ul>
                                 </div>
