@@ -46,7 +46,7 @@ return [
     'interiorReachablePeakHut'               => 'erreichbare Gipfel von Hütte',
 
     /* Translation for labels and headings */
-    'openingTimeHeading'                     => 'Vorraussuchtliche Öffnungszeiten',
+    'openingTimeHeading'                     => 'Voraussichtliche Öffnungszeiten',
     'summerOpenTime'                         => 'Öffnung Sommer',
     'summerCloseTime'                        => 'Schließung Sommer',
     'winterOpen'                             => 'Öffnung Winter',

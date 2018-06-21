@@ -18,7 +18,7 @@ return[
 
     'clickHere'                 => 'klicken Sie hier',
     'moreDetails'               => 'Mehr Details',
-    'openingTimeHeading'        => 'Vorraussichtliche',
+    'openingTimeHeading'        => 'Voraussichtliche Öffnungszeiten',
     'summerOpenTime'            => 'Öffnung Sommer',
     'summerCloseTime'           => 'Schließung Sommer',
     'winterOpen'                => 'Öffnung Winter',
