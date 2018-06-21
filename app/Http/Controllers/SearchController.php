@@ -344,7 +344,7 @@ class SearchController extends Controller
                                         }
                                         else {
                                             $availableStatus[] = 'notAvailable';
-                                            return response()->json(['error' => $bedsRequest.__("searchDetails.bedsNotAvailable").$generateBookingDate->format("jS F")], 422);
+                                            return response()->json(['error' => $bedsRequest.__("searchDetails.bedsNotAvailable").$generateBookingDate->format("d.m")], 422);
                                         }
 
                                         if($dormsRequest <= $not_regular_dorms_avail) {
@@ -352,7 +352,7 @@ class SearchController extends Controller
                                         }
                                         else {
                                             $availableStatus[] = 'notAvailable';
-                                            return response()->json(['error' => $dormsRequest.__("searchDetails.dormsNotAvailable").$generateBookingDate->format("jS F")], 422);
+                                            return response()->json(['error' => $dormsRequest.__("searchDetails.dormsNotAvailable").$generateBookingDate->format("d.m")], 422);
                                         }
 
                                         /* Checking requested beds and dorms sum is greater or equal to inquiry. Cabin inquiry guest is greater than 0 */
@@ -368,7 +368,7 @@ class SearchController extends Controller
                                             $request->session()->put('dormitory', $dormsRequest);
                                             $request->session()->put('sleeps', $requestBedsSumDorms);
                                             $request->session()->put('guests', $requestBedsSumDorms);
-                                            return response()->json(['error' => __("searchDetails.inquiryAlert").$generateBookingDate->format("jS F").__("searchDetails.inquiryAlert1").$cabin->not_regular_inquiry_guest.__("searchDetails.inquiryAlert2").$clickHere.__("searchDetails.inquiryAlert3")], 422);
+                                            return response()->json(['error' => __("searchDetails.inquiryAlert").$generateBookingDate->format("d.m").__("searchDetails.inquiryAlert1").$cabin->not_regular_inquiry_guest.__("searchDetails.inquiryAlert2").$clickHere.__("searchDetails.inquiryAlert3")], 422);
                                         }
 
                                         /*print_r(' ----not_regular_data---- ');
@@ -382,7 +382,7 @@ class SearchController extends Controller
                                         /*print_r(' ----not_regular_data---- ');
                                         print_r(' not_available_dates '. $dates);*/
                                         $availableStatus[] = 'notAvailable';
-                                        return response()->json(['error' => __("searchDetails.alreadyFilledBedsDorms").$generateBookingDate->format("jS F")], 422);
+                                        return response()->json(['error' => __("searchDetails.alreadyFilledBedsDorms").$generateBookingDate->format("d.m")], 422);
                                     }
                                 }
                             }
@@ -409,7 +409,7 @@ class SearchController extends Controller
                                             }
                                             else {
                                                 $availableStatus[] = 'notAvailable';
-                                                return response()->json(['error' => $bedsRequest.__("searchDetails.bedsNotAvailable").$generateBookingDate->format("jS F")], 422);
+                                                return response()->json(['error' => $bedsRequest.__("searchDetails.bedsNotAvailable").$generateBookingDate->format("d.m")], 422);
                                             }
 
                                             if($dormsRequest <= $mon_dorms_avail) {
@@ -417,7 +417,7 @@ class SearchController extends Controller
                                             }
                                             else {
                                                 $availableStatus[] = 'notAvailable';
-                                                return response()->json(['error' => $dormsRequest.__("searchDetails.dormsNotAvailable").$generateBookingDate->format("jS F")], 422);
+                                                return response()->json(['error' => $dormsRequest.__("searchDetails.dormsNotAvailable").$generateBookingDate->format("d.m")], 422);
                                             }
 
                                             /* Checking requested beds and dorms sum is greater or equal to inquiry. Cabin inquiry guest is greater than 0 */
@@ -433,7 +433,7 @@ class SearchController extends Controller
                                                 $request->session()->put('dormitory', $dormsRequest);
                                                 $request->session()->put('sleeps', $requestBedsSumDorms);
                                                 $request->session()->put('guests', $requestBedsSumDorms);
-                                                return response()->json(['error' => __("searchDetails.inquiryAlert").$generateBookingDate->format("jS F").__("searchDetails.inquiryAlert1").$cabin->mon_inquiry_guest.__("searchDetails.inquiryAlert2").$clickHere.__("searchDetails.inquiryAlert3")], 422);
+                                                return response()->json(['error' => __("searchDetails.inquiryAlert").$generateBookingDate->format("d.m").__("searchDetails.inquiryAlert1").$cabin->mon_inquiry_guest.__("searchDetails.inquiryAlert2").$clickHere.__("searchDetails.inquiryAlert3")], 422);
                                             }
 
                                             /*print_r(' ----mon_regular_data---- ');
@@ -445,7 +445,7 @@ class SearchController extends Controller
                                         }
                                         else {
                                             $availableStatus[] = 'notAvailable';
-                                            return response()->json(['error' => __("searchDetails.alreadyFilledBedsDorms").$generateBookingDate->format("jS F")], 422);
+                                            return response()->json(['error' => __("searchDetails.alreadyFilledBedsDorms").$generateBookingDate->format("d.m")], 422);
                                             /*print_r(' ----mon_regular_data---- ');
                                             print_r(' not_available_dates '. $dates);*/
                                         }
@@ -471,7 +471,7 @@ class SearchController extends Controller
                                             }
                                             else {
                                                 $availableStatus[] = 'notAvailable';
-                                                return response()->json(['error' => $bedsRequest.__("searchDetails.bedsNotAvailable").$generateBookingDate->format("jS F")], 422);
+                                                return response()->json(['error' => $bedsRequest.__("searchDetails.bedsNotAvailable").$generateBookingDate->format("d.m")], 422);
                                             }
 
                                             if($dormsRequest <= $tue_dorms_avail) {
@@ -479,7 +479,7 @@ class SearchController extends Controller
                                             }
                                             else {
                                                 $availableStatus[] = 'notAvailable';
-                                                return response()->json(['error' => $dormsRequest.__("searchDetails.dormsNotAvailable").$generateBookingDate->format("jS F")], 422);
+                                                return response()->json(['error' => $dormsRequest.__("searchDetails.dormsNotAvailable").$generateBookingDate->format("d.m")], 422);
                                             }
 
                                             /* Checking requested beds and dorms sum is greater or equal to inquiry. Cabin inquiry guest is greater than 0 */
@@ -495,7 +495,7 @@ class SearchController extends Controller
                                                 $request->session()->put('dormitory', $dormsRequest);
                                                 $request->session()->put('sleeps', $requestBedsSumDorms);
                                                 $request->session()->put('guests', $requestBedsSumDorms);
-                                                return response()->json(['error' => __("searchDetails.inquiryAlert").$generateBookingDate->format("jS F").__("searchDetails.inquiryAlert1").$cabin->tue_inquiry_guest.__("searchDetails.inquiryAlert2").$clickHere.__("searchDetails.inquiryAlert3")], 422);
+                                                return response()->json(['error' => __("searchDetails.inquiryAlert").$generateBookingDate->format("d.m").__("searchDetails.inquiryAlert1").$cabin->tue_inquiry_guest.__("searchDetails.inquiryAlert2").$clickHere.__("searchDetails.inquiryAlert3")], 422);
                                             }
 
                                             /*print_r(' ----tue_regular_data---- ');
@@ -507,7 +507,7 @@ class SearchController extends Controller
                                         }
                                         else {
                                             $availableStatus[] = 'notAvailable';
-                                            return response()->json(['error' => __("searchDetails.alreadyFilledBedsDorms").$generateBookingDate->format("jS F")], 422);
+                                            return response()->json(['error' => __("searchDetails.alreadyFilledBedsDorms").$generateBookingDate->format("d.m")], 422);
                                             /*print_r(' ----tue_regular_data---- ');
                                             print_r(' not_available_dates '. $dates);*/
                                         }
@@ -533,7 +533,7 @@ class SearchController extends Controller
                                             }
                                             else {
                                                 $availableStatus[] = 'notAvailable';
-                                                return response()->json(['error' => $bedsRequest.__("searchDetails.bedsNotAvailable").$generateBookingDate->format("jS F")], 422);
+                                                return response()->json(['error' => $bedsRequest.__("searchDetails.bedsNotAvailable").$generateBookingDate->format("d.m")], 422);
                                             }
 
                                             if($dormsRequest <= $wed_dorms_avail) {
@@ -541,7 +541,7 @@ class SearchController extends Controller
                                             }
                                             else {
                                                 $availableStatus[] = 'notAvailable';
-                                                return response()->json(['error' => $dormsRequest.__("searchDetails.dormsNotAvailable").$generateBookingDate->format("jS F")], 422);
+                                                return response()->json(['error' => $dormsRequest.__("searchDetails.dormsNotAvailable").$generateBookingDate->format("d.m")], 422);
                                             }
 
                                             /* Checking requested beds and dorms sum is greater or equal to inquiry. Cabin inquiry guest is greater than 0 */
@@ -557,7 +557,7 @@ class SearchController extends Controller
                                                 $request->session()->put('dormitory', $dormsRequest);
                                                 $request->session()->put('sleeps', $requestBedsSumDorms);
                                                 $request->session()->put('guests', $requestBedsSumDorms);
-                                                return response()->json(['error' => __("searchDetails.inquiryAlert").$generateBookingDate->format("jS F").__("searchDetails.inquiryAlert1").$cabin->wed_inquiry_guest.__("searchDetails.inquiryAlert2").$clickHere.__("searchDetails.inquiryAlert3")], 422);
+                                                return response()->json(['error' => __("searchDetails.inquiryAlert").$generateBookingDate->format("d.m").__("searchDetails.inquiryAlert1").$cabin->wed_inquiry_guest.__("searchDetails.inquiryAlert2").$clickHere.__("searchDetails.inquiryAlert3")], 422);
                                             }
 
                                             /*print_r(' ----wed_regular_data---- ');
@@ -569,7 +569,7 @@ class SearchController extends Controller
                                         }
                                         else {
                                             $availableStatus[] = 'notAvailable';
-                                            return response()->json(['error' => __("searchDetails.alreadyFilledBedsDorms").$generateBookingDate->format("jS F")], 422);
+                                            return response()->json(['error' => __("searchDetails.alreadyFilledBedsDorms").$generateBookingDate->format("d.m")], 422);
                                             /*print_r(' ----wed_regular_data---- ');
                                             print_r(' not_available_dates '. $dates);*/
                                         }
@@ -595,7 +595,7 @@ class SearchController extends Controller
                                             }
                                             else {
                                                 $availableStatus[] = 'notAvailable';
-                                                return response()->json(['error' => $bedsRequest.__("searchDetails.bedsNotAvailable").$generateBookingDate->format("jS F")], 422);
+                                                return response()->json(['error' => $bedsRequest.__("searchDetails.bedsNotAvailable").$generateBookingDate->format("d.m")], 422);
                                             }
 
                                             if($dormsRequest <= $thu_dorms_avail) {
@@ -603,7 +603,7 @@ class SearchController extends Controller
                                             }
                                             else {
                                                 $availableStatus[] = 'notAvailable';
-                                                return response()->json(['error' => $dormsRequest.__("searchDetails.dormsNotAvailable").$generateBookingDate->format("jS F")], 422);
+                                                return response()->json(['error' => $dormsRequest.__("searchDetails.dormsNotAvailable").$generateBookingDate->format("d.m")], 422);
                                             }
 
                                             /* Checking requested beds and dorms sum is greater or equal to inquiry. Cabin inquiry guest is greater than 0 */
@@ -619,7 +619,7 @@ class SearchController extends Controller
                                                 $request->session()->put('dormitory', $dormsRequest);
                                                 $request->session()->put('sleeps', $requestBedsSumDorms);
                                                 $request->session()->put('guests', $requestBedsSumDorms);
-                                                return response()->json(['error' => __("searchDetails.inquiryAlert").$generateBookingDate->format("jS F").__("searchDetails.inquiryAlert1").$cabin->thu_inquiry_guest.__("searchDetails.inquiryAlert2").$clickHere.__("searchDetails.inquiryAlert3")], 422);
+                                                return response()->json(['error' => __("searchDetails.inquiryAlert").$generateBookingDate->format("d.m").__("searchDetails.inquiryAlert1").$cabin->thu_inquiry_guest.__("searchDetails.inquiryAlert2").$clickHere.__("searchDetails.inquiryAlert3")], 422);
                                             }
 
                                             /*print_r(' ----thu_regular_data---- ');
@@ -633,7 +633,7 @@ class SearchController extends Controller
                                             $availableStatus[] = 'notAvailable';
                                             /*print_r(' ----thu_regular_data---- ');
                                             print_r(' not_available_dates '. $dates);*/
-                                            return response()->json(['error' => __("searchDetails.alreadyFilledBedsDorms").$generateBookingDate->format("jS F")], 422);
+                                            return response()->json(['error' => __("searchDetails.alreadyFilledBedsDorms").$generateBookingDate->format("d.m")], 422);
                                         }
                                     }
                                 }
@@ -657,7 +657,7 @@ class SearchController extends Controller
                                             }
                                             else {
                                                 $availableStatus[] = 'notAvailable';
-                                                return response()->json(['error' => $bedsRequest.__("searchDetails.bedsNotAvailable").$generateBookingDate->format("jS F")], 422);
+                                                return response()->json(['error' => $bedsRequest.__("searchDetails.bedsNotAvailable").$generateBookingDate->format("d.m")], 422);
                                             }
 
                                             if($dormsRequest <= $fri_dorms_avail) {
@@ -665,7 +665,7 @@ class SearchController extends Controller
                                             }
                                             else {
                                                 $availableStatus[] = 'notAvailable';
-                                                return response()->json(['error' => $dormsRequest.__("searchDetails.dormsNotAvailable").$generateBookingDate->format("jS F")], 422);
+                                                return response()->json(['error' => $dormsRequest.__("searchDetails.dormsNotAvailable").$generateBookingDate->format("d.m")], 422);
                                             }
 
                                             /* Checking requested beds and dorms sum is greater or equal to inquiry. Cabin inquiry guest is greater than 0 */
@@ -681,7 +681,7 @@ class SearchController extends Controller
                                                 $request->session()->put('dormitory', $dormsRequest);
                                                 $request->session()->put('sleeps', $requestBedsSumDorms);
                                                 $request->session()->put('guests', $requestBedsSumDorms);
-                                                return response()->json(['error' =>  __("searchDetails.inquiryAlert").$generateBookingDate->format("jS F"). __("searchDetails.inquiryAlert1").$cabin->fri_inquiry_guest. __("searchDetails.inquiryAlert2").$clickHere. __("searchDetails.inquiryAlert3")], 422);
+                                                return response()->json(['error' =>  __("searchDetails.inquiryAlert").$generateBookingDate->format("d.m"). __("searchDetails.inquiryAlert1").$cabin->fri_inquiry_guest. __("searchDetails.inquiryAlert2").$clickHere. __("searchDetails.inquiryAlert3")], 422);
                                             }
 
                                             /*print_r(' ----fri_regular_data---- ');
@@ -693,7 +693,7 @@ class SearchController extends Controller
                                         }
                                         else {
                                             $availableStatus[] = 'notAvailable';
-                                            return response()->json(['error' => __("searchDetails.alreadyFilledBedsDorms").$generateBookingDate->format("jS F")], 422);
+                                            return response()->json(['error' => __("searchDetails.alreadyFilledBedsDorms").$generateBookingDate->format("d.m")], 422);
                                             /*print_r(' ----fri_regular_data---- ');
                                             print_r(' not_available_dates '. $dates);*/
                                         }
@@ -719,7 +719,7 @@ class SearchController extends Controller
                                             }
                                             else {
                                                 $availableStatus[] = 'notAvailable';
-                                                return response()->json(['error' => $bedsRequest.__("searchDetails.bedsNotAvailable").$generateBookingDate->format("jS F")], 422);
+                                                return response()->json(['error' => $bedsRequest.__("searchDetails.bedsNotAvailable").$generateBookingDate->format("d.m")], 422);
                                             }
 
                                             if($dormsRequest <= $sat_dorms_avail) {
@@ -727,7 +727,7 @@ class SearchController extends Controller
                                             }
                                             else {
                                                 $availableStatus[] = 'notAvailable';
-                                                return response()->json(['error' => $dormsRequest.__("searchDetails.dormsNotAvailable").$generateBookingDate->format("jS F")], 422);
+                                                return response()->json(['error' => $dormsRequest.__("searchDetails.dormsNotAvailable").$generateBookingDate->format("d.m")], 422);
                                             }
 
                                             /* Checking requested beds and dorms sum is greater or equal to inquiry. Cabin inquiry guest is greater than 0 */
@@ -743,7 +743,7 @@ class SearchController extends Controller
                                                 $request->session()->put('dormitory', $dormsRequest);
                                                 $request->session()->put('sleeps', $requestBedsSumDorms);
                                                 $request->session()->put('guests', $requestBedsSumDorms);
-                                                return response()->json(['error' =>  __("searchDetails.inquiryAlert").$generateBookingDate->format("jS F"). __("searchDetails.inquiryAlert1").$cabin->sat_inquiry_guest. __("searchDetails.inquiryAlert2").$clickHere. __("searchDetails.inquiryAlert3")], 422);
+                                                return response()->json(['error' =>  __("searchDetails.inquiryAlert").$generateBookingDate->format("d.m"). __("searchDetails.inquiryAlert1").$cabin->sat_inquiry_guest. __("searchDetails.inquiryAlert2").$clickHere. __("searchDetails.inquiryAlert3")], 422);
                                             }
 
                                             /*print_r(' ----sat_regular_data---- ');
@@ -755,7 +755,7 @@ class SearchController extends Controller
                                         }
                                         else {
                                             $availableStatus[] = 'notAvailable';
-                                            return response()->json(['error' => __("searchDetails.alreadyFilledBedsDorms").$generateBookingDate->format("jS F")], 422);
+                                            return response()->json(['error' => __("searchDetails.alreadyFilledBedsDorms").$generateBookingDate->format("d.m")], 422);
                                             /*print_r(' ----sat_regular_data---- ');
                                             print_r(' not_available_dates '. $dates);*/
                                         }
@@ -781,7 +781,7 @@ class SearchController extends Controller
                                             }
                                             else {
                                                 $availableStatus[] = 'notAvailable';
-                                                return response()->json(['error' => $bedsRequest.__("searchDetails.bedsNotAvailable").$generateBookingDate->format("jS F")], 422);
+                                                return response()->json(['error' => $bedsRequest.__("searchDetails.bedsNotAvailable").$generateBookingDate->format("d.m")], 422);
                                             }
 
                                             if($dormsRequest <= $sun_dorms_avail) {
@@ -789,7 +789,7 @@ class SearchController extends Controller
                                             }
                                             else {
                                                 $availableStatus[] = 'notAvailable';
-                                                return response()->json(['error' => $dormsRequest.__("searchDetails.dormsNotAvailable").$generateBookingDate->format("jS F")], 422);
+                                                return response()->json(['error' => $dormsRequest.__("searchDetails.dormsNotAvailable").$generateBookingDate->format("d.m")], 422);
                                             }
 
                                             /* Checking requested beds and dorms sum is greater or equal to inquiry. Cabin inquiry guest is greater than 0 */
@@ -805,7 +805,7 @@ class SearchController extends Controller
                                                 $request->session()->put('dormitory', $dormsRequest);
                                                 $request->session()->put('sleeps', $requestBedsSumDorms);
                                                 $request->session()->put('guests', $requestBedsSumDorms);
-                                                return response()->json(['error' =>  __("searchDetails.inquiryAlert").$generateBookingDate->format("jS F"). __("searchDetails.inquiryAlert1").$cabin->sun_inquiry_guest. __("searchDetails.inquiryAlert2").$clickHere. __("searchDetails.inquiryAlert3")], 422);
+                                                return response()->json(['error' =>  __("searchDetails.inquiryAlert").$generateBookingDate->format("d.m"). __("searchDetails.inquiryAlert1").$cabin->sun_inquiry_guest. __("searchDetails.inquiryAlert2").$clickHere. __("searchDetails.inquiryAlert3")], 422);
                                             }
 
                                             /*print_r(' ----sun_regular_data---- ');
@@ -817,7 +817,7 @@ class SearchController extends Controller
                                         }
                                         else {
                                             $availableStatus[] = 'notAvailable';
-                                            return response()->json(['error' =>  __("searchDetails.alreadyFilledBedsDorms").$generateBookingDate->format("jS F")], 422);
+                                            return response()->json(['error' =>  __("searchDetails.alreadyFilledBedsDorms").$generateBookingDate->format("d.m")], 422);
                                             /*print_r(' ----sun_regular_data---- ');
                                             print_r(' not_available_dates '. $dates);*/
                                         }
@@ -842,7 +842,7 @@ class SearchController extends Controller
                                     }
                                     else {
                                         $availableStatus[] = 'notAvailable';
-                                        return response()->json(['error' => $bedsRequest.__("searchDetails.bedsNotAvailable").$generateBookingDate->format("jS F")], 422);
+                                        return response()->json(['error' => $bedsRequest.__("searchDetails.bedsNotAvailable").$generateBookingDate->format("d.m")], 422);
                                     }
 
                                     if($dormsRequest <= $normal_dorms_avail) {
@@ -850,7 +850,7 @@ class SearchController extends Controller
                                     }
                                     else {
                                         $availableStatus[] = 'notAvailable';
-                                        return response()->json(['error' => $dormsRequest.__("searchDetails.dormsNotAvailable").$generateBookingDate->format("jS F")], 422);
+                                        return response()->json(['error' => $dormsRequest.__("searchDetails.dormsNotAvailable").$generateBookingDate->format("d.m")], 422);
                                     }
 
                                     /* Checking requested beds and dorms sum is greater or equal to inquiry. Cabin inquiry guest is greater than 0 */
@@ -866,7 +866,7 @@ class SearchController extends Controller
                                         $request->session()->put('dormitory', $dormsRequest);
                                         $request->session()->put('sleeps', $requestBedsSumDorms);
                                         $request->session()->put('guests', $requestBedsSumDorms);
-                                        return response()->json(['error' =>  __("searchDetails.inquiryAlert").$generateBookingDate->format("jS F"). __("searchDetails.inquiryAlert1").$cabin->inquiry_starts. __("searchDetails.inquiryAlert2").$clickHere. __("searchDetails.inquiryAlert3")], 422);
+                                        return response()->json(['error' =>  __("searchDetails.inquiryAlert").$generateBookingDate->format("d.m"). __("searchDetails.inquiryAlert1").$cabin->inquiry_starts. __("searchDetails.inquiryAlert2").$clickHere. __("searchDetails.inquiryAlert3")], 422);
                                     }
 
                                     /*print_r(' ----normal_data---- ');
@@ -878,7 +878,7 @@ class SearchController extends Controller
                                 }
                                 else {
                                     $availableStatus[] = 'notAvailable';
-                                    return response()->json(['error' =>  __("searchDetails.alreadyFilledBedsDorms").$generateBookingDate->format("jS F")], 422);
+                                    return response()->json(['error' =>  __("searchDetails.alreadyFilledBedsDorms").$generateBookingDate->format("d.m")], 422);
                                     /*print_r(' ----normal_data---- ');
                                     print_r(' not_available_dates '. $dates);*/
                                 }
@@ -914,7 +914,7 @@ class SearchController extends Controller
                                         }
                                         else {
                                             $availableStatus[] = 'notAvailable';
-                                            return response()->json(['error' => $sleepsRequest.__("searchDetails.sleepsNotAvailable").$generateBookingDate->format("jS F")], 422);
+                                            return response()->json(['error' => $sleepsRequest.__("searchDetails.sleepsNotAvailable").$generateBookingDate->format("d.m")], 422);
                                         }
 
                                         /* Checking requested sleeps is greater or equal to inquiry. Cabin inquiry guest is greater than 0 */
@@ -930,7 +930,7 @@ class SearchController extends Controller
                                             $request->session()->put('dormitory', 0);
                                             $request->session()->put('sleeps', $sleepsRequest);
                                             $request->session()->put('guests', $sleepsRequest);
-                                            return response()->json(['error' => __("searchDetails.inquiryAlert").$generateBookingDate->format("jS F").__("searchDetails.inquiryAlert1").$cabin->not_regular_inquiry_guest.__("searchDetails.inquiryAlert2").$clickHere.__("searchDetails.inquiryAlert3")], 422);
+                                            return response()->json(['error' => __("searchDetails.inquiryAlert").$generateBookingDate->format("d.m").__("searchDetails.inquiryAlert1").$cabin->not_regular_inquiry_guest.__("searchDetails.inquiryAlert2").$clickHere.__("searchDetails.inquiryAlert3")], 422);
                                         }
 
                                         /*print_r(' ----not_regular_data---- ');
@@ -938,7 +938,7 @@ class SearchController extends Controller
                                     }
                                     else {
                                         $availableStatus[] = 'notAvailable';
-                                        return response()->json(['error' => __("searchDetails.alreadyFilledSleeps").$generateBookingDate->format("jS F")], 422);
+                                        return response()->json(['error' => __("searchDetails.alreadyFilledSleeps").$generateBookingDate->format("d.m")], 422);
                                         /*print_r(' ----not_regular_data---- ');
                                         print_r(' not_available_dates '. $dates);*/
                                     }
@@ -965,7 +965,7 @@ class SearchController extends Controller
                                             }
                                             else {
                                                 $availableStatus[] = 'notAvailable';
-                                                return response()->json(['error' => $sleepsRequest.__("searchDetails.sleepsNotAvailable").$generateBookingDate->format("jS F")], 422);
+                                                return response()->json(['error' => $sleepsRequest.__("searchDetails.sleepsNotAvailable").$generateBookingDate->format("d.m")], 422);
                                             }
 
                                             /* Checking requested sleeps is greater or equal to inquiry. Cabin inquiry guest is greater than 0 */
@@ -981,7 +981,7 @@ class SearchController extends Controller
                                                 $request->session()->put('dormitory', 0);
                                                 $request->session()->put('sleeps', $sleepsRequest);
                                                 $request->session()->put('guests', $sleepsRequest);
-                                                return response()->json(['error' => __("searchDetails.inquiryAlert").$generateBookingDate->format("jS F").__("searchDetails.inquiryAlert1").$cabin->mon_inquiry_guest.__("searchDetails.inquiryAlert2").$clickHere.__("searchDetails.inquiryAlert3")], 422);
+                                                return response()->json(['error' => __("searchDetails.inquiryAlert").$generateBookingDate->format("d.m").__("searchDetails.inquiryAlert1").$cabin->mon_inquiry_guest.__("searchDetails.inquiryAlert2").$clickHere.__("searchDetails.inquiryAlert3")], 422);
                                             }
 
                                             /*print_r(' ----mon_regular_data---- ');
@@ -990,7 +990,7 @@ class SearchController extends Controller
                                         }
                                         else {
                                             $availableStatus[] = 'notAvailable';
-                                            return response()->json(['error' => __("searchDetails.alreadyFilledSleeps").$generateBookingDate->format("jS F")], 422);
+                                            return response()->json(['error' => __("searchDetails.alreadyFilledSleeps").$generateBookingDate->format("d.m")], 422);
                                             /*print_r(' ----mon_regular_data---- ');
                                             print_r(' not_available_dates '. $dates);*/
                                         }
@@ -1014,7 +1014,7 @@ class SearchController extends Controller
                                             }
                                             else {
                                                 $availableStatus[] = 'notAvailable';
-                                                return response()->json(['error' => $sleepsRequest.__("searchDetails.sleepsNotAvailable").$generateBookingDate->format("jS F")], 422);
+                                                return response()->json(['error' => $sleepsRequest.__("searchDetails.sleepsNotAvailable").$generateBookingDate->format("d.m")], 422);
                                             }
 
                                             /* Checking requested sleeps is greater or equal to inquiry. Cabin inquiry guest is greater than 0 */
@@ -1030,7 +1030,7 @@ class SearchController extends Controller
                                                 $request->session()->put('dormitory', 0);
                                                 $request->session()->put('sleeps', $sleepsRequest);
                                                 $request->session()->put('guests', $sleepsRequest);
-                                                return response()->json(['error' => __("searchDetails.inquiryAlert").$generateBookingDate->format("jS F").__("searchDetails.inquiryAlert1").$cabin->tue_inquiry_guest.__("searchDetails.inquiryAlert2").$clickHere.__("searchDetails.inquiryAlert3")], 422);
+                                                return response()->json(['error' => __("searchDetails.inquiryAlert").$generateBookingDate->format("d.m").__("searchDetails.inquiryAlert1").$cabin->tue_inquiry_guest.__("searchDetails.inquiryAlert2").$clickHere.__("searchDetails.inquiryAlert3")], 422);
                                             }
 
                                             /*print_r(' ----tue_regular_data---- ');
@@ -1039,7 +1039,7 @@ class SearchController extends Controller
                                         }
                                         else {
                                             $availableStatus[] = 'notAvailable';
-                                            return response()->json(['error' => __("searchDetails.alreadyFilledSleeps").$generateBookingDate->format("jS F")], 422);
+                                            return response()->json(['error' => __("searchDetails.alreadyFilledSleeps").$generateBookingDate->format("d.m")], 422);
                                             /*print_r(' ----tue_regular_data---- ');
                                             print_r(' not_available_dates '. $dates);*/
                                         }
@@ -1063,7 +1063,7 @@ class SearchController extends Controller
                                             }
                                             else {
                                                 $availableStatus[] = 'notAvailable';
-                                                return response()->json(['error' => $sleepsRequest.__("searchDetails.sleepsNotAvailable").$generateBookingDate->format("jS F")], 422);
+                                                return response()->json(['error' => $sleepsRequest.__("searchDetails.sleepsNotAvailable").$generateBookingDate->format("d.m")], 422);
                                             }
 
                                             /* Checking requested sleeps is greater or equal to inquiry. Cabin inquiry guest is greater than 0 */
@@ -1079,7 +1079,7 @@ class SearchController extends Controller
                                                 $request->session()->put('dormitory', 0);
                                                 $request->session()->put('sleeps', $sleepsRequest);
                                                 $request->session()->put('guests', $sleepsRequest);
-                                                return response()->json(['error' => __("searchDetails.inquiryAlert").$generateBookingDate->format("jS F").__("searchDetails.inquiryAlert1").$cabin->wed_inquiry_guest.__("searchDetails.inquiryAlert2").$clickHere.__("searchDetails.inquiryAlert3")], 422);
+                                                return response()->json(['error' => __("searchDetails.inquiryAlert").$generateBookingDate->format("d.m").__("searchDetails.inquiryAlert1").$cabin->wed_inquiry_guest.__("searchDetails.inquiryAlert2").$clickHere.__("searchDetails.inquiryAlert3")], 422);
                                             }
 
                                             /*print_r(' ----wed_regular_data---- ');
@@ -1088,7 +1088,7 @@ class SearchController extends Controller
                                         }
                                         else {
                                             $availableStatus[] = 'notAvailable';
-                                            return response()->json(['error' => __("searchDetails.alreadyFilledSleeps").$generateBookingDate->format("jS F")], 422);
+                                            return response()->json(['error' => __("searchDetails.alreadyFilledSleeps").$generateBookingDate->format("d.m")], 422);
                                             /*print_r(' ----wed_regular_data---- ');
                                             print_r(' not_available_dates '. $dates);*/
                                         }
@@ -1112,7 +1112,7 @@ class SearchController extends Controller
                                             }
                                             else {
                                                 $availableStatus[] = 'notAvailable';
-                                                return response()->json(['error' => $sleepsRequest.__("searchDetails.sleepsNotAvailable").$generateBookingDate->format("jS F")], 422);
+                                                return response()->json(['error' => $sleepsRequest.__("searchDetails.sleepsNotAvailable").$generateBookingDate->format("d.m")], 422);
                                             }
 
                                             /* Checking requested sleeps is greater or equal to inquiry. Cabin inquiry guest is greater than 0 */
@@ -1128,7 +1128,7 @@ class SearchController extends Controller
                                                 $request->session()->put('dormitory', 0);
                                                 $request->session()->put('sleeps', $sleepsRequest);
                                                 $request->session()->put('guests', $sleepsRequest);
-                                                return response()->json(['error' => __("searchDetails.inquiryAlert").$generateBookingDate->format("jS F").__("searchDetails.inquiryAlert1").$cabin->thu_inquiry_guest.__("searchDetails.inquiryAlert2").$clickHere.__("searchDetails.inquiryAlert3")], 422);
+                                                return response()->json(['error' => __("searchDetails.inquiryAlert").$generateBookingDate->format("d.m").__("searchDetails.inquiryAlert1").$cabin->thu_inquiry_guest.__("searchDetails.inquiryAlert2").$clickHere.__("searchDetails.inquiryAlert3")], 422);
                                             }
 
                                             /*print_r(' ----thu_regular_data---- ');
@@ -1137,7 +1137,7 @@ class SearchController extends Controller
                                         }
                                         else {
                                             $availableStatus[] = 'notAvailable';
-                                            return response()->json(['error' => __("searchDetails.alreadyFilledSleeps").$generateBookingDate->format("jS F")], 422);
+                                            return response()->json(['error' => __("searchDetails.alreadyFilledSleeps").$generateBookingDate->format("d.m")], 422);
                                             /*print_r(' ----thu_regular_data---- ');
                                             print_r(' not_available_dates '. $dates);*/
                                         }
@@ -1161,7 +1161,7 @@ class SearchController extends Controller
                                             }
                                             else {
                                                 $availableStatus[] = 'notAvailable';
-                                                return response()->json(['error' => $sleepsRequest.__("searchDetails.sleepsNotAvailable").$generateBookingDate->format("jS F")], 422);
+                                                return response()->json(['error' => $sleepsRequest.__("searchDetails.sleepsNotAvailable").$generateBookingDate->format("d.m")], 422);
                                             }
 
                                             /* Checking requested sleeps is greater or equal to inquiry. Cabin inquiry guest is greater than 0 */
@@ -1177,7 +1177,7 @@ class SearchController extends Controller
                                                 $request->session()->put('dormitory', 0);
                                                 $request->session()->put('sleeps', $sleepsRequest);
                                                 $request->session()->put('guests', $sleepsRequest);
-                                                return response()->json(['error' => __("searchDetails.inquiryAlert").$generateBookingDate->format("jS F").__("searchDetails.inquiryAlert1").$cabin->fri_inquiry_guest.__("searchDetails.inquiryAlert2").$clickHere.__("searchDetails.inquiryAlert3")], 422);
+                                                return response()->json(['error' => __("searchDetails.inquiryAlert").$generateBookingDate->format("d.m").__("searchDetails.inquiryAlert1").$cabin->fri_inquiry_guest.__("searchDetails.inquiryAlert2").$clickHere.__("searchDetails.inquiryAlert3")], 422);
                                             }
 
                                             /*print_r(' ----fri_regular_data---- ');
@@ -1186,7 +1186,7 @@ class SearchController extends Controller
                                         }
                                         else {
                                             $availableStatus[] = 'notAvailable';
-                                            return response()->json(['error' => __("searchDetails.alreadyFilledSleeps").$generateBookingDate->format("jS F")], 422);
+                                            return response()->json(['error' => __("searchDetails.alreadyFilledSleeps").$generateBookingDate->format("d.m")], 422);
                                             /*print_r(' ----fri_regular_data---- ');
                                             print_r(' not_available_dates '. $dates);*/
                                         }
@@ -1210,7 +1210,7 @@ class SearchController extends Controller
                                             }
                                             else {
                                                 $availableStatus[] = 'notAvailable';
-                                                return response()->json(['error' => $sleepsRequest.__("searchDetails.sleepsNotAvailable").$generateBookingDate->format("jS F")], 422);
+                                                return response()->json(['error' => $sleepsRequest.__("searchDetails.sleepsNotAvailable").$generateBookingDate->format("d.m")], 422);
                                             }
 
                                             /* Checking requested sleeps is greater or equal to inquiry. Cabin inquiry guest is greater than 0 */
@@ -1226,7 +1226,7 @@ class SearchController extends Controller
                                                 $request->session()->put('dormitory', 0);
                                                 $request->session()->put('sleeps', $sleepsRequest);
                                                 $request->session()->put('guests', $sleepsRequest);
-                                                return response()->json(['error' => __("searchDetails.inquiryAlert").$generateBookingDate->format("jS F").__("searchDetails.inquiryAlert1").$cabin->sat_inquiry_guest.__("searchDetails.inquiryAlert2").$clickHere.__("searchDetails.inquiryAlert3")], 422);
+                                                return response()->json(['error' => __("searchDetails.inquiryAlert").$generateBookingDate->format("d.m").__("searchDetails.inquiryAlert1").$cabin->sat_inquiry_guest.__("searchDetails.inquiryAlert2").$clickHere.__("searchDetails.inquiryAlert3")], 422);
                                             }
 
                                             /*print_r(' ----sat_regular_data---- ');
@@ -1235,7 +1235,7 @@ class SearchController extends Controller
                                         }
                                         else {
                                             $availableStatus[] = 'notAvailable';
-                                            return response()->json(['error' => __("searchDetails.alreadyFilledSleeps").$generateBookingDate->format("jS F")], 422);
+                                            return response()->json(['error' => __("searchDetails.alreadyFilledSleeps").$generateBookingDate->format("d.m")], 422);
                                             /*print_r(' ----sat_regular_data---- ');
                                             print_r(' not_available_dates '. $dates);*/
                                         }
@@ -1259,7 +1259,7 @@ class SearchController extends Controller
                                             }
                                             else {
                                                 $availableStatus[] = 'notAvailable';
-                                                return response()->json(['error' => $sleepsRequest.__("searchDetails.sleepsNotAvailable").$generateBookingDate->format("jS F")], 422);
+                                                return response()->json(['error' => $sleepsRequest.__("searchDetails.sleepsNotAvailable").$generateBookingDate->format("d.m")], 422);
                                             }
 
                                             /* Checking requested sleeps is greater or equal to inquiry. Cabin inquiry guest is greater than 0 */
@@ -1275,7 +1275,7 @@ class SearchController extends Controller
                                                 $request->session()->put('dormitory', 0);
                                                 $request->session()->put('sleeps', $sleepsRequest);
                                                 $request->session()->put('guests', $sleepsRequest);
-                                                return response()->json(['error' => __("searchDetails.inquiryAlert").$generateBookingDate->format("jS F").__("searchDetails.inquiryAlert1").$cabin->sun_inquiry_guest.__("searchDetails.inquiryAlert2").$clickHere.__("searchDetails.inquiryAlert3")], 422);
+                                                return response()->json(['error' => __("searchDetails.inquiryAlert").$generateBookingDate->format("d.m").__("searchDetails.inquiryAlert1").$cabin->sun_inquiry_guest.__("searchDetails.inquiryAlert2").$clickHere.__("searchDetails.inquiryAlert3")], 422);
                                             }
 
                                             /*print_r(' ----sun_regular_data---- ');
@@ -1284,7 +1284,7 @@ class SearchController extends Controller
                                         }
                                         else {
                                             $availableStatus[] = 'notAvailable';
-                                            return response()->json(['error' => __("searchDetails.alreadyFilledSleeps").$generateBookingDate->format("jS F")], 422);
+                                            return response()->json(['error' => __("searchDetails.alreadyFilledSleeps").$generateBookingDate->format("d.m")], 422);
                                             /*print_r(' ----sun_regular_data---- ');
                                             print_r(' not_available_dates '. $dates);*/
                                         }
@@ -1306,7 +1306,7 @@ class SearchController extends Controller
                                     }
                                     else {
                                         $availableStatus[] = 'notAvailable';
-                                        return response()->json(['error' => $sleepsRequest.__("searchDetails.sleepsNotAvailable").$generateBookingDate->format("jS F")], 422);
+                                        return response()->json(['error' => $sleepsRequest.__("searchDetails.sleepsNotAvailable").$generateBookingDate->format("d.m")], 422);
                                     }
 
                                     /* Checking requested sleeps is greater or equal to inquiry. Cabin inquiry guest is greater than 0 */
@@ -1322,7 +1322,7 @@ class SearchController extends Controller
                                         $request->session()->put('dormitory', 0);
                                         $request->session()->put('sleeps', $sleepsRequest);
                                         $request->session()->put('guests', $sleepsRequest);
-                                        return response()->json(['error' => __("searchDetails.inquiryAlert").$generateBookingDate->format("jS F").__("searchDetails.inquiryAlert1").$cabin->inquiry_starts.__("searchDetails.inquiryAlert2").$clickHere.__("searchDetails.inquiryAlert3")], 422);
+                                        return response()->json(['error' => __("searchDetails.inquiryAlert").$generateBookingDate->format("d.m").__("searchDetails.inquiryAlert1").$cabin->inquiry_starts.__("searchDetails.inquiryAlert2").$clickHere.__("searchDetails.inquiryAlert3")], 422);
                                     }
 
                                     /*print_r(' ----normal_regular_data---- ');
@@ -1331,7 +1331,7 @@ class SearchController extends Controller
                                 }
                                 else {
                                     $availableStatus[] = 'notAvailable';
-                                    return response()->json(['error' => __("searchDetails.alreadyFilledSleeps").$generateBookingDate->format("jS F")], 422);
+                                    return response()->json(['error' => __("searchDetails.alreadyFilledSleeps").$generateBookingDate->format("d.m")], 422);
                                     /*print_r(' ----normal_regular_data---- ');
                                     print_r(' not_available_dates '. $dates);*/
                                 }
