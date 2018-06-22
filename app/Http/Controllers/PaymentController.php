@@ -990,7 +990,7 @@ class PaymentController extends Controller
                     ->where('userid', session()->get('userid'))
                     ->get();
 
-                if(!empty($carts) && session()->key('payByBillPossible') === 'yes') {
+                if(!empty($carts) && session()->get('payByBillPossible') === 'yes') {
                     foreach ($carts as $cart) {
                         $cartUpdate                 = Booking::find($cart->_id);
                         $cartUpdate->status         = '5';
