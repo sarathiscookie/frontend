@@ -126,7 +126,7 @@ class PaymentController extends Controller
         /*if (session()->has('availableStatus') && session()->get('availableStatus') === 'success') {*/
             $prepayment_amount           = [];
             $moneyBalance                = 0;
-            $payByBillPossible           = [];
+            $payByBillPossible           = '';
             $carts                       = Booking::where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
                 ->where('status', "8")
                 ->where('is_delete', 0)
@@ -145,10 +145,10 @@ class PaymentController extends Controller
                     $d2                  = new DateTime($checkingFrom);
                     $dateDifference      = $d2->diff($d1);
                     if($dateDifference->days > 14) {
-                        $payByBillPossible[] = 'yes';
+                        $payByBillPossible = 'yes';
                     }
                     else {
-                        $payByBillPossible[] = 'no';
+                        $payByBillPossible = 'no';
                     }
                     /* Condition to check pay by bill possible end */
                 }
@@ -209,7 +209,7 @@ class PaymentController extends Controller
     {
         $prepayment_amount           = [];
         $cart_ids                    = [];
-        $payByBillPossible           = [];
+        $payByBillPossible           = '';
         $user                        = Userlist::where('is_delete', 0)->where('usrActive', '1')->find(Auth::user()->_id);
         $carts                       = Booking::where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
             ->where('status', "8")
@@ -217,7 +217,7 @@ class PaymentController extends Controller
             ->take(5)
             ->get();
 
-        if(count($carts) > 0) {
+        if(!empty($carts)) {
             $countCarts              = count($carts);
             /* Loop for amount calculation, pay by bill date difference and explode cabin code */
             foreach ($carts as $key => $cart) {
@@ -231,10 +231,10 @@ class PaymentController extends Controller
                 $d2                  = new DateTime($checkingFrom);
                 $dateDifference      = $d2->diff($d1);
                 if($dateDifference->days > 14) {
-                    $payByBillPossible[] = 'yes';
+                    $payByBillPossible = 'yes';
                 }
                 else {
-                    $payByBillPossible[] = 'no';
+                    $payByBillPossible = 'no';
                 }
             }
 
@@ -342,21 +342,20 @@ class PaymentController extends Controller
                                     $cartUpdate->payment_type      = $request->payment;
                                     $cartUpdate->txid              = $paymentGateway["txid"];
                                     $cartUpdate->userid            = $paymentGateway["userid"];
-                                    $cartUpdate->status            = '1';
-                                    $cartUpdate->payment_status    = '1';
                                     $cartUpdate->moneybalance_used = round($cartMoneyBalance, 2);
                                     $cartUpdate->save();
                                 }
 
-                                /* Storing userid and updating money balance of user collection */
+                                /* Storing userid in user collection */
                                 $user->userid        = $paymentGateway["userid"];
-                                $user->money_balance = 0.00;
                                 $user->save();
 
                                 /* Updating order number in ordernumber collection */
                                 $orderNumber->number = $order_num;
                                 $orderNumber->save();
 
+                                $request->session()->flash('txid', $paymentGateway["txid"]);
+                                $request->session()->flash('userid', $paymentGateway["userid"]);
                                 $request->session()->flash('bookingSuccessStatus', __('payment.bookingSuccessStatus'));
                                 return redirect()->away($paymentGateway["redirecturl"]);
                             }
@@ -381,7 +380,7 @@ class PaymentController extends Controller
                             $order->order_delete                  = 0;
 
                             /* If guest paid using payByBill we need to store bank details. Condition begin */
-                            if($request->payment === 'payByBill' && in_array('yes', $payByBillPossible)) {
+                            if($request->payment === 'payByBill' && $payByBillPossible === 'yes') {
                                 $order->clearing_bankaccount       = $paymentGateway["clearing_bankaccount"];
                                 $order->clearing_bankcode          = $paymentGateway["clearing_bankcode"];
                                 $order->clearing_bankcountry       = $paymentGateway["clearing_bankcountry"];
@@ -407,23 +406,11 @@ class PaymentController extends Controller
                                     $cartUpdate->txid               = $paymentGateway["txid"];
                                     $cartUpdate->userid             = $paymentGateway["userid"];
                                     $cartUpdate->moneybalance_used  = round($cartMoneyBalance, 2);
-
-                                    /* If guest paid using payByBill we need to update booking and payment status begin */
-                                    if($request->payment === 'payByBill' && in_array('yes', $payByBillPossible)) {
-                                        $cartUpdate->status         = '5';
-                                        $cartUpdate->payment_status = '3';
-                                    }
-                                    else {
-                                        $cartUpdate->status         = '1';
-                                        $cartUpdate->payment_status = '1';
-                                    }
-
                                     $cartUpdate->save();
                                 }
 
-                                /* Storing userid and updating money balance of user collection  */
+                                /* Storing userid in user collection */
                                 $user->userid        = $paymentGateway["userid"];
-                                $user->money_balance = 0.00;
                                 $user->save();
 
                                 /* Updating order number in ordernumber collection */
@@ -432,7 +419,10 @@ class PaymentController extends Controller
 
                                 /* If guest paid using payByBill it will redirect to bank details listing page. Condition begin*/
                                 if($request->payment === 'payByBill') {
-                                    if(in_array('yes', $payByBillPossible)) {
+                                    if($payByBillPossible === 'yes') {
+                                        $request->session()->flash('txid', $paymentGateway["txid"]);
+                                        $request->session()->flash('userid', $paymentGateway["userid"]);
+                                        $request->session()->flash('payByBillPossible', $payByBillPossible);
                                         $request->session()->flash('bookingSuccessStatusPrepayment', __('payment.bookingSuccessStatus'));
                                         return redirect()->route('payment.prepayment')->with('order', $order);
                                     }
@@ -442,6 +432,8 @@ class PaymentController extends Controller
                                 }
                                 /* If guest paid using payByBill it will redirect to bank details listing page. Condition end*/
 
+                                $request->session()->flash('txid', $paymentGateway["txid"]);
+                                $request->session()->flash('userid', $paymentGateway["userid"]);
                                 return redirect()->route('payment.success')->with('bookingSuccessStatus', __('payment.bookingSuccessStatus'));
                             }
                             else {
@@ -506,11 +498,11 @@ class PaymentController extends Controller
                                 $cartUpdate->payment_type   = $request->payment;
                                 $cartUpdate->txid           = $paymentGateway["txid"];
                                 $cartUpdate->userid         = $paymentGateway["userid"];
-                                $cartUpdate->status         = '1';
-                                $cartUpdate->payment_status = '1';
                                 $cartUpdate->save();
                             }
 
+                            $request->session()->flash('txid', $paymentGateway["txid"]);
+                            $request->session()->flash('userid', $paymentGateway["userid"]);
                             $request->session()->flash('bookingSuccessStatus', __('payment.bookingSuccessStatus'));
                             return redirect()->away($paymentGateway["redirecturl"]);
                         }
@@ -533,7 +525,7 @@ class PaymentController extends Controller
                         $order->order_delete          = 0;
 
                         /* If guest paid using payByBill we need to store bank details. Condition begin */
-                        if($request->payment === 'payByBill' && in_array('yes', $payByBillPossible)) {
+                        if($request->payment === 'payByBill' && $payByBillPossible === 'yes') {
                             $order->clearing_bankaccount       = $paymentGateway["clearing_bankaccount"];
                             $order->clearing_bankcode          = $paymentGateway["clearing_bankcode"];
                             $order->clearing_bankcountry       = $paymentGateway["clearing_bankcountry"];
@@ -566,23 +558,15 @@ class PaymentController extends Controller
                                 $cartUpdate->payment_type = $request->payment;
                                 $cartUpdate->txid         = $paymentGateway["txid"];
                                 $cartUpdate->userid       = $paymentGateway["userid"];
-
-                                /* If guest paid using payByBill we need to update booking and payment status begin */
-                                if($request->payment === 'payByBill' && in_array('yes', $payByBillPossible)) {
-                                    $cartUpdate->status         = '5'; //Waiting for payment
-                                    $cartUpdate->payment_status = '3'; //Prepayment
-                                }
-                                else {
-                                    $cartUpdate->status         = '1';
-                                    $cartUpdate->payment_status = '1';
-                                }
-
                                 $cartUpdate->save();
                             }
 
                             /* If guest paid using payByBill it will redirect to bank details listing page. Condition begin*/
                             if($request->payment === 'payByBill') {
-                                if(in_array('yes', $payByBillPossible)) {
+                                if($payByBillPossible === 'yes') {
+                                    $request->session()->flash('txid', $paymentGateway["txid"]);
+                                    $request->session()->flash('userid', $paymentGateway["userid"]);
+                                    $request->session()->flash('payByBillPossible', $payByBillPossible);
                                     $request->session()->flash('bookingSuccessStatusPrepayment', __('payment.bookingSuccessStatus'));
                                     return redirect()->route('payment.prepayment')->with('order', $order);
                                 }
@@ -592,6 +576,8 @@ class PaymentController extends Controller
                             }
                             /* If guest paid using payByBill it will redirect to bank details listing page. Condition end*/
 
+                            $request->session()->flash('txid', $paymentGateway["txid"]);
+                            $request->session()->flash('userid', $paymentGateway["userid"]);
                             return redirect()->route('payment.success')->with('bookingSuccessStatus', __('payment.bookingSuccessStatus'));
                         }
                         else {
@@ -613,7 +599,9 @@ class PaymentController extends Controller
                 }
             }
         }
-        return redirect()->route('cart');
+        else {
+            return redirect()->route('cart');
+        }
     }
 
     /**
@@ -946,6 +934,38 @@ class PaymentController extends Controller
     public function success()
     {
         if(session()->has('bookingSuccessStatus')) {
+            if(session()->has('txid') && session()->has('userid')) {
+                $carts              = Booking::select('_id', 'status', 'payment_status')
+                    ->where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
+                    ->where('status', "8")
+                    ->where('is_delete', 0)
+                    ->where('txid', session()->get('txid'))
+                    ->where('userid', session()->get('userid'))
+                    ->get();
+
+                if(!empty($carts)) {
+                    foreach ($carts as $cart) {
+                        $cartUpdate                 = Booking::find($cart->_id);
+                        $cartUpdate->status         = '1';
+                        $cartUpdate->payment_status = '1';
+                        $cartUpdate->save();
+                    }
+
+                    $order          = Order::where('userid', session()->get('userid'))
+                        ->where('txid', session()->get('txid'))
+                        ->where('auth_user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
+                        ->first();
+
+                    if(!empty($order) && $order->order_payment_method === 2) { // 1 => fully paid using money balance, 2 => Partially paid using money balance, 3 => Paid using payment gateway
+                        $user = Userlist::where('is_delete', 0)->where('usrActive', '1')->find(Auth::user()->_id);
+                        $user->money_balance = 0.00;
+                        $user->save();
+                    }
+                }
+                else {
+                    abort(404);
+                }
+            }
             return view('paymentSuccess');
         }
         else {
@@ -961,6 +981,38 @@ class PaymentController extends Controller
     public function prepayment()
     {
         if(session()->has('bookingSuccessStatusPrepayment') && session()->has('order')) {
+            if(session()->has('txid') && session()->has('userid') && session()->has('payByBillPossible')) {
+                $carts              = Booking::select('_id', 'status', 'payment_status')
+                    ->where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
+                    ->where('status', "8")
+                    ->where('is_delete', 0)
+                    ->where('txid', session()->get('txid'))
+                    ->where('userid', session()->get('userid'))
+                    ->get();
+
+                if(!empty($carts) && session()->key('payByBillPossible') === 'yes') {
+                    foreach ($carts as $cart) {
+                        $cartUpdate                 = Booking::find($cart->_id);
+                        $cartUpdate->status         = '5';
+                        $cartUpdate->payment_status = '3';
+                        $cartUpdate->save();
+                    }
+
+                    $order          = Order::where('userid', session()->get('userid'))
+                        ->where('txid', session()->get('txid'))
+                        ->where('auth_user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
+                        ->first();
+
+                    if(!empty($order) && $order->order_payment_method === 2) { // 1 => fully paid using money balance, 2 => Partially paid using money balance, 3 => Paid using payment gateway
+                        $user = Userlist::where('is_delete', 0)->where('usrActive', '1')->find(Auth::user()->_id);
+                        $user->money_balance = 0.00;
+                        $user->save();
+                    }
+                }
+                else {
+                    abort(404);
+                }
+            }
             return view('paymentPrepayment');
         }
         else {
