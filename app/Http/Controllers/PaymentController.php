@@ -895,7 +895,7 @@ class PaymentController extends Controller
                 }
             }
             else if ($_POST["txaction"] === "paid") {
-                $payment        = new Payment;
+                $payment        = Payment::where('userid', $_POST["userid"])->where('txid', $_POST["txid"])->first();
                 foreach($_POST as $key => $value) {
                     if(Schema::hasColumn($payment->getTable(), $key)){
                         if(is_array($value)) {

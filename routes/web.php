@@ -273,6 +273,14 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('/payment/prepayment/download', 'PaymentController@download')->name('payment.prepayment.download');
 });
 
+/*
+ |--------------------------------------------------------------------------
+ | Payment
+ |--------------------------------------------------------------------------
+ |
+ | Route for getting response from payone
+ |
+ */
 /* Response from payone */
 Route::post('/payment/response', 'PaymentController@response')->name('payment.response');
 
