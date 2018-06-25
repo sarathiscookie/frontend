@@ -172,7 +172,7 @@ return [
             'max'           => 'Die Telefonnummer dürfen nicht länger als :max Zeichen sein.'
         ],
         'payment' => [
-            'required'      => 'Das Zahlungs muss ausgefüllt sein.'
+            'required'      => 'Es muss ein Zahlungsweg ausgewählt werden.'
         ]
     ],
 

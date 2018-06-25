@@ -62,5 +62,7 @@ return [
     'oldAmount'                                             => 'Bisheriger Gutscheinwert',
     'updateBookingSuccessOne'                               => 'Gut gemacht!',
     'updateBookingSuccessTwo'                               => 'Ihre Buchung wurde erfolgreich geändert.',
-    'commentsMax'                                           => 'Das Kommentar darf nicht länger als :max Zeichen sein.'
+    'commentsMax'                                           => 'Das Kommentar darf nicht länger als :max Zeichen sein.',
+    'inquiryStatusOne'                                      => 'Ihr Anfrage wurde an den Hüttenwirt gesendet und wird nun bearbeitet.',
+    'inquiryStatusTwo'                                      => 'Sie werden schnellstmöglich benachrichtigt, ob Sie Ihre Wanderung zum gewünschten Datum antreten können.',
 ];

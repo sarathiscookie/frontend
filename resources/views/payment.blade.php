@@ -14,8 +14,8 @@
         }
         .paymentLabel {
             margin-right: 10px;
-            float: left;
-            width: 80px;
+            width:auto;
+            float:none;
             padding-top: 0.3em;
             text-align: right;
         }
@@ -286,6 +286,7 @@
         $storecarddata           = "yes"; // yes: Card data is stored, a pseudo card number is returned. no: Card data is not stored
         $successurl              = env('SUCCESSURL');
         $errorurl                = env('ERRORURL');
+        $backurl                 = env('BACKURL');
         $encoding                = env('ENCODING');
         $key                     = env('KEY');
         $clearingtype            = "cc"; //cc - Credit card, rec - Invoice, cod - Cash on delivery, sb - Online Bank Transfer, wlt - e-wallet, fnc - Financing
@@ -358,6 +359,7 @@
         $hash = hash_hmac("sha384", $aid .
         $amount .
         $api_version .
+        $backurl .
         $booking_date .
         $clearingtype .
         $currency .

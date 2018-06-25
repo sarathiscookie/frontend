@@ -62,5 +62,7 @@ return [
     'oldAmount'                                             => 'Previous Voucher Amount',
     'updateBookingSuccessOne'                               => 'Well Done!',
     'updateBookingSuccessTwo'                               => 'Your booking has been successfully changed.',
-    'commentsMax'                                           => 'The comments may not be greater than :max characters.'
+    'commentsMax'                                           => 'The comments may not be greater than :max characters.',
+    'inquiryStatusOne'                                      => 'Your request has been sent to the cabin owner and is now being processed.',
+    'inquiryStatusTwo'                                      => 'You will be informed as soon as possible whether you can start your journey on the desired date.',
 ];

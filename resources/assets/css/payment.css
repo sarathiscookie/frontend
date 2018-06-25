@@ -243,6 +243,7 @@
 
 #creditcard fieldset{
     margin: 0px;
+    width:auto !important;
 }
 
 #cardpan{
@@ -251,10 +252,16 @@
     border-color: #5F6876 !important;
     border:none;
     opacity:1;
+    padding:5px;
+    padding-right:0px;
+    margin-bottom:0px;
 }
 
 #cardcvc2{
     border-color: #5F6876 !important;
+    padding:5px;
+    padding-right:0px;
+    margin-bottom:0px;
 }
 
 #cardexpiremonth{
