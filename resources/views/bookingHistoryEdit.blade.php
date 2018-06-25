@@ -9,7 +9,7 @@
         <div class="col-md-2 col-md-2-booking1"></div>
         <div class="col-md-8" id="list-filter-booking1">
             <nav class="navbar navbar-default navbar-default-booking1">
-                <h2 class="cabin-head-booking1">{{ __('bookingHistory.editBookingHeading') }}</h2><h2 class="cabin-head-booking1">{{ __('bookingHistory.step1') }}</h2>
+                <h2 class="cabin-head-booking1">{{ __('bookingHistory.editBookingHeading') }}</h2><h2 class="cabin-head-booking1"></h2>
             </nav>
         </div>
         <div class="col-md-2 col-md-2-booking1"></div>

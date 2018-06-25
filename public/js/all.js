@@ -721,6 +721,7 @@ $(function() {
                 $( ".totalPrepayAmount" ).hide();
             }
             else {
+                $( ".serviceFee" ).show();
                 var afterRedeemAmount     = sumPrepayAmount - redeemAmount;
                 var paymentMethod         = $( ".serviceFee" ).attr('data-paymentmethod');
                 var serviceTaxBook        = serviceFees(afterRedeemAmount, paymentMethod);
@@ -737,6 +738,7 @@ $(function() {
         }
         else {
             $( ".afterRedeem" ).hide();
+            $( ".serviceFee" ).show();
             var sumPrepaymentAmount    = $( ".sumPrepayAmount" ).data('sumprepayamount');
             var paymentMethod         = $( ".serviceFee" ).attr('data-paymentmethod');
             var serviceFee             = serviceFees(sumPrepaymentAmount, paymentMethod);
