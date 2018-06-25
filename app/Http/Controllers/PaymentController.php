@@ -798,7 +798,9 @@ class PaymentController extends Controller
 
             "successurl"              => env('SUCCESSURL'),
 
-            "errorurl"                => env('ERRORURL')
+            "errorurl"                => env('ERRORURL'),
+
+            "backurl"                 => env('BACKURL'),
         );
 
         $request                      = array_merge($defaults, $parameters, $personalData);
