@@ -67,7 +67,7 @@
                                     {{ __('login.loginButton') }}
                                 </button>
 
-                                <a class="btn btn-link" href="{{ route('password.request') }}">
+                                <a class="btn btn-link" href="{{ route('reset.password.manually') }}">
                                     {{ __('login.forgotYourPassword') }}
                                 </a>
                             </div>

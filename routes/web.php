@@ -11,7 +11,23 @@
 |
 */
 
+/*
+|--------------------------------------------------------------------------
+| Login, Register and Reset password
+|--------------------------------------------------------------------------
+|
+| Route for login, register and reset password
+|
+*/
+
+/* Default laravel auth route */
 Auth::routes();
+
+/* Show form for checking email */
+Route::get('/reset/password', 'Auth\ResetPasswordManuallyController@showForm')->name('reset.password.manually');
+
+/* Send token to user */
+Route::post('/reset/password', 'Auth\ResetPasswordManuallyController@sendPasswordResetToken')->name('reset.password.manually');
 
 /*
 |--------------------------------------------------------------------------

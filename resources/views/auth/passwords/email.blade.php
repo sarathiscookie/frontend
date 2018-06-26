@@ -14,18 +14,18 @@
                         </div>
                     @endif
 
-                    <form class="form-horizontal" method="POST" action="{{ route('password.email') }}">
+                    <form class="form-horizontal" method="POST" action="{{ route('reset.password.manually') }}">
                         {{ csrf_field() }}
 
-                        <div class="form-group{{ $errors->has('email') ? ' has-error' : '' }}">
+                        <div class="form-group{{ $errors->has('email') || $errors->has('user') ? ' has-error' : '' }}">
                             <label for="email" class="col-md-4 control-label">{{ __('login.email') }}</label>
 
                             <div class="col-md-6">
                                 <input id="email" type="email" class="form-control" name="email" value="{{ old('email') }}">
 
-                                @if ($errors->has('email'))
+                                @if ($errors->has('email') || $errors->has('user'))
                                     <span class="help-block">
-                                        <strong>{{ $errors->first('email') }}</strong>
+                                        <strong>{{ $errors->first('email') }}  {{ $errors->first('user') }} </strong>
                                     </span>
                                 @endif
                             </div>
