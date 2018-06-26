@@ -21,6 +21,38 @@ use DateInterval;
 class BookingHistoryController extends Controller
 {
     /**
+     * To generate date between two dates.
+     *
+     * @param  string  $now
+     * @param  string  $end
+     * @return \Illuminate\Http\Response
+     */
+    protected function generateDates($now, $end){
+        $period = new DatePeriod(
+            new DateTime($now),
+            new DateInterval('P1D'),
+            new DateTime($end)
+        );
+
+        return $period;
+    }
+
+    /**
+     * To generate date format as mongo.
+     *
+     * @param  string  $date
+     * @return \Illuminate\Http\Response
+     */
+    protected function getDateUtc($date)
+    {
+        $dateFormatChange = DateTime::createFromFormat("d.m.y", $date)->format('Y-m-d');
+        $dateTime         = new DateTime($dateFormatChange);
+        $timeStamp        = $dateTime->getTimestamp();
+        $utcDateTime      = new \MongoDB\BSON\UTCDateTime($timeStamp * 1000);
+        return $utcDateTime;
+    }
+
+    /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
@@ -133,13 +165,24 @@ class BookingHistoryController extends Controller
 
             $monthBegin                   = DateTime::createFromFormat('d.m.y', $request->dateFrom)->format('Y-m-d');
             $monthEnd                     = DateTime::createFromFormat('d.m.y', $request->dateTo)->format('Y-m-d');
+
             $d1                           = new DateTime($monthBegin);
             $d2                           = new DateTime($monthEnd);
             $new_date_diff                = $d2->diff($d1);
             $sleepsRequest                = 0;
             $requestBedsSumDorms          = 0;
-            $sleeps                       = 0;
+            $bookingSleeps                = 0;
+            $bookingBeds                  = 0;
+            $bookingDorms                 = 0;
             $bedsSumDorms                 = 0;
+            $holiday_prepare              = [];
+            $not_regular_dates            = [];
+            $dates_array                  = [];
+            $availableStatus              = [];
+            $sleepsRequest                = (int)$request->sleeps;
+            $bedsRequest                  = (int)$request->beds;
+            $dormsRequest                 = (int)$request->dormitory;
+
             if($monthBegin < $monthEnd) {
                 if($new_date_diff->days <= 60) {
                     $booking              = Booking::select('cabinname', 'beds', 'dormitory', 'sleeps','prepayment_amount', 'checkin_from', 'reserve_to')
@@ -150,8 +193,7 @@ class BookingHistoryController extends Controller
 
                     if(!empty($booking)) {
 
-                        $cabin                    = Cabin::select('prepayment_amount', 'sleeping_place')
-                            ->where('is_delete', 0)
+                        $cabin                    = Cabin::where('is_delete', 0)
                             ->where('other_cabin', "0")
                             ->where('name', $booking->cabinname)
                             ->first();
@@ -167,22 +209,19 @@ class BookingHistoryController extends Controller
                         }
 
                         if ($cabin->sleeping_place === 1) {
-                            $sleepsRequest        = (int)$request->sleeps;
-                            $sleeps               = (int)$booking->sleeps;
+                            $bookingSleeps        = (int)$booking->sleeps;
                         }
                         else {
-                            $bedsRequest          = (int)$request->beds;
-                            $beds                 = (int)$booking->beds;
-                            $dormsRequest         = (int)$request->dormitory;
-                            $dorms                = (int)$booking->dormitory;
+                            $bookingBeds          = (int)$booking->beds;
+                            $bookingDorms         = (int)$booking->dormitory;
                             $requestBedsSumDorms  = $bedsRequest + $dormsRequest;
-                            $bedsSumDorms         = $beds + $dorms;
+                            $bedsSumDorms         = $bookingBeds + $bookingDorms;
                         }
                         /* Form request end */
 
                         /* Payment calculation begin */
                         // Old Data
-                        $old_sleeps_sum           = ($cabin->sleeping_place === 1) ? $sleeps : $bedsSumDorms;
+                        $old_sleeps_sum           = ($cabin->sleeping_place === 1) ? $bookingSleeps : $bedsSumDorms;
                         $old_amount               = $booking->prepayment_amount;
                         $old_checking_from        = $booking->checkin_from->format('Y-m-d');
                         $old_reserve_to           = $booking->reserve_to->format('Y-m-d');
@@ -195,25 +234,221 @@ class BookingHistoryController extends Controller
                         $new_amount               = round(($cabin->prepayment_amount * $new_date_diff->days) * $new_sleeps_sum, 2);
                         $new_old_amount_diff      = round($new_amount - $old_amount, 2);
                         $total                    = ($new_amount > $old_amount) ? $new_old_amount_diff : $new_amount;
+                        $amount                   = ($new_amount > $old_amount) ? $total : $old_amount - $total;
+                        /* Payment calculation end */
 
-                        if( ($total === $old_amount) && ($old_date_diff->days === $new_date_diff->days) && ($old_sleeps_sum === $new_sleeps_sum) ) {
+
+                        if( ($total === $old_amount) && ($old_checking_from === $monthBegin) && ($old_reserve_to === $monthEnd) && ($old_sleeps_sum === $new_sleeps_sum) ) {
                             return redirect()->back()->with('updateBookingFailedStatus', __('bookingHistory.errorThree'));
                         }
-                        elseif ($new_amount < $old_amount) {
-                            // Update booking, Update money balance, Send email
-                        }
                         else {
-                            $amount = ($new_amount > $old_amount) ? $total : $old_amount - $total;
-                            dd('New amount: '.$new_amount.' Old: '.$old_amount.' Total: '.$total. ' Amount ' .$amount); //Higher - Amount: 83.04 Old: 55.36 Total: 27.68. Lower - Amount: 27.68 Old: 55.36 Total: 27.68
-                            // Write condition correctly then test. After that variable store in to sessions.
-                            // Availability checking of beds dorms and sleeps
-                            // Redirect to payment
-                            // After payment use redirection "return redirect()->route('booking.history')->with('updateBookingSuccessStatus', __('bookingHistory.updateBookingSuccessTwo'))";
+                            /*Availability checking of beds dorms and sleeps begin*/
+                            $seasons                   = Season::where('cabin_id', new \MongoDB\BSON\ObjectID($cabin->_id))->get();
+
+                            $generateBookingDates      = $this->generateDates($monthBegin, $monthEnd);
+
+                            foreach ($generateBookingDates as $generateBookingDate) {
+                                $dates                 = $generateBookingDate->format('Y-m-d');
+                                $day                   = $generateBookingDate->format('D');
+                                $bookingDateSeasonType = null;
+
+                                /* Checking season begin */
+                                if($seasons) {
+                                    foreach ($seasons as $season) {
+                                        if (($season->summerSeasonStatus === 'open') && ($season->summerSeason === 1) && ($dates >= ($season->earliest_summer_open)->format('Y-m-d')) && ($dates < ($season->latest_summer_close)->format('Y-m-d'))) {
+                                            $holiday_prepare[]     = ($season->summer_mon === 1) ? 'Mon' : 0;
+                                            $holiday_prepare[]     = ($season->summer_tue === 1) ? 'Tue' : 0;
+                                            $holiday_prepare[]     = ($season->summer_wed === 1) ? 'Wed' : 0;
+                                            $holiday_prepare[]     = ($season->summer_thu === 1) ? 'Thu' : 0;
+                                            $holiday_prepare[]     = ($season->summer_fri === 1) ? 'Fri' : 0;
+                                            $holiday_prepare[]     = ($season->summer_sat === 1) ? 'Sat' : 0;
+                                            $holiday_prepare[]     = ($season->summer_sun === 1) ? 'Sun' : 0;
+                                            $bookingDateSeasonType = 'summer';
+                                        }
+                                        elseif (($season->winterSeasonStatus === 'open') && ($season->winterSeason === 1) && ($dates >= ($season->earliest_winter_open)->format('Y-m-d')) && ($dates < ($season->latest_winter_close)->format('Y-m-d'))) {
+                                            $holiday_prepare[]     = ($season->winter_mon === 1) ? 'Mon' : 0;
+                                            $holiday_prepare[]     = ($season->winter_tue === 1) ? 'Tue' : 0;
+                                            $holiday_prepare[]     = ($season->winter_wed === 1) ? 'Wed' : 0;
+                                            $holiday_prepare[]     = ($season->winter_thu === 1) ? 'Thu' : 0;
+                                            $holiday_prepare[]     = ($season->winter_fri === 1) ? 'Fri' : 0;
+                                            $holiday_prepare[]     = ($season->winter_sat === 1) ? 'Sat' : 0;
+                                            $holiday_prepare[]     = ($season->winter_sun === 1) ? 'Sun' : 0;
+                                            $bookingDateSeasonType = 'winter';
+                                        }
+                                    }
+
+                                    if (!$bookingDateSeasonType)
+                                    {
+                                        return response()->json(['error' => __('searchDetails.notSeasonTime')], 422);
+                                    }
+
+                                    $prepareArray       = [$dates => $day];
+                                    $array_unique       = array_unique($holiday_prepare);
+                                    $array_intersect    = array_intersect($prepareArray, $array_unique);
+
+                                    foreach ($array_intersect as $array_intersect_key => $array_intersect_values) {
+                                        if((strtotime($array_intersect_key) >= strtotime($monthBegin)) && (strtotime($array_intersect_key) < strtotime($monthEnd))) {
+                                            return response()->json(['error' => __('searchDetails.holidayIncludedAlert')], 422);
+                                        }
+                                    }
+
+                                }
+                                /* Checking season end */
+
+                                /* Checking bookings available begins */
+                                $mon_day     = ($cabin->mon_day === 1) ? 'Mon' : 0;
+                                $tue_day     = ($cabin->tue_day === 1) ? 'Tue' : 0;
+                                $wed_day     = ($cabin->wed_day === 1) ? 'Wed' : 0;
+                                $thu_day     = ($cabin->thu_day === 1) ? 'Thu' : 0;
+                                $fri_day     = ($cabin->fri_day === 1) ? 'Fri' : 0;
+                                $sat_day     = ($cabin->sat_day === 1) ? 'Sat' : 0;
+                                $sun_day     = ($cabin->sun_day === 1) ? 'Sun' : 0;
+
+                                /* Getting bookings from booking collection status 1=> Fix, 2=> Cancel, 3=> Completed, 4=> Request (Reservation), 5=> Waiting for payment, 6=> Expired, 7=> Inquiry, 8=> Cart */
+                                $bookings  = Booking::select('beds', 'dormitory', 'sleeps')
+                                    ->where('is_delete', 0)
+                                    ->where('cabinname', $cabin->name)
+                                    ->whereIn('status', ['1', '4', '5', '8'])
+                                    ->whereRaw(['checkin_from' => array('$lte' => $this->getDateUtc($generateBookingDate->format('d.m.y')))])
+                                    ->whereRaw(['reserve_to' => array('$gt' => $this->getDateUtc($generateBookingDate->format('d.m.y')))])
+                                    ->get();
+
+                                /* Getting bookings from mschool collection status 1=> Fix, 2=> Cancel, 3=> Completed, 4=> Request (Reservation), 5=> Waiting for payment, 6=> Expired, 7=> Inquiry, 8=> Cart */
+                                $msBookings  = MountSchoolBooking::select('beds', 'dormitory', 'sleeps')
+                                    ->where('is_delete', 0)
+                                    ->where('cabin_name', $cabin->name)
+                                    ->whereIn('status', ['1', '4', '5', '8'])
+                                    ->whereRaw(['check_in' => array('$lte' => $this->getDateUtc($generateBookingDate->format('d.m.y')))])
+                                    ->whereRaw(['reserve_to' => array('$gt' => $this->getDateUtc($generateBookingDate->format('d.m.y')))])
+                                    ->get();
+
+                                /* Getting count of sleeps, beds and dorms */
+                                if(count($bookings) > 0) {
+                                    $sleeps          = $bookings->sum('sleeps');
+                                    $beds            = $bookings->sum('beds');
+                                    $dorms           = $bookings->sum('dormitory');
+                                }
+                                else {
+                                    $dorms           = 0;
+                                    $beds            = 0;
+                                    $sleeps          = 0;
+                                }
+
+                                if(count($msBookings) > 0) {
+                                    $msSleeps        = $msBookings->sum('sleeps');
+                                    $msBeds          = $msBookings->sum('beds');
+                                    $msDorms         = $msBookings->sum('dormitory');
+                                }
+                                else {
+                                    $msSleeps        = 0;
+                                    $msBeds          = 0;
+                                    $msDorms         = 0;
+                                }
+
+                                /* Taking beds, dorms and sleeps depends up on sleeping_place */
+                                if($cabin->sleeping_place != 1) {
+                                    $totalBeds           = ($beds + $msBeds) - $bookingBeds;
+                                    $totalDorms          = ($dorms + $msDorms) - $bookingDorms;
+
+                                    /* Calculating beds & dorms for not regular */
+                                    if($cabin->not_regular === 1) {
+                                        $not_regular_date_explode = explode(" - ", $cabin->not_regular_date);
+                                        $not_regular_date_begin   = DateTime::createFromFormat('d.m.y', $not_regular_date_explode[0])->format('Y-m-d');
+                                        $not_regular_date_end     = DateTime::createFromFormat('d.m.y', $not_regular_date_explode[1])->format('Y-m-d 23:59:59'); //To get the end date. We need to add time
+                                        $generateNotRegularDates  = $this->generateDates($not_regular_date_begin, $not_regular_date_end);
+                                        foreach($generateNotRegularDates as $generateNotRegularDate) {
+                                            $not_regular_dates[]  = $generateNotRegularDate->format('Y-m-d');
+                                        }
+
+                                        if(in_array($dates, $not_regular_dates)) {
+                                            $dates_array[] = $dates;
+                                            if(($totalBeds < $cabin->not_regular_beds) || ($totalDorms < $cabin->not_regular_dorms)) {
+                                                $not_regular_beds_diff              = $cabin->not_regular_beds - $totalBeds;
+                                                $not_regular_dorms_diff             = $cabin->not_regular_dorms - $totalDorms;
+
+                                                /* Available beds and dorms on not regular */
+                                                $not_regular_beds_avail             = ($not_regular_beds_diff >= 0) ? $not_regular_beds_diff : 0;
+                                                $not_regular_dorms_avail            = ($not_regular_dorms_diff >= 0) ? $not_regular_dorms_diff : 0;
+
+                                                if($bedsRequest <= $not_regular_beds_avail) {
+                                                    $availableStatus[] = 'available';
+                                                }
+                                                else {
+                                                    $availableStatus[] = 'notAvailable';
+                                                    return redirect()->back()->with('updateBookingFailedStatus', $bedsRequest.__("searchDetails.bedsNotAvailable").$generateBookingDate->format("d.m"));
+                                                }
+
+                                                if($dormsRequest <= $not_regular_dorms_avail) {
+                                                    $availableStatus[] = 'available';
+                                                }
+                                                else {
+                                                    $availableStatus[] = 'notAvailable';
+                                                    return redirect()->back()->with('updateBookingFailedStatus', $dormsRequest.__("searchDetails.dormsNotAvailable").$generateBookingDate->format("d.m"));
+                                                }
+
+                                            }
+                                            else {
+                                                $availableStatus[] = 'notAvailable';
+                                                return redirect()->back()->with('updateBookingFailedStatus', __("searchDetails.alreadyFilledBedsDorms").$generateBookingDate->format("d.m"));
+                                            }
+                                        }
+
+                                    }
+
+                                    /* Calculating beds & dorms for normal */
+                                    if(!in_array($dates, $dates_array)) {
+
+                                        if(($totalBeds < $cabin->beds) || ($totalDorms < $cabin->dormitory)) {
+
+                                            $normal_beds_diff              = $cabin->beds - $totalBeds;
+                                            $normal_dorms_diff             = $cabin->dormitory - $totalDorms;
+
+                                            /* Available beds and dorms on normal */
+                                            $normal_beds_avail             = ($normal_beds_diff >= 0) ? $normal_beds_diff : 0;
+                                            $normal_dorms_avail            = ($normal_dorms_diff >= 0) ? $normal_dorms_diff : 0;
+
+                                            if($bedsRequest <= $normal_beds_avail) {
+                                                $availableStatus[] = 'available';
+                                            }
+                                            else {
+                                                $availableStatus[] = 'notAvailable';
+                                                return redirect()->back()->with('updateBookingFailedStatus', $bedsRequest.__("searchDetails.bedsNotAvailable").$generateBookingDate->format("d.m"));
+                                            }
+
+                                            if($dormsRequest <= $normal_dorms_avail) {
+                                                $availableStatus[] = 'available';
+                                            }
+                                            else {
+                                                $availableStatus[] = 'notAvailable';
+                                                return redirect()->back()->with('updateBookingFailedStatus', $dormsRequest.__("searchDetails.dormsNotAvailable").$generateBookingDate->format("d.m"));
+                                            }
+
+                                            print_r(' ----normal_data---- '.' totalBeds '. $totalBeds .' totalDorms '. $totalDorms.' beds '. $beds .' dorms '. $dorms .' msBeds '. $msBeds .' msDorms '. $msDorms.' normal_dates: ' . $dates . ' normal_beds_diff: '. $normal_beds_diff. ' normal_beds_avail: '. $normal_beds_avail.' normal_dates: ' . $dates . ' normal_dorms_diff: '. $normal_dorms_diff. ' normal_dorms_avail: '. $normal_dorms_avail);
+                                        }
+                                        else {
+                                            $availableStatus[] = 'notAvailable';
+                                            return response()->json(['error' =>  __("searchDetails.alreadyFilledBedsDorms").$generateBookingDate->format("d.m")], 422);
+                                        }
+                                    }
+
+                                }
+                                else {
+                                    $totalSleeps = ($sleeps + $msSleeps) - $bookingSleeps;
+                                    dd($totalSleeps);
+                                }
+                                /* Checking bookings available end */
+                            }
+                            /*Availability checking of beds dorms and sleeps end*/
+
+                            /*if ($new_amount <= $old_amount){
+                                dd('Dont need to go payment page. Just update booking, update money balance, send email');
+                                // After payment use redirection "return redirect()->route('booking.history')->with('updateBookingSuccessStatus', __('bookingHistory.updateBookingSuccessTwo'))";
+                            }
+                            else {
+                                dd('----Redirect to payment gateway-----'.'New amount: '.$new_amount.' Old: '.$old_amount.' Total: '.$total. ' Amount ' .$amount); //Higher - Amount: 83.04 Old: 55.36 Total: 27.68. Lower - Amount: 27.68 Old: 55.36 Total: 27.68
+                                // After payment use redirection "return redirect()->route('booking.history')->with('updateBookingSuccessStatus', __('bookingHistory.updateBookingSuccessTwo'))";
+                            }*/
                         }
-
-                        //dd('Amount: '.$amount.' Old: '.$booking->prepayment_amount.' Total: '.$total);
-
-                        /* Payment calculation end */
                     }
                     else {
                         return redirect()->back()->with('updateBookingFailedStatus', __('bookingHistory.errorTwo'));
