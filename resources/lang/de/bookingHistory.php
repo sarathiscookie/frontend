@@ -65,4 +65,7 @@ return [
     'commentsMax'                                           => 'Das Kommentar darf nicht länger als :max Zeichen sein.',
     'inquiryStatusOne'                                      => 'Ihr Anfrage wurde an den Hüttenwirt gesendet und wird nun bearbeitet.',
     'inquiryStatusTwo'                                      => 'Sie werden schnellstmöglich benachrichtigt, ob Sie Ihre Wanderung zum gewünschten Datum antreten können.',
+    'bookingLimitReached'                                   => 'Limit erreicht! Am ',
+    'bookingLimitReachedOne'                                => ' können Sie maximal ',
+    'bookingLimitReachedTwo'                                => ' Personen buchen. Sollten Sie mehr Plätze benötigen, starten Sie bitte eine neue Buchung.'
 ];

@@ -163,6 +163,7 @@
 }}
 .payment-options{
     list-style: none;
+    padding-left: 0;
 }
 @media (max-width: 767px){.payment-options{
     margin-top: 60px;

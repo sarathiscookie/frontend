@@ -49,6 +49,12 @@
                                 <div class="col-sm-7 text-left col-sm-7-booking1">
 
                                     <h3 class="headliner-cabinname">{{ $cabinDetails->name }} - {{ $cabinDetails->region }}<span class="glyphicon glyphicon-question-sign" title="{{ __('cart.headingThreeTitle') }}"></span></h3>
+                                    @if (session()->has('bookingAvailableStatus'))
+                                        <div class="alert alert-danger alert-dismissible" role="alert">
+                                            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                            {{ session()->get('bookingAvailableStatus') }}
+                                        </div>
+                                    @endif
 
                                     <div class="row row-booking1">
 

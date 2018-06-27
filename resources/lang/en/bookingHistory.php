@@ -65,4 +65,7 @@ return [
     'commentsMax'                                           => 'The comments may not be greater than :max characters.',
     'inquiryStatusOne'                                      => 'Your request has been sent to the cabin owner and is now being processed.',
     'inquiryStatusTwo'                                      => 'You will be informed as soon as possible whether you can start your journey on the desired date.',
+    'bookingLimitReached'                                   => 'Limit reached! On the ',
+    'bookingLimitReachedOne'                                => ' you can book a maximum of ',
+    'bookingLimitReachedTwo'                                => ' persons. If you need more seats, please start a new booking.'
 ];
