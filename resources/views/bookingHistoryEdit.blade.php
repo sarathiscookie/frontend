@@ -34,7 +34,7 @@
                     </div>
                 @endif
 
-                <form action="{{ route('edit.booking.history', $booking->_id) }}" method="post">
+                <form action="{{ route('edit.booking.history', $booking->_id) }}" method="post" autocomplete="off">
 
                     {{ csrf_field() }}
 
@@ -164,7 +164,7 @@
                                             <div class="row row-booking1">
                                                 <div class="col-sm-4 col-sm-4-f-booking1 comment-booking1 col-sm-4-booking1">
                                                     <div class="form-group {{ $errors->has('comments') ? ' has-error' : '' }}">
-                                                        <textarea id="comments" name="comments" class="form-control" rows="3" maxlength="300" placeholder="{{ __('cart.comment') }}">{{ old('comments', $booking->comments) }}</textarea>
+                                                        <textarea id="comments" name="comments" class="form-control" rows="3" maxlength="300" placeholder="{{ __('cart.comment') }}">{{ $booking->comments }}</textarea>
 
                                                         @if ($errors->has('comments'))
                                                             <span class="help-block"><strong>{{ $errors->first('comments') }}</strong></span>

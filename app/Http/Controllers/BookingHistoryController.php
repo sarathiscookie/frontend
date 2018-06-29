@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Requests\BookingHistoryRequest;
 use App\Region;
+use App\Ordernumber;
 use App\Season;
 use App\Booking;
 use App\MountSchoolBooking;
@@ -135,6 +136,40 @@ class BookingHistoryController extends Controller
             ->find($id);
 
         if(!empty($booking)) {
+
+            if(empty($booking->order_id)) {
+                /* Generate order number begin */
+                $orderNumber   = Ordernumber::first();
+                if( !empty ($orderNumber->number) ) {
+                    $order_num = (int)$orderNumber->number + 1;
+                }
+                else {
+                    $order_num = 100000;
+                }
+                $order_number  = 'ORDER'.'-'.date('y').'-'.$order_num;
+                /* Generate order number end */
+
+                /* Creating new order: This is for old system. In old system we don't have orders table. */
+                $order                   = new Order;
+                $order->order_id         = $order_number;
+                $order->auth_user        = new \MongoDB\BSON\ObjectID(Auth::user()->_id);
+                $order->order_delete     = 0;
+                $order->save();
+
+                if(!empty($order)) {
+                    /* Updating order number in booking collection */
+                    $booking->order_id   = new \MongoDB\BSON\ObjectID($order->_id);
+                    $booking->save();
+
+                    /* Updating order number in ordernumber collection */
+                    $orderNumber->number = $order_num;
+                    $orderNumber->save();
+                }
+                else {
+                    return redirect()->back();
+                }
+            }
+
             $cabinDetails = Cabin::select('name', 'region', 'prepayment_amount', 'sleeping_place', 'halfboard', 'halfboard_price')
                 ->where('is_delete', 0)
                 ->where('other_cabin', "0")
@@ -1071,33 +1106,48 @@ class BookingHistoryController extends Controller
                         }
 
                         if(!in_array('notAvailable', $availableStatus)) {
-                            $available                 = 'success';
-                            //Store session values
-                            //checkin_from, reserve_to, beds, dormitory, sleeps, guests, bookingdate, prepayment_amount, total_prepayment_amount, moneybalance_used,
-                            //order_amount, order_total_amount, order_money_balance_used, order_money_balance_used_date, order_payment_method
+
+                            $available = 'success';
+
                             if ($new_amount <= $old_amount){
-
-                                $order = Order::updateOrCreate(
-                                    ['auth_user' => new \MongoDB\BSON\ObjectID(Auth::user()->_id), '_id' => new \MongoDB\BSON\ObjectID($booking->order_id)],
-                                    ['order_delete' => 1]
-                                );
-
-                                $booking->order_id = new \MongoDB\BSON\ObjectID($order->_id);
+                                /* Update amount in booking */
+                                $booking->checkin_from            = $this->getDateUtc($request->dateFrom);
+                                $booking->reserve_to              = $this->getDateUtc($request->dateTo);
+                                $booking->beds                    = $bedsRequest;
+                                $booking->dormitory               = $dormsRequest;
+                                $booking->sleeps                  = $new_sleeps_sum;
+                                $booking->guests                  = $new_sleeps_sum;
+                                $booking->bookingdate             = date('Y-m-d H:i:s');
+                                $booking->prepayment_amount       = $new_amount;
+                                $booking->total_prepayment_amount = $new_amount;
+                                $booking->booking_update          = date('Y-m-d H:i:s');
+                                $booking->moneybalance_used       = 0;
                                 $booking->save();
 
+                                /* Update amount in orders */
+                                //order_amount, order_total_amount, order_money_balance_used, order_money_balance_used_date, order_payment_method
+                                //Take all $booking->order_id sum and calculate order_total_amount with new amount.
+
+                                $order                                = Order::where('auth_user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))->find($booking->order_id);
+                                $order->order_amount                  = $new_amount;
+                                $order->order_total_amount            = $new_amount;
+                                $order->order_money_balance_used      = $new_amount;
+                                $order->order_money_balance_used_date = Carbon::now();
+                                $order->order_payment_method          = 1; // 1 => fully paid using money balance, 2 => Partially paid using money balance, 3 => Paid using payment gateway
+                                $order->order_delete                  = 0;
+                                $order->save();
+
+                                /* Update user money balance */
+
+                                /* Send email with voucher */
+
                                 dd('Dont need to go payment page. Just update booking, update money balance, send email'.'New amount: '.$new_amount.' Old: '.$old_amount.' Total: '.$total. ' Amount ' .$amount);
-                                /*$user = Userlist::where('is_delete', 0)
-                        ->where('usrActive', '1')
-                        ->find(Auth::user()->_id);
-
-                    $total_money_balance   = Auth::user()->money_balance + $cart->money_refunded;
-
-                    $user->money_balance   = round($total_money_balance, 2);
-                    $user->save();*/
-
                                 // After payment use redirection "return redirect()->route('booking.history')->with('updateBookingSuccessStatus', __('bookingHistory.updateBookingSuccessTwo'))";
                             }
                             else {
+                                //Store session values
+                                //checkin_from, reserve_to, beds, dormitory, sleeps, guests, bookingdate, prepayment_amount, total_prepayment_amount, moneybalance_used,
+                                //order_amount, order_total_amount, order_money_balance_used, order_money_balance_used_date, order_payment_method
                                 dd('----Redirect to payment gateway-----'.'New amount: '.$new_amount.' Old: '.$old_amount.' Total: '.$total. ' Amount ' .$amount); //Higher - Amount: 83.04 Old: 55.36 Total: 27.68. Lower - Amount: 27.68 Old: 55.36 Total: 27.68
                                 // After payment use redirection "return redirect()->route('booking.history')->with('updateBookingSuccessStatus', __('bookingHistory.updateBookingSuccessTwo'))";
                             }

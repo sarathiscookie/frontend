@@ -531,7 +531,6 @@ $(function(){
         var sumPrepayAmountServiceTotal = total + sumPrepayAmountPerc;
 
         if(amount > oldVoucherAmount) {
-            console.log('Amount: ' +amount+ ' Old: '+oldVoucherAmount+' Total: '+total);
             $( ".amountGreater" ).show();
             $( ".voucherGreater" ).hide();
             $( ".replaceEditBookingCompleteDeposit" ).html(formatter.format(total));
@@ -539,7 +538,6 @@ $(function(){
             $( ".replaceEditBookingCompletePayment" ).html(formatter.format(sumPrepayAmountServiceTotal));
         }
         else if(amount === oldVoucherAmount) {
-            console.log('Amount: ' +amount+ ' Old: '+oldVoucherAmount+' Total: '+total);
             $( ".amountGreater" ).show();
             $( ".voucherGreater" ).hide();
             $( ".replaceEditBookingCompleteDeposit" ).html(formatter.format(0));
@@ -547,7 +545,6 @@ $(function(){
             $( ".replaceEditBookingCompletePayment" ).html(formatter.format(0));
         }
         else {
-            console.log('Amount: ' +amount+ ' Old: '+oldVoucherAmount+' Total: '+total);
             $( ".voucherGreater" ).show();
             $( ".amountGreater" ).hide();
             $( '.replaceEditBookingCompleteDeposit' ).html(formatter.format(total));
@@ -558,9 +555,9 @@ $(function(){
     // Sleeps calculation
     $('.jsEditBookSleep').change(function() {
 
-        var days             = $('.daysEditBook').data('days');
-        var oldVoucherAmount = $('.daysEditBook').data('prepaymentamount');
-        var cabinPrepay      = $('.daysEditBook').data('cabinprepaymentamount');
+        var days             = $( ".daysEditBook" ).attr("data-days");
+        var oldVoucherAmount = $( ".daysEditBook" ).data('prepaymentamount');
+        var cabinPrepay      = $( ".daysEditBook" ).data('cabinprepaymentamount');
 
         // Sleeps select box value is null for validation purpose. So value is set as 0
         var sleeps           = 0;
@@ -580,9 +577,9 @@ $(function(){
     // Beds calculation
     $('.jsEditBookBed').change(function() {
 
-        var days              = $('.daysEditBook').data('days');
-        var oldVoucherAmount  = $('.daysEditBook').data('prepaymentamount');
-        var cabinPrepayAmount = $('.daysEditBook').data('cabinprepaymentamount');
+        var days              = $( ".daysEditBook" ).attr("data-days");
+        var oldVoucherAmount  = $( ".daysEditBook" ).data('prepaymentamount');
+        var cabinPrepayAmount = $( ".daysEditBook" ).data('cabinprepaymentamount');
 
         // Beds & Dorms select box value is null for validation purpose. So value is set as 0
         var dorms      = 0;
@@ -608,9 +605,9 @@ $(function(){
     // Dorms calculation
     $('.jsEditBookDorm').change(function() {
 
-        var days              = $('.daysEditBook').data('days');
-        var oldVoucherAmount  = $('.daysEditBook').data('prepaymentamount');
-        var cabinPrepayAmount = $('.daysEditBook').data('cabinprepaymentamount');
+        var days              = $( ".daysEditBook" ).attr("data-days");
+        var oldVoucherAmount  = $( ".daysEditBook" ).data('prepaymentamount');
+        var cabinPrepayAmount = $( ".daysEditBook" ).data('cabinprepaymentamount');
 
         // Beds & Dorms select box value is null for validation purpose. So value is set as 0
         var dorms      = 0;
