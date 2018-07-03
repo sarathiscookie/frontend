@@ -26,5 +26,5 @@ class Order extends Eloquent
      * Internally, these dates will be converted to MongoDate objects when saved to the database.
      */
 
-    protected $dates = ['order_money_balance_used_date'];
+    protected $dates = ['order_money_balance_used_date, order_update_date'];
 }
