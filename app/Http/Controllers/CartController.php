@@ -178,20 +178,20 @@ class CartController extends Controller
                         $sat_day              = ($cabin->sat_day === 1) ? 'Sat' : 0;
                         $sun_day              = ($cabin->sun_day === 1) ? 'Sun' : 0;
 
-                        /* Getting bookings from booking collection status 1=> Fix, 2=> Cancel, 3=> Completed, 4=> Request (Reservation), 5=> Waiting for payment, 6=> Expired, 7=> Inquiry, 8=> Cart */
+                        /* Getting bookings from booking collection status 1=> Fix, 2=> Cancel, 3=> Completed, 4=> Request (Reservation), 5=> Waiting for payment, 6=> Expired, 7=> Inquiry, 8=> Cart 9=> Old (Booking updated)*/
                         $bookings             = Booking::select('beds', 'dormitory', 'sleeps')
                             ->where('is_delete', 0)
                             ->where('cabinname', $cabin->name)
-                            ->whereIn('status', ['1', '4', '7', '8'])
+                            ->whereIn('status', ['1', '4', '5', '8'])
                             ->whereRaw(['checkin_from' => array('$lte' => $this->getDateUtc($generateBookingDate->format('d.m.y')))])
                             ->whereRaw(['reserve_to' => array('$gt' => $this->getDateUtc($generateBookingDate->format('d.m.y')))])
                             ->get();
 
-                        /* Getting bookings from mschool collection status 1=> Fix, 2=> Cancel, 3=> Completed, 4=> Request (Reservation), 5=> Waiting for payment, 6=> Expired, 7=> Inquiry, 8=> Cart */
+                        /* Getting bookings from mschool collection status 1=> Fix, 2=> Cancel, 3=> Completed, 4=> Request (Reservation), 5=> Waiting for payment, 6=> Expired, 7=> Inquiry, 8=> Cart 9=> Old (Booking updated)*/
                         $msBookings           = MountSchoolBooking::select('beds', 'dormitory', 'sleeps')
                             ->where('is_delete', 0)
                             ->where('cabin_name', $cabin->name)
-                            ->whereIn('status', ['1', '4', '7', '8'])
+                            ->whereIn('status', ['1', '4', '5', '8'])
                             ->whereRaw(['check_in' => array('$lte' => $this->getDateUtc($generateBookingDate->format('d.m.y')))])
                             ->whereRaw(['reserve_to' => array('$gt' => $this->getDateUtc($generateBookingDate->format('d.m.y')))])
                             ->get();
