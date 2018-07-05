@@ -265,7 +265,7 @@ class PaymentController extends Controller
                     $order->order_amount                  = $total_prepayment_amount;
                     $order->order_total_amount            = $total_prepayment_amount;
                     $order->order_money_balance_used      = $total_prepayment_amount;
-                    $order->order_money_balance_used_date = Carbon::now();
+                    $order->order_money_balance_used_date = date('Y-m-d H:i:s');
                     $order->order_payment_method          = 1; // 1 => fully paid using money balance, 2 => Partially paid using money balance, 3 => Paid using payment gateway
                     $order->order_delete                  = 0;
                     $order->save();
@@ -326,7 +326,7 @@ class PaymentController extends Controller
                             $order->order_amount                  = round($afterRedeemAmount, 2);
                             $order->order_total_amount            = $total;
                             $order->order_money_balance_used      = round($user->money_balance, 2);
-                            $order->order_money_balance_used_date = Carbon::now();
+                            $order->order_money_balance_used_date = date('Y-m-d H:i:s');
                             $order->order_delete                  = 0;
                             $order->save();
                             /* Storing order details end */
@@ -376,7 +376,7 @@ class PaymentController extends Controller
                             $order->order_amount                  = round($afterRedeemAmount, 2);
                             $order->order_total_amount            = $total;
                             $order->order_money_balance_used      = round($user->money_balance, 2);
-                            $order->order_money_balance_used_date = Carbon::now();
+                            $order->order_money_balance_used_date = date('Y-m-d H:i:s');
                             $order->order_delete                  = 0;
 
                             /* If guest paid using payByBill we need to store bank details. Condition begin */
@@ -494,10 +494,11 @@ class PaymentController extends Controller
                                     ->where('status', "8")
                                     ->where('is_delete', 0)
                                     ->find($cart_id);
-                                $cartUpdate->order_id       = new \MongoDB\BSON\ObjectID($order->_id);
-                                $cartUpdate->payment_type   = $request->payment;
-                                $cartUpdate->txid           = $paymentGateway["txid"];
-                                $cartUpdate->userid         = $paymentGateway["userid"];
+                                $cartUpdate->order_id          = new \MongoDB\BSON\ObjectID($order->_id);
+                                $cartUpdate->payment_type      = $request->payment;
+                                $cartUpdate->txid              = $paymentGateway["txid"];
+                                $cartUpdate->userid            = $paymentGateway["userid"];
+                                $cartUpdate->moneybalance_used = 0;
                                 $cartUpdate->save();
                             }
 
@@ -554,10 +555,11 @@ class PaymentController extends Controller
                                     ->where('status', "8")
                                     ->where('is_delete', 0)
                                     ->find($cart_id);
-                                $cartUpdate->order_id     = new \MongoDB\BSON\ObjectID($order->_id);
-                                $cartUpdate->payment_type = $request->payment;
-                                $cartUpdate->txid         = $paymentGateway["txid"];
-                                $cartUpdate->userid       = $paymentGateway["userid"];
+                                $cartUpdate->order_id          = new \MongoDB\BSON\ObjectID($order->_id);
+                                $cartUpdate->payment_type      = $request->payment;
+                                $cartUpdate->txid              = $paymentGateway["txid"];
+                                $cartUpdate->userid            = $paymentGateway["userid"];
+                                $cartUpdate->moneybalance_used = 0;
                                 $cartUpdate->save();
                             }
 
