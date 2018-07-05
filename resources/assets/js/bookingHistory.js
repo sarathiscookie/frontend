@@ -537,13 +537,13 @@ $(function(){
             $( ".replaceEditBookingServiceFee" ).html(serviceTaxEditBooking+' %');
             $( ".replaceEditBookingCompletePayment" ).html(formatter.format(sumPrepayAmountServiceTotal));
         }
-        else if(amount === oldVoucherAmount) {
+        /*else if(amount === oldVoucherAmount) {
             $( ".amountGreater" ).show();
             $( ".voucherGreater" ).hide();
             $( ".replaceEditBookingCompleteDeposit" ).html(formatter.format(0));
             $( ".replaceEditBookingServiceFee" ).html(0+' %');
             $( ".replaceEditBookingCompletePayment" ).html(formatter.format(0));
-        }
+        }*/
         else {
             $( ".voucherGreater" ).show();
             $( ".amountGreater" ).hide();

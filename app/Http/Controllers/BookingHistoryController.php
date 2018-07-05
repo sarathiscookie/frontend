@@ -18,6 +18,8 @@ use PDF;
 use DateTime;
 use DatePeriod;
 use DateInterval;
+use Mail;
+use App\Mail\SendVoucher;
 
 class BookingHistoryController extends Controller
 {
@@ -295,7 +297,6 @@ class BookingHistoryController extends Controller
             $d1                           = new DateTime($monthBegin);
             $d2                           = new DateTime($monthEnd);
             $new_date_diff                = $d2->diff($d1);
-            $invoiceNumber                = '';
             $sleepsRequest                = 0;
             $requestBedsSumDorms          = 0;
             $bookingSleeps                = 0;
@@ -316,7 +317,7 @@ class BookingHistoryController extends Controller
 
                     $user                 = Userlist::where('is_delete', 0)->where('usrActive', '1')->find(Auth::user()->_id);
 
-                    $booking              = Booking::select('cabinname', 'beds', 'dormitory', 'sleeps','prepayment_amount', 'checkin_from', 'reserve_to', 'order_id')
+                    $booking              = Booking::select('invoice_number', 'cabinname', 'beds', 'dormitory', 'sleeps','prepayment_amount', 'checkin_from', 'reserve_to', 'order_id')
                         ->where('status', '1')
                         ->where('is_delete', 0)
                         ->where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
@@ -328,6 +329,10 @@ class BookingHistoryController extends Controller
                             ->where('other_cabin', "0")
                             ->where('name', $booking->cabinname)
                             ->first();
+
+                        $order                    = Order::where('auth_user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))->find($booking->order_id);
+
+                        $orderNumber              = Ordernumber::first();
 
                         /* Form request begin */
                         $commentsRequest          = $request->comments;
@@ -1205,22 +1210,16 @@ class BookingHistoryController extends Controller
 
                             $available = 'success';
 
-                            /* Create invoice number begin */
-                            if( !empty ($cabin->invoice_autonum) ) {
-                                $autoNumber = (int)$cabin->invoice_autonum + 1;
+                            /* Create invoice tree structure begin */
+                            if( !empty ($cabin->invoice_autonum_tree) ) {
+                                $autoNumberTree = (int)$cabin->invoice_autonum_tree + 1;
                             }
                             else {
-                                $autoNumber = 100000;
+                                $autoNumberTree = 1;
                             }
-
-                            if( !empty ($cabin->invoice_code) ) {
-                                $invoiceCode   = $cabin->invoice_code;
-                                $invoiceNumber = $invoiceCode . "-" . date("y") . "-" . $autoNumber;
-                            }
-                            /* Create invoice number end */
+                            /* Create invoice tree structure end */
 
                             /* Generate order number begin */
-                            $orderNumber = Ordernumber::first();
                             if( !empty ($orderNumber->number) ) {
                                 $order_num = (int)$orderNumber->number + 1;
                             }
@@ -1249,14 +1248,13 @@ class BookingHistoryController extends Controller
                             if ($new_amount <= $old_amount){
 
                                 /* Update status of old booking begin */
-                                $booking->booking_update             = date('Y-m-d H:i:s');
-                                $booking->status                     = "9"; //9 => Old (Booking Updated)
-                                $booking->is_delete                  = 1;
+                                $booking->booking_update       = date('Y-m-d H:i:s');
+                                $booking->status               = "9"; //9 => Old (Booking Updated)
+                                $booking->is_delete            = 1;
                                 $booking->save();
                                 /* Update status of old booking end */
 
                                 /* Update status of old orders begin */
-                                $order                         = Order::where('auth_user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))->find($booking->order_id);
                                 if($order) {
                                     $order->order_update_date  = date('Y-m-d H:i:s');
                                     $order->order_delete       = 0;
@@ -1265,19 +1263,21 @@ class BookingHistoryController extends Controller
                                 /* Update status of old orders end */
 
                                 /* Create new order and new booking begin */
-                                $newOrder                            = new Order;
-                                $newOrder->order_id                  = $order_number;
-                                $newOrder->auth_user                 = new \MongoDB\BSON\ObjectID(Auth::user()->_id);
-                                $newOrder->order_payment_type        = 'Used previous booking amount';
-                                $newOrder->order_payment_method      = 4; //4 => Fully paid using previous voucher amount
-                                $newOrder->order_amount              = ($new_amount === 0) ? $old_amount : $new_amount;
-                                $newOrder->order_total_amount        = ($new_amount === 0) ? $old_amount : $new_amount;
-                                $newOrder->old_order_id              = new \MongoDB\BSON\ObjectID($order->_id);
-                                $newOrder->order_delete              = 0;
+                                $newOrder                       = new Order;
+                                $newOrder->order_id             = $order_number;
+                                $newOrder->auth_user            = new \MongoDB\BSON\ObjectID(Auth::user()->_id);
+                                $newOrder->order_payment_type   = 'Used previous booking amount';
+                                $newOrder->order_payment_method = 4; //4 => Fully paid using previous voucher amount
+                                $newOrder->order_amount         = ($new_amount === 0) ? $old_amount : $new_amount;
+                                $newOrder->order_total_amount   = ($new_amount === 0) ? $old_amount : $new_amount;
+                                $newOrder->old_order_id         = new \MongoDB\BSON\ObjectID($order->_id);
+                                $newOrder->order_delete         = 0;
                                 $newOrder->save();
                                 /* Create new order end */
 
                                 /* Create new booking begin */
+                                $invoice_explode                     = explode('-', $booking->invoice_number); // Exploding auto number and ignoring last element
+
                                 $newBooking                          = new Booking;
                                 $newBooking->cabinname               = $cabin->name;
                                 $newBooking->cabin_id                = new \MongoDB\BSON\ObjectID($cabin->_id);
@@ -1286,7 +1286,7 @@ class BookingHistoryController extends Controller
                                 $newBooking->user                    = new \MongoDB\BSON\ObjectID(Auth::user()->_id);
                                 $newBooking->beds                    = $bedsRequest;
                                 $newBooking->dormitory               = $dormsRequest;
-                                $newBooking->invoice_number          = $invoiceNumber;
+                                $newBooking->invoice_number          = $invoice_explode[0].'-'.$invoice_explode[1].'-'.$invoice_explode[2].'-'.$autoNumberTree;
                                 $newBooking->sleeps                  = $new_sleeps_sum;
                                 $newBooking->guests                  = $new_sleeps_sum;
                                 $newBooking->halfboard               = (isset($request->halfboard)) ? $request->halfboard : '0';
@@ -1296,9 +1296,9 @@ class BookingHistoryController extends Controller
                                 $newBooking->payment_type            = 'Used previous booking amount';
                                 $newBooking->moneybalance_used       = 0;
                                 $newBooking->bookingdate             = date('Y-m-d H:i:s');
-                                $newBooking->status                  = "1"; //1 => Fix
+                                $newBooking->status                  = '1';
+                                $newBooking->payment_status          = '1';
                                 $newBooking->reservation_cancel      = $cabin->reservation_cancel;
-                                $newBooking->previous_voucher_amount = $old_amount;
                                 $newBooking->money_refunded          = round($amount, 2);
                                 $newBooking->old_booking_id          = new \MongoDB\BSON\ObjectID($booking->_id);
                                 $newBooking->order_id                = new \MongoDB\BSON\ObjectID($newOrder->_id);
@@ -1307,92 +1307,24 @@ class BookingHistoryController extends Controller
                                 /* Create new booking end */
 
                                 /* Update cabin invoice_autonum begin */
-                                $cabin->invoice_autonum = $autoNumber;
+                                $cabin->invoice_autonum_tree = $autoNumberTree;
                                 $cabin->save();
 
                                 /* Updating money balance */
-                                $user->money_balance    = round(Auth::user()->money_balance + $amount, 2);
+                                $user->money_balance         = round(Auth::user()->money_balance + $amount, 2);
                                 $user->save();
 
                                 /* Updating order number in ordernumber collection */
-                                $orderNumber->number    = $order_num;
+                                $orderNumber->number         = $order_num;
                                 $orderNumber->save();
 
                                 /* Send email with voucher */
+                                Mail::to($user->usrEmail)->send(new SendVoucher($newBooking));
 
                                 dd('Dont need to go payment page. Just update booking, update money balance, send email'.'New amount: '.$new_amount.' Old: '.$old_amount.' Total: '.$total. ' Amount ' .$amount);
                                 // After payment use redirection "return redirect()->route('booking.history')->with('updateBookingSuccessStatus', __('bookingHistory.updateBookingSuccessTwo'))";
                             }
                             else {
-                                /* Update status of old booking begin */
-                                $booking->booking_update             = date('Y-m-d H:i:s');
-                                $booking->status                     = "9"; //9 => Old (Booking Updated)
-                                $booking->is_delete                  = 1;
-                                $booking->save();
-                                /* Update status of old booking end */
-
-                                /* Update status of old orders begin */
-                                $order                         = Order::where('auth_user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))->find($booking->order_id);
-                                if($order) {
-                                    $order->order_update_date  = date('Y-m-d H:i:s');
-                                    $order->order_delete       = 0;
-                                    $order->save();
-                                }
-                                /* Update status of old orders end */
-
-                                /* Create new order and new booking begin */
-                                $newOrder                            = new Order;
-                                $newOrder->order_id                  = $order_number;
-                                $newOrder->auth_user                 = new \MongoDB\BSON\ObjectID(Auth::user()->_id);
-                                $newOrder->order_payment_type        = 'Used previous booking amount';
-                                $newOrder->order_payment_method      = 4; //4 => Fully paid using previous voucher amount
-                                $newOrder->order_amount              = ($new_amount === 0) ? $old_amount : $new_amount;
-                                $newOrder->order_total_amount        = ($new_amount === 0) ? $old_amount : $new_amount;
-                                $newOrder->old_order_id              = new \MongoDB\BSON\ObjectID($order->_id);
-                                $newOrder->order_delete              = 0;
-                                $newOrder->save();
-                                /* Create new order end */
-
-                                /* Create new booking begin */
-                                $newBooking                          = new Booking;
-                                $newBooking->cabinname               = $cabin->name;
-                                $newBooking->cabin_id                = new \MongoDB\BSON\ObjectID($cabin->_id);
-                                $newBooking->checkin_from            = $this->getDateUtc($request->dateFrom);
-                                $newBooking->reserve_to              = $this->getDateUtc($request->dateTo);
-                                $newBooking->user                    = new \MongoDB\BSON\ObjectID(Auth::user()->_id);
-                                $newBooking->beds                    = $bedsRequest;
-                                $newBooking->dormitory               = $dormsRequest;
-                                $newBooking->invoice_number          = $invoiceNumber;
-                                $newBooking->sleeps                  = $new_sleeps_sum;
-                                $newBooking->guests                  = $new_sleeps_sum;
-                                $newBooking->halfboard               = (isset($request->halfboard)) ? $request->halfboard : '0';
-                                $newBooking->comments                = $request->comments;
-                                $newBooking->prepayment_amount       = ($new_amount === 0) ? $old_amount : $new_amount;
-                                $newBooking->total_prepayment_amount = ($new_amount === 0) ? $old_amount : $new_amount;
-                                $newBooking->payment_type            = 'Used previous booking amount';
-                                $newBooking->moneybalance_used       = 0;
-                                $newBooking->bookingdate             = date('Y-m-d H:i:s');
-                                $newBooking->status                  = "1"; //1 => Fix
-                                $newBooking->reservation_cancel      = $cabin->reservation_cancel;
-                                $newBooking->previous_voucher_amount = $old_amount;
-                                $newBooking->money_refunded          = round($amount, 2);
-                                $newBooking->old_booking_id          = new \MongoDB\BSON\ObjectID($booking->_id);
-                                $newBooking->order_id                = new \MongoDB\BSON\ObjectID($newOrder->_id);
-                                $newBooking->is_delete               = 0;
-                                $newBooking->save();
-                                /* Create new booking end */
-
-                                /* Update cabin invoice_autonum begin */
-                                $cabin->invoice_autonum = $autoNumber;
-                                $cabin->save();
-
-                                /* Updating money balance */
-                                $user->money_balance    = round(Auth::user()->money_balance + $amount, 2);
-                                $user->save();
-
-                                /* Updating order number in ordernumber collection */
-                                $orderNumber->number    = $order_num;
-                                $orderNumber->save();
 
                                 /* Send email with voucher */
                                 dd('----Redirect to payment gateway-----'.'New amount: '.$new_amount.' Old: '.$old_amount.' Total: '.$total. ' Amount ' .$amount); //Higher - Amount: 83.04 Old: 55.36 Total: 27.68. Lower - Amount: 27.68 Old: 55.36 Total: 27.68
