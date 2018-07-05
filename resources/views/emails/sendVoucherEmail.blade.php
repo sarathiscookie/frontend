@@ -394,6 +394,7 @@
 
 <span style="font-size:12.0pt;line-height:150%;font-family:&quot;Helvetica&quot;,sans-serif;color:#5F6876">Sehr geehrter Gast,
 <br>
+<br>
 Sie haben Ihre Buchung erfolgreich geändert. Im Anhang finden Sie Ihren neuen Wertgutschein.
 <br>
 <br>Mit freundlichen Grüßen
@@ -624,7 +625,7 @@ Sie haben Ihre Buchung erfolgreich geändert. Im Anhang finden Sie Ihren neuen W
 
                                                                                                         <p class="MsoNormal" align="center" style="text-align:center;line-height:150%"><em>
 
-<span style="font-size:9.0pt;line-height:150%;font-family:&quot;Helvetica&quot;,sans-serif;color:white">Copyright © {{ date('y') }} Huetten-Holiday.de GmbH, All rights reserved.
+<span style="font-size:9.0pt;line-height:150%;font-family:&quot;Helvetica&quot;,sans-serif;color:white">Copyright © {{ date('Y') }} Huetten-Holiday.de GmbH, All rights reserved.
 </span></em>
 
                                                                                                             <span style="font-size:9.0pt;line-height:150%;font-family:&quot;Helvetica&quot;,sans-serif;color:white">
