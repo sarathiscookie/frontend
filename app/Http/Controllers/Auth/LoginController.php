@@ -67,7 +67,7 @@ class LoginController extends Controller
             $user     = User::where('usrEmail', $request->email)
                 ->where('usrPassword', $password)
                 ->where('usrActive', '1')
-                ->where('usrEmailConfirmed', '1')
+               /* ->where('usrEmailConfirmed', '1')*/
                 ->where('is_delete', 0)
                 ->where('usrlId', 2)
                 ->first();
