@@ -24,99 +24,6 @@ use App\Mail\SendVoucher;
 class BookingHistoryController extends Controller
 {
     /**
-     * Function for service fee
-     *
-     * @param  string  $sumPrepayAmount
-     * @param  string  $paymentMethod
-     * @return \Illuminate\Http\Response
-     */
-    public function serviceFees($sumPrepayAmount, $paymentMethod = null)
-    {
-        $serviceTaxBook = 0;
-
-        if($paymentMethod === 'payByBill'){
-            if($sumPrepayAmount <= 30) {
-                $serviceTaxBook = env('SERVICE_TAX_PAYBYBILL_ONE');
-            }
-
-            if($sumPrepayAmount > 30 && $sumPrepayAmount <= 100) {
-                $serviceTaxBook = env('SERVICE_TAX_PAYBYBILL_TWO');
-            }
-
-            if($sumPrepayAmount > 100) {
-                $serviceTaxBook = env('SERVICE_TAX_PAYBYBILL_THREE');
-            }
-        }
-        elseif($paymentMethod === 'sofort'){
-            if($sumPrepayAmount <= 30) {
-                $serviceTaxBook = env('SERVICE_TAX_SOFORT_ONE');
-            }
-
-            if($sumPrepayAmount > 30 && $sumPrepayAmount <= 100) {
-                $serviceTaxBook = env('SERVICE_TAX_SOFORT_TWO');
-            }
-
-            if($sumPrepayAmount > 100) {
-                $serviceTaxBook = env('SERVICE_TAX_SOFORT_THREE');
-            }
-        }
-        elseif($paymentMethod === 'payDirect'){
-            if($sumPrepayAmount <= 30) {
-                $serviceTaxBook = env('SERVICE_TAX_PAYDIRECT_ONE');
-            }
-
-            if($sumPrepayAmount > 30 && $sumPrepayAmount <= 100) {
-                $serviceTaxBook = env('SERVICE_TAX_PAYDIRECT_TWO');
-            }
-
-            if($sumPrepayAmount > 100) {
-                $serviceTaxBook = env('SERVICE_TAX_PAYDIRECT_THREE');
-            }
-        }
-        elseif($paymentMethod === 'payPal'){
-            if($sumPrepayAmount <= 30) {
-                $serviceTaxBook = env('SERVICE_TAX_PAYPAL_ONE');
-            }
-
-            if($sumPrepayAmount > 30 && $sumPrepayAmount <= 100) {
-                $serviceTaxBook = env('SERVICE_TAX_PAYPAL_TWO');
-            }
-
-            if($sumPrepayAmount > 100) {
-                $serviceTaxBook = env('SERVICE_TAX_PAYPAL_THREE');
-            }
-        }
-        elseif($paymentMethod === 'creditCard'){
-            if($sumPrepayAmount <= 30) {
-                $serviceTaxBook = env('SERVICE_TAX_CREDITCARD_ONE');
-            }
-
-            if($sumPrepayAmount > 30 && $sumPrepayAmount <= 100) {
-                $serviceTaxBook = env('SERVICE_TAX_CREDITCARD_TWO');
-            }
-
-            if($sumPrepayAmount > 100) {
-                $serviceTaxBook = env('SERVICE_TAX_CREDITCARD_THREE');
-            }
-        }
-        else {
-            if($sumPrepayAmount <= 30) {
-                $serviceTaxBook = env('SERVICE_TAX_ONE');
-            }
-
-            if($sumPrepayAmount > 30 && $sumPrepayAmount <= 100) {
-                $serviceTaxBook = env('SERVICE_TAX_TWO');
-            }
-
-            if($sumPrepayAmount > 100) {
-                $serviceTaxBook = env('SERVICE_TAX_THREE');
-            }
-        }
-
-        return $serviceTaxBook;
-    }
-
-    /**
      * To generate date between two dates.
      *
      * @param  string  $now
@@ -224,6 +131,7 @@ class BookingHistoryController extends Controller
     public function edit($id)
     {
         $booking           = Booking::where('status', '1')
+            ->where('payment_status', '1')
             ->where('is_delete', 0)
             ->where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
             ->find($id);
@@ -297,7 +205,6 @@ class BookingHistoryController extends Controller
             $d1                           = new DateTime($monthBegin);
             $d2                           = new DateTime($monthEnd);
             $new_date_diff                = $d2->diff($d1);
-            $sleepsRequest                = 0;
             $requestBedsSumDorms          = 0;
             $bookingSleeps                = 0;
             $bookingBeds                  = 0;
@@ -307,7 +214,6 @@ class BookingHistoryController extends Controller
             $not_regular_dates            = [];
             $dates_array                  = [];
             $availableStatus              = [];
-            $prepayment_amount            = [];
             $sleepsRequest                = (int)$request->sleeps;
             $bedsRequest                  = (int)$request->beds;
             $dormsRequest                 = (int)$request->dormitory;
@@ -319,6 +225,7 @@ class BookingHistoryController extends Controller
 
                     $booking              = Booking::select('invoice_number', 'cabinname', 'beds', 'dormitory', 'sleeps','prepayment_amount', 'checkin_from', 'reserve_to', 'order_id')
                         ->where('status', '1')
+                        ->where('payment_status', '1')
                         ->where('is_delete', 0)
                         ->where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
                         ->find($id);
@@ -335,15 +242,6 @@ class BookingHistoryController extends Controller
                         $orderNumber              = Ordernumber::first();
 
                         /* Form request begin */
-                        $commentsRequest          = $request->comments;
-                        if($request->has('halfboard'))
-                        {
-                            $halfBoard            = $request->halfboard;
-                        }
-                        else {
-                            $halfBoard            = '0';
-                        }
-
                         if ($cabin->sleeping_place === 1) {
                             $bookingSleeps        = (int)$booking->sleeps;
                         }
@@ -1211,7 +1109,7 @@ class BookingHistoryController extends Controller
                             $available = 'success';
 
                             /* Create invoice tree structure begin */
-                            if( !empty ($cabin->invoice_autonum_tree) ) {
+                            if(!empty($cabin->invoice_autonum_tree) ) {
                                 $autoNumberTree = (int)$cabin->invoice_autonum_tree + 1;
                             }
                             else {
@@ -1220,7 +1118,7 @@ class BookingHistoryController extends Controller
                             /* Create invoice tree structure end */
 
                             /* Generate order number begin */
-                            if( !empty ($orderNumber->number) ) {
+                            if(!empty($orderNumber->number) ) {
                                 $order_num = (int)$orderNumber->number + 1;
                             }
                             else {
@@ -1228,22 +1126,6 @@ class BookingHistoryController extends Controller
                             }
                             $order_number  = 'ORDER'.'-'.date('y').'-'.$order_num;
                             /* Generate order number end */
-
-                            /* Getting sum of prepayment amount for updating amount in old orders table begin */
-                            $bookingPrePayAmounts  = Booking::select('prepayment_amount')
-                                ->where('status', '1')
-                                ->where('is_delete', 0)
-                                ->where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
-                                ->where('order_id', new \MongoDB\BSON\ObjectID($booking->order_id))
-                                ->get();
-
-                            if(!empty($bookingPrePayAmounts)) {
-                                foreach($bookingPrePayAmounts as $bookingPrePayAmount) {
-                                    $prepayment_amount[] = $bookingPrePayAmount->prepayment_amount;
-                                }
-                            }
-                            $sumPrepayAmount = array_sum($prepayment_amount) - $amount;
-                            /* Getting sum of prepayment amount for updating amount in old orders table end */
 
                             if ($new_amount <= $old_amount){
 
@@ -1262,7 +1144,7 @@ class BookingHistoryController extends Controller
                                 }
                                 /* Update status of old orders end */
 
-                                /* Create new order and new booking begin */
+                                /* Create new order begin */
                                 $newOrder                       = new Order;
                                 $newOrder->order_id             = $order_number;
                                 $newOrder->auth_user            = new \MongoDB\BSON\ObjectID(Auth::user()->_id);
@@ -1321,14 +1203,29 @@ class BookingHistoryController extends Controller
                                 /* Send email with voucher */
                                 Mail::to($user->usrEmail)->send(new SendVoucher($newBooking));
 
-                                dd('Dont need to go payment page. Just update booking, update money balance, send email'.'New amount: '.$new_amount.' Old: '.$old_amount.' Total: '.$total. ' Amount ' .$amount);
-                                // After payment use redirection "return redirect()->route('booking.history')->with('updateBookingSuccessStatus', __('bookingHistory.updateBookingSuccessTwo'))";
+                                //dd('Dont need to go payment page. Just update booking, update money balance, send email'.'New amount: '.$new_amount.' Old: '.$old_amount.' Total: '.$total. ' Amount ' .$amount);
+                                return redirect()->route('booking.history')->with('updateBookingSuccessStatus', __('bookingHistory.updateBookingSuccessTwo'));
                             }
                             else {
+                                $request->session()->put('bookingIdRequest', $booking->_id);
+                                $request->session()->put('dateFromRequest', $request->dateFrom);
+                                $request->session()->put('dateToRequest', $request->dateTo);
+                                $request->session()->put('bedRequest', $bedsRequest);
+                                $request->session()->put('dormRequest', $dormsRequest);
+                                $request->session()->put('sleepRequest', $new_sleeps_sum);
 
-                                /* Send email with voucher */
-                                dd('----Redirect to payment gateway-----'.'New amount: '.$new_amount.' Old: '.$old_amount.' Total: '.$total. ' Amount ' .$amount); //Higher - Amount: 83.04 Old: 55.36 Total: 27.68. Lower - Amount: 27.68 Old: 55.36 Total: 27.68
-                                // After payment use redirection "return redirect()->route('booking.history')->with('updateBookingSuccessStatus', __('bookingHistory.updateBookingSuccessTwo'))";
+                                if(isset($request->halfboard)) {
+                                    $request->session()->put('halfBoardRequest', $request->halfboard);
+                                }
+                                else {
+                                    $request->session()->put('halfBoardRequest', '0');
+                                }
+
+                                $request->session()->put('commentsRequest', $request->comments);
+                                $request->session()->put('sleepingPlaceRequest', $request->sleeping_place);
+                                $request->session()->put('prepaymentAmountRequest', $amount);
+                                //dd('----Redirect to payment gateway-----'.'New amount: '.$new_amount.' Old: '.$old_amount.' Total: '.$total. ' Amount ' .$amount); //Higher - Amount: 83.04 Old: 55.36 Total: 27.68. Lower - Amount: 27.68 Old: 55.36 Total: 27.68
+                                return redirect()->route('payment', $request->updateBooking)->with('availableStatus', $available)/*->with('updateBookingRequest', $request->updateBooking)*/;
                             }
                         }
                     }

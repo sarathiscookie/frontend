@@ -26,6 +26,7 @@ return [
     'sleeps'                                                => 'Sleeps(s)',
     'bookingStatusHeading'                                  => 'Booking Status',
     'successStatus'                                         => 'Booking Successfully',
+    'reservationStatus'                                     => 'Reservation Successfully',
     'waitingStatus'                                         => 'Waiting for payment',
     'inquiryAcceptedStatus'                                 => 'Inquiry Accepted',
     'inquiryRejectedStatus'                                 => 'Inquiry Rejected',

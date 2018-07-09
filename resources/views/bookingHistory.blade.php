@@ -76,7 +76,7 @@
                                                 <div class="col-sm-12 col-sm-12-history month-opening">
                                                     <h5>{{ __('bookingHistory.bookingStatusHeading') }}</h5>
                                                     <br>
-                                                    @if($booking->status === '1') <!-- Fix -->
+                                                    @if($booking->status === '1' && $booking->payment_status === '1') <!-- Fix -->
                                                         <span class="label label-success label-cabinlist">{{ __('bookingHistory.successStatus') }}</span> <br>
 
                                                         <form action="{{route('booking.history.voucher.download')}}" method="POST">
@@ -114,22 +114,22 @@
                                                     @endif
 
                                                     @if($booking->status === '4' && $booking->payment_status === '2') <!-- Reservation -->
-                                                        <span class="label label-success label-cabinlist">{{ __('bookingHistory.successStatus') }}</span> <br>
+                                                        <span class="label label-info label-cabinlist">{{ __('bookingHistory.reservationStatus') }}</span> <br>
                                                         <form action="{{route('booking.history.voucher.download')}}" method="POST">
                                                             {{ csrf_field() }}
                                                             <input type="hidden" name="book_id" id="book_id" value="{{ $booking->_id }}">
                                                             <button type="submit" class="btn btn-list-history">{{ __('bookingHistory.downloadVoucher') }} <span class="glyphicon glyphicon-cloud-download"></span></button>
                                                         </form>
 
-                                                        <button type="button" class="btn btn-list-history">{{ __('bookingHistory.editBooking') }} <span class="glyphicon glyphicon-wrench"></span></button>
+                                                        {{--<button type="button" class="btn btn-list-history">{{ __('bookingHistory.editBooking') }} <span class="glyphicon glyphicon-wrench"></span></button>--}}
 
-                                                        @if($begin < $end)
+                                                        {{--@if($begin < $end)
                                                            @if($reservation_cancel <= $dateDifference->days)
                                                               <button type="button" class="btn btn-list-history cancelMoneyReturn" data-cancel="{{ $booking->_id }}" data-return="yes" data-loading-text="{{ __('bookingHistory.cancelingLoader') }}" autocomplete="off">{{ __('bookingHistory.cancelBooking') }} <span class="glyphicon glyphicon-remove"></span></button>
                                                            @else
                                                               <button type="button" class="btn btn-list-history cancelMoneyReturn" data-cancel="{{ $booking->_id }}" data-return="no" data-loading-text="{{ __('bookingHistory.cancelingLoader') }}" autocomplete="off">{{ __('bookingHistory.cancelBooking') }} <span class="glyphicon glyphicon-remove"></span></button>
                                                            @endif
-                                                        @endif
+                                                        @endif--}}
 
                                                     @endif
 

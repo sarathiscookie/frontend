@@ -26,6 +26,7 @@ return [
     'sleeps'                                                => 'Schlafplätze',
     'bookingStatusHeading'                                  => 'Buchungs status',
     'successStatus'                                         => 'Buchung erfolgreich',
+    'reservationStatus'                                     => 'Reservation Successfully',
     'waitingStatus'                                         => 'Warten auf Zahlung',
     'inquiryAcceptedStatus'                                 => 'Anfrage bestätigt',
     'inquiryRejectedStatus'                                 => 'Anfrage abgelehnt',

@@ -270,11 +270,6 @@ Route::group(['middleware' => ['auth']], function () {
     | Route for view payment type, redeem amount, payment gateway functionality
     |
     */
-    /* View payment page */
-    Route::get('/payment', 'PaymentController@index')->name('payment');
-
-    /* Choose payment and store data */
-    Route::post('/payment/store', 'PaymentController@store')->name('payment.store');
 
     /* Payment success */
     Route::get('/payment/success', 'PaymentController@success')->name('payment.success');
@@ -287,6 +282,12 @@ Route::group(['middleware' => ['auth']], function () {
 
     /* Payment prepayment download */
     Route::post('/payment/prepayment/download', 'PaymentController@download')->name('payment.prepayment.download');
+
+    /* Choose payment and store data */
+    Route::post('/payment/store/{editBooking?}', 'PaymentController@store')->name('payment.store');
+
+    /* View payment page */
+    Route::get('/payment/{editBooking?}', 'PaymentController@index')->name('payment');
 });
 
 /*

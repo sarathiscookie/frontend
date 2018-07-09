@@ -321,14 +321,14 @@
 <br>
 </span><strong>
 
-<span style="font-size:13.5pt;line-height:150%;font-family:&quot;Helvetica&quot;,sans-serif;color:gray">Sie haben eine neue Nachricht
+<span style="font-size:13.5pt;line-height:150%;font-family:&quot;Helvetica&quot;,sans-serif;color:gray">Ihr Gutschein
 </span></strong>
 
                                                                                                             <span style="font-size:13.5pt;line-height:150%;font-family:&quot;Helvetica&quot;,sans-serif;color:gray">
 <br>
 </span><strong>
 
-<span style="font-size:14.5pt;line-height:150%;font-family:&quot;Helvetica&quot;,sans-serif;color:gray">von der {{ $newBooking['cabinname'] }}...
+<span style="font-size:14.5pt;line-height:150%;font-family:&quot;Helvetica&quot;,sans-serif;color:gray">für {{ $newBooking['cabinname'] }}...
 </span></strong>
 
                                                                                                             <span style="font-size:12.0pt;line-height:150%;font-family:&quot;Helvetica&quot;,sans-serif;color:gray"><o:p></o:p>
@@ -395,7 +395,32 @@
 <span style="font-size:12.0pt;line-height:150%;font-family:&quot;Helvetica&quot;,sans-serif;color:#5F6876">Sehr geehrter Gast,
 <br>
 <br>
-Sie haben Ihre Buchung erfolgreich geändert. Im Anhang finden Sie Ihren neuen Wertgutschein.
+im Anhang erhalten Sie Ihren Übernachtungsgutschein als PDF. Bitte legen Sie den Gutschein dem Hüttenwirt bei Ihrer Ankunft vor. Dieser Gutschein wird dann mit Ihrem Übernachtungspreis verrechnet.
+<br>
+                                                                                                        <p class="MsoNormal"><o:p>&nbsp;</o:p></p>
+                                                                                                        <table class="MsoNormalTable" border="0" cellspacing="0" cellpadding="0" width="100%" style="width:100.0%;border-collapse:collapse;min-width: 100%;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%"><tbody>
+                                                                                                            <tr>
+                                                                                                                <td valign="top" style="padding:0cm 13.5pt 13.5pt 13.5pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%">
+
+                                                                                                                    <div align="center">
+                                                                                                                        <table class="MsoNormalTable" border="0" cellspacing="0" cellpadding="0" width="100%" style="width:100.0%;background:#00B1EB;border-collapse:collapse;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%"><tbody>
+                                                                                                                            <tr>
+                                                                                                                                <td style="padding:15.0pt 15.0pt 15.0pt 15.0pt;border-radius: 3px;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%">
+
+                                                                                                                                    <p class="MsoNormal" align="center" style="text-align:center">
+
+<span style="font-size:12.0pt;font-family:&quot;Arial&quot;,sans-serif"><a href="https://blog.huetten-holiday.de/wordpress/" target="_blank" title="zum Hüttenblog"><b>
+
+<span style="color:white;text-decoration:none">zum Hüttenblog
+</span></b></a> <o:p></o:p>
+</span></p>
+                                                                                                                                </td>
+                                                                                                                            </tr></tbody>
+                                                                                                                        </table>
+                                                                                                                    </div>
+                                                                                                                </td>
+                                                                                                            </tr></tbody>
+                                                                                                        </table>
 <br>
 <br>Mit freundlichen Grüßen
 <br>Huetten-Holiday.de Team

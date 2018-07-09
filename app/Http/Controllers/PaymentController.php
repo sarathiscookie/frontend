@@ -12,17 +12,34 @@ use App\Booking;
 use App\Order;
 use App\Ordernumber;
 use App\Payment;
+use App\Cabin;
 use Auth;
 use Validator;
 use Payone;
 use DateTime;
 use Carbon\Carbon;
 use Mail;
+use App\Mail\SendVoucher;
 use PDF;
 use Illuminate\Support\Facades\Schema;
 
 class PaymentController extends Controller
 {
+    /**
+     * To generate date format as mongo.
+     *
+     * @param  string  $date
+     * @return \Illuminate\Http\Response
+     */
+    protected function getDateUtc($date)
+    {
+        $dateFormatChange = DateTime::createFromFormat("d.m.y", $date)->format('Y-m-d');
+        $dateTime         = new DateTime($dateFormatChange);
+        $timeStamp        = $dateTime->getTimestamp();
+        $utcDateTime      = new \MongoDB\BSON\UTCDateTime($timeStamp * 1000);
+        return $utcDateTime;
+    }
+
     /**
      * Function for service fee
      *
@@ -119,69 +136,106 @@ class PaymentController extends Controller
     /**
      * Display a listing of the resource.
      *
+     * @param  string  $editBooking
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index($editBooking = null)
     {
         /*if (session()->has('availableStatus') && session()->get('availableStatus') === 'success') {*/
-            $prepayment_amount           = [];
-            $moneyBalance                = 0;
-            $payByBillPossible           = '';
-            $carts                       = Booking::where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
-                ->where('status', "8")
+        $prepayment_amount         = [];
+        $payByBillPossible         = '';
+        $carts                     = Booking::where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
+            ->where('status', "8")
+            ->where('is_delete', 0)
+            ->take(5)
+            ->get();
+
+        if($editBooking !== null && $editBooking === 'updateBooking') {
+            $bookingData            = Booking::where('status', '1')
+                ->where('payment_status', '1')
                 ->where('is_delete', 0)
-                ->take(5)
-                ->get();
+                ->where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
+                ->find(session()->get('bookingIdRequest'));
 
-            if(count($carts) > 0 ) {
-                foreach ($carts as $key => $cart) {
-                    $prepayment_amount[] = $cart->prepayment_amount;
+            if(!empty($bookingData)) {
+                $sum_prepayment_amount = session()->get('prepaymentAmountRequest');
+                $serviceTax            = $this->serviceFees($sum_prepayment_amount, $paymentMethod = null);
+                $percentage            = ($serviceTax / 100) * $sum_prepayment_amount;
+                $prepay_service_total  = $sum_prepayment_amount + $percentage;
 
-                    /* Condition to check pay by bill possible begin */
-                    // Pay by bill radio button in payment page will show when there is two weeks diff b/w current date and checking from date.
-                    $checkingFrom        = $cart->checkin_from->format('Y-m-d');
-                    $currentDate         = date('Y-m-d');
-                    $d1                  = new DateTime($currentDate);
-                    $d2                  = new DateTime($checkingFrom);
-                    $dateDifference      = $d2->diff($d1);
-                    if($dateDifference->days > 14) {
-                        $payByBillPossible = 'yes';
-                    }
-                    else {
-                        $payByBillPossible = 'no';
-                    }
-                    /* Condition to check pay by bill possible end */
-                }
-
-                /* Get order number */
-                $orderNumber             = Ordernumber::first();
-                if( !empty ($orderNumber->number) ) {
-                    $order_num           = (int)$orderNumber->number + 1;
+                /* Condition to check pay by bill possible begin */
+                // Pay by bill radio button in payment page will show when there is two weeks diff b/w current date and checking from date.
+                $checkingFrom          = DateTime::createFromFormat('d.m.y', session()->get('dateFromRequest'))->format('Y-m-d');
+                $currentDate           = date('Y-m-d');
+                $d1                    = new DateTime($currentDate);
+                $d2                    = new DateTime($checkingFrom);
+                $dateDifference        = $d2->diff($d1);
+                if($dateDifference->days > 14) {
+                    $payByBillPossible = 'yes';
                 }
                 else {
-                    $order_num           = 100000;
+                    $payByBillPossible = 'no';
                 }
+                /* Condition to check pay by bill possible end */
 
-                $order_number            = 'ORDER'.'-'.date('y').'-'.$order_num;
-                $sum_prepayment_amount   = array_sum($prepayment_amount);
-                $serviceTax              = $this->serviceFees($sum_prepayment_amount, $paymentMethod = null);
-                $percentage              = ($serviceTax / 100) * $sum_prepayment_amount;
-                $prepay_service_total    = $sum_prepayment_amount + $percentage;
-
-                /* Getting money balance */
-                $user                    = Userlist::select('money_balance')
-                    ->where('is_delete', 0)
-                    ->findOrFail(Auth::user()->_id);
-
-                if($user) {
-                    $moneyBalance        = $user->money_balance;
+                /* Get order number */
+                $orderNumber           = Ordernumber::first();
+                if( !empty ($orderNumber->number) ) {
+                    $order_num         = (int)$orderNumber->number + 1;
                 }
+                else {
+                    $order_num         = 100000;
+                }
+                $order_number          = 'ORDER'.'-'.date('y').'-'.$order_num;
 
-                return view('payment', ['moneyBalance' => $moneyBalance, 'sumPrepaymentAmount' => $sum_prepayment_amount, 'prepayServiceTotal' => $prepay_service_total, 'serviceTax' => $serviceTax, 'payByBillPossible' => $payByBillPossible, 'order_number' => $order_number]);
+                return view('payment', ['moneyBalance' => Auth::user()->money_balance, 'sumPrepaymentAmount' => $sum_prepayment_amount, 'prepayServiceTotal' => $prepay_service_total, 'serviceTax' => $serviceTax, 'payByBillPossible' => $payByBillPossible, 'order_number' => $order_number, 'editBooking' => $editBooking]);
             }
             else {
-                return redirect()->route('cart');
+                abort(404);
             }
+        }
+        elseif(count($carts) > 0 ) {
+
+            foreach ($carts as $key => $cart) {
+                $prepayment_amount[] = $cart->prepayment_amount;
+
+                /* Condition to check pay by bill possible begin */
+                // Pay by bill radio button in payment page will show when there is two weeks diff b/w current date and checking from date.
+                $checkingFrom        = $cart->checkin_from->format('Y-m-d');
+                $currentDate         = date('Y-m-d');
+                $d1                  = new DateTime($currentDate);
+                $d2                  = new DateTime($checkingFrom);
+                $dateDifference      = $d2->diff($d1);
+                if($dateDifference->days > 14) {
+                    $payByBillPossible = 'yes';
+                }
+                else {
+                    $payByBillPossible = 'no';
+                }
+                /* Condition to check pay by bill possible end */
+            }
+
+            /* Get order number */
+            $orderNumber             = Ordernumber::first();
+            if( !empty ($orderNumber->number) ) {
+                $order_num           = (int)$orderNumber->number + 1;
+            }
+            else {
+                $order_num           = 100000;
+            }
+
+            $order_number            = 'ORDER'.'-'.date('y').'-'.$order_num;
+            $sum_prepayment_amount   = array_sum($prepayment_amount);
+            $serviceTax              = $this->serviceFees($sum_prepayment_amount, $paymentMethod = null);
+            $percentage              = ($serviceTax / 100) * $sum_prepayment_amount;
+            $prepay_service_total    = $sum_prepayment_amount + $percentage;
+
+            return view('payment', ['moneyBalance' => Auth::user()->money_balance, 'sumPrepaymentAmount' => $sum_prepayment_amount, 'prepayServiceTotal' => $prepay_service_total, 'serviceTax' => $serviceTax, 'payByBillPossible' => $payByBillPossible, 'order_number' => $order_number]);
+
+        }
+        else {
+            return redirect()->route('cart');
+        }
         /*}
         else {
             return redirect()->route('cart');
@@ -203,9 +257,10 @@ class PaymentController extends Controller
      * Store a newly created resource in storage.
      *
      * @param  \App\Http\Requests\PaymentRequest  $request
+     * @param  string  $editBooking
      * @return \Illuminate\Http\Response
      */
-    public function store(PaymentRequest $request)
+    public function store(PaymentRequest $request, $editBooking = null)
     {
         $prepayment_amount           = [];
         $cart_ids                    = [];
@@ -217,7 +272,182 @@ class PaymentController extends Controller
             ->take(5)
             ->get();
 
-        if(!empty($carts)) {
+        if($editBooking !== null && $editBooking === 'updateBooking') {
+
+            $bookingOld                = Booking::where('status', '1')
+                ->where('payment_status', '1')
+                ->where('is_delete', 0)
+                ->where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
+                ->find(session()->get('bookingIdRequest'));
+
+            if(!empty($bookingOld)) {
+
+                $order                 = Order::where('auth_user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))->find($bookingOld->order_id);
+                $cabin                 = Cabin::where('is_delete', 0)->where('other_cabin', "0")->where('name', $bookingOld->cabinname)->first();
+                $countCarts            = 1;
+                $sum_prepayment_amount = session()->get('prepaymentAmountRequest');
+
+                // Pay by bill condition works if there is two weeks diff b/w current date and checking from date.
+                $checkingFrom          = DateTime::createFromFormat('d.m.y', session()->get('dateFromRequest'))->format('Y-m-d');
+                $currentDate           = date('Y-m-d');
+                $d1                    = new DateTime($currentDate);
+                $d2                    = new DateTime($checkingFrom);
+                $dateDifference        = $d2->diff($d1);
+                if($dateDifference->days > 14) {
+                    $payByBillPossible = 'yes';
+                }
+                else {
+                    $payByBillPossible = 'no';
+                }
+
+                /* Create invoice tree structure begin */
+                if(!empty($cabin->invoice_autonum_tree) ) {
+                    $autoNumberTree = (int)$cabin->invoice_autonum_tree + 1;
+                }
+                else {
+                    $autoNumberTree = 1;
+                }
+                /* Create invoice tree structure end */
+
+                /* Generate order number begin */
+                $orderNumber           = Ordernumber::first();
+                if(!empty($orderNumber->number) ) {
+                    $order_num         = (int)$orderNumber->number + 1;
+                }
+                else {
+                    $order_num         = 100000;
+                }
+                $order_number          = 'ORDER'.'-'.date('y').'-'.$order_num;
+                /* Generate order number end */
+
+                $total_prepayment_amount = round($sum_prepayment_amount, 2);
+
+                if($request->has('moneyBalance') && $request->moneyBalance === '1') {
+                    if($user->money_balance >= $total_prepayment_amount) {
+                        /* How much money user have in their account after used money balance */
+                        $afterRedeemAmount = $user->money_balance - $total_prepayment_amount;
+
+                        /* Update status of old booking begin */
+                        if(!empty($bookingOld)) {
+                            $bookingOld->booking_update = date('Y-m-d H:i:s');
+                            $bookingOld->status         = "9"; //9 => Old (Booking Updated)
+                            $bookingOld->is_delete      = 1;
+                            $bookingOld->save();
+                        }
+                        /* Update status of old booking end */
+
+                        /* Update status of old orders begin */
+                        if($order) {
+                            $order->order_update_date  = date('Y-m-d H:i:s');
+                            $order->order_delete       = 0;
+                            $order->save();
+                        }
+                        /* Update status of old orders end */
+
+                        /* Create new order begin */
+                        $newOrder                                = new Order;
+                        $newOrder->order_id                      = $order_number;
+                        $newOrder->auth_user                     = new \MongoDB\BSON\ObjectID(Auth::user()->_id);
+                        $newOrder->order_amount                  = $total_prepayment_amount;
+                        $newOrder->order_total_amount            = $total_prepayment_amount;
+                        $newOrder->order_money_balance_used      = $total_prepayment_amount;
+                        $newOrder->order_money_balance_used_date = date('Y-m-d H:i:s');
+                        $newOrder->old_order_id                  = new \MongoDB\BSON\ObjectID($order->_id);
+                        $newOrder->order_payment_method          = 1; // 1 => Fully paid using money balance, 2 => Partially paid using money balance, 3 => Paid using payment gateway
+                        $newOrder->order_delete                  = 0;
+                        $newOrder->save();
+                        /* Create new order end */
+
+                        if($newOrder) {
+                            /* Create new booking begin */
+                            $invoice_explode                     = explode('-', $bookingOld->invoice_number); // Exploding auto number and ignoring last element
+
+                            $newBooking                          = new Booking;
+                            $newBooking->cabinname               = $cabin->name;
+                            $newBooking->cabin_id                = new \MongoDB\BSON\ObjectID($cabin->_id);
+                            $newBooking->checkin_from            = $this->getDateUtc(session()->get('dateFromRequest'));
+                            $newBooking->reserve_to              = $this->getDateUtc(session()->get('dateToRequest'));
+                            $newBooking->user                    = new \MongoDB\BSON\ObjectID(Auth::user()->_id);
+                            $newBooking->beds                    = (int)session()->get('bedRequest');
+                            $newBooking->dormitory               = (int)session()->get('dormRequest');
+                            $newBooking->invoice_number          = $invoice_explode[0].'-'.$invoice_explode[1].'-'.$invoice_explode[2].'-'.$autoNumberTree;
+                            $newBooking->sleeps                  = (int)session()->get('sleepRequest');
+                            $newBooking->guests                  = (int)session()->get('sleepRequest'); // Sleeps and guest are same count
+                            $newBooking->halfboard               = session()->get('halfBoardRequest');
+                            $newBooking->comments                = session()->get('commentsRequest');
+                            $newBooking->prepayment_amount       = $total_prepayment_amount;
+                            $newBooking->total_prepayment_amount = $total_prepayment_amount;
+                            $newBooking->moneybalance_used       = $newBooking->prepayment_amount;
+                            $newBooking->bookingdate             = date('Y-m-d H:i:s');
+                            $newBooking->status                  = '1';
+                            $newBooking->payment_status          = '1';
+                            $newBooking->reservation_cancel      = $cabin->reservation_cancel;
+                            $newBooking->old_booking_id          = new \MongoDB\BSON\ObjectID($bookingOld->_id);
+                            $newBooking->order_id                = new \MongoDB\BSON\ObjectID($newOrder->_id);
+                            $newBooking->is_delete               = 0;
+                            $newBooking->save();
+                            /* Create new booking end */
+
+                            /* Update cabin invoice_autonum begin */
+                            $cabin->invoice_autonum_tree = $autoNumberTree;
+                            $cabin->save();
+
+                            /* Updating money balance */
+                            $user->money_balance         = round($afterRedeemAmount, 2);
+                            $user->save();
+
+                            /* Updating order number in ordernumber collection */
+                            $orderNumber->number         = $order_num;
+                            $orderNumber->save();
+
+                            /* Send email with voucher */
+                            Mail::to($user->usrEmail)->send(new SendVoucher($newBooking));
+
+                            return redirect()->route('payment.success')->with('bookingSuccessStatus', __('payment.bookingSuccessStatus'));
+                        }
+                        else {
+                            return redirect()->back()->with('bookingFailureStatus', __('payment.bookingFailureStatus'));
+                        }
+                    }
+                    else {
+                        if(isset($request->payment)) {
+                            /* How much money user have in their account after used money balance */
+                            $afterRedeemAmount = $total_prepayment_amount - $user->money_balance;
+                            dd($afterRedeemAmount);
+                        }
+                        else {
+                            $validator = Validator::make($request->all(), [
+                                'payment' => 'required'
+                            ]);
+
+                            if ($validator->fails()) {
+                                return redirect()->back()->withErrors($validator)->withInput();
+                            }
+                        }
+                    }
+                }
+                else {
+                    if(isset($request->payment)) {
+                        $percentage     = ($this->serviceFees($total_prepayment_amount, $request->payment) / 100) * $total_prepayment_amount;
+                        $total          = round($total_prepayment_amount + $percentage, 2);
+                        dd($total);
+                    }
+                    else {
+                        $validator = Validator::make($request->all(), [
+                            'payment' => 'required'
+                        ]);
+
+                        if ($validator->fails()) {
+                            return redirect()->back()->withErrors($validator)->withInput();
+                        }
+                    }
+                }
+            }
+            else {
+                abort(404);
+            }
+        }
+        elseif(!empty($carts)) {
             $countCarts              = count($carts);
             /* Loop for amount calculation, pay by bill date difference and explode cabin code */
             foreach ($carts as $key => $cart) {

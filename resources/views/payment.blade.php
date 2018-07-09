@@ -90,7 +90,11 @@
                 </div>
             @endif
 
-            <form action="{{ route('payment.store') }}" method="post" name="paymentform">
+            @if(isset($editBooking))
+                <form action="{{ route('payment.store', $editBooking) }}" method="post" name="paymentform">
+            @else
+                <form action="{{ route('payment.store') }}" method="post" name="paymentform">
+            @endif
 
                 {{ csrf_field() }}
 
