@@ -10,6 +10,7 @@
                     <div class="panel-heading">Reset Password</div>
 
                     <div class="panel-body panel-body-log">
+                        <br>
                         <form class="form-horizontal" method="POST" action="{{ route('password.request') }}">
                             {{ csrf_field() }}
 

@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\PasswordReset;
 use Illuminate\Http\Request;
 use App\Http\Requests\ResetPasswordManuallyRequest;
 use App\Http\Controllers\Controller;
 use App\User;
+use Mail;
+use App\Mail\PasswordResetEmail;
 
 class ResetPasswordManuallyController extends Controller
 {
@@ -34,10 +37,40 @@ class ResetPasswordManuallyController extends Controller
             ->first();
 
         if( !empty($user) ) {
-            dd('send email token');
+            /* Delete old token requested by user */
+            PasswordReset::where('email', $user->usrEmail)->delete();
+
+            /* Generate token and store in to table */
+            $passwordReset         = new PasswordReset;
+            $passwordReset->email  = $user->usrEmail;
+            $passwordReset->token  = str_random(60);
+            $passwordReset->status = 0; // 1: Reset, 0: Not reset
+            $passwordReset->save();
+
+            Mail::to($passwordReset->email)->send(new PasswordResetEmail($passwordReset));
+
+            return redirect()->back()->with('status', __('passwords.sent'));
         }
         else {
             return redirect()->back()->withErrors(['user' => __('passwords.user')]);
+        }
+    }
+
+    /**
+     * Show password reset form.
+     *
+     * @param  string  $token
+     * @return \Illuminate\Http\Response
+     */
+    public function showPasswordResetForm($token)
+    {
+        $tokenData = PasswordReset::where('token', $token)->first();
+
+        if( !empty($tokenData) ) {
+            return view('auth.passwords.resetManually', ['token' => $tokenData->token]);
+        }
+        else {
+            return redirect()->to('/reset/password');
         }
     }
 }
