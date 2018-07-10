@@ -1109,8 +1109,8 @@ class BookingHistoryController extends Controller
                             $available = 'success';
 
                             /* Create invoice tree structure begin */
-                            if(!empty($cabin->invoice_autonum_tree) ) {
-                                $autoNumberTree = (int)$cabin->invoice_autonum_tree + 1;
+                            if(!empty($user->invoice_autonum_tree) ) {
+                                $autoNumberTree = (int)$user->invoice_autonum_tree + 1;
                             }
                             else {
                                 $autoNumberTree = 1;
@@ -1188,12 +1188,9 @@ class BookingHistoryController extends Controller
                                 $newBooking->save();
                                 /* Create new booking end */
 
-                                /* Update cabin invoice_autonum begin */
-                                $cabin->invoice_autonum_tree = $autoNumberTree;
-                                $cabin->save();
-
-                                /* Updating money balance */
+                                /* Updating money balance and invoice_autonum tree */
                                 $user->money_balance         = round(Auth::user()->money_balance + $amount, 2);
+                                $user->invoice_autonum_tree  = $autoNumberTree;
                                 $user->save();
 
                                 /* Updating order number in ordernumber collection */

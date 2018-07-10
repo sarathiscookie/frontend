@@ -284,7 +284,7 @@ class PaymentController extends Controller
 
                 $order                 = Order::where('auth_user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))->find($bookingOld->order_id);
                 $cabin                 = Cabin::where('is_delete', 0)->where('other_cabin', "0")->where('name', $bookingOld->cabinname)->first();
-                $countCarts            = 1;
+                $invoice_explode       = explode('-', $bookingOld->invoice_number); // Exploding auto number and ignoring last element
                 $sum_prepayment_amount = session()->get('prepaymentAmountRequest');
 
                 // Pay by bill condition works if there is two weeks diff b/w current date and checking from date.
@@ -301,8 +301,8 @@ class PaymentController extends Controller
                 }
 
                 /* Create invoice tree structure begin */
-                if(!empty($cabin->invoice_autonum_tree) ) {
-                    $autoNumberTree = (int)$cabin->invoice_autonum_tree + 1;
+                if(!empty($user->invoice_autonum_tree) ) {
+                    $autoNumberTree = (int)$user->invoice_autonum_tree + 1;
                 }
                 else {
                     $autoNumberTree = 1;
@@ -360,8 +360,6 @@ class PaymentController extends Controller
 
                         if($newOrder) {
                             /* Create new booking begin */
-                            $invoice_explode                     = explode('-', $bookingOld->invoice_number); // Exploding auto number and ignoring last element
-
                             $newBooking                          = new Booking;
                             $newBooking->cabinname               = $cabin->name;
                             $newBooking->cabin_id                = new \MongoDB\BSON\ObjectID($cabin->_id);
@@ -388,12 +386,9 @@ class PaymentController extends Controller
                             $newBooking->save();
                             /* Create new booking end */
 
-                            /* Update cabin invoice_autonum begin */
-                            $cabin->invoice_autonum_tree = $autoNumberTree;
-                            $cabin->save();
-
-                            /* Updating money balance */
+                            /* Updating money balance and invoice_autonum tree */
                             $user->money_balance         = round($afterRedeemAmount, 2);
+                            $user->invoice_autonum_tree  = $autoNumberTree;
                             $user->save();
 
                             /* Updating order number in ordernumber collection */
@@ -413,7 +408,187 @@ class PaymentController extends Controller
                         if(isset($request->payment)) {
                             /* How much money user have in their account after used money balance */
                             $afterRedeemAmount = $total_prepayment_amount - $user->money_balance;
-                            dd($afterRedeemAmount);
+                            $percentage        = ($this->serviceFees($afterRedeemAmount, $request->payment) / 100) * $afterRedeemAmount;
+                            $total             = round($afterRedeemAmount + $percentage, 2);
+
+                            // Function call for payment gateway section
+                            $paymentGateway    = $this->paymentGateway($request->all(), $request->ip(), $total, $order_number);
+
+                            if ($paymentGateway["status"] === "REDIRECT") { // If card is 3d secure return status is REDIRECT and "redirect url" will return.
+
+                                /* Storing new order details */
+                                $newOrder                                = new Order;
+                                $newOrder->order_id                      = $order_number;
+                                $newOrder->auth_user                     = new \MongoDB\BSON\ObjectID(Auth::user()->_id);
+                                $newOrder->order_status                  = "REDIRECT";
+                                $newOrder->txid                          = $paymentGateway["txid"];
+                                $newOrder->userid                        = $paymentGateway["userid"];
+                                $newOrder->order_payment_type            = $request->payment;
+                                $newOrder->order_payment_method          = 2; // 1 => fully paid using money balance, 2 => Partially paid using money balance, 3 => Paid using payment gateway
+                                $newOrder->order_amount                  = round($afterRedeemAmount, 2);
+                                $newOrder->order_total_amount            = $total;
+                                $newOrder->order_money_balance_used      = round($user->money_balance, 2);
+                                $newOrder->order_money_balance_used_date = date('Y-m-d H:i:s');
+                                $newOrder->old_order_id                  = new \MongoDB\BSON\ObjectID($order->_id);
+                                $newOrder->order_delete                  = 0;
+                                $newOrder->save();
+                                /* Storing new order details end */
+
+                                if($newOrder) {
+                                    /* Create new booking begin */
+                                    $newBooking                          = new Booking;
+                                    $newBooking->cabinname               = $cabin->name;
+                                    $newBooking->cabin_id                = new \MongoDB\BSON\ObjectID($cabin->_id);
+                                    $newBooking->checkin_from            = $this->getDateUtc(session()->get('dateFromRequest'));
+                                    $newBooking->reserve_to              = $this->getDateUtc(session()->get('dateToRequest'));
+                                    $newBooking->user                    = new \MongoDB\BSON\ObjectID(Auth::user()->_id);
+                                    $newBooking->beds                    = (int)session()->get('bedRequest');
+                                    $newBooking->dormitory               = (int)session()->get('dormRequest');
+                                    $newBooking->invoice_number          = $invoice_explode[0].'-'.$invoice_explode[1].'-'.$invoice_explode[2].'-'.$autoNumberTree;
+                                    $newBooking->sleeps                  = (int)session()->get('sleepRequest');
+                                    $newBooking->guests                  = (int)session()->get('sleepRequest'); // Sleeps and guest are same count
+                                    $newBooking->halfboard               = session()->get('halfBoardRequest');
+                                    $newBooking->comments                = session()->get('commentsRequest');
+                                    $newBooking->prepayment_amount       = $total_prepayment_amount;
+                                    $newBooking->total_prepayment_amount = $total_prepayment_amount;
+                                    $newBooking->moneybalance_used       = $user->money_balance;
+                                    $newBooking->bookingdate             = date('Y-m-d H:i:s');
+                                    $newBooking->status                  = '10'; // 10=> Temporary (This status is using in edit booking section)
+                                    $newBooking->reservation_cancel      = $cabin->reservation_cancel;
+                                    $newBooking->payment_type            = $request->payment;
+                                    $newBooking->txid                    = $paymentGateway["txid"];
+                                    $newBooking->userid                  = $paymentGateway["userid"];
+                                    $newBooking->old_booking_id          = new \MongoDB\BSON\ObjectID($bookingOld->_id);
+                                    $newBooking->order_id                = new \MongoDB\BSON\ObjectID($newOrder->_id);
+                                    $newBooking->is_delete               = 0;
+                                    $newBooking->save();
+                                    /* Create new booking end */
+
+                                    /* Storing new userid, old userid and updating invoice auto number tree in user collection */
+                                    $user->userId_old_booking   = $user->userid;
+                                    $user->userid               = $paymentGateway["userid"];
+                                    $user->invoice_autonum_tree = $autoNumberTree;
+                                    $user->save();
+
+                                    /* Updating order number in ordernumber collection */
+                                    $orderNumber->number        = $order_num;
+                                    $orderNumber->save();
+
+                                    $request->session()->flash('editBooking', $editBooking);
+                                    $request->session()->flash('txid', $paymentGateway["txid"]);
+                                    $request->session()->flash('userid', $paymentGateway["userid"]);
+                                    $request->session()->flash('bookingSuccessStatus', __('payment.bookingSuccessStatus'));
+
+                                    return redirect()->away($paymentGateway["redirecturl"]);
+                                }
+                                else {
+                                    return redirect()->back()->with('bookingFailureStatus', __('payment.bookingFailureStatus'));
+                                }
+                            }
+                            elseif ($paymentGateway["status"] === "APPROVED") { // If card is not 3d secure and prepayment(PayByBill) return status is APPROVED and "redirect url" will not return. We manually redirect to success page.
+
+                                /* Storing new order details */
+                                $newOrder                                = new Order;
+                                $newOrder->order_id                      = $order_number;
+                                $newOrder->auth_user                     = new \MongoDB\BSON\ObjectID(Auth::user()->_id);
+                                $newOrder->order_status                  = "APPROVED";
+                                $newOrder->txid                          = $paymentGateway["txid"];
+                                $newOrder->userid                        = $paymentGateway["userid"];
+                                $newOrder->order_payment_type            = $request->payment;
+                                $newOrder->order_payment_method          = 2; // 1 => fully paid using money balance, 2 => Partially paid using money balance, 3 => Paid using payment gateway
+                                $newOrder->order_amount                  = round($afterRedeemAmount, 2);
+                                $newOrder->order_total_amount            = $total;
+                                $newOrder->order_money_balance_used      = round($user->money_balance, 2);
+                                $newOrder->order_money_balance_used_date = date('Y-m-d H:i:s');
+                                $newOrder->old_order_id                  = new \MongoDB\BSON\ObjectID($order->_id);
+                                $newOrder->order_delete                  = 0;
+
+                                /* If guest paid using payByBill we need to store bank details. Condition begin */
+                                if($request->payment === 'payByBill' && $payByBillPossible === 'yes') {
+                                    $newOrder->clearing_bankaccount       = $paymentGateway["clearing_bankaccount"];
+                                    $newOrder->clearing_bankcode          = $paymentGateway["clearing_bankcode"];
+                                    $newOrder->clearing_bankcountry       = $paymentGateway["clearing_bankcountry"];
+                                    $newOrder->clearing_bankname          = $paymentGateway["clearing_bankname"];
+                                    $newOrder->clearing_bankaccountholder = $paymentGateway["clearing_bankaccountholder"];
+                                    $newOrder->clearing_bankiban          = $paymentGateway["clearing_bankiban"];
+                                    $newOrder->clearing_bankbic           = $paymentGateway["clearing_bankbic"];
+                                }
+                                /* If guest paid using payByBill we need to store bank details. Condition end */
+
+                                $newOrder->save();
+
+                                /* Storing new order details end */
+
+                                if($newOrder) {
+                                    /* Create new booking begin */
+                                    $newBooking                          = new Booking;
+                                    $newBooking->cabinname               = $cabin->name;
+                                    $newBooking->cabin_id                = new \MongoDB\BSON\ObjectID($cabin->_id);
+                                    $newBooking->checkin_from            = $this->getDateUtc(session()->get('dateFromRequest'));
+                                    $newBooking->reserve_to              = $this->getDateUtc(session()->get('dateToRequest'));
+                                    $newBooking->user                    = new \MongoDB\BSON\ObjectID(Auth::user()->_id);
+                                    $newBooking->beds                    = (int)session()->get('bedRequest');
+                                    $newBooking->dormitory               = (int)session()->get('dormRequest');
+                                    $newBooking->invoice_number          = $invoice_explode[0].'-'.$invoice_explode[1].'-'.$invoice_explode[2].'-'.$autoNumberTree;
+                                    $newBooking->sleeps                  = (int)session()->get('sleepRequest');
+                                    $newBooking->guests                  = (int)session()->get('sleepRequest'); // Sleeps and guest are same count
+                                    $newBooking->halfboard               = session()->get('halfBoardRequest');
+                                    $newBooking->comments                = session()->get('commentsRequest');
+                                    $newBooking->prepayment_amount       = $total_prepayment_amount;
+                                    $newBooking->total_prepayment_amount = $total_prepayment_amount;
+                                    $newBooking->moneybalance_used       = $user->money_balance;
+                                    $newBooking->bookingdate             = date('Y-m-d H:i:s');
+                                    $newBooking->status                  = '10'; // 10=> Temporary (This status is using in edit booking section)
+                                    $newBooking->reservation_cancel      = $cabin->reservation_cancel;
+                                    $newBooking->payment_type            = $request->payment;
+                                    $newBooking->txid                    = $paymentGateway["txid"];
+                                    $newBooking->userid                  = $paymentGateway["userid"];
+                                    $newBooking->old_booking_id          = new \MongoDB\BSON\ObjectID($bookingOld->_id);
+                                    $newBooking->order_id                = new \MongoDB\BSON\ObjectID($newOrder->_id);
+                                    $newBooking->is_delete               = 0;
+                                    $newBooking->save();
+                                    /* Create new booking end */
+
+                                    /* Storing new userid, old userid and updating invoice auto number tree in user collection */
+                                    $user->userId_old_booking   = $user->userid;
+                                    $user->userid               = $paymentGateway["userid"];
+                                    $user->invoice_autonum_tree = $autoNumberTree;
+                                    $user->save();
+
+                                    /* Updating order number in ordernumber collection */
+                                    $orderNumber->number        = $order_num;
+                                    $orderNumber->save();
+
+                                    /* If guest paid using payByBill it will redirect to bank details listing page. Condition begin*/
+                                    if($request->payment === 'payByBill') {
+                                        if($payByBillPossible === 'yes') {
+                                            $request->session()->flash('editBooking', $editBooking);
+                                            $request->session()->flash('txid', $paymentGateway["txid"]);
+                                            $request->session()->flash('userid', $paymentGateway["userid"]);
+                                            $request->session()->flash('payByBillPossible', $payByBillPossible);
+                                            $request->session()->flash('bookingSuccessStatusPrepayment', __('payment.bookingSuccessStatus'));
+
+                                            return redirect()->route('payment.prepayment')->with('order', $newOrder);
+                                        }
+                                        else {
+                                            return redirect()->back()->with('bookingFailureStatus', __('payment.bookingFailureStatus'));
+                                        }
+                                    }
+                                    /* If guest paid using payByBill it will redirect to bank details listing page. Condition end*/
+
+                                    $request->session()->flash('txid', $paymentGateway["txid"]);
+                                    $request->session()->flash('userid', $paymentGateway["userid"]);
+                                    $request->session()->flash('editBooking', $editBooking);
+
+                                    return redirect()->route('payment.success')->with('bookingSuccessStatus', __('payment.bookingSuccessStatus'));
+                                }
+                                else {
+                                    return redirect()->back()->with('bookingFailureStatus', __('payment.bookingFailureStatus'));
+                                }
+                            }
+                            else {
+                                return redirect()->route('payment.error')->with('bookingErrorStatus', __('payment.bookingErrorStatus'));
+                            }
                         }
                         else {
                             $validator = Validator::make($request->all(), [
@@ -430,7 +605,180 @@ class PaymentController extends Controller
                     if(isset($request->payment)) {
                         $percentage     = ($this->serviceFees($total_prepayment_amount, $request->payment) / 100) * $total_prepayment_amount;
                         $total          = round($total_prepayment_amount + $percentage, 2);
-                        dd($total);
+
+                        // Function call for payment gateway section
+                        $paymentGateway = $this->paymentGateway($request->all(), $request->ip(), $total, $order_number);
+                        if ($paymentGateway["status"] === "REDIRECT") { // If card is 3d secure return status is REDIRECT and "redirect url" will return.
+
+                            /* Storing new order details */
+                            $newOrder                                = new Order;
+                            $newOrder->order_id                      = $order_number;
+                            $newOrder->auth_user                     = new \MongoDB\BSON\ObjectID(Auth::user()->_id);
+                            $newOrder->order_status                  = "REDIRECT";
+                            $newOrder->txid                          = $paymentGateway["txid"];
+                            $newOrder->userid                        = $paymentGateway["userid"];
+                            $newOrder->order_payment_type            = $request->payment;
+                            $newOrder->order_payment_method          = 3; // 1 => fully paid using money balance, 2 => Partially paid using money balance, 3 => Paid using payment gateway
+                            $newOrder->order_amount                  = $total_prepayment_amount;
+                            $newOrder->order_total_amount            = $total;
+                            $newOrder->old_order_id                  = new \MongoDB\BSON\ObjectID($order->_id);
+                            $newOrder->order_delete                  = 0;
+                            $newOrder->save();
+                            /* Storing new order details end */
+
+                            if($newOrder) {
+                                /* Create new booking begin */
+                                $newBooking                          = new Booking;
+                                $newBooking->cabinname               = $cabin->name;
+                                $newBooking->cabin_id                = new \MongoDB\BSON\ObjectID($cabin->_id);
+                                $newBooking->checkin_from            = $this->getDateUtc(session()->get('dateFromRequest'));
+                                $newBooking->reserve_to              = $this->getDateUtc(session()->get('dateToRequest'));
+                                $newBooking->user                    = new \MongoDB\BSON\ObjectID(Auth::user()->_id);
+                                $newBooking->beds                    = (int)session()->get('bedRequest');
+                                $newBooking->dormitory               = (int)session()->get('dormRequest');
+                                $newBooking->invoice_number          = $invoice_explode[0].'-'.$invoice_explode[1].'-'.$invoice_explode[2].'-'.$autoNumberTree;
+                                $newBooking->sleeps                  = (int)session()->get('sleepRequest');
+                                $newBooking->guests                  = (int)session()->get('sleepRequest'); // Sleeps and guest are same count
+                                $newBooking->halfboard               = session()->get('halfBoardRequest');
+                                $newBooking->comments                = session()->get('commentsRequest');
+                                $newBooking->prepayment_amount       = $total_prepayment_amount;
+                                $newBooking->total_prepayment_amount = $total_prepayment_amount;
+                                $newBooking->moneybalance_used       = 0;
+                                $newBooking->bookingdate             = date('Y-m-d H:i:s');
+                                $newBooking->status                  = '10'; // 10=> Temporary (This status is using in edit booking section)
+                                $newBooking->reservation_cancel      = $cabin->reservation_cancel;
+                                $newBooking->payment_type            = $request->payment;
+                                $newBooking->txid                    = $paymentGateway["txid"];
+                                $newBooking->userid                  = $paymentGateway["userid"];
+                                $newBooking->old_booking_id          = new \MongoDB\BSON\ObjectID($bookingOld->_id);
+                                $newBooking->order_id                = new \MongoDB\BSON\ObjectID($newOrder->_id);
+                                $newBooking->is_delete               = 0;
+                                $newBooking->save();
+                                /* Create new booking end */
+
+                                /* Storing new userid, old userid and updating invoice auto number tree in user collection */
+                                $user->userId_old_booking   = $user->userid;
+                                $user->userid               = $paymentGateway["userid"];
+                                $user->invoice_autonum_tree = $autoNumberTree;
+                                $user->save();
+
+                                /* Updating order number in ordernumber collection */
+                                $orderNumber->number        = $order_num;
+                                $orderNumber->save();
+
+                                $request->session()->flash('editBooking', $editBooking);
+                                $request->session()->flash('txid', $paymentGateway["txid"]);
+                                $request->session()->flash('userid', $paymentGateway["userid"]);
+                                $request->session()->flash('bookingSuccessStatus', __('payment.bookingSuccessStatus'));
+
+                                return redirect()->away($paymentGateway["redirecturl"]);
+                            }
+                            else {
+                                return redirect()->back()->with('bookingFailureStatus', __('payment.bookingFailureStatus'));
+                            }
+                        }
+                        elseif ($paymentGateway["status"] === "APPROVED") { // If card is not 3d secure and prepayment(PayByBill) return status is APPROVED and "redirect url" will not return. We manually redirect to success page.
+
+                            /* Storing new order details */
+                            $newOrder                                = new Order;
+                            $newOrder->order_id                      = $order_number;
+                            $newOrder->auth_user                     = new \MongoDB\BSON\ObjectID(Auth::user()->_id);
+                            $newOrder->order_status                  = "APPROVED";
+                            $newOrder->txid                          = $paymentGateway["txid"];
+                            $newOrder->userid                        = $paymentGateway["userid"];
+                            $newOrder->order_payment_type            = $request->payment;
+                            $newOrder->order_payment_method          = 3; // 1 => fully paid using money balance, 2 => Partially paid using money balance, 3 => Paid using payment gateway
+                            $newOrder->order_amount                  = $total_prepayment_amount;
+                            $newOrder->order_total_amount            = $total;
+                            $newOrder->old_order_id                  = new \MongoDB\BSON\ObjectID($order->_id);
+                            $newOrder->order_delete                  = 0;
+
+                            /* If guest paid using payByBill we need to store bank details. Condition begin */
+                            if($request->payment === 'payByBill' && $payByBillPossible === 'yes') {
+                                $newOrder->clearing_bankaccount       = $paymentGateway["clearing_bankaccount"];
+                                $newOrder->clearing_bankcode          = $paymentGateway["clearing_bankcode"];
+                                $newOrder->clearing_bankcountry       = $paymentGateway["clearing_bankcountry"];
+                                $newOrder->clearing_bankname          = $paymentGateway["clearing_bankname"];
+                                $newOrder->clearing_bankaccountholder = $paymentGateway["clearing_bankaccountholder"];
+                                $newOrder->clearing_bankiban          = $paymentGateway["clearing_bankiban"];
+                                $newOrder->clearing_bankbic           = $paymentGateway["clearing_bankbic"];
+                            }
+                            /* If guest paid using payByBill we need to store bank details. Condition end */
+
+                            $newOrder->save();
+
+                            /* Storing new order details end */
+
+                            if($newOrder) {
+                                /* Create new booking begin */
+                                $newBooking                          = new Booking;
+                                $newBooking->cabinname               = $cabin->name;
+                                $newBooking->cabin_id                = new \MongoDB\BSON\ObjectID($cabin->_id);
+                                $newBooking->checkin_from            = $this->getDateUtc(session()->get('dateFromRequest'));
+                                $newBooking->reserve_to              = $this->getDateUtc(session()->get('dateToRequest'));
+                                $newBooking->user                    = new \MongoDB\BSON\ObjectID(Auth::user()->_id);
+                                $newBooking->beds                    = (int)session()->get('bedRequest');
+                                $newBooking->dormitory               = (int)session()->get('dormRequest');
+                                $newBooking->invoice_number          = $invoice_explode[0].'-'.$invoice_explode[1].'-'.$invoice_explode[2].'-'.$autoNumberTree;
+                                $newBooking->sleeps                  = (int)session()->get('sleepRequest');
+                                $newBooking->guests                  = (int)session()->get('sleepRequest'); // Sleeps and guest are same count
+                                $newBooking->halfboard               = session()->get('halfBoardRequest');
+                                $newBooking->comments                = session()->get('commentsRequest');
+                                $newBooking->prepayment_amount       = $total_prepayment_amount;
+                                $newBooking->total_prepayment_amount = $total_prepayment_amount;
+                                $newBooking->moneybalance_used       = 0;
+                                $newBooking->bookingdate             = date('Y-m-d H:i:s');
+                                $newBooking->status                  = '10'; // 10=> Temporary (This status is using in edit booking section)
+                                $newBooking->reservation_cancel      = $cabin->reservation_cancel;
+                                $newBooking->payment_type            = $request->payment;
+                                $newBooking->txid                    = $paymentGateway["txid"];
+                                $newBooking->userid                  = $paymentGateway["userid"];
+                                $newBooking->old_booking_id          = new \MongoDB\BSON\ObjectID($bookingOld->_id);
+                                $newBooking->order_id                = new \MongoDB\BSON\ObjectID($newOrder->_id);
+                                $newBooking->is_delete               = 0;
+                                $newBooking->save();
+                                /* Create new booking end */
+
+                                /* Storing new userid, old userid and updating invoice auto number tree in user collection */
+                                $user->userId_old_booking   = $user->userid;
+                                $user->userid               = $paymentGateway["userid"];
+                                $user->invoice_autonum_tree = $autoNumberTree;
+                                $user->save();
+
+                                /* Updating order number in ordernumber collection */
+                                $orderNumber->number        = $order_num;
+                                $orderNumber->save();
+
+                                /* If guest paid using payByBill it will redirect to bank details listing page. Condition begin*/
+                                if($request->payment === 'payByBill') {
+                                    if($payByBillPossible === 'yes') {
+                                        $request->session()->flash('editBooking', $editBooking);
+                                        $request->session()->flash('txid', $paymentGateway["txid"]);
+                                        $request->session()->flash('userid', $paymentGateway["userid"]);
+                                        $request->session()->flash('payByBillPossible', $payByBillPossible);
+                                        $request->session()->flash('bookingSuccessStatusPrepayment', __('payment.bookingSuccessStatus'));
+
+                                        return redirect()->route('payment.prepayment')->with('order', $newOrder);
+                                    }
+                                    else {
+                                        return redirect()->back()->with('bookingFailureStatus', __('payment.bookingFailureStatus'));
+                                    }
+                                }
+                                /* If guest paid using payByBill it will redirect to bank details listing page. Condition end*/
+
+                                $request->session()->flash('txid', $paymentGateway["txid"]);
+                                $request->session()->flash('userid', $paymentGateway["userid"]);
+                                $request->session()->flash('editBooking', $editBooking);
+
+                                return redirect()->route('payment.success')->with('bookingSuccessStatus', __('payment.bookingSuccessStatus'));
+                            }
+                            else {
+                                return redirect()->back()->with('bookingFailureStatus', __('payment.bookingFailureStatus'));
+                            }
+                        }
+                        else {
+                            return redirect()->route('payment.error')->with('bookingErrorStatus', __('payment.bookingErrorStatus'));
+                        }
                     }
                     else {
                         $validator = Validator::make($request->all(), [
@@ -1041,6 +1389,7 @@ class PaymentController extends Controller
 
         $response                     = Payone::sendRequest($request);
 
+
         //dd($response);
         /**
 
@@ -1169,6 +1518,9 @@ class PaymentController extends Controller
     {
         if(session()->has('bookingSuccessStatus')) {
             if(session()->has('txid') && session()->has('userid')) {
+                /*if(session()->has('editBooking')) {
+                    dd(session()->get('editBooking'));
+                }*/
                 $carts              = Booking::select('_id', 'status', 'payment_status')
                     ->where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
                     ->where('status', "8")

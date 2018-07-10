@@ -298,7 +298,7 @@ Route::group(['middleware' => ['auth']], function () {
 
 /*
  |--------------------------------------------------------------------------
- | Payment
+ | Payment response
  |--------------------------------------------------------------------------
  |
  | Route for getting response from payone
