@@ -281,7 +281,6 @@ class PaymentController extends Controller
                 ->find(session()->get('bookingIdRequest'));
 
             if(!empty($bookingOld)) {
-
                 $order                 = Order::where('auth_user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))->find($bookingOld->order_id);
                 $cabin                 = Cabin::where('is_delete', 0)->where('other_cabin', "0")->where('name', $bookingOld->cabinname)->first();
                 $invoice_explode       = explode('-', $bookingOld->invoice_number); // Exploding auto number and ignoring last element
@@ -328,16 +327,14 @@ class PaymentController extends Controller
                         $afterRedeemAmount = $user->money_balance - $total_prepayment_amount;
 
                         /* Update status of old booking begin */
-                        if(!empty($bookingOld)) {
-                            $bookingOld->booking_update = date('Y-m-d H:i:s');
-                            $bookingOld->status         = "9"; //9 => Old (Booking Updated)
-                            $bookingOld->is_delete      = 1;
-                            $bookingOld->save();
-                        }
+                        $bookingOld->booking_update = date('Y-m-d H:i:s');
+                        $bookingOld->status         = "9"; //9 => Old (Booking Updated)
+                        $bookingOld->is_delete      = 1;
+                        $bookingOld->save();
                         /* Update status of old booking end */
 
                         /* Update status of old orders begin */
-                        if($order) {
+                        if(!empty($order)) {
                             $order->order_update_date  = date('Y-m-d H:i:s');
                             $order->order_delete       = 0;
                             $order->save();
@@ -352,7 +349,14 @@ class PaymentController extends Controller
                         $newOrder->order_total_amount            = $total_prepayment_amount;
                         $newOrder->order_money_balance_used      = $total_prepayment_amount;
                         $newOrder->order_money_balance_used_date = date('Y-m-d H:i:s');
-                        $newOrder->old_order_id                  = new \MongoDB\BSON\ObjectID($order->_id);
+
+                        if(!empty($order)) {
+                            $newOrder->old_order_id              = new \MongoDB\BSON\ObjectID($order->_id);
+                        }
+                        else {
+                            $newOrder->old_order_comment         = 'Old booking from old website';
+                        }
+
                         $newOrder->order_payment_method          = 1; // 1 => Fully paid using money balance, 2 => Partially paid using money balance, 3 => Paid using payment gateway
                         $newOrder->order_delete                  = 0;
                         $newOrder->save();
@@ -375,7 +379,7 @@ class PaymentController extends Controller
                             $newBooking->comments                = session()->get('commentsRequest');
                             $newBooking->prepayment_amount       = $total_prepayment_amount;
                             $newBooking->total_prepayment_amount = $total_prepayment_amount;
-                            $newBooking->moneybalance_used       = $newBooking->prepayment_amount;
+                            $newBooking->moneybalance_used       = $total_prepayment_amount;
                             $newBooking->bookingdate             = date('Y-m-d H:i:s');
                             $newBooking->status                  = '1';
                             $newBooking->payment_status          = '1';
