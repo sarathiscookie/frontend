@@ -354,7 +354,7 @@ class PaymentController extends Controller
                             $newOrder->old_order_id              = new \MongoDB\BSON\ObjectID($order->_id);
                         }
                         else {
-                            $newOrder->old_order_comment         = 'Old booking from old website';
+                            $newOrder->old_order_comment         = 'Created for old booking';
                         }
 
                         $newOrder->order_payment_method          = 1; // 1 => Fully paid using money balance, 2 => Partially paid using money balance, 3 => Paid using payment gateway
@@ -433,7 +433,14 @@ class PaymentController extends Controller
                                 $newOrder->order_total_amount            = $total;
                                 $newOrder->order_money_balance_used      = round($user->money_balance, 2);
                                 $newOrder->order_money_balance_used_date = date('Y-m-d H:i:s');
-                                $newOrder->old_order_id                  = new \MongoDB\BSON\ObjectID($order->_id);
+
+                                if(!empty($order)) {
+                                    $newOrder->old_order_id              = new \MongoDB\BSON\ObjectID($order->_id);
+                                }
+                                else {
+                                    $newOrder->old_order_comment         = 'Created for old booking';
+                                }
+
                                 $newOrder->order_delete                  = 0;
                                 $newOrder->save();
                                 /* Storing new order details end */
@@ -455,7 +462,7 @@ class PaymentController extends Controller
                                     $newBooking->comments                = session()->get('commentsRequest');
                                     $newBooking->prepayment_amount       = $total_prepayment_amount;
                                     $newBooking->total_prepayment_amount = $total_prepayment_amount;
-                                    $newBooking->moneybalance_used       = $user->money_balance;
+                                    $newBooking->moneybalance_used       = round($user->money_balance, 2);
                                     $newBooking->bookingdate             = date('Y-m-d H:i:s');
                                     $newBooking->status                  = '10'; // 10=> Temporary (This status is using in edit booking section)
                                     $newBooking->reservation_cancel      = $cabin->reservation_cancel;
@@ -469,7 +476,6 @@ class PaymentController extends Controller
                                     /* Create new booking end */
 
                                     /* Storing new userid, old userid and updating invoice auto number tree in user collection */
-                                    $user->userId_old_booking   = $user->userid;
                                     $user->userid               = $paymentGateway["userid"];
                                     $user->invoice_autonum_tree = $autoNumberTree;
                                     $user->save();
@@ -479,6 +485,7 @@ class PaymentController extends Controller
                                     $orderNumber->save();
 
                                     $request->session()->flash('editBooking', $editBooking);
+                                    $request->session()->flash('newBooking', $newBooking->_id);
                                     $request->session()->flash('txid', $paymentGateway["txid"]);
                                     $request->session()->flash('userid', $paymentGateway["userid"]);
                                     $request->session()->flash('bookingSuccessStatus', __('payment.bookingSuccessStatus'));
@@ -504,7 +511,14 @@ class PaymentController extends Controller
                                 $newOrder->order_total_amount            = $total;
                                 $newOrder->order_money_balance_used      = round($user->money_balance, 2);
                                 $newOrder->order_money_balance_used_date = date('Y-m-d H:i:s');
-                                $newOrder->old_order_id                  = new \MongoDB\BSON\ObjectID($order->_id);
+
+                                if(!empty($order)) {
+                                    $newOrder->old_order_id              = new \MongoDB\BSON\ObjectID($order->_id);
+                                }
+                                else {
+                                    $newOrder->old_order_comment         = 'Created for old booking';
+                                }
+
                                 $newOrder->order_delete                  = 0;
 
                                 /* If guest paid using payByBill we need to store bank details. Condition begin */
@@ -540,7 +554,7 @@ class PaymentController extends Controller
                                     $newBooking->comments                = session()->get('commentsRequest');
                                     $newBooking->prepayment_amount       = $total_prepayment_amount;
                                     $newBooking->total_prepayment_amount = $total_prepayment_amount;
-                                    $newBooking->moneybalance_used       = $user->money_balance;
+                                    $newBooking->moneybalance_used       = round($user->money_balance, 2);
                                     $newBooking->bookingdate             = date('Y-m-d H:i:s');
                                     $newBooking->status                  = '10'; // 10=> Temporary (This status is using in edit booking section)
                                     $newBooking->reservation_cancel      = $cabin->reservation_cancel;
@@ -554,7 +568,6 @@ class PaymentController extends Controller
                                     /* Create new booking end */
 
                                     /* Storing new userid, old userid and updating invoice auto number tree in user collection */
-                                    $user->userId_old_booking   = $user->userid;
                                     $user->userid               = $paymentGateway["userid"];
                                     $user->invoice_autonum_tree = $autoNumberTree;
                                     $user->save();
@@ -567,6 +580,7 @@ class PaymentController extends Controller
                                     if($request->payment === 'payByBill') {
                                         if($payByBillPossible === 'yes') {
                                             $request->session()->flash('editBooking', $editBooking);
+                                            $request->session()->flash('newBooking', $newBooking->_id);
                                             $request->session()->flash('txid', $paymentGateway["txid"]);
                                             $request->session()->flash('userid', $paymentGateway["userid"]);
                                             $request->session()->flash('payByBillPossible', $payByBillPossible);
@@ -583,6 +597,7 @@ class PaymentController extends Controller
                                     $request->session()->flash('txid', $paymentGateway["txid"]);
                                     $request->session()->flash('userid', $paymentGateway["userid"]);
                                     $request->session()->flash('editBooking', $editBooking);
+                                    $request->session()->flash('newBooking', $newBooking->_id);
 
                                     return redirect()->route('payment.success')->with('bookingSuccessStatus', __('payment.bookingSuccessStatus'));
                                 }
@@ -625,7 +640,14 @@ class PaymentController extends Controller
                             $newOrder->order_payment_method          = 3; // 1 => fully paid using money balance, 2 => Partially paid using money balance, 3 => Paid using payment gateway
                             $newOrder->order_amount                  = $total_prepayment_amount;
                             $newOrder->order_total_amount            = $total;
-                            $newOrder->old_order_id                  = new \MongoDB\BSON\ObjectID($order->_id);
+
+                            if(!empty($order)) {
+                                $newOrder->old_order_id              = new \MongoDB\BSON\ObjectID($order->_id);
+                            }
+                            else {
+                                $newOrder->old_order_comment         = 'Created for old booking';
+                            }
+
                             $newOrder->order_delete                  = 0;
                             $newOrder->save();
                             /* Storing new order details end */
@@ -661,7 +683,6 @@ class PaymentController extends Controller
                                 /* Create new booking end */
 
                                 /* Storing new userid, old userid and updating invoice auto number tree in user collection */
-                                $user->userId_old_booking   = $user->userid;
                                 $user->userid               = $paymentGateway["userid"];
                                 $user->invoice_autonum_tree = $autoNumberTree;
                                 $user->save();
@@ -671,6 +692,7 @@ class PaymentController extends Controller
                                 $orderNumber->save();
 
                                 $request->session()->flash('editBooking', $editBooking);
+                                $request->session()->flash('newBooking', $newBooking->_id);
                                 $request->session()->flash('txid', $paymentGateway["txid"]);
                                 $request->session()->flash('userid', $paymentGateway["userid"]);
                                 $request->session()->flash('bookingSuccessStatus', __('payment.bookingSuccessStatus'));
@@ -694,7 +716,14 @@ class PaymentController extends Controller
                             $newOrder->order_payment_method          = 3; // 1 => fully paid using money balance, 2 => Partially paid using money balance, 3 => Paid using payment gateway
                             $newOrder->order_amount                  = $total_prepayment_amount;
                             $newOrder->order_total_amount            = $total;
-                            $newOrder->old_order_id                  = new \MongoDB\BSON\ObjectID($order->_id);
+
+                            if(!empty($order)) {
+                                $newOrder->old_order_id              = new \MongoDB\BSON\ObjectID($order->_id);
+                            }
+                            else {
+                                $newOrder->old_order_comment         = 'Created for old booking';
+                            }
+
                             $newOrder->order_delete                  = 0;
 
                             /* If guest paid using payByBill we need to store bank details. Condition begin */
@@ -744,7 +773,6 @@ class PaymentController extends Controller
                                 /* Create new booking end */
 
                                 /* Storing new userid, old userid and updating invoice auto number tree in user collection */
-                                $user->userId_old_booking   = $user->userid;
                                 $user->userid               = $paymentGateway["userid"];
                                 $user->invoice_autonum_tree = $autoNumberTree;
                                 $user->save();
@@ -757,6 +785,7 @@ class PaymentController extends Controller
                                 if($request->payment === 'payByBill') {
                                     if($payByBillPossible === 'yes') {
                                         $request->session()->flash('editBooking', $editBooking);
+                                        $request->session()->flash('newBooking', $newBooking->_id);
                                         $request->session()->flash('txid', $paymentGateway["txid"]);
                                         $request->session()->flash('userid', $paymentGateway["userid"]);
                                         $request->session()->flash('payByBillPossible', $payByBillPossible);
@@ -773,6 +802,7 @@ class PaymentController extends Controller
                                 $request->session()->flash('txid', $paymentGateway["txid"]);
                                 $request->session()->flash('userid', $paymentGateway["userid"]);
                                 $request->session()->flash('editBooking', $editBooking);
+                                $request->session()->flash('newBooking', $newBooking->_id);
 
                                 return redirect()->route('payment.success')->with('bookingSuccessStatus', __('payment.bookingSuccessStatus'));
                             }
@@ -870,7 +900,7 @@ class PaymentController extends Controller
                             $cartUpdate->order_id          = new \MongoDB\BSON\ObjectID($order->_id);
                             $cartUpdate->status            = '1';
                             $cartUpdate->payment_status    = '1';
-                            $cartUpdate->moneybalance_used = $cartUpdate->prepayment_amount;
+                            $cartUpdate->moneybalance_used = round($cartUpdate->prepayment_amount, 2);
                             $cartUpdate->save();
                         }
 
@@ -1522,40 +1552,102 @@ class PaymentController extends Controller
     {
         if(session()->has('bookingSuccessStatus')) {
             if(session()->has('txid') && session()->has('userid')) {
-                /*if(session()->has('editBooking')) {
-                    dd(session()->get('editBooking'));
-                }*/
-                $carts              = Booking::select('_id', 'status', 'payment_status')
-                    ->where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
-                    ->where('status', "8")
-                    ->where('is_delete', 0)
-                    ->where('txid', session()->get('txid'))
-                    ->where('userid', session()->get('userid'))
-                    ->get();
 
-                if(!empty($carts)) {
-                    foreach ($carts as $cart) {
-                        $cartUpdate                 = Booking::find($cart->_id);
-                        $cartUpdate->status         = '1';
-                        $cartUpdate->payment_status = '1';
-                        $cartUpdate->save();
-                    }
+                if(session()->has('editBooking') && session()->has('bookingIdRequest') && session()->get('editBooking') === 'updateBooking') {
 
-                    $order          = Order::where('userid', session()->get('userid'))
-                        ->where('txid', session()->get('txid'))
-                        ->where('auth_user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
-                        ->first();
+                    $bookingOld = Booking::where('status', '1')
+                        ->where('payment_status', '1')
+                        ->where('is_delete', 0)
+                        ->where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
+                        ->find(session()->get('bookingIdRequest'));
 
-                    if(!empty($order) && $order->order_payment_method === 2) { // 1 => fully paid using money balance, 2 => Partially paid using money balance, 3 => Paid using payment gateway
-                        $user = Userlist::where('is_delete', 0)->where('usrActive', '1')->find(Auth::user()->_id);
-                        $user->money_balance = 0.00;
-                        $user->save();
+                    if(!empty($bookingOld)) {
+                        /* Update status of old booking */
+                        $bookingOld->booking_update = date('Y-m-d H:i:s');
+                        $bookingOld->status         = "9"; //9 => Old (Booking Updated)
+                        $bookingOld->is_delete      = 1;
+                        $bookingOld->save();
+
+                        /* Update status of old orders */
+                        $order  = Order::where('auth_user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
+                            ->find($bookingOld->order_id);
+
+                        if(!empty($order)) {
+                            $order->order_update_date  = date('Y-m-d H:i:s');
+                            $order->order_delete       = 0;
+                            $order->save();
+                        }
+
+                        /* Update new booking status and payment status */
+                        $newBooking = Booking::where('status', '10')
+                            ->where('userid', session()->get('userid'))
+                            ->where('txid', session()->get('txid'))
+                            ->find(session()->get('newBooking'));
+
+                        $newBooking->status         = '1';
+                        $newBooking->payment_status = '1';
+                        $newBooking->save();
+
+                        /* Update money balance */
+                        $newOrder = Order::where('userid', session()->get('userid'))
+                            ->where('txid', session()->get('txid'))
+                            ->where('auth_user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
+                            ->first();
+
+                        if(!empty($newOrder) && $newOrder->order_payment_method === 2) { // 1 => fully paid using money balance, 2 => Partially paid using money balance, 3 => Paid using payment gateway
+                            $user = Userlist::where('is_delete', 0)->where('usrActive', '1')->find(Auth::user()->_id);
+                            $user->money_balance = 0.00;
+                            $user->save();
+                        }
                     }
                 }
                 else {
-                    abort(404);
+                    $carts              = Booking::select('_id', 'status', 'payment_status')
+                        ->where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
+                        ->where('status', "8")
+                        ->where('is_delete', 0)
+                        ->where('txid', session()->get('txid'))
+                        ->where('userid', session()->get('userid'))
+                        ->get();
+
+                    if(!empty($carts)) {
+                        foreach ($carts as $cart) {
+                            $cartUpdate                 = Booking::find($cart->_id);
+                            $cartUpdate->status         = '1';
+                            $cartUpdate->payment_status = '1';
+                            $cartUpdate->save();
+                        }
+
+                        $order          = Order::where('userid', session()->get('userid'))
+                            ->where('txid', session()->get('txid'))
+                            ->where('auth_user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
+                            ->first();
+
+                        if(!empty($order) && $order->order_payment_method === 2) { // 1 => fully paid using money balance, 2 => Partially paid using money balance, 3 => Paid using payment gateway
+                            $user = Userlist::where('is_delete', 0)->where('usrActive', '1')->find(Auth::user()->_id);
+                            $user->money_balance = 0.00;
+                            $user->save();
+                        }
+                    }
+                    else {
+                        abort(404);
+                    }
                 }
+
             }
+
+            /* Forgot sessions */
+            session()->forget('bookingIdRequest');
+            session()->forget('dateFromRequest');
+            session()->forget('dateToRequest');
+            session()->forget('bedRequest');
+            session()->forget('dormRequest');
+            session()->forget('sleepRequest');
+            session()->forget('halfBoardRequest');
+            session()->forget('commentsRequest');
+            session()->forget('sleepingPlaceRequest');
+            session()->forget('prepaymentAmountRequest');
+
             return view('paymentSuccess');
         }
         else {
@@ -1572,35 +1664,87 @@ class PaymentController extends Controller
     {
         if(session()->has('bookingSuccessStatusPrepayment') && session()->has('order')) {
             if(session()->has('txid') && session()->has('userid') && session()->has('payByBillPossible')) {
-                $carts              = Booking::select('_id', 'status', 'payment_status')
-                    ->where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
-                    ->where('status', "8")
-                    ->where('is_delete', 0)
-                    ->where('txid', session()->get('txid'))
-                    ->where('userid', session()->get('userid'))
-                    ->get();
 
-                if(!empty($carts) && session()->get('payByBillPossible') === 'yes') {
-                    foreach ($carts as $cart) {
-                        $cartUpdate                 = Booking::find($cart->_id);
-                        $cartUpdate->status         = '5';
-                        $cartUpdate->payment_status = '3';
-                        $cartUpdate->save();
-                    }
+                if(session()->has('editBooking') && session()->has('bookingIdRequest') && session()->get('editBooking') === 'updateBooking') {
 
-                    $order          = Order::where('userid', session()->get('userid'))
-                        ->where('txid', session()->get('txid'))
-                        ->where('auth_user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
-                        ->first();
+                    $bookingOld = Booking::where('status', '1')
+                        ->where('payment_status', '1')
+                        ->where('is_delete', 0)
+                        ->where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
+                        ->find(session()->get('bookingIdRequest'));
 
-                    if(!empty($order) && $order->order_payment_method === 2) { // 1 => fully paid using money balance, 2 => Partially paid using money balance, 3 => Paid using payment gateway
-                        $user = Userlist::where('is_delete', 0)->where('usrActive', '1')->find(Auth::user()->_id);
-                        $user->money_balance = 0.00;
-                        $user->save();
+                    if(!empty($bookingOld)) {
+
+                        /* Update status of old booking */
+                        $bookingOld->booking_update = date('Y-m-d H:i:s');
+                        $bookingOld->status         = "9"; //9 => Old (Booking Updated)
+                        $bookingOld->is_delete      = 1;
+                        $bookingOld->save();
+
+                        /* Update status of old orders */
+                        $order  = Order::where('auth_user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
+                            ->find($bookingOld->order_id);
+
+                        if(!empty($order)) {
+                            $order->order_update_date  = date('Y-m-d H:i:s');
+                            $order->order_delete       = 0;
+                            $order->save();
+                        }
+
+                        /* Update new booking status and payment status */
+                        $newBooking = Booking::where('status', '10')
+                            ->where('userid', session()->get('userid'))
+                            ->where('txid', session()->get('txid'))
+                            ->find(session()->get('newBooking'));
+
+                        $newBooking->status         = '1';
+                        $newBooking->payment_status = '1';
+                        $newBooking->save();
+
+                        /* Update money balance */
+                        $newOrder = Order::where('userid', session()->get('userid'))
+                            ->where('txid', session()->get('txid'))
+                            ->where('auth_user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
+                            ->first();
+
+                        if(!empty($newOrder) && $newOrder->order_payment_method === 2) { // 1 => fully paid using money balance, 2 => Partially paid using money balance, 3 => Paid using payment gateway
+                            $user = Userlist::where('is_delete', 0)->where('usrActive', '1')->find(Auth::user()->_id);
+                            $user->money_balance = 0.00;
+                            $user->save();
+                        }
                     }
                 }
                 else {
-                    abort(404);
+                    $carts              = Booking::select('_id', 'status', 'payment_status')
+                        ->where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
+                        ->where('status', "8")
+                        ->where('is_delete', 0)
+                        ->where('txid', session()->get('txid'))
+                        ->where('userid', session()->get('userid'))
+                        ->get();
+
+                    if(!empty($carts) && session()->get('payByBillPossible') === 'yes') {
+                        foreach ($carts as $cart) {
+                            $cartUpdate                 = Booking::find($cart->_id);
+                            $cartUpdate->status         = '5';
+                            $cartUpdate->payment_status = '3';
+                            $cartUpdate->save();
+                        }
+
+                        $order          = Order::where('userid', session()->get('userid'))
+                            ->where('txid', session()->get('txid'))
+                            ->where('auth_user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
+                            ->first();
+
+                        if(!empty($order) && $order->order_payment_method === 2) { // 1 => fully paid using money balance, 2 => Partially paid using money balance, 3 => Paid using payment gateway
+                            $user = Userlist::where('is_delete', 0)->where('usrActive', '1')->find(Auth::user()->_id);
+                            $user->money_balance = 0.00;
+                            $user->save();
+                        }
+                    }
+                    else {
+                        abort(404);
+                    }
                 }
             }
             return view('paymentPrepayment');

@@ -1137,7 +1137,7 @@ class BookingHistoryController extends Controller
                                 /* Update status of old booking end */
 
                                 /* Update status of old orders begin */
-                                if($order) {
+                                if(!empty($order)) {
                                     $order->order_update_date  = date('Y-m-d H:i:s');
                                     $order->order_delete       = 0;
                                     $order->save();
@@ -1152,7 +1152,15 @@ class BookingHistoryController extends Controller
                                 $newOrder->order_payment_method = 4; //4 => Fully paid using previous voucher amount
                                 $newOrder->order_amount         = ($new_amount === 0) ? $old_amount : $new_amount;
                                 $newOrder->order_total_amount   = ($new_amount === 0) ? $old_amount : $new_amount;
-                                $newOrder->old_order_id         = new \MongoDB\BSON\ObjectID($order->_id);
+
+                                if(!empty($order)) {
+                                    $newOrder->old_order_id     = new \MongoDB\BSON\ObjectID($order->_id);
+                                }
+                                else {
+                                    $newOrder->old_order_comment= 'Created for old booking';
+                                }
+
+
                                 $newOrder->order_delete         = 0;
                                 $newOrder->save();
                                 /* Create new order end */
