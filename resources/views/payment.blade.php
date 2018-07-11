@@ -492,6 +492,7 @@
             narrative_text          : '<?php echo $narrative_text; ?>',
             document_date           : '<?php echo $document_date; ?>',
             booking_date            : '<?php echo $booking_date; ?>',
+            backurl                 : '<?php echo $backurl; ?>',
             due_time                : '<?php echo $due_time; ?>',
             invoiceid               : '<?php echo $invoiceid; ?>',
             invoice_deliverymode    : '<?php echo $invoice_deliverymode; ?>',
