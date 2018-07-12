@@ -90,8 +90,8 @@
                 </div>
             @endif
 
-            @if(isset($editBooking))
-                <form action="{{ route('payment.store', $editBooking) }}" method="post" name="paymentform">
+            @if(isset($editBooking, $availableStatus) && $editBooking === 'updateBooking' && $availableStatus === 'success')
+                <form action="{{ route('booking.history.payment.store') }}" method="post" name="paymentform">
             @else
                 <form action="{{ route('payment.store') }}" method="post" name="paymentform">
             @endif
@@ -268,8 +268,15 @@
 
                 <div>
                     <div id="btn-ground-2-booking2">
-                        <button type="submit" class="btn btn-default btn-default-booking2 btn-sm btn-details-booking2 nonCreditCardButton">{{ __('payment.bookCabin') }}</button>
-                        <input id="paymentsubmit" class="btn btn-default btn-default-booking2 btn-sm btn-details-booking2" type="button" value="{{ __('payment.bookCabin') }}" onclick="check();" style="display: none;">
+
+                        @if(isset($editBooking, $availableStatus) && $editBooking === 'updateBooking' && $availableStatus === 'success')
+                            <button type="submit" class="btn btn-default btn-default-booking2 btn-sm btn-details-booking2 nonCreditCardButton" name="updateBooking" value="{{$editBooking}}">{{ __('payment.bookCabin') }}</button>
+                            <button type="button" id="paymentsubmit" class="btn btn-default btn-default-booking2 btn-sm btn-details-booking2" name="updateBooking" value="{{$editBooking}}" onclick="check();" style="display: none;">{{ __('payment.bookCabin') }}</button>
+                        @else
+                            <button type="submit" class="btn btn-default btn-default-booking2 btn-sm btn-details-booking2 nonCreditCardButton">{{ __('payment.bookCabin') }}</button>
+                            <button type="button" id="paymentsubmit" class="btn btn-default btn-default-booking2 btn-sm btn-details-booking2" onclick="check();" style="display: none;">{{ __('payment.bookCabin') }}</button>
+                        @endif
+
                     </div>
                 </div>
             </form>

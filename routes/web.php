@@ -260,6 +260,15 @@ Route::group(['middleware' => ['auth']], function () {
     /* Cancel booking */
     Route::post('/booking/history/cancel', 'BookingHistoryController@cancelBooking')->name('booking.history.cancel');
 
+    /* Choose payment and store data */
+    Route::post('/booking/history/payment/store', 'BookingHistoryController@store')->name('booking.history.payment.store');
+
+    /* Payment success */
+    Route::get('/booking/history/payment/success', 'BookingHistoryController@success')->name('booking.history.payment.success');
+
+    /* Payment prepayment */
+    Route::get('/booking/history/payment/prepayment', 'BookingHistoryController@prepayment')->name('booking.history.payment.prepayment');
+
     /* Edit booking history */
     Route::get('/booking/history/edit/{id}', 'BookingHistoryController@edit')->name('edit.booking.history');
 
@@ -290,10 +299,10 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('/payment/prepayment/download', 'PaymentController@download')->name('payment.prepayment.download');
 
     /* Choose payment and store data */
-    Route::post('/payment/store/{editBooking?}', 'PaymentController@store')->name('payment.store');
+    Route::post('/payment/store', 'PaymentController@store')->name('payment.store');
 
     /* View payment page */
-    Route::get('/payment/{editBooking?}', 'PaymentController@index')->name('payment');
+    Route::get('/payment', 'PaymentController@index')->name('payment');
 });
 
 /*

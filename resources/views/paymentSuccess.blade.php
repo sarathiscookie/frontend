@@ -21,7 +21,12 @@
                             <div class="row row-booking3">
                                 <div class="col-sm-12 month-opening-booking3 col-sm-12-booking3">
                                     <h2>{{ __('payment.bookingSuccess') }}</h2>
-                                    <p id="info-text-booking3">@if (session()->has('bookingSuccessStatus')) {{ session()->get('bookingSuccessStatus') }} @endif</p>
+                                    <p id="info-text-booking3">
+                                        @if (session()->has('bookingSuccessStatus'))
+                                            {{ session()->get('bookingSuccessStatus') }}
+                                        @elseif (session()->has('editBookingSuccessStatus'))
+                                            {{ session()->get('editBookingSuccessStatus') }}
+                                        @endif</p>
                                     <p id="info-text-booking3">{{ __('payment.voucherMsg') }}</p>
                                 </div>
                             </div>

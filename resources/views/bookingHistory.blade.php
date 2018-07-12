@@ -20,6 +20,13 @@
                 </div>
             @endif
 
+            @if (session()->has('updateBookingFailedStatus'))
+                <div class="alert alert-warning alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <strong>{{ __('bookingHistory.errorOne') }}</strong> {{ session()->get('updateBookingFailedStatus') }}
+                </div>
+            @endif
+
             @if (session()->has('response') && session()->get('response') === 'success')
                 <div class="alert alert-success alert-dismissible" role="alert">
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>

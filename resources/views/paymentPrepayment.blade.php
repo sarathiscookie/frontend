@@ -16,9 +16,16 @@
         <div class="container-fluid text-center">
             <div class="row">
                 <div class="panel panel-primary text-left bill-container">
-                    @if (session()->has('bookingSuccessStatusPrepayment') && session()->has('order'))
+                    @if ( session()->has('bookingSuccessStatusPrepayment') || session()->has('editBookingSuccessStatusPrepayment') )
+
                         @php
-                            $order = session()->get('order')
+                            if( session()->has('order') ) {
+                              $order = session()->get('order');
+                            }
+
+                            if( session()->has('editBookOrder') ) {
+                              $order = session()->get('editBookOrder');
+                            }
                         @endphp
                         <div class="panel-heading panel-heading-bill">
                             <div class="row">
