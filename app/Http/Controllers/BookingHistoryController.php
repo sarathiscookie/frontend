@@ -151,10 +151,11 @@ class BookingHistoryController extends Controller
                 /* Generate order number end */
 
                 /* Creating new order: This is for old system. In old system we don't have orders table. */
-                $order                   = new Order;
-                $order->order_id         = $order_number;
-                $order->auth_user        = new \MongoDB\BSON\ObjectID(Auth::user()->_id);
-                $order->order_delete     = 0;
+                $order                    = new Order;
+                $order->order_id          = $order_number;
+                $order->auth_user         = new \MongoDB\BSON\ObjectID(Auth::user()->_id);
+                $order->old_order_comment = 'Booking from old website';
+                $order->order_delete      = 0;
                 $order->save();
 
                 if(!empty($order)) {
@@ -1152,15 +1153,7 @@ class BookingHistoryController extends Controller
                                 $newOrder->order_payment_method = 4; //4 => Fully paid using previous voucher amount
                                 $newOrder->order_amount         = ($new_amount === 0) ? $old_amount : $new_amount;
                                 $newOrder->order_total_amount   = ($new_amount === 0) ? $old_amount : $new_amount;
-
-                                if(!empty($order)) {
-                                    $newOrder->old_order_id     = new \MongoDB\BSON\ObjectID($order->_id);
-                                }
-                                else {
-                                    $newOrder->old_order_comment= 'Created for old booking';
-                                }
-
-
+                                $newOrder->old_order_id         = new \MongoDB\BSON\ObjectID($order->_id);
                                 $newOrder->order_delete         = 0;
                                 $newOrder->save();
                                 /* Create new order end */

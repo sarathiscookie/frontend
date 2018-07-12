@@ -349,14 +349,7 @@ class PaymentController extends Controller
                         $newOrder->order_total_amount            = $total_prepayment_amount;
                         $newOrder->order_money_balance_used      = $total_prepayment_amount;
                         $newOrder->order_money_balance_used_date = date('Y-m-d H:i:s');
-
-                        if(!empty($order)) {
-                            $newOrder->old_order_id              = new \MongoDB\BSON\ObjectID($order->_id);
-                        }
-                        else {
-                            $newOrder->old_order_comment         = 'Created for old booking';
-                        }
-
+                        $newOrder->old_order_id                  = new \MongoDB\BSON\ObjectID($order->_id);
                         $newOrder->order_payment_method          = 1; // 1 => Fully paid using money balance, 2 => Partially paid using money balance, 3 => Paid using payment gateway
                         $newOrder->order_delete                  = 0;
                         $newOrder->save();
@@ -433,14 +426,7 @@ class PaymentController extends Controller
                                 $newOrder->order_total_amount            = $total;
                                 $newOrder->order_money_balance_used      = round($user->money_balance, 2);
                                 $newOrder->order_money_balance_used_date = date('Y-m-d H:i:s');
-
-                                if(!empty($order)) {
-                                    $newOrder->old_order_id              = new \MongoDB\BSON\ObjectID($order->_id);
-                                }
-                                else {
-                                    $newOrder->old_order_comment         = 'Created for old booking';
-                                }
-
+                                $newOrder->old_order_id                  = new \MongoDB\BSON\ObjectID($order->_id);
                                 $newOrder->order_delete                  = 0;
                                 $newOrder->save();
                                 /* Storing new order details end */
@@ -511,14 +497,7 @@ class PaymentController extends Controller
                                 $newOrder->order_total_amount            = $total;
                                 $newOrder->order_money_balance_used      = round($user->money_balance, 2);
                                 $newOrder->order_money_balance_used_date = date('Y-m-d H:i:s');
-
-                                if(!empty($order)) {
-                                    $newOrder->old_order_id              = new \MongoDB\BSON\ObjectID($order->_id);
-                                }
-                                else {
-                                    $newOrder->old_order_comment         = 'Created for old booking';
-                                }
-
+                                $newOrder->old_order_id                  = new \MongoDB\BSON\ObjectID($order->_id);
                                 $newOrder->order_delete                  = 0;
 
                                 /* If guest paid using payByBill we need to store bank details. Condition begin */
@@ -640,14 +619,7 @@ class PaymentController extends Controller
                             $newOrder->order_payment_method          = 3; // 1 => fully paid using money balance, 2 => Partially paid using money balance, 3 => Paid using payment gateway
                             $newOrder->order_amount                  = $total_prepayment_amount;
                             $newOrder->order_total_amount            = $total;
-
-                            if(!empty($order)) {
-                                $newOrder->old_order_id              = new \MongoDB\BSON\ObjectID($order->_id);
-                            }
-                            else {
-                                $newOrder->old_order_comment         = 'Created for old booking';
-                            }
-
+                            $newOrder->old_order_id                  = new \MongoDB\BSON\ObjectID($order->_id);
                             $newOrder->order_delete                  = 0;
                             $newOrder->save();
                             /* Storing new order details end */
@@ -716,14 +688,7 @@ class PaymentController extends Controller
                             $newOrder->order_payment_method          = 3; // 1 => fully paid using money balance, 2 => Partially paid using money balance, 3 => Paid using payment gateway
                             $newOrder->order_amount                  = $total_prepayment_amount;
                             $newOrder->order_total_amount            = $total;
-
-                            if(!empty($order)) {
-                                $newOrder->old_order_id              = new \MongoDB\BSON\ObjectID($order->_id);
-                            }
-                            else {
-                                $newOrder->old_order_comment         = 'Created for old booking';
-                            }
-
+                            $newOrder->old_order_id                  = new \MongoDB\BSON\ObjectID($order->_id);
                             $newOrder->order_delete                  = 0;
 
                             /* If guest paid using payByBill we need to store bank details. Condition begin */
