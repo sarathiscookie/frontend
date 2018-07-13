@@ -947,7 +947,7 @@ class PaymentController extends Controller
      */
     public function success()
     {
-        if(session()->has('bookingSuccessStatus')) {
+        if(session()->has('bookingSuccessStatus')) {  // Success condition for cart payment
 
             if(session()->has('txid') && session()->has('userid')) {
                 $carts              = Booking::select('_id', 'status', 'payment_status')
@@ -989,6 +989,77 @@ class PaymentController extends Controller
 
             return view('paymentSuccess');
         }
+        else if(session()->has('editBookingSuccessStatus')) { // Success condition for edit payment
+            if(session()->has('editTxId') && session()->has('editUserId')) {
+
+                if( session()->has('updateBookingPayment') && session()->get('updateBookingPayment') === 'updateBookingPayment' && session()->has('availableStatus') && session()->get('availableStatus') === 'success' ) {
+
+                    $bookingOld = Booking::where('status', '1')
+                        ->where('payment_status', '1')
+                        ->where('is_delete', 0)
+                        ->where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
+                        ->find(session()->get('bookingIdRequest'));
+
+                    if(!empty($bookingOld)) {
+                        /* Update status of old booking */
+                        $bookingOld->booking_update = date('Y-m-d H:i:s');
+                        $bookingOld->status         = "9"; //9 => Old (Booking Updated)
+                        $bookingOld->is_delete      = 1;
+                        $bookingOld->save();
+
+                        /* Update status of old orders */
+                        $order  = Order::where('auth_user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
+                            ->find($bookingOld->order_id);
+
+                        if(!empty($order)) {
+                            $order->order_update_date  = date('Y-m-d H:i:s');
+                            $order->save();
+                        }
+
+                        /* Update new booking status and payment status */
+                        $newBooking = Booking::where('status', '10')
+                            ->where('userid', session()->get('editUserId'))
+                            ->where('txid', session()->get('editTxId'))
+                            ->where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
+                            ->find(session()->get('newBooking'));
+
+                        $newBooking->status         = '1';
+                        $newBooking->payment_status = '1';
+                        $newBooking->save();
+
+                        /* Update money balance */
+                        $newOrder = Order::where('userid', session()->get('editUserId'))
+                            ->where('txid', session()->get('editTxId'))
+                            ->where('auth_user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
+                            ->first();
+
+                        if(!empty($newOrder) && $newOrder->order_payment_method === 2) { // 1 => fully paid using money balance, 2 => Partially paid using money balance, 3 => Paid using payment gateway
+                            $user = Userlist::where('is_delete', 0)->where('usrActive', '1')->find(Auth::user()->_id);
+                            $user->money_balance = 0.00;
+                            $user->save();
+                        }
+                    }
+                }
+                else {
+                    abort(404);
+                }
+            }
+
+            /* Delete sessions */
+            session()->forget('bookingIdRequest');
+            session()->forget('dateFromRequest');
+            session()->forget('dateToRequest');
+            session()->forget('bedRequest');
+            session()->forget('dormRequest');
+            session()->forget('sleepRequest');
+            session()->forget('halfBoardRequest');
+            session()->forget('commentsRequest');
+            session()->forget('sleepingPlaceRequest');
+            session()->forget('prepaymentAmountRequest');
+            session()->forget('availableStatus');
+
+            return view('paymentSuccess');
+        }
         else {
             abort(404);
         }
@@ -1001,7 +1072,7 @@ class PaymentController extends Controller
      */
     public function prepayment()
     {
-        if(session()->has('bookingSuccessStatusPrepayment') && session()->has('order')) {
+        if(session()->has('bookingSuccessStatusPrepayment') && session()->has('order')) { // Success condition for cart prepayment
 
             if(session()->has('txid') && session()->has('userid') && session()->has('payByBillPossible')) {
                 $carts              = Booking::select('_id', 'status', 'payment_status')
@@ -1041,6 +1112,79 @@ class PaymentController extends Controller
                     abort(404);
                 }
             }
+
+            return view('paymentPrepayment');
+        }
+        else if(session()->has('editBookingSuccessStatusPrepayment') && session()->has('editBookOrder')) { // Success condition for edit prepayment
+
+            if(session()->has('editTxId') && session()->has('editUserId') && session()->has('editPayByBillPossible') && session()->get('editPayByBillPossible') === 'yes') {
+
+                if( session()->has('updateBookingPayment') && session()->get('updateBookingPayment') === 'updateBookingPayment' && session()->has('availableStatus') && session()->get('availableStatus') === 'success' ) {
+
+                    $bookingOld = Booking::where('status', '1')
+                        ->where('payment_status', '1')
+                        ->where('is_delete', 0)
+                        ->where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
+                        ->find(session()->get('bookingIdRequest'));
+
+                    if(!empty($bookingOld)) {
+
+                        /* Update status of old booking */
+                        $bookingOld->booking_update = date('Y-m-d H:i:s');
+                        $bookingOld->status         = "9"; //9 => Old (Booking Updated)
+                        $bookingOld->is_delete      = 1;
+                        $bookingOld->save();
+
+                        /* Update status of old orders */
+                        $order  = Order::where('auth_user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
+                            ->find($bookingOld->order_id);
+
+                        if(!empty($order)) {
+                            $order->order_update_date  = date('Y-m-d H:i:s');
+                            $order->save();
+                        }
+
+                        /* Update new booking status and payment status */
+                        $newBooking = Booking::where('status', '10')
+                            ->where('userid', session()->get('editUserId'))
+                            ->where('txid', session()->get('editTxId'))
+                            ->where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
+                            ->find(session()->get('newBooking'));
+
+                        $newBooking->status         = '5';
+                        $newBooking->payment_status = '3';
+                        $newBooking->save();
+
+                        /* Update money balance */
+                        $newOrder = Order::where('userid', session()->get('editUserId'))
+                            ->where('txid', session()->get('editTxId'))
+                            ->where('auth_user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
+                            ->first();
+
+                        if(!empty($newOrder) && $newOrder->order_payment_method === 2) { // 1 => fully paid using money balance, 2 => Partially paid using money balance, 3 => Paid using payment gateway
+                            $user = Userlist::where('is_delete', 0)->where('usrActive', '1')->find(Auth::user()->_id);
+                            $user->money_balance = 0.00;
+                            $user->save();
+                        }
+                    }
+                }
+                else {
+                    abort(404);
+                }
+            }
+
+            /* Delete sessions */
+            session()->forget('bookingIdRequest');
+            session()->forget('dateFromRequest');
+            session()->forget('dateToRequest');
+            session()->forget('bedRequest');
+            session()->forget('dormRequest');
+            session()->forget('sleepRequest');
+            session()->forget('halfBoardRequest');
+            session()->forget('commentsRequest');
+            session()->forget('sleepingPlaceRequest');
+            session()->forget('prepaymentAmountRequest');
+            session()->forget('availableStatus');
 
             return view('paymentPrepayment');
         }

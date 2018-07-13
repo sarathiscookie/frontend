@@ -263,12 +263,6 @@ Route::group(['middleware' => ['auth']], function () {
     /* Choose payment and store data */
     Route::post('/booking/history/payment/store', 'BookingHistoryController@store')->name('booking.history.payment.store');
 
-    /* Edit booking payment success */
-    Route::get('/booking/history/payment/success', 'BookingHistoryController@success')->name('booking.history.payment.success');
-
-    /* Edit booking payment prepayment */
-    Route::get('/booking/history/payment/prepayment', 'BookingHistoryController@prepayment')->name('booking.history.payment.prepayment');
-
     /* Edit booking history */
     Route::get('/booking/history/edit/{id}', 'BookingHistoryController@edit')->name('edit.booking.history');
 

@@ -270,8 +270,9 @@
                     <div id="btn-ground-2-booking2">
 
                         @if(isset($editBooking, $availableStatus) && $editBooking === 'updateBooking' && $availableStatus === 'success')
-                            <button type="submit" class="btn btn-default btn-default-booking2 btn-sm btn-details-booking2 nonCreditCardButton" name="updateBookingPayment" value="updateBookingPayment">{{ __('payment.bookCabin') }}</button>
-                            <button type="button" id="paymentsubmit" class="btn btn-default btn-default-booking2 btn-sm btn-details-booking2" name="updateBookingPayment" value="updateBookingPayment" onclick="check();" style="display: none;">{{ __('payment.bookCabin') }}</button>
+                            <input type="hidden" name="updateBookingPayment" value="updateBookingPayment">
+                            <button type="submit" class="btn btn-default btn-default-booking2 btn-sm btn-details-booking2 nonCreditCardButton" {{--name="updateBookingPayment" value="updateBookingPayment"--}}>{{ __('payment.bookCabin') }}</button>
+                            <button type="button" id="paymentsubmit" class="btn btn-default btn-default-booking2 btn-sm btn-details-booking2" onclick="check();" style="display: none;">{{ __('payment.bookCabin') }}</button>
                         @else
                             <button type="submit" class="btn btn-default btn-default-booking2 btn-sm btn-details-booking2 nonCreditCardButton">{{ __('payment.bookCabin') }}</button>
                             <button type="button" id="paymentsubmit" class="btn btn-default btn-default-booking2 btn-sm btn-details-booking2" onclick="check();" style="display: none;">{{ __('payment.bookCabin') }}</button>
