@@ -336,7 +336,7 @@ class PaymentController extends Controller
                             $order->order_total_amount            = $total;
                             $order->order_money_balance_used      = round($user->money_balance, 2);
                             $order->order_money_balance_used_date = date('Y-m-d H:i:s');
-                            $order->order_delete                  = 0;
+                            $order->order_delete                  = 1;
                             $order->save();
                             /* Storing order details end */
 
@@ -386,7 +386,7 @@ class PaymentController extends Controller
                             $order->order_total_amount            = $total;
                             $order->order_money_balance_used      = round($user->money_balance, 2);
                             $order->order_money_balance_used_date = date('Y-m-d H:i:s');
-                            $order->order_delete                  = 0;
+                            $order->order_delete                  = 1;
 
                             /* If guest paid using payByBill we need to store bank details. Condition begin */
                             if($request->payment === 'payByBill' && $payByBillPossible === 'yes') {
@@ -484,7 +484,7 @@ class PaymentController extends Controller
                         $order->order_payment_method = 3; // 1 => fully paid using money balance, 2 => Partially paid using money balance, 3 => Paid using payment gateway
                         $order->order_amount         = $total_prepayment_amount;
                         $order->order_total_amount   = $total;
-                        $order->order_delete         = 0;
+                        $order->order_delete         = 1;
                         $order->save();
                         /* Storing order details end */
 
@@ -532,7 +532,7 @@ class PaymentController extends Controller
                         $order->order_payment_method  = 3; // 1 => fully paid using money balance, 2 => Partially paid using money balance, 3 => Paid using payment gateway
                         $order->order_amount          = $total_prepayment_amount;
                         $order->order_total_amount    = $total;
-                        $order->order_delete          = 0;
+                        $order->order_delete          = 1;
 
                         /* If guest paid using payByBill we need to store bank details. Condition begin */
                         if($request->payment === 'payByBill' && $payByBillPossible === 'yes') {
@@ -971,10 +971,15 @@ class PaymentController extends Controller
                         ->where('auth_user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
                         ->first();
 
-                    if(!empty($order) && $order->order_payment_method === 2) { // 1 => fully paid using money balance, 2 => Partially paid using money balance, 3 => Paid using payment gateway
-                        $user = Userlist::where('is_delete', 0)->where('usrActive', '1')->find(Auth::user()->_id);
-                        $user->money_balance = 0.00;
-                        $user->save();
+                    if(!empty($order)) {
+                        $order->order_delete = 0;
+                        $order->save();
+
+                        if($order->order_payment_method === 2) { // 1 => Fully paid using money balance, 2 => Partially paid using money balance, 3 => Paid using payment gateway
+                            $user                = Userlist::where('is_delete', 0)->where('usrActive', '1')->find(Auth::user()->_id);
+                            $user->money_balance = 0.00;
+                            $user->save();
+                        }
                     }
                 }
                 else {
@@ -1020,11 +1025,17 @@ class PaymentController extends Controller
                         ->where('auth_user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
                         ->first();
 
-                    if(!empty($order) && $order->order_payment_method === 2) { // 1 => fully paid using money balance, 2 => Partially paid using money balance, 3 => Paid using payment gateway
-                        $user = Userlist::where('is_delete', 0)->where('usrActive', '1')->find(Auth::user()->_id);
-                        $user->money_balance = 0.00;
-                        $user->save();
+                    if(!empty($order)) {
+                        $order->order_delete = 0;
+                        $order->save();
+
+                        if($order->order_payment_method === 2) { // 1 => Fully paid using money balance, 2 => Partially paid using money balance, 3 => Paid using payment gateway
+                            $user = Userlist::where('is_delete', 0)->where('usrActive', '1')->find(Auth::user()->_id);
+                            $user->money_balance = 0.00;
+                            $user->save();
+                        }
                     }
+
                 }
                 else {
                     abort(404);

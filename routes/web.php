@@ -263,10 +263,10 @@ Route::group(['middleware' => ['auth']], function () {
     /* Choose payment and store data */
     Route::post('/booking/history/payment/store', 'BookingHistoryController@store')->name('booking.history.payment.store');
 
-    /* Payment success */
+    /* Edit booking payment success */
     Route::get('/booking/history/payment/success', 'BookingHistoryController@success')->name('booking.history.payment.success');
 
-    /* Payment prepayment */
+    /* Edit booking payment prepayment */
     Route::get('/booking/history/payment/prepayment', 'BookingHistoryController@prepayment')->name('booking.history.payment.prepayment');
 
     /* Edit booking history */
@@ -275,7 +275,8 @@ Route::group(['middleware' => ['auth']], function () {
     /* Update booking history */
     Route::post('/booking/history/edit/{id}', 'BookingHistoryController@update')->name('update.booking.history');
 
-
+    /* Edit booking payment */
+    Route::get('/booking/history/payment/{editBooking}', 'BookingHistoryController@show')->name('booking.history.payment');
 
     /*
     |--------------------------------------------------------------------------
@@ -285,6 +286,8 @@ Route::group(['middleware' => ['auth']], function () {
     | Route for view payment type, redeem amount, payment gateway functionality
     |
     */
+    /* View payment page */
+    Route::get('/payment', 'PaymentController@index')->name('payment');
 
     /* Payment success */
     Route::get('/payment/success', 'PaymentController@success')->name('payment.success');
@@ -300,9 +303,6 @@ Route::group(['middleware' => ['auth']], function () {
 
     /* Choose payment and store data */
     Route::post('/payment/store', 'PaymentController@store')->name('payment.store');
-
-    /* View payment page */
-    Route::get('/payment', 'PaymentController@index')->name('payment');
 });
 
 /*

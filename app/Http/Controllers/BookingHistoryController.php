@@ -21,6 +21,7 @@ use DatePeriod;
 use DateInterval;
 use Mail;
 use App\Mail\SendVoucher;
+use Validator;
 use App\Http\Controllers\PaymentController;
 
 class BookingHistoryController extends Controller
@@ -1110,7 +1111,6 @@ class BookingHistoryController extends Controller
                                 /* Update status of old orders begin */
                                 if(!empty($order)) {
                                     $order->order_update_date  = date('Y-m-d H:i:s');
-                                    $order->order_delete       = 0;
                                     $order->save();
                                 }
                                 /* Update status of old orders end */
@@ -1195,37 +1195,9 @@ class BookingHistoryController extends Controller
                                 $request->session()->put('updateBooking', $request->updateBooking);
                                 $request->session()->put('availableStatus', $available);
                                 //dd('----Redirect to payment gateway-----'.'New amount: '.$new_amount.' Old: '.$old_amount.' Total: '.$total. ' Amount ' .$amount); //Higher - Amount: 83.04 Old: 55.36 Total: 27.68. Lower - Amount: 27.68 Old: 55.36 Total: 27.68
-                                //return redirect()->route('booking.history.payment', $request->updateBooking)->with('availableStatus', $available)/*->with('updateBookingRequest', $request->updateBooking)*/;
 
-                                $serviceTax            = (new PaymentController)->serviceFees($amount, $paymentMethod = null);
-                                $percentage            = ($serviceTax / 100) * $amount;
-                                $prepay_service_total  = $amount + $percentage;
+                                return redirect()->route('booking.history.payment', $request->updateBooking)->with('editAvailableStatus', $available);
 
-                                /* Condition to check pay by bill possible begin */
-                                // Pay by bill radio button in payment page will show when there is two weeks diff b/w current date and checking from date.
-                                $checkingFrom          = DateTime::createFromFormat('d.m.y', $request->dateFrom)->format('Y-m-d');
-                                $currentDate           = date('Y-m-d');
-                                $d1                    = new DateTime($currentDate);
-                                $d2                    = new DateTime($checkingFrom);
-                                $dateDifference        = $d2->diff($d1);
-                                if($dateDifference->days > 14) {
-                                    $payByBillPossible = 'yes';
-                                }
-                                else {
-                                    $payByBillPossible = 'no';
-                                }
-                                /* Condition to check pay by bill possible end */
-
-                                /* Get order number */
-                                if( !empty ($orderNumber->number) ) {
-                                    $order_num         = (int)$orderNumber->number + 1;
-                                }
-                                else {
-                                    $order_num         = 100000;
-                                }
-                                $order_number          = 'ORDER'.'-'.date('y').'-'.$order_num;
-
-                                return view('payment', ['moneyBalance' => Auth::user()->money_balance, 'sumPrepaymentAmount' => $amount, 'prepayServiceTotal' => $prepay_service_total, 'serviceTax' => $serviceTax, 'payByBillPossible' => $payByBillPossible, 'order_number' => $order_number, 'editBooking' => $request->updateBooking, 'availableStatus' => $available]);
                             }
                         }
                     }
@@ -1259,11 +1231,58 @@ class BookingHistoryController extends Controller
     /**
      * Display the specified resource.
      *
+     * @param  string  $editBooking
      * @return \Illuminate\Http\Response
      */
-    public function show()
+    public function show($editBooking)
     {
-        //
+        if($editBooking !== null && $editBooking === 'updateBooking') {
+            $bookingData            = Booking::where('status', '1')
+                ->where('payment_status', '1')
+                ->where('is_delete', 0)
+                ->where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
+                ->find(session()->get('bookingIdRequest'));
+
+            if(!empty($bookingData)) {
+                $sum_prepayment_amount = session()->get('prepaymentAmountRequest');
+                $serviceTax            = (new PaymentController)->serviceFees($sum_prepayment_amount, $paymentMethod = null);
+                $percentage            = ($serviceTax / 100) * $sum_prepayment_amount;
+                $prepay_service_total  = $sum_prepayment_amount + $percentage;
+
+                /* Condition to check pay by bill possible begin */
+                // Pay by bill radio button in payment page will show when there is two weeks diff b/w current date and checking from date.
+                $checkingFrom          = DateTime::createFromFormat('d.m.y', session()->get('dateFromRequest'))->format('Y-m-d');
+                $currentDate           = date('Y-m-d');
+                $d1                    = new DateTime($currentDate);
+                $d2                    = new DateTime($checkingFrom);
+                $dateDifference        = $d2->diff($d1);
+                if($dateDifference->days > 14) {
+                    $payByBillPossible = 'yes';
+                }
+                else {
+                    $payByBillPossible = 'no';
+                }
+                /* Condition to check pay by bill possible end */
+
+                /* Get order number */
+                $orderNumber           = Ordernumber::first();
+                if( !empty ($orderNumber->number) ) {
+                    $order_num         = (int)$orderNumber->number + 1;
+                }
+                else {
+                    $order_num         = 100000;
+                }
+                $order_number          = 'ORDER'.'-'.date('y').'-'.$order_num;
+
+                return view('payment', ['moneyBalance' => Auth::user()->money_balance, 'sumPrepaymentAmount' => $sum_prepayment_amount, 'prepayServiceTotal' => $prepay_service_total, 'serviceTax' => $serviceTax, 'payByBillPossible' => $payByBillPossible, 'order_number' => $order_number, 'editBooking' => $editBooking, 'availableStatus' => session()->get('availableStatus')]);
+            }
+            else {
+                return redirect()->back()->with('updateBookingFailedStatus', __('bookingHistory.errorTwo'));
+            }
+        }
+        else {
+            return redirect()->back()->with('updateBookingFailedStatus', __('bookingHistory.errorTwo'));
+        }
     }
 
     /**
@@ -1340,7 +1359,6 @@ class BookingHistoryController extends Controller
                         /* Update status of old orders begin */
                         if(!empty($order)) {
                             $order->order_update_date  = date('Y-m-d H:i:s');
-                            $order->order_delete       = 0;
                             $order->save();
                         }
                         /* Update status of old orders end */
@@ -1374,8 +1392,9 @@ class BookingHistoryController extends Controller
                             $newBooking->guests                  = (int)session()->get('sleepRequest'); // Sleeps and guest are same count
                             $newBooking->halfboard               = session()->get('halfBoardRequest');
                             $newBooking->comments                = session()->get('commentsRequest');
-                            $newBooking->prepayment_amount       = $total_prepayment_amount;
-                            $newBooking->total_prepayment_amount = $total_prepayment_amount;
+                            $newBooking->prepayment_amount       = round($total_prepayment_amount + $bookingOld->prepayment_amount, 2);
+                            $newBooking->total_prepayment_amount = round($total_prepayment_amount + $bookingOld->total_prepayment_amount, 2);
+                            $newBooking->new_amount              = $total_prepayment_amount;
                             $newBooking->moneybalance_used       = $total_prepayment_amount;
                             $newBooking->bookingdate             = date('Y-m-d H:i:s');
                             $newBooking->status                  = '1';
@@ -1672,9 +1691,9 @@ class BookingHistoryController extends Controller
 
                                 $request->session()->flash('editBooking', $request->updateBooking);
                                 $request->session()->flash('newBooking', $newBooking->_id);
-                                $request->session()->flash('txid', $paymentGateway["txid"]);
-                                $request->session()->flash('userid', $paymentGateway["userid"]);
-                                $request->session()->flash('bookingSuccessStatus', __('payment.bookingSuccessStatus'));
+                                $request->session()->flash('editTxId', $paymentGateway["txid"]);
+                                $request->session()->flash('editUserId', $paymentGateway["userid"]);
+                                $request->session()->flash('editBookingSuccessStatus', __('payment.bookingSuccessStatus'));
 
                                 return redirect()->away($paymentGateway["redirecturl"]);
                             }
@@ -1759,12 +1778,12 @@ class BookingHistoryController extends Controller
                                     if($payByBillPossible === 'yes') {
                                         $request->session()->flash('editBooking', $request->updateBooking);
                                         $request->session()->flash('newBooking', $newBooking->_id);
-                                        $request->session()->flash('txid', $paymentGateway["txid"]);
-                                        $request->session()->flash('userid', $paymentGateway["userid"]);
-                                        $request->session()->flash('payByBillPossible', $payByBillPossible);
-                                        $request->session()->flash('bookingSuccessStatusPrepayment', __('payment.bookingSuccessStatus'));
+                                        $request->session()->flash('editTxId', $paymentGateway["txid"]);
+                                        $request->session()->flash('editUserId', $paymentGateway["userid"]);
+                                        $request->session()->flash('editPayByBillPossible', $payByBillPossible);
+                                        $request->session()->flash('editBookingSuccessStatusPrepayment', __('payment.bookingSuccessStatus'));
 
-                                        return redirect()->route('payment.prepayment')->with('order', $newOrder);
+                                        return redirect()->route('booking.history.payment.prepayment')->with('editBookOrder', $newOrder);
                                     }
                                     else {
                                         return redirect()->back()->with('bookingFailureStatus', __('payment.bookingFailureStatus'));
@@ -1772,12 +1791,12 @@ class BookingHistoryController extends Controller
                                 }
                                 /* If guest paid using payByBill it will redirect to bank details listing page. Condition end*/
 
-                                $request->session()->flash('txid', $paymentGateway["txid"]);
-                                $request->session()->flash('userid', $paymentGateway["userid"]);
+                                $request->session()->flash('editTxId', $paymentGateway["txid"]);
+                                $request->session()->flash('editUserId', $paymentGateway["userid"]);
                                 $request->session()->flash('editBooking', $request->updateBooking);
                                 $request->session()->flash('newBooking', $newBooking->_id);
 
-                                return redirect()->route('payment.success')->with('bookingSuccessStatus', __('payment.bookingSuccessStatus'));
+                                return redirect()->route('booking.history.payment.success')->with('editBookingSuccessStatus', __('payment.bookingSuccessStatus'));
                             }
                             else {
                                 return redirect()->back()->with('bookingFailureStatus', __('payment.bookingFailureStatus'));
@@ -1807,29 +1826,6 @@ class BookingHistoryController extends Controller
         }
     }
 
-
-    /**
-     * Remove the specified resource from storage.
-     * Cancelled booking delete
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function destroyCancelledBooking(Request $request)
-    {
-        $cart      = Booking::where('status', '2')
-            ->where('is_delete', 0)
-            ->where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
-            ->find($request->delId);
-
-        if(!empty($cart)){
-            Booking::destroy($cart->_id);
-            return response()->json(['status' => 'success'] ,201);
-        }
-        else {
-            return response()->json(['status' => 'failure'] ,500);
-        }
-    }
 
     /**
      * Display the specified resource.
@@ -1862,7 +1858,6 @@ class BookingHistoryController extends Controller
 
                         if(!empty($order)) {
                             $order->order_update_date  = date('Y-m-d H:i:s');
-                            $order->order_delete       = 0;
                             $order->save();
                         }
 
@@ -1870,6 +1865,7 @@ class BookingHistoryController extends Controller
                         $newBooking = Booking::where('status', '10')
                             ->where('userid', session()->get('userid'))
                             ->where('txid', session()->get('txid'))
+                            ->where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
                             ->find(session()->get('newBooking'));
 
                         $newBooking->status         = '1';
@@ -1923,7 +1919,7 @@ class BookingHistoryController extends Controller
     public function prepayment()
     {
         if(session()->has('editBookingSuccessStatusPrepayment') && session()->has('editBookOrder')) {
-            if(session()->has('txid') && session()->has('userid') && session()->has('editPayByBillPossible')) {
+            if(session()->has('txid') && session()->has('userid') && session()->has('editPayByBillPossible') && session()->get('editPayByBillPossible') === 'yes') {
 
                 if( session()->has('editBooking') && session()->has('bookingIdRequest') && session()->get('editBooking') === 'updateBooking' && session()->has('availableStatus') && session()->get('availableStatus') === 'success' ) {
 
@@ -1947,7 +1943,6 @@ class BookingHistoryController extends Controller
 
                         if(!empty($order)) {
                             $order->order_update_date  = date('Y-m-d H:i:s');
-                            $order->order_delete       = 0;
                             $order->save();
                         }
 
@@ -1955,10 +1950,11 @@ class BookingHistoryController extends Controller
                         $newBooking = Booking::where('status', '10')
                             ->where('userid', session()->get('userid'))
                             ->where('txid', session()->get('txid'))
+                            ->where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
                             ->find(session()->get('newBooking'));
 
-                        $newBooking->status         = '1';
-                        $newBooking->payment_status = '1';
+                        $newBooking->status         = '5';
+                        $newBooking->payment_status = '3';
                         $newBooking->save();
 
                         /* Update money balance */
@@ -1999,6 +1995,30 @@ class BookingHistoryController extends Controller
             abort(404);
         }
     }
+
+    /**
+     * Remove the specified resource from storage.
+     * Cancelled booking delete
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function destroyCancelledBooking(Request $request)
+    {
+        $cart      = Booking::where('status', '2')
+            ->where('is_delete', 0)
+            ->where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
+            ->find($request->delId);
+
+        if(!empty($cart)){
+            Booking::destroy($cart->_id);
+            return response()->json(['status' => 'success'] ,201);
+        }
+        else {
+            return response()->json(['status' => 'failure'] ,500);
+        }
+    }
+
 
     /**
      * Remove the specified resource from storage.

@@ -83,7 +83,7 @@
                 </div>
             @endif
 
-            @if (session()->has('availableStatus') && session()->get('availableStatus') === 'success')
+            @if ( (session()->has('cartAvailableStatus') && session()->get('cartAvailableStatus') === 'success') || (session()->has('editAvailableStatus') && session()->get('editAvailableStatus') === 'success') )
                 <div class="alert alert-success alert-dismissible" role="alert">
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                     <strong>{{ __('payment.wellDone') }}</strong> {{ __('payment.wellDoneMsg') }}
