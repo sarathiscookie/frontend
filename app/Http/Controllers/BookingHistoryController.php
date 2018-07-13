@@ -1192,7 +1192,6 @@ class BookingHistoryController extends Controller
                                 $request->session()->put('commentsRequest', $request->comments);
                                 $request->session()->put('sleepingPlaceRequest', $request->sleeping_place);
                                 $request->session()->put('prepaymentAmountRequest', $amount);
-                                $request->session()->put('updateBooking', $request->updateBooking);
                                 $request->session()->put('availableStatus', $available);
                                 //dd('----Redirect to payment gateway-----'.'New amount: '.$new_amount.' Old: '.$old_amount.' Total: '.$total. ' Amount ' .$amount); //Higher - Amount: 83.04 Old: 55.36 Total: 27.68. Lower - Amount: 27.68 Old: 55.36 Total: 27.68
 
@@ -1236,7 +1235,7 @@ class BookingHistoryController extends Controller
      */
     public function show($editBooking)
     {
-        if($editBooking !== null && $editBooking === 'updateBooking') {
+        if($editBooking !== null && $editBooking === 'updateBooking' && session()->has('availableStatus') && session()->get('availableStatus') === 'success') {
             $bookingData            = Booking::where('status', '1')
                 ->where('payment_status', '1')
                 ->where('is_delete', 0)
@@ -1293,7 +1292,7 @@ class BookingHistoryController extends Controller
      */
     public function store(PaymentRequest $request)
     {
-        if( isset($request->updateBooking) && $request->updateBooking === 'updateBooking' && $request->session()->has('updateBooking') && $request->session()->get('updateBooking') === 'updateBooking' && $request->session()->has('availableStatus') && $request->session()->get('availableStatus') === 'success' ) {
+        if( isset($request->updateBookingPayment) && $request->updateBookingPayment === 'updateBookingPayment' && $request->session()->has('availableStatus') && $request->session()->get('availableStatus') === 'success' && $request->session()->has('prepaymentAmountRequest') ) {
 
             $bookingOld                = Booking::where('status', '1')
                 ->where('payment_status', '1')
@@ -1494,7 +1493,7 @@ class BookingHistoryController extends Controller
                                     $orderNumber->number        = $order_num;
                                     $orderNumber->save();
 
-                                    $request->session()->flash('editBooking', $request->updateBooking);
+                                    $request->session()->flash('updateBookingPayment', $request->updateBookingPayment);
                                     $request->session()->flash('newBooking', $newBooking->_id);
                                     $request->session()->flash('editTxId', $paymentGateway["txid"]);
                                     $request->session()->flash('editUserId', $paymentGateway["userid"]);
@@ -1583,7 +1582,7 @@ class BookingHistoryController extends Controller
                                     /* If guest paid using payByBill it will redirect to bank details listing page. Condition begin*/
                                     if($request->payment === 'payByBill') {
                                         if($payByBillPossible === 'yes') {
-                                            $request->session()->flash('editBooking', $request->updateBooking);
+                                            $request->session()->flash('updateBookingPayment', $request->updateBookingPayment);
                                             $request->session()->flash('newBooking', $newBooking->_id);
                                             $request->session()->flash('editTxId', $paymentGateway["txid"]);
                                             $request->session()->flash('editUserId', $paymentGateway["userid"]);
@@ -1600,7 +1599,7 @@ class BookingHistoryController extends Controller
 
                                     $request->session()->flash('editTxId', $paymentGateway["txid"]);
                                     $request->session()->flash('editUserId', $paymentGateway["userid"]);
-                                    $request->session()->flash('editBooking', $request->updateBooking);
+                                    $request->session()->flash('updateBookingPayment', $request->updateBookingPayment);
                                     $request->session()->flash('newBooking', $newBooking->_id);
 
                                     return redirect()->route('booking.history.payment.success')->with('editBookingSuccessStatus', __('payment.bookingSuccessStatus'));
@@ -1689,7 +1688,7 @@ class BookingHistoryController extends Controller
                                 $orderNumber->number        = $order_num;
                                 $orderNumber->save();
 
-                                $request->session()->flash('editBooking', $request->updateBooking);
+                                $request->session()->flash('updateBookingPayment', $request->updateBookingPayment);
                                 $request->session()->flash('newBooking', $newBooking->_id);
                                 $request->session()->flash('editTxId', $paymentGateway["txid"]);
                                 $request->session()->flash('editUserId', $paymentGateway["userid"]);
@@ -1776,7 +1775,7 @@ class BookingHistoryController extends Controller
                                 /* If guest paid using payByBill it will redirect to bank details listing page. Condition begin*/
                                 if($request->payment === 'payByBill') {
                                     if($payByBillPossible === 'yes') {
-                                        $request->session()->flash('editBooking', $request->updateBooking);
+                                        $request->session()->flash('updateBookingPayment', $request->updateBookingPayment);
                                         $request->session()->flash('newBooking', $newBooking->_id);
                                         $request->session()->flash('editTxId', $paymentGateway["txid"]);
                                         $request->session()->flash('editUserId', $paymentGateway["userid"]);
@@ -1793,7 +1792,7 @@ class BookingHistoryController extends Controller
 
                                 $request->session()->flash('editTxId', $paymentGateway["txid"]);
                                 $request->session()->flash('editUserId', $paymentGateway["userid"]);
-                                $request->session()->flash('editBooking', $request->updateBooking);
+                                $request->session()->flash('updateBookingPayment', $request->updateBookingPayment);
                                 $request->session()->flash('newBooking', $newBooking->_id);
 
                                 return redirect()->route('booking.history.payment.success')->with('editBookingSuccessStatus', __('payment.bookingSuccessStatus'));
@@ -1837,7 +1836,7 @@ class BookingHistoryController extends Controller
         if(session()->has('editBookingSuccessStatus')) {
             if(session()->has('editTxId') && session()->has('editUserId')) {
 
-                if( session()->has('editBooking') && session()->has('bookingIdRequest') && session()->get('editBooking') === 'updateBooking' && session()->has('availableStatus') && session()->get('availableStatus') === 'success' ) {
+                if( session()->has('updateBookingPayment') && session()->get('updateBookingPayment') === 'updateBookingPayment' && session()->has('availableStatus') && session()->get('availableStatus') === 'success' ) {
 
                     $bookingOld = Booking::where('status', '1')
                         ->where('payment_status', '1')
@@ -1901,7 +1900,6 @@ class BookingHistoryController extends Controller
             session()->forget('commentsRequest');
             session()->forget('sleepingPlaceRequest');
             session()->forget('prepaymentAmountRequest');
-            session()->forget('updateBooking');
             session()->forget('availableStatus');
 
             return view('paymentSuccess');
@@ -1921,7 +1919,7 @@ class BookingHistoryController extends Controller
         if(session()->has('editBookingSuccessStatusPrepayment') && session()->has('editBookOrder')) {
             if(session()->has('txid') && session()->has('userid') && session()->has('editPayByBillPossible') && session()->get('editPayByBillPossible') === 'yes') {
 
-                if( session()->has('editBooking') && session()->has('bookingIdRequest') && session()->get('editBooking') === 'updateBooking' && session()->has('availableStatus') && session()->get('availableStatus') === 'success' ) {
+                if( session()->has('updateBookingPayment') && session()->get('updateBookingPayment') === 'updateBookingPayment' && session()->has('availableStatus') && session()->get('availableStatus') === 'success' ) {
 
                     $bookingOld = Booking::where('status', '1')
                         ->where('payment_status', '1')
@@ -1986,7 +1984,6 @@ class BookingHistoryController extends Controller
             session()->forget('commentsRequest');
             session()->forget('sleepingPlaceRequest');
             session()->forget('prepaymentAmountRequest');
-            session()->forget('updateBooking');
             session()->forget('availableStatus');
 
             return view('paymentPrepayment');
