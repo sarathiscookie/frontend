@@ -1492,5 +1492,4 @@ $(function(){
         editCartTotalDepositCalc(total, oldVoucherAmount, amount);
     });
     /* Amount calc of sleeps, beds & dorms end */
-
 });

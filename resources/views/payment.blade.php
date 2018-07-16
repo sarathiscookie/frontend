@@ -90,10 +90,13 @@
                 </div>
             @endif
 
-            @if(isset($editBooking, $availableStatus) && $editBooking === 'updateBooking' && $availableStatus === 'success')
-                <form action="{{ route('booking.history.payment.store') }}" method="post" name="paymentform">
+            @if( isset($editBooking, $availableStatus) && $editBooking === 'updateBooking' && $availableStatus === 'success' )
+                <form action="{{ route('booking.history.payment.store') }}" method="POST" name="paymentform">
+            @elseif( isset($inquiryPayment, $inquiryPaymentId) && $inquiryPayment === 'inquiryPayment' )
+                <form action="{{ route('booking.history.inquiry.payment.update') }}" method="POST" name="paymentform">
+                    <input type="hidden" name="inquiryPaymentId" value="{{ $inquiryPaymentId }}">
             @else
-                <form action="{{ route('payment.store') }}" method="post" name="paymentform">
+                <form action="{{ route('payment.store') }}" method="POST" name="paymentform">
             @endif
 
                 {{ csrf_field() }}
@@ -271,7 +274,11 @@
 
                         @if(isset($editBooking, $availableStatus) && $editBooking === 'updateBooking' && $availableStatus === 'success')
                             <input type="hidden" name="updateBookingPayment" value="updateBookingPayment">
-                            <button type="submit" class="btn btn-default btn-default-booking2 btn-sm btn-details-booking2 nonCreditCardButton" {{--name="updateBookingPayment" value="updateBookingPayment"--}}>{{ __('payment.bookCabin') }}</button>
+                            <button type="submit" class="btn btn-default btn-default-booking2 btn-sm btn-details-booking2 nonCreditCardButton">{{ __('payment.bookCabin') }}</button>
+                            <button type="button" id="paymentsubmit" class="btn btn-default btn-default-booking2 btn-sm btn-details-booking2" onclick="check();" style="display: none;">{{ __('payment.bookCabin') }}</button>
+                        @elseif( isset($inquiryPayment, $inquiryPaymentId) && $inquiryPayment === 'inquiryPayment' )
+                            <input type="hidden" name="updateInquiryPayment" value="updateInquiryPayment">
+                            <button type="submit" class="btn btn-default btn-default-booking2 btn-sm btn-details-booking2 nonCreditCardButton">{{ __('payment.bookCabin') }}</button>
                             <button type="button" id="paymentsubmit" class="btn btn-default btn-default-booking2 btn-sm btn-details-booking2" onclick="check();" style="display: none;">{{ __('payment.bookCabin') }}</button>
                         @else
                             <button type="submit" class="btn btn-default btn-default-booking2 btn-sm btn-details-booking2 nonCreditCardButton">{{ __('payment.bookCabin') }}</button>

@@ -31,7 +31,7 @@
                             <div class="row">
                                 <div class="col-sm-12">
                                     <h2><strong>{{ __('prepayment.wellDone') }}</strong> {{ __('prepayment.wellDoneMsg') }}</h2>
-                                    <h5>{{ session()->get('bookingSuccessStatusPrepayment') }} {{--{{ __('prepayment.thankYouMsgTwo') }}--}}</h5>
+                                    <h5>{{ session()->get('bookingSuccessStatusPrepayment') }} {{ session()->get('editBookingSuccessStatusPrepayment') }}{{--{{ __('prepayment.thankYouMsgTwo') }}--}}</h5>
                                     <h5>{{ __('prepayment.thankYouMsgTwo') }}</h5>
                                     <div class="pull-right">
                                         <form action="{{route('payment.prepayment.download')}}" method="POST">

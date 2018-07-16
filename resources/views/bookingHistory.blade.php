@@ -27,6 +27,13 @@
                 </div>
             @endif
 
+            @if (session()->has('inquiryPaymentStatus'))
+                <div class="alert alert-danger alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <strong>{{ __('bookingHistory.errorOne') }}</strong> {{ session()->get('inquiryPaymentStatus') }}
+                </div>
+            @endif
+
             @if (session()->has('response') && session()->get('response') === 'success')
                 <div class="alert alert-success alert-dismissible" role="alert">
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -142,7 +149,7 @@
 
                                                     @if($booking->status === '5' && $booking->inquirystatus === 1 && $booking->typeofbooking === 1) <!-- 1: Inquiry Approved -->
                                                         <span class="label label-success label-cabinlist">{{ __('bookingHistory.inquiryAcceptedStatus') }}</span> <br>
-                                                        <button type="button" class="btn btn-list-history">{{ __('bookingHistory.doYourPayment') }} <span class="glyphicon glyphicon-euro"></span></button>
+                                                        <a href="/booking/history/inquiry/{{ $booking->_id }}" class="btn btn-list-history inquiryPayment" name="inquiryPayment" id="inquiryPayment" value="inquiryPayment" data-inquirypayment="{{ $booking->_id }}" data-loading-text="{{ __('bookingHistory.doYourPayment') }}..." autocomplete="off">{{ __('bookingHistory.doYourPayment') }} <span class="glyphicon glyphicon-euro"></span></a>
                                                         <button type="button" class="btn btn-list-history">{{ __('bookingHistory.openChat') }} <span class="glyphicon glyphicon-envelope"></span></button>
                                                         <button type="button" class="btn btn-list-history deleteInquiryApprovedBookingHistory" data-delapprovedinquiry="{{ $booking->_id }}" data-loading-text="{{ __('bookingHistory.deleteBookingLoader') }}" autocomplete="off">{{ __('bookingHistory.deleteInquiry') }} <span class="glyphicon glyphicon-trash"></span></button>
                                                     @endif

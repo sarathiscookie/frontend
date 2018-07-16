@@ -1417,7 +1417,7 @@ class BookingHistoryController extends Controller
                             /* Send email with voucher */
                             Mail::to($user->usrEmail)->send(new SendVoucher($newBooking));
 
-                            return redirect()->route('booking.history.payment.success')->with('editBookingSuccessStatus', __('payment.bookingSuccessStatus'));
+                            return redirect()->route('payment.success')->with('editBookingSuccessStatus', __('payment.bookingSuccessStatus'));
                         }
                         else {
                             return redirect()->back()->with('bookingFailureStatus', __('payment.bookingFailureStatus'));

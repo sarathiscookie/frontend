@@ -34,7 +34,7 @@
                     </div>
                 @endif
 
-                <form action="{{ route('edit.booking.history', $booking->_id) }}" method="post" autocomplete="off">
+                <form action="{{ route('update.booking.history', $booking->_id) }}" method="POST" autocomplete="off">
 
                     {{ csrf_field() }}
 

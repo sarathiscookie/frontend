@@ -3,10 +3,13 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Http\Requests\PaymentRequest;
 use App\Cabin;
 use App\Country;
 use App\Booking;
 use App\Userlist;
+use App\Order;
+use App\Ordernumber;
 use App\PrivateMessage;
 use App\Http\Requests\InquiryRequest;
 use Carbon\Carbon;
@@ -15,6 +18,9 @@ use DatePeriod;
 use DateInterval;
 use Auth;
 use Validator;
+use Mail;
+use App\Mail\SendVoucher;
+use App\Http\Controllers\PaymentController;
 
 class InquiryController extends Controller
 {
@@ -591,7 +597,85 @@ class InquiryController extends Controller
      */
     public function show($id)
     {
-        //
+        if(!empty($id)) {
+            $bookingData            = Booking::where('status', '5')
+                ->where('inquirystatus', 1)
+                ->where('typeofbooking', 1)
+                ->where('is_delete', 0)
+                ->where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
+                ->find($id);
+
+            if(!empty($bookingData)) {
+                $sum_prepayment_amount = round($bookingData->prepayment_amount, 2);
+                $serviceTax            = (new PaymentController)->serviceFees($sum_prepayment_amount, $paymentMethod = null);
+                $percentage            = ($serviceTax / 100) * $sum_prepayment_amount;
+                $prepay_service_total  = $sum_prepayment_amount + $percentage;
+
+                /* Condition to check pay by bill possible begin */
+                // Pay by bill radio button in payment page will show when there is two weeks diff b/w current date and checking from date.
+                $checkingFrom          = $bookingData->checkin_from->format('Y-m-d');
+                $currentDate           = date('Y-m-d');
+                $d1                    = new DateTime($currentDate);
+                $d2                    = new DateTime($checkingFrom);
+                $dateDifference        = $d2->diff($d1);
+                if($dateDifference->days > 14) {
+                    $payByBillPossible = 'yes';
+                }
+                else {
+                    $payByBillPossible = 'no';
+                }
+                /* Condition to check pay by bill possible end */
+
+                /* Get order number */
+                $orderNumber           = Ordernumber::first();
+
+                if(empty($bookingData->order_id)) {
+
+                    if( !empty ($orderNumber->number) ) {
+                        $order_num         = (int)$orderNumber->number + 1;
+                    }
+                    else {
+                        $order_num         = 100000;
+                    }
+                    $order_number          = 'ORDER'.'-'.date('y').'-'.$order_num;
+
+                    /* Creating new order: This is for inquiry system. In inquiry system we don't have orders table. */
+                    $order                    = new Order;
+                    $order->order_id          = $order_number;
+                    $order->auth_user         = new \MongoDB\BSON\ObjectID(Auth::user()->_id);
+                    $order->old_order_comment = 'Order created for inquiry';
+                    $order->order_delete      = 1;
+                    $order->save();
+
+                    if(!empty($order)) {
+                        /* Updating order number in booking collection */
+                        $bookingData->order_id = new \MongoDB\BSON\ObjectID($order->_id);
+                        $bookingData->save();
+
+                        /* Updating order number in ordernumber collection */
+                        $orderNumber->number   = $order_num;
+                        $orderNumber->save();
+                    }
+                }
+
+                if( !empty ($orderNumber->number) ) {
+                    $order_sum = (int)$orderNumber->number + 1;
+                }
+                else {
+                    $order_sum = 100000;
+                }
+
+                $order_number_format = 'ORDER'.'-'.date('y').'-'.$order_sum;
+
+                return view('payment', ['moneyBalance' => Auth::user()->money_balance, 'sumPrepaymentAmount' => $sum_prepayment_amount, 'prepayServiceTotal' => $prepay_service_total, 'serviceTax' => $serviceTax, 'payByBillPossible' => $payByBillPossible, 'order_number' => $order_number_format, 'inquiryPayment' => 'inquiryPayment', 'inquiryPaymentId' => $bookingData->_id]);
+            }
+            else {
+                return redirect()->back()->with('inquiryPaymentStatus', __('bookingHistory.errorTwo'));
+            }
+        }
+        else {
+            abort(404);
+        }
     }
 
     /**
@@ -608,13 +692,237 @@ class InquiryController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param  \App\Http\Requests\PaymentRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(PaymentRequest $request)
     {
-        //
+        if( isset($request->updateInquiryPayment, $request->inquiryPaymentId) && $request->updateInquiryPayment === 'updateInquiryPayment' ) {
+            $bookingData            = Booking::where('status', '5')
+                ->where('inquirystatus', 1)
+                ->where('typeofbooking', 1)
+                ->where('is_delete', 0)
+                ->where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
+                ->find($request->inquiryPaymentId);
+
+            if(!empty($bookingData)) {
+                $user                  = Userlist::where('is_delete', 0)->where('usrActive', '1')->find(Auth::user()->_id);
+                $order                 = Order::where('auth_user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))->find($bookingData->order_id);
+                $cabin                 = Cabin::select('_id', 'name')->where('is_delete', 0)->where('other_cabin', "0")->where('name', $bookingData->cabinname)->first();
+                $invoice_explode       = explode('-', $bookingData->invoice_number); // Exploding auto number and ignoring last element
+
+                // Pay by bill condition works if there is two weeks diff b/w current date and checking from date.
+                $checkingFrom          = $bookingData->checkin_from->format('Y-m-d');
+                $currentDate           = date('Y-m-d');
+                $d1                    = new DateTime($currentDate);
+                $d2                    = new DateTime($checkingFrom);
+                $dateDifference        = $d2->diff($d1);
+                if($dateDifference->days > 14) {
+                    $payByBillPossible = 'yes';
+                }
+                else {
+                    $payByBillPossible = 'no';
+                }
+
+                /* Generate order number begin */
+                $orderNumber           = Ordernumber::first();
+                if(!empty($orderNumber->number) ) {
+                    $order_num         = (int)$orderNumber->number + 1;
+                }
+                else {
+                    $order_num         = 100000;
+                }
+                $order_number          = 'ORDER'.'-'.date('y').'-'.$order_num;
+                /* Generate order number end */
+
+                $total_prepayment_amount = round($bookingData->prepayment_amount, 2);
+                if($request->has('moneyBalance') && $request->moneyBalance === '1') {
+                    if($user->money_balance >= $total_prepayment_amount) {
+                        /* How much money user have in their account after used money balance */
+                        $afterRedeemAmount = $user->money_balance - $total_prepayment_amount;
+
+                        if(!empty($order)) {
+                            /* Update status of orders begin */
+                            $order->order_amount                  = $total_prepayment_amount;
+                            $order->order_total_amount            = $total_prepayment_amount;
+                            $order->order_money_balance_used      = $total_prepayment_amount;
+                            $order->order_money_balance_used_date = date('Y-m-d H:i:s');
+                            $order->order_payment_method          = 1; // 1 => Fully paid using money balance, 2 => Partially paid using money balance, 3 => Paid using payment gateway
+                            $order->order_delete                  = 0;
+                            $order->save();
+                            /* Update status of orders end */
+
+                            /* Update status of booking begin */
+                            $bookingData->status            = "1"; // 1=> Fix
+                            $bookingData->payment_status    = '1';
+                            $bookingData->moneybalance_used = $total_prepayment_amount;
+                            $bookingData->save();
+                            /* Update status of booking end */
+
+                            /* Updating money balance and invoice_autonum tree */
+                            $user->money_balance         = round($afterRedeemAmount, 2);
+                            $user->save();
+
+                            /* Send email with voucher */
+                            Mail::to($user->usrEmail)->send(new SendVoucher($bookingData));
+
+                            return redirect()->route('payment.success')->with('editBookingSuccessStatus', __('payment.bookingSuccessStatus'));
+                        }
+                        else {
+                            return redirect()->back()->with('bookingFailureStatus', __('payment.bookingFailureStatus'));
+                        }
+                    }
+                    else {
+                        if(isset($request->payment)) {
+                            /* How much money user have in their account after used money balance */
+                            $afterRedeemAmount = $total_prepayment_amount - $user->money_balance;
+                            $percentage        = ((new PaymentController)->serviceFees($afterRedeemAmount, $request->payment) / 100) * $afterRedeemAmount;
+                            $total             = round($afterRedeemAmount + $percentage, 2);
+
+                            // Function call for payment gateway section
+                            $paymentGateway    = (new PaymentController)->paymentGateway($request->all(), $request->ip(), $total, $order_number);
+                            if ($paymentGateway["status"] === "REDIRECT") {
+                                if(!empty($order)) {
+                                    /* Update order details */
+                                    $order->order_status                  = "REDIRECT";
+                                    $order->txid                          = $paymentGateway["txid"];
+                                    $order->userid                        = $paymentGateway["userid"];
+                                    $order->order_payment_type            = $request->payment;
+                                    $order->order_payment_method          = 2; // 1 => fully paid using money balance, 2 => Partially paid using money balance, 3 => Paid using payment gateway
+                                    $order->order_amount                  = round($afterRedeemAmount, 2);
+                                    $order->order_total_amount            = $total;
+                                    $order->order_money_balance_used      = round($user->money_balance, 2);
+                                    $order->order_money_balance_used_date = date('Y-m-d H:i:s');
+                                    $order->save();
+
+                                    /* Updating booking details */
+                                    $bookingData->payment_type            = $request->payment;
+                                    $bookingData->txid                    = $paymentGateway["txid"];
+                                    $bookingData->userid                  = $paymentGateway["userid"];
+                                    $bookingData->moneybalance_used       = round($user->money_balance, 2);
+                                    $bookingData->save();
+
+                                    /* Storing new userid in user collection */
+                                    $user->userid                         = $paymentGateway["userid"];
+                                    $user->save();
+
+                                    $request->session()->flash('updateInquiryPayment', $request->updateInquiryPayment);
+                                    $request->session()->flash('newBooking', $bookingData->_id);
+                                    $request->session()->flash('inquiryTxId', $paymentGateway["txid"]);
+                                    $request->session()->flash('inquiryUserId', $paymentGateway["userid"]);
+                                    $request->session()->flash('inquiryBookingSuccessStatus', __('payment.bookingSuccessStatus'));
+
+                                    return redirect()->away($paymentGateway["redirecturl"]);
+                                }
+                                else {
+                                    return redirect()->back()->with('bookingFailureStatus', __('payment.bookingFailureStatus'));
+                                }
+                            }
+                            elseif ($paymentGateway["status"] === "APPROVED") {
+                                if(!empty($order)) {
+                                    /* Update order details */
+                                    $order->order_status                  = "APPROVED";
+                                    $order->txid                          = $paymentGateway["txid"];
+                                    $order->userid                        = $paymentGateway["userid"];
+                                    $order->order_payment_type            = $request->payment;
+                                    $order->order_payment_method          = 2; // 1 => fully paid using money balance, 2 => Partially paid using money balance, 3 => Paid using payment gateway
+                                    $order->order_amount                  = round($afterRedeemAmount, 2);
+                                    $order->order_total_amount            = $total;
+                                    $order->order_money_balance_used      = round($user->money_balance, 2);
+                                    $order->order_money_balance_used_date = date('Y-m-d H:i:s');
+
+                                    /* If guest paid using payByBill we need to store bank details. Condition begin */
+                                    if($request->payment === 'payByBill' && $payByBillPossible === 'yes') {
+                                        $order->clearing_bankaccount       = $paymentGateway["clearing_bankaccount"];
+                                        $order->clearing_bankcode          = $paymentGateway["clearing_bankcode"];
+                                        $order->clearing_bankcountry       = $paymentGateway["clearing_bankcountry"];
+                                        $order->clearing_bankname          = $paymentGateway["clearing_bankname"];
+                                        $order->clearing_bankaccountholder = $paymentGateway["clearing_bankaccountholder"];
+                                        $order->clearing_bankiban          = $paymentGateway["clearing_bankiban"];
+                                        $order->clearing_bankbic           = $paymentGateway["clearing_bankbic"];
+                                    }
+                                    /* If guest paid using payByBill we need to store bank details. Condition end */
+
+                                    $order->save();
+
+                                    /* Updating booking details */
+                                    $bookingData->payment_type            = $request->payment;
+                                    $bookingData->txid                    = $paymentGateway["txid"];
+                                    $bookingData->userid                  = $paymentGateway["userid"];
+                                    $bookingData->moneybalance_used       = round($user->money_balance, 2);
+                                    $bookingData->save();
+
+                                    /* Storing new userid in user collection */
+                                    $user->userid                         = $paymentGateway["userid"];
+                                    $user->save();
+
+                                    /* If guest paid using payByBill it will redirect to bank details listing page. Condition begin*/
+                                    if($request->payment === 'payByBill') {
+                                        if($payByBillPossible === 'yes') {
+                                            $request->session()->flash('updateInquiryPayment', $request->updateInquiryPayment);
+                                            $request->session()->flash('newBooking', $bookingData->_id);
+                                            $request->session()->flash('inquiryTxId', $paymentGateway["txid"]);
+                                            $request->session()->flash('inquiryUserId', $paymentGateway["userid"]);
+                                            $request->session()->flash('inquiryPayByBillPossible', $payByBillPossible);
+                                            $request->session()->flash('inquiryBookingSuccessStatusPrepayment', __('payment.bookingSuccessStatus'));
+
+                                            return redirect()->route('payment.prepayment')->with('inquiryBookOrder', $order);
+                                        }
+                                        else {
+                                            return redirect()->back()->with('bookingFailureStatus', __('payment.bookingFailureStatus'));
+                                        }
+                                    }
+                                    /* If guest paid using payByBill it will redirect to bank details listing page. Condition end*/
+
+                                    $request->session()->flash('updateInquiryPayment', $request->updateInquiryPayment);
+                                    $request->session()->flash('newBooking', $bookingData->_id);
+                                    $request->session()->flash('inquiryTxId', $paymentGateway["txid"]);
+                                    $request->session()->flash('inquiryUserId', $paymentGateway["userid"]);
+
+                                    return redirect()->route('payment.success')->with('inquiryBookingSuccessStatus', __('payment.bookingSuccessStatus'));
+                                }
+                                else {
+                                    return redirect()->back()->with('bookingFailureStatus', __('payment.bookingFailureStatus'));
+                                }
+                            }
+                            else {
+                                return redirect()->route('payment.error')->with('bookingErrorStatus', __('payment.bookingErrorStatus'));
+                            }
+                        }
+                        else {
+                            $validator = Validator::make($request->all(), [
+                                'payment' => 'required'
+                            ]);
+
+                            if ($validator->fails()) {
+                                return redirect()->back()->withErrors($validator)->withInput();
+                            }
+                        }
+                    }
+                }
+                else {
+                    if(isset($request->payment)) {
+                        dd($request->payment);
+                    }
+                    else {
+                        $validator = Validator::make($request->all(), [
+                            'payment' => 'required'
+                        ]);
+
+                        if ($validator->fails()) {
+                            return redirect()->back()->withErrors($validator)->withInput();
+                        }
+                    }
+                }
+
+            }
+            else {
+                abort(404);
+            }
+        }
+        else {
+            abort(404);
+        }
     }
 
     /**

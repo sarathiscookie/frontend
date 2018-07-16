@@ -260,6 +260,12 @@ Route::group(['middleware' => ['auth']], function () {
     /* Cancel booking */
     Route::post('/booking/history/cancel', 'BookingHistoryController@cancelBooking')->name('booking.history.cancel');
 
+    /* Inquiry booking payment */
+    Route::get('/booking/history/inquiry/{payment}', 'InquiryController@show')->name('booking.history.inquiry');
+
+    /* Choose payment and store data */
+    Route::post('/booking/history/inquiry/payment/update', 'InquiryController@update')->name('booking.history.inquiry.payment.update');
+
     /* Choose payment and store data */
     Route::post('/booking/history/payment/store', 'BookingHistoryController@store')->name('booking.history.payment.store');
 
