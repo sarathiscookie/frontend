@@ -902,7 +902,114 @@ class InquiryController extends Controller
                 }
                 else {
                     if(isset($request->payment)) {
-                        dd($request->payment);
+                        $percentage     = ((new PaymentController)->serviceFees($total_prepayment_amount, $request->payment) / 100) * $total_prepayment_amount;
+                        $total          = round($total_prepayment_amount + $percentage, 2);
+
+                        // Function call for payment gateway section
+                        $paymentGateway = (new PaymentController)->paymentGateway($request->all(), $request->ip(), $total, $order_number);
+                        if ($paymentGateway["status"] === "REDIRECT") {
+                            if(!empty($order)) {
+                                /* Update order details */
+                                $order->order_status                  = "REDIRECT";
+                                $order->txid                          = $paymentGateway["txid"];
+                                $order->userid                        = $paymentGateway["userid"];
+                                $order->order_payment_type            = $request->payment;
+                                $order->order_payment_method          = 3; // 1 => fully paid using money balance, 2 => Partially paid using money balance, 3 => Paid using payment gateway
+                                $order->order_amount                  = $total_prepayment_amount;
+                                $order->order_total_amount            = $total;
+                                $order->save();
+
+                                /* Updating booking details */
+                                $bookingData->payment_type            = $request->payment;
+                                $bookingData->txid                    = $paymentGateway["txid"];
+                                $bookingData->userid                  = $paymentGateway["userid"];
+                                $bookingData->moneybalance_used       = 0;
+                                $bookingData->save();
+
+                                /* Storing new userid in user collection */
+                                $user->userid                         = $paymentGateway["userid"];
+                                $user->save();
+
+                                $request->session()->flash('updateInquiryPayment', $request->updateInquiryPayment);
+                                $request->session()->flash('newBooking', $bookingData->_id);
+                                $request->session()->flash('inquiryTxId', $paymentGateway["txid"]);
+                                $request->session()->flash('inquiryUserId', $paymentGateway["userid"]);
+                                $request->session()->flash('inquiryBookingSuccessStatus', __('payment.bookingSuccessStatus'));
+
+                                return redirect()->away($paymentGateway["redirecturl"]);
+                            }
+                            else {
+                                return redirect()->back()->with('bookingFailureStatus', __('payment.bookingFailureStatus'));
+                            }
+                        }
+                        elseif ($paymentGateway["status"] === "APPROVED") {
+                            if(!empty($order)) {
+                                /* Update order details */
+                                $order->order_status                  = "APPROVED";
+                                $order->txid                          = $paymentGateway["txid"];
+                                $order->userid                        = $paymentGateway["userid"];
+                                $order->order_payment_type            = $request->payment;
+                                $order->order_payment_method          = 3; // 1 => fully paid using money balance, 2 => Partially paid using money balance, 3 => Paid using payment gateway
+                                $order->order_amount                  = $total_prepayment_amount;
+                                $order->order_total_amount            = $total;
+
+                                /* If guest paid using payByBill we need to store bank details. Condition begin */
+                                if($request->payment === 'payByBill' && $payByBillPossible === 'yes') {
+                                    $order->clearing_bankaccount       = $paymentGateway["clearing_bankaccount"];
+                                    $order->clearing_bankcode          = $paymentGateway["clearing_bankcode"];
+                                    $order->clearing_bankcountry       = $paymentGateway["clearing_bankcountry"];
+                                    $order->clearing_bankname          = $paymentGateway["clearing_bankname"];
+                                    $order->clearing_bankaccountholder = $paymentGateway["clearing_bankaccountholder"];
+                                    $order->clearing_bankiban          = $paymentGateway["clearing_bankiban"];
+                                    $order->clearing_bankbic           = $paymentGateway["clearing_bankbic"];
+                                }
+                                /* If guest paid using payByBill we need to store bank details. Condition end */
+
+                                $order->save();
+
+                                /* Updating booking details */
+                                $bookingData->payment_type            = $request->payment;
+                                $bookingData->txid                    = $paymentGateway["txid"];
+                                $bookingData->userid                  = $paymentGateway["userid"];
+                                $bookingData->moneybalance_used       = 0;
+                                $bookingData->save();
+
+                                /* Storing new userid in user collection */
+                                $user->userid                         = $paymentGateway["userid"];
+                                $user->save();
+
+                                /* If guest paid using payByBill it will redirect to bank details listing page. Condition begin*/
+                                if($request->payment === 'payByBill') {
+                                    if($payByBillPossible === 'yes') {
+                                        $request->session()->flash('updateInquiryPayment', $request->updateInquiryPayment);
+                                        $request->session()->flash('newBooking', $bookingData->_id);
+                                        $request->session()->flash('inquiryTxId', $paymentGateway["txid"]);
+                                        $request->session()->flash('inquiryUserId', $paymentGateway["userid"]);
+                                        $request->session()->flash('inquiryPayByBillPossible', $payByBillPossible);
+                                        $request->session()->flash('inquiryBookingSuccessStatusPrepayment', __('payment.bookingSuccessStatus'));
+
+                                        return redirect()->route('payment.prepayment')->with('inquiryBookOrder', $order);
+                                    }
+                                    else {
+                                        return redirect()->back()->with('bookingFailureStatus', __('payment.bookingFailureStatus'));
+                                    }
+                                }
+                                /* If guest paid using payByBill it will redirect to bank details listing page. Condition end*/
+
+                                $request->session()->flash('updateInquiryPayment', $request->updateInquiryPayment);
+                                $request->session()->flash('newBooking', $bookingData->_id);
+                                $request->session()->flash('inquiryTxId', $paymentGateway["txid"]);
+                                $request->session()->flash('inquiryUserId', $paymentGateway["userid"]);
+
+                                return redirect()->route('payment.success')->with('inquiryBookingSuccessStatus', __('payment.bookingSuccessStatus'));
+                            }
+                            else {
+                                return redirect()->back()->with('bookingFailureStatus', __('payment.bookingFailureStatus'));
+                            }
+                        }
+                        else {
+                            return redirect()->route('payment.error')->with('bookingErrorStatus', __('payment.bookingErrorStatus'));
+                        }
                     }
                     else {
                         $validator = Validator::make($request->all(), [

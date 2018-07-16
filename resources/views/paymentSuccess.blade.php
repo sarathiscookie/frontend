@@ -26,6 +26,8 @@
                                             {{ session()->get('bookingSuccessStatus') }}
                                         @elseif (session()->has('editBookingSuccessStatus'))
                                             {{ session()->get('editBookingSuccessStatus') }}
+                                        @elseif (session()->has('inquiryBookingSuccessStatus'))
+                                            {{ session()->get('inquiryBookingSuccessStatus') }}
                                         @endif</p>
                                     <p id="info-text-booking3">{{ __('payment.voucherMsg') }}</p>
                                 </div>

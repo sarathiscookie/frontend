@@ -16,7 +16,7 @@
         <div class="container-fluid text-center">
             <div class="row">
                 <div class="panel panel-primary text-left bill-container">
-                    @if ( session()->has('bookingSuccessStatusPrepayment') || session()->has('editBookingSuccessStatusPrepayment') )
+                    @if ( session()->has('bookingSuccessStatusPrepayment') || session()->has('editBookingSuccessStatusPrepayment') || session()->has('inquiryBookingSuccessStatusPrepayment') )
 
                         @php
                             if( session()->has('order') ) {
@@ -26,12 +26,16 @@
                             if( session()->has('editBookOrder') ) {
                               $order = session()->get('editBookOrder');
                             }
+
+                            if( session()->has('inquiryBookOrder') ) {
+                              $order = session()->get('inquiryBookOrder');
+                            }
                         @endphp
                         <div class="panel-heading panel-heading-bill">
                             <div class="row">
                                 <div class="col-sm-12">
                                     <h2><strong>{{ __('prepayment.wellDone') }}</strong> {{ __('prepayment.wellDoneMsg') }}</h2>
-                                    <h5>{{ session()->get('bookingSuccessStatusPrepayment') }} {{ session()->get('editBookingSuccessStatusPrepayment') }}{{--{{ __('prepayment.thankYouMsgTwo') }}--}}</h5>
+                                    <h5>{{ session()->get('bookingSuccessStatusPrepayment') }} {{ session()->get('editBookingSuccessStatusPrepayment') }} {{ session()->get('inquiryBookingSuccessStatusPrepayment') }}</h5>
                                     <h5>{{ __('prepayment.thankYouMsgTwo') }}</h5>
                                     <div class="pull-right">
                                         <form action="{{route('payment.prepayment.download')}}" method="POST">

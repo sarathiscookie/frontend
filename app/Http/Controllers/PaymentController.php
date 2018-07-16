@@ -1282,19 +1282,6 @@ class PaymentController extends Controller
                 }
             }
 
-            /* Delete sessions */
-            session()->forget('bookingIdRequest');
-            session()->forget('dateFromRequest');
-            session()->forget('dateToRequest');
-            session()->forget('bedRequest');
-            session()->forget('dormRequest');
-            session()->forget('sleepRequest');
-            session()->forget('halfBoardRequest');
-            session()->forget('commentsRequest');
-            session()->forget('sleepingPlaceRequest');
-            session()->forget('prepaymentAmountRequest');
-            session()->forget('availableStatus');
-
             return view('paymentPrepayment');
         }
         else {
