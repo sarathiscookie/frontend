@@ -166,7 +166,7 @@
     padding-left: 0;
 }
 @media (max-width: 767px){.payment-options{
-    margin-top: 60px;
+    margin-top: 70px;
 }}
 @media (max-width: 767px){.booking-box-history {
     background-color:#D1D1D1;
@@ -180,12 +180,13 @@
 }}
 .col-sm-12-history{
     padding-left:0;
+    padding-right:0;
 }
 .check-it-list-spe-history{
     float:left;
     margin-bottom:5px;
     padding-bottom:2px;
-    padding-top:2px;
+    padding-top:0px;
 }
 .in-info-history{
     float:none;

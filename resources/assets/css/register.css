@@ -45,8 +45,12 @@
     margin-right:0;
 }}
 
+@media (max-width: 991px){.panel-register .panel-body{
+    padding:15px !important;
+}}
+
 @media (min-width: 992px){.check-register{
-    margin-left: 33%;
+    margin-left: 33% !important;
 }}
 
 .terms-headliner-register{

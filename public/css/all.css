@@ -383,6 +383,9 @@ footer {
     text-align: center;
     margin-bottom: 10px;
 }}
+@media (max-width: 650px){#prefetch .tt-menu, #prefetch #cabinname{
+    width: auto !important;
+}}
 /* Welcome page main css begin */
 /*Text in titlepicture*/
 #headliner-home{
@@ -1956,6 +1959,11 @@ hr {
 @media (min-width: 1511px){.depsit-booking1{
     height:117px;
 }}
+
+@media (min-width: 1511px){.col-sm-7-booking1 .form-group {
+    margin-bottom: 0px !important;
+}}
+
 .month-opening-booking1{
     padding-left:0;
     padding-right:0;
@@ -2050,20 +2058,31 @@ hr {
     padding-left:15px;
     padding-right:15px;
 }
-@media (max-width:424px){.navbar-default-booking2{
+@media (max-width:650px){.navbar-default-booking2{
     height:105px;
 }}
+
+@media (max-width: 650px){.cabin-head-booking2 {
+    float: none;
+    margin: 5px;
+    margin-left: 0;
+    margin-right: 0;
+}}
+
 @media (max-width:1349px){.col-md-8-booking2 {
     width:100% !important;
 }}
+
 @media (min-width:1511px){ div .container-fluid-booking2{
     padding-left:0px;
     padding-right:0px;
     margin:0;
 }}
+
 @media (min-width:992px){#list-filter-booking2{
     width:80%;
 }}
+
 #list-filter-booking2{
     padding-left:0;
     padding-right:0;
@@ -2248,6 +2267,10 @@ hr {
     width:auto !important;
 }
 
+#creditcard .form-group{
+    margin-bottom:0;
+}
+
 #cardpan{
     width: 100%;
     margin-top: 0.3em;
@@ -2259,6 +2282,10 @@ hr {
     margin-bottom:0px;
 }
 
+.cardpan iframe{
+    width:100%;
+}
+
 #cardcvc2{
     border-color: #5F6876 !important;
     padding:5px;
@@ -2268,10 +2295,12 @@ hr {
 
 #cardexpiremonth{
     border-color: #5F6876 !important;
+    width: 100%;
 }
 
 #cardexpireyear{
     border-color: #5F6876 !important;
+    width: 100%;
 }
 
 #visa, #mastercard{
@@ -2584,8 +2613,12 @@ hr {
     margin-right:0;
 }}
 
+@media (max-width: 991px){.panel-register .panel-body{
+    padding:15px !important;
+}}
+
 @media (min-width: 992px){.check-register{
-    margin-left: 33%;
+    margin-left: 33% !important;
 }}
 
 .terms-headliner-register{
@@ -2837,7 +2870,7 @@ hr {
     padding-left: 0;
 }
 @media (max-width: 767px){.payment-options{
-    margin-top: 60px;
+    margin-top: 70px;
 }}
 @media (max-width: 767px){.booking-box-history {
     background-color:#D1D1D1;
@@ -2851,12 +2884,13 @@ hr {
 }}
 .col-sm-12-history{
     padding-left:0;
+    padding-right:0;
 }
 .check-it-list-spe-history{
     float:left;
     margin-bottom:5px;
     padding-bottom:2px;
-    padding-top:2px;
+    padding-top:0px;
 }
 .in-info-history{
     float:none;

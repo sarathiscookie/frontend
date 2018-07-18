@@ -16,7 +16,7 @@ return [
     |
     */
     'overviewHeading'                                       => 'Buchungshistorie',
-    'bookingNumber'                                         => 'Buchungs nummer',
+    'bookingNumber'                                         => 'Buchungsnummer',
     'newVoucherAmount'                                      => 'Anzahlung',
     'storeToWallet'                                         => 'Guthaben hinzufügen',
     'arrival'                                               => 'Anreise',
@@ -24,7 +24,7 @@ return [
     'beds'                                                  => 'Betten',
     'dorms'                                                 => 'Lager',
     'sleeps'                                                => 'Schlafplätze',
-    'bookingStatusHeading'                                  => 'Buchungs status',
+    'bookingStatusHeading'                                  => 'Buchungsstatus',
     'successStatus'                                         => 'Buchung erfolgreich',
     'reservationStatus'                                     => 'Reservation Successfully',
     'waitingStatus'                                         => 'Warten auf Zahlung',

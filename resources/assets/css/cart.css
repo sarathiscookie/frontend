@@ -279,6 +279,11 @@
 @media (min-width: 1511px){.depsit-booking1{
     height:117px;
 }}
+
+@media (min-width: 1511px){.col-sm-7-booking1 .form-group {
+    margin-bottom: 0px !important;
+}}
+
 .month-opening-booking1{
     padding-left:0;
     padding-right:0;

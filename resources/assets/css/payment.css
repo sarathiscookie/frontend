@@ -48,20 +48,31 @@
     padding-left:15px;
     padding-right:15px;
 }
-@media (max-width:424px){.navbar-default-booking2{
+@media (max-width:650px){.navbar-default-booking2{
     height:105px;
 }}
+
+@media (max-width: 650px){.cabin-head-booking2 {
+    float: none;
+    margin: 5px;
+    margin-left: 0;
+    margin-right: 0;
+}}
+
 @media (max-width:1349px){.col-md-8-booking2 {
     width:100% !important;
 }}
+
 @media (min-width:1511px){ div .container-fluid-booking2{
     padding-left:0px;
     padding-right:0px;
     margin:0;
 }}
+
 @media (min-width:992px){#list-filter-booking2{
     width:80%;
 }}
+
 #list-filter-booking2{
     padding-left:0;
     padding-right:0;
@@ -246,6 +257,10 @@
     width:auto !important;
 }
 
+#creditcard .form-group{
+    margin-bottom:0;
+}
+
 #cardpan{
     width: 100%;
     margin-top: 0.3em;
@@ -257,6 +272,10 @@
     margin-bottom:0px;
 }
 
+.cardpan iframe{
+    width:100%;
+}
+
 #cardcvc2{
     border-color: #5F6876 !important;
     padding:5px;
@@ -266,10 +285,12 @@
 
 #cardexpiremonth{
     border-color: #5F6876 !important;
+    width: 100%;
 }
 
 #cardexpireyear{
     border-color: #5F6876 !important;
+    width: 100%;
 }
 
 #visa, #mastercard{

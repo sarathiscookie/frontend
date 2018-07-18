@@ -708,8 +708,6 @@ class InquiryController extends Controller
             if(!empty($bookingData)) {
                 $user                  = Userlist::where('is_delete', 0)->where('usrActive', '1')->find(Auth::user()->_id);
                 $order                 = Order::where('auth_user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))->find($bookingData->order_id);
-                $cabin                 = Cabin::select('_id', 'name')->where('is_delete', 0)->where('other_cabin', "0")->where('name', $bookingData->cabinname)->first();
-                $invoice_explode       = explode('-', $bookingData->invoice_number); // Exploding auto number and ignoring last element
 
                 // Pay by bill condition works if there is two weeks diff b/w current date and checking from date.
                 $checkingFrom          = $bookingData->checkin_from->format('Y-m-d');

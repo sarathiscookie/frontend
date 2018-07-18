@@ -115,33 +115,33 @@ return [
         ],
         /* Custom errors in login & registration page */
         'password' => [
-            'required'      => 'Das passwort muss ausgefüllt sein.',
-            'string'        => 'Der passwort muss eine Zeichenfolge sein.',
-            'min'           => 'Das Passwort muss länger als 6 Zeichen sein',
-            'confirmed'     => 'Das passwort bestätigung stimmt nicht überein.',
+            'required'      => 'Passwort muss ausgefüllt werden',
+            'string'        => 'Passwort muss eine Zeichenfolge sein.',
+            'min'           => 'Passwort muss länger als 6 Zeichen sein',
+            'confirmed'     => 'Passwörter stimmen nicht überein.',
         ],
         'firstName' => [
-            'required'      => 'Das vorname muss ausgefüllt sein.',
-            'string'        => 'Der vorname muss eine Zeichenfolge sein.',
-            'max'           => 'Die vorname dürfen nicht länger als :max Zeichen sein.'
+            'required'      => 'Vorname muss angegeben werden.',
+            'string'        => 'Vorname muss eine Zeichenfolge sein.',
+            'max'           => 'Vorname dürfen nicht länger als :max Zeichen sein.'
         ],
         'lastName' => [
-            'required'      => 'Das nachname muss ausgefüllt sein.',
-            'string'        => 'Der nachname muss eine Zeichenfolge sein.',
-            'max'           => 'Die nachname dürfen nicht länger als :max Zeichen sein.'
+            'required'      => 'Nachname muss angegeben werden.',
+            'string'        => 'Nachname muss eine Zeichenfolge sein.',
+            'max'           => 'Nachname dürfen nicht länger als :max Zeichen sein.'
         ],
         'email' => [
-            'required'      => 'Das E-Mail muss ausgefüllt sein.',
-            'string'        => 'Der E-Mail muss eine Zeichenfolge sein.',
-            'max'           => 'Die E-Mail dürfen nicht länger als :max Zeichen sein.',
-            'email'         => 'Die E-Mail muss eine gültige E-Mail-Adresse sein.',
-            'unique'        => 'Diese E-Mail wird bereits verwendet',
+            'required'      => 'E-Mail-Adresse muss angegeben werden.',
+            'string'        => 'E-Mail-Adresse muss eine Zeichenfolge sein.',
+            'max'           => 'E-Mail-Adresse dürfen nicht länger als :max Zeichen sein.',
+            'email'         => 'E-Mail-Adresse muss eine gültige E-Mail-Adresse sein.',
+            'unique'        => 'E-Mail-Adresse wird bereits verwendet',
         ],
         'dataProtection' => [
-            'required'      => 'Der datenschutz muss bestätigt werden'
+            'required'      => 'Der Datenschutz muss bestätigt werden.'
         ],
         'termsService' => [
-            'required'      => 'Der AGB muss bestätigt werden'
+            'required'      => 'Die AGB müssen bestätigt werden.'
         ],
         /* Custom errors in cart page */
         'street' => [

@@ -5,7 +5,7 @@
     <div class="row row-log">
         <div class="col-md-8 col-md-8-log">
             <div class="panel panel-log panel-default">
-                <div class="panel-heading">Reset Password</div> <br>
+                <div class="panel-heading">{{ __('passwords.passwordResetHeading') }}</div> <br>
 
                 <div class="panel-body panel-body-log">
                     @if (session('status'))
@@ -34,7 +34,7 @@
                         <div class="form-group">
                             <div class="col-md-6 col-md-offset-4 div-btn-log">
                                 <button type="submit" class="btn btn-primary btn-log">
-                                    Send Password Reset Link
+                                    {{ __('passwords.passwordResetSendEmailButton') }}
                                 </button>
                             </div>
                         </div>
