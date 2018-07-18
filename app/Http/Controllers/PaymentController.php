@@ -1255,6 +1255,7 @@ class PaymentController extends Controller
                         /* Updating new booking status and payment status */
                         $bookingData->status         = '5';
                         $bookingData->payment_status = '3';
+                        $bookingData->typeofbooking  = 0; // 1=> Inquiry, 0=> Not inquiry // Updating inquiry booking to normal booking
                         $bookingData->save();
 
                         $order = Order::where('userid', session()->get('inquiryUserId'))
