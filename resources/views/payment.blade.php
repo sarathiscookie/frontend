@@ -231,7 +231,7 @@
                                             <div class="row row-booking2" data-redeem="{{ $moneyBalance }}">
                                                 <div class="col-sm-12 col-sm-12-booking2 month-opening-booking2">
                                                     <h5>{{ __('payment.yourAmount') }}</h5>
-                                                    <span class="label label-info label-cabinlist"><input type="checkbox" class="moneyBalance" name="moneyBalance" value="1"> {{ __('payment.redeemNow') }} {{ number_format($moneyBalance, 2, ',', '.') }}&euro;</span>
+                                                    <span class="label label-info label-cabinlist"><input type="checkbox" class="moneyBalanceCheckbox" name="moneyBalance" value="1"> {{ __('payment.redeemNow') }} {{ number_format($moneyBalance, 2, ',', '.') }}&euro;</span>
                                                 </div>
                                             </div>
                                         @endif

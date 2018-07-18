@@ -703,7 +703,7 @@ $(function() {
 
     var paymentChoosePassAmount = $( ".sumPrepayAmount" ).data('sumprepayamount'); // If click on any payment method, pass amount to function to calculate service fee.
 
-    $(".moneyBalance").click(function(){
+    $(".moneyBalanceCheckbox").click(function(){
 
         if($(this).is(":checked")) {
             $( ".afterRedeem" ).show();
