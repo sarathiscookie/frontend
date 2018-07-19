@@ -639,7 +639,7 @@ class PaymentController extends Controller
 
         $countryName                  = "";
 
-        $strReplacedAmount            = str_replace(".", "", $amount);
+        /*$strReplacedAmount            = str_replace(".", "", $amount);*/
 
         include(app_path() . '/Function/Payone.php');
 
@@ -741,13 +741,13 @@ class PaymentController extends Controller
 
             "wallettype"              => $walletType,
 
-            "amount"                  => $strReplacedAmount * 100,
+            "amount"                  => $amount * 100,
 
             "currency"                => "EUR",
 
             "reference"               => random_int(111, 99999).uniqid(),
 
-            "pr[1]"                   => $strReplacedAmount * 100,
+            "pr[1]"                   => $amount * 100,
 
             "no[1]"                   => "1",
 
