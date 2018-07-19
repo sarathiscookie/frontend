@@ -54,7 +54,7 @@ class RegisterController extends Controller
     {
         return Validator::make($data, [
             'firstName' => 'required|string|max:255',
-            'lastName' => 'required|string|max:255',
+            'lastName' => 'required|string|max:255|min:2',
             'email' => [ 'required', 'string', 'email', 'max:255',
                 Rule::unique('user', 'usrEmail')->where(function($query) {
                     $query->whereIn('usrlId', [1, 2, 5, 6])
