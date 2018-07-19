@@ -63,9 +63,7 @@ class CartController extends Controller
             ->take(5)
             ->get();
 
-        $country  = Country::select('name')
-            ->where('is_delete', 0)
-            ->get();
+        $country  = Country::select('name')->get();
 
         return view('cart', ['carts' => $carts, 'country' => $country]);
     }
