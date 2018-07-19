@@ -173,11 +173,11 @@ $(function(){
             if( redDates.indexOf(string) >=0 ) {
                 returnResults = [true, "redDates", "Ausgebucht"];
             }
+            if( holidayDates.indexOf(string) >=0 ) {
+                returnResults = [true, "holidayDates", "Ruhetag"];
+            }
             if( not_season_time.indexOf(string) >=0 ) {
                 returnResults = [false, "", "Geschlossen"];
-            }
-            if( holidayDates.indexOf(string) >=0 ) {
-                returnResults = [false, "", "Ruhetag"];
             }
             return returnResults;
         });
