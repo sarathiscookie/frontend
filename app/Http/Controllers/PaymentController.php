@@ -639,8 +639,6 @@ class PaymentController extends Controller
 
         $countryName                  = "";
 
-        /*$strReplacedAmount            = str_replace(".", "", $amount);*/
-
         include(app_path() . '/Function/Payone.php');
 
         /* Condition for country*/

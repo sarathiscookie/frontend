@@ -312,7 +312,6 @@
         $ecommercemode           = "3dsecure";
 
         /* Parameter ( Normal data ) */
-        $strReplacedAmount       = str_replace(".", "", $prepayServiceTotal);
         $reference               = random_int(111, 99999).uniqid();
         $pr[1]                   = $prepayServiceTotal * 100;
         $no[1]                   = "1";
