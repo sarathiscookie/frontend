@@ -741,13 +741,13 @@ class PaymentController extends Controller
 
             "wallettype"              => $walletType,
 
-            "amount"                  => $strReplacedAmount * 100,
+            "amount"                  => $strReplacedAmount,
 
             "currency"                => "EUR",
 
             "reference"               => random_int(111, 99999).uniqid(),
 
-            "pr[1]"                   => $strReplacedAmount * 100,
+            "pr[1]"                   => $strReplacedAmount,
 
             "no[1]"                   => "1",
 
