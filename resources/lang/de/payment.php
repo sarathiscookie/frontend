@@ -26,7 +26,7 @@ return[
     'confirmThePrivacy'                                => 'Bitte bestätigen Sie die Datenschutzerklärung von Huetten-Holiday.de',
     'confirmTheTerms'                                  => 'Bitte bestätigen Sie die Reservierungsbedingungen von Huetten-Holiday.de',
     'newscenter'                                       => 'Neuigkeiten',
-    'informationBooking'                               => 'Informationen zu Ihre Buchung',
+    'informationBooking'                               => 'Informationen zu Ihrer Buchung',
     'updatedAboutSystem'                               => 'Neuigkeiten zu unserem System',
     'subscribeNewsletter'                              => 'Möchten Sie unseren Newsletter abonnieren',
     'completePayment'                                  => 'GESAMTBETRAG',

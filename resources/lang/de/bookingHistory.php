@@ -58,7 +58,7 @@ return [
     'updateButton'                                          => 'Buchung speichern',
     'errorOne'                                              => 'Whoooops!',
     'errorTwo'                                              => 'Ändern Sie ein paar Dinge und versuchen Sie es erneut.',
-    'errorThree'                                            => 'Whoooops! Sie haben nichts an der Buchung verändert.',
+    'errorThree'                                            => 'Sie haben nichts an der Buchung verändert.',
     'alertChooseGreater'                                    => 'Sie können im Auswahlfeld größere Werte auswählen.',
     'oldAmount'                                             => 'Bisheriger Gutscheinwert',
     'updateBookingSuccessOne'                               => 'Gut gemacht!',
