@@ -117,7 +117,7 @@ return [
         'password' => [
             'required'      => 'Passwort muss ausgefüllt werden',
             'string'        => 'Passwort muss eine Zeichenfolge sein.',
-            'min'           => 'Passwort muss länger als 6 Zeichen sein',
+            'min'           => 'Passwort muss länger als :min Zeichen sein',
             'confirmed'     => 'Passwörter stimmen nicht überein.',
         ],
         'firstName' => [
@@ -128,7 +128,8 @@ return [
         'lastName' => [
             'required'      => 'Nachname muss angegeben werden.',
             'string'        => 'Nachname muss eine Zeichenfolge sein.',
-            'max'           => 'Nachname dürfen nicht länger als :max Zeichen sein.'
+            'max'           => 'Nachname dürfen nicht länger als :max Zeichen sein.',
+            'min'           => 'Nachname muss länger als :min Zeichen sein',
         ],
         'email' => [
             'required'      => 'E-Mail-Adresse muss angegeben werden.',
@@ -146,13 +147,13 @@ return [
         /* Custom errors in cart page */
         'street' => [
             'required'      => 'Die Straße muss eingegeben werden.',
-            'string'        => 'Der Straße muss eine Zeichenfolge sein.',
-            'max'           => 'Die Straße dürfen nicht länger als :max Zeichen sein.'
+            'max'           => 'Die Straße dürfen nicht länger als :max Zeichen sein.',
+            'alpha_num'     => 'Die Straße darf nur aus Buchstaben und Zahlen bestehen.'
         ],
         'city' => [
             'required'      => 'Die Stadt muss eingegeben werden.',
-            'string'        => 'Der Stadt muss eine Zeichenfolge sein.',
-            'max'           => 'Die Stadt dürfen nicht länger als :max Zeichen sein.'
+            'max'           => 'Die Stadt dürfen nicht länger als :max Zeichen sein.',
+            'alpha_num'     => 'Die Stadt darf nur aus Buchstaben und Zahlen bestehen.'
         ],
         'country' => [
             'required'      => 'Das Land muss eingegeben werden.',
@@ -160,16 +161,18 @@ return [
         ],
         'zipcode' => [
             'required'      => 'Die Postleizahl muss eingegeben werden.',
-            'string'        => 'Der Postleizahl muss eine Zeichenfolge sein.',
-            'max'           => 'Die Postleizahl dürfen nicht länger als :max Zeichen sein.'
+            'max'           => 'Die Postleizahl dürfen nicht länger als :max Zeichen sein.',
+            'alpha_num'     => 'Die Postleizahl darf nur aus Buchstaben und Zahlen bestehen.'
         ],
         'mobile' => [
-            'max'           => 'Die Handy dürfen nicht länger als :max Zeichen sein.'
+            'required'      => 'Die Handy muss eingegeben werden.',
+            'numeric'       => 'Die Handy muss eine Nummer sein.',
+            'digits_between' => 'Die Handy muss zwischen :min und :max Ziffern.',
         ],
         'phone' => [
             'required'      => 'Die Telefonnummer muss eingegeben werden.',
-            'string'        => 'Der Telefonnummer muss eine Zeichenfolge sein.',
-            'max'           => 'Die Telefonnummer dürfen nicht länger als :max Zeichen sein.'
+            'numeric'       => 'Die Telefonnummer muss eine Nummer sein.',
+            'digits_between' => 'Die Telefonnummer muss zwischen :min und :max Ziffern.',
         ],
         'payment' => [
             'required'      => 'Es muss ein Zahlungsweg ausgewählt werden.'
