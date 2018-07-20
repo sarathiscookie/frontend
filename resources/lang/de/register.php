@@ -26,7 +26,7 @@ return [
     'passwordPlaceholder'               => 'Passwort erstellen',
     'cpassword'                         => 'Passwort bestätigen',
     'cpasswordPlaceholder'              => 'Passwort wiederholen',
-    'dataProtection'                    => 'Ich habe den Datenschutzerklärung gelesen und zur Kenntnis genommen',
+    'dataProtection'                    => 'Ich habe die Datenschutzerklärung gelesen und zur Kenntnis genommen',
     'termsOfService'                    => 'Ich habe die AGB gelesen und zur Kenntnis genommen',
     'newsletterSignup'                  => 'Unseren Newsletter abonnieren',
     'registerButton'                    => 'Registrieren',

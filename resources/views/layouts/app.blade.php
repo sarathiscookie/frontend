@@ -105,7 +105,7 @@
 @else
     <div class="jumbotron">
         <div class="container text-center">
-            <img src="{{ asset('storage/img/namloser-wetter-spitz.jpg') }}" class="img-responsive titlepicture" alt="Title picture">
+            <img src="{{ asset('storage/img/bergpanorama.jpg') }}" class="img-responsive titlepicture" alt="Title picture">
             <h1 id="headliner-home">{{ __('app.imageHeadline1') }}<br>{{ __('app.imageHeadline2') }}</h1>
         </div>
     </div>
