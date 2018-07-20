@@ -1492,4 +1492,57 @@ $(function(){
         editCartTotalDepositCalc(total, oldVoucherAmount, amount);
     });
     /* Amount calc of sleeps, beds & dorms end */
+
+    /* Send chat message to cabin owner */
+    $(".sendChatMsg").on("click", function(e){
+        e.preventDefault();
+        var chatBookId     = $(this).data('chatbookid');
+        var $btn           = $(this).btnBootstrap('loading');
+        var message        = $(".chatMessage_"+chatBookId).val();
+        if(chatBookId !== '') {
+            $.ajax({
+                url: '/booking/history/inquiry/message/send',
+                dataType: 'JSON',
+                type: 'POST',
+                data: { chatBookId: chatBookId, message: message }
+            })
+                .done(function( result ) {
+                    if(result.status === 'success') {
+                        $btn.btnBootstrap('reset');
+                        $(".hideAfterSuccess").hide();
+                        $(".successMessage_"+chatBookId).html('<div class="alert alert-success alert-dismissible"> <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button> <h4><i class="icon fa fa-check"></i></h4>Die Nachricht wurde nun versendet</div>');
+                        setInterval(function () {
+                            window.location.href = '/booking/history/';
+                        }, 1000);
+                    }
+                })
+                .fail(function(data) {
+                    $btn.btnBootstrap('reset');
+                    if( data.status === 422 ) {
+                        var errors = data.responseJSON.errors;
+                        if(errors) {
+                            $( "#chatSendFailed_"+chatBookId ).hide();
+                            $( "#errorSendFailed_"+chatBookId ).show();
+                            errorsHtml = '<div class="alert alert-danger"><ul>';
+                            $.each( errors , function( key, value ) {
+                                errorsHtml += '<li>' + value + '</li>';
+                            });
+                            errorsHtml += '</ul></div>';
+                            $( "#errorSendFailed_"+chatBookId ).html( errorsHtml );
+                        }
+                        else {
+                            $( "#errorSendFailed_"+chatBookId ).hide();
+                            $( "#chatSendFailed_"+chatBookId ).show();
+                            var warning = data.responseJSON;
+                            errorsHtml = '<div class="alert alert-info"><ul>';
+                            $.each( warning , function( key, value ) {
+                                errorsHtml += '<li>' + value + '</li>';
+                            });
+                            errorsHtml += '</ul></div>';
+                            $( "#chatSendFailed_"+chatBookId ).html( errorsHtml );
+                        }
+                    }
+                });
+        }
+    });
 });

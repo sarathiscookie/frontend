@@ -21,4 +21,13 @@ return [
     'errorOne'                      => 'Oh snap!',
     'errorTwo'                      => 'Change a few things up and try submitting again.',
     'alertChooseGreater'            => 'You can select greater than values from select box.',
+
+    /* Chat message popup translations */
+    'noChats'                       => 'No chats available',
+    'enterYourAnswer'               => 'Please enter your answer here...',
+    'sendButton'                    => 'Send',
+    'sendLoading'                   => 'Sending...',
+    'msgSendFailed'                 => 'Something went wrong. Please try it again.',
+    'messageRequired'               => 'Please enter your message.',
+    'messageMax'                    => 'A maximum of :max characters is allowed.',
 ];

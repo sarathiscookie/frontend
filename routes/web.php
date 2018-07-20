@@ -266,6 +266,9 @@ Route::group(['middleware' => ['auth']], function () {
     /* Choose payment and store data */
     Route::post('/booking/history/inquiry/payment/update', 'InquiryController@update')->name('booking.history.inquiry.payment.update');
 
+    /* Inquiry chat message send */
+    Route::post('/booking/history/inquiry/message/send', 'InquiryController@sendMessage')->name('booking.history.inquiry.message.send');
+
     /* Choose payment and store data */
     Route::post('/booking/history/payment/store', 'BookingHistoryController@store')->name('booking.history.payment.store');
 

@@ -108,6 +108,12 @@ hr {
 @media(max-width: 1510px){.row-cabinlist .col-sm-7 .row{
     bottom: 0px;
 }}
+@media (max-width: 1510px){ .row-cabinlist > div > img {
+    height: auto;
+}}
+@media (min-width: 1511px){ .row-cabinlist > div > img {
+    max-height: 361px;
+}}
 @media (max-width:767px){.navbar-default-cabinlist {
     height:auto;
     display: block;

@@ -4,6 +4,8 @@
 
 @inject('service', 'App\Http\Controllers\BookingHistoryController')
 
+@inject('inquiryService', 'App\Http\Controllers\InquiryController')
+
 @section('content')
     <div class="container-fluid bg-3 text-center container-fluid-history">
         <div class="col-md-2 col-md-2-history"></div>
@@ -150,13 +152,15 @@
                                                     @if($booking->status === '5' && $booking->inquirystatus === 1 && $booking->typeofbooking === 1) <!-- 1: Inquiry Approved -->
                                                         <span class="label label-success label-cabinlist">{{ __('bookingHistory.inquiryAcceptedStatus') }}</span> <br>
                                                         <a href="/booking/history/inquiry/{{ $booking->_id }}" class="btn btn-list-history inquiryPayment" name="inquiryPayment" id="inquiryPayment" value="inquiryPayment" data-inquirypayment="{{ $booking->_id }}" data-loading-text="{{ __('bookingHistory.doYourPayment') }}..." autocomplete="off">{{ __('bookingHistory.doYourPayment') }} <span class="glyphicon glyphicon-euro"></span></a>
-                                                        <button type="button" class="btn btn-list-history">{{ __('bookingHistory.openChat') }} <span class="glyphicon glyphicon-envelope"></span></button>
+                                                        {{--<button type="button" class="btn btn-list-history">{{ __('bookingHistory.openChat') }} <span class="glyphicon glyphicon-envelope"></span></button>--}}
                                                         <button type="button" class="btn btn-list-history deleteInquiryApprovedBookingHistory" data-delapprovedinquiry="{{ $booking->_id }}" data-loading-text="{{ __('bookingHistory.deleteBookingLoader') }}" autocomplete="off">{{ __('bookingHistory.deleteInquiry') }} <span class="glyphicon glyphicon-trash"></span></button>
                                                     @endif
 
                                                     @if($booking->status === '7' && $booking->inquirystatus === 0 && $booking->typeofbooking === 1) <!-- Inquiry Waiting for reply -->
                                                         <span class="label label-warning label-cabinlist">{{ __('bookingHistory.inquiryWaitingStatus') }}</span> <br>
-                                                        <button type="button" class="btn btn-list-history">{{ __('bookingHistory.openChat') }} <span class="glyphicon glyphicon-envelope"></span></button>
+
+                                                        <button type="button" class="btn btn-list-history" data-toggle="modal" data-target="#openChat_{{ $booking->_id }}">{{ __('bookingHistory.openChat') }} <span class="glyphicon glyphicon-envelope"></span></button>
+
                                                         <button type="button" class="btn btn-list-history deleteInquiryWaitingBookingHistory" data-delwaitinginquiry="{{ $booking->_id }}" data-loading-text="{{ __('bookingHistory.deleteBookingLoader') }}" autocomplete="off">{{ __('bookingHistory.deleteInquiry') }} <span class="glyphicon glyphicon-trash"></span></button>
                                                     @endif
 
@@ -177,6 +181,63 @@
                                                         <button type="button" class="btn btn-list-history deleteWaitingPrepaymentBookingHistory" data-delwaitingprepay="{{ $booking->_id }}" data-loading-text="{{ __('bookingHistory.deleteBookingLoader') }}" autocomplete="off">{{ __('bookingHistory.deleteBooking') }} <span class="glyphicon glyphicon-trash"></span></button>
                                                     @endif
                                                 </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Modal for chat -->
+                    <div class="col-md-12">
+                        <div class="modal fade box box_primary direct-chat direct-chat-warning box_chat" id="openChat_{{ $booking->_id }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header box-header with-border">
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                        <h4 class="modal-title box-title" id="myModalLabel">Chat</h4>
+                                    </div>
+
+                                    <div class="successMessage_{{$booking->_id}}"></div>
+
+                                    <div class="hideAfterSuccess">
+                                        <div class="modal-body box-body">
+                                            <div id="errorSendFailed_{{$booking->_id}}" style="display: none;"></div>
+                                            <div id="chatSendFailed_{{$booking->_id}}" style="display: none;"></div>
+                                            @forelse($inquiryService->message($booking->_id) as $message)
+                                                <div class="direct-chat-messages">
+                                                    @if($message->sender_id == Auth::user()->_id && !empty($message->text))
+                                                        <div class="direct-chat-msg chat_msg">
+                                                            <div class="direct-chat-info chat_info clearfix">
+                                                                <span class="direct-chat-name chat_name pull-left">{{$message->sender->usrFirstname}} {{$message->sender->usrLastname}}</span>
+                                                                <span class="direct-chat-timestamp chat_timestamp pull-right">{{ ($message->created_at)->format('d M H:i:s A') }}</span>
+                                                            </div>
+                                                            <i class="menu-icon bg-light-blue direct-chat-img chat_img text-center" style="padding: 9px;">G</i>
+                                                            <div class="direct-chat-text chat_text">{{ $message->text }}</div>
+                                                        </div>
+                                                    @endif
+                                                    @if($message->receiver_id == Auth::user()->_id && !empty($message->text))
+                                                        <div class="direct-chat-msg chat_msg right">
+                                                            <div class="direct-chat-info chat_info clearfix">
+                                                                <span class="direct-chat-name chat_name pull-right">{{$message->sender->usrFirstname}} {{$message->sender->usrLastname}}</span>
+                                                                <span class="direct-chat-timestamp chat_timestamp pull-left">{{ ($message->created_at)->format('d M H:i:s A') }}</span>
+                                                            </div>
+                                                            <i class="menu-icon label-default direct-chat-img chat_img text-center" style="padding: 9px;">HW</i>
+                                                            <div class="direct-chat-text chat_text">{{ $message->text }}</div>
+                                                        </div>
+                                                    @endif
+                                                </div>
+                                            @empty
+                                                <p>{{ __('inquiry.noChats') }}</p>
+                                            @endforelse
+                                        </div>
+                                        <div class="modal-footer box_footer">
+                                            <div class="input-group margin col-md-12">
+                                                <input type="text" name="message[]" id="message.{{$booking->_id}}" placeholder="{{ __('inquiry.enterYourAnswer') }}" class="form-control chatMessage_{{$booking->_id}}" autocomplete="off" maxlength="350">
+                                                <span class="input-group-btn">
+                                                <button type="button" class="btn btn_info btn-flat sendChatMsg" data-chatbookid="{{$booking->_id}}" data-loading-text="{{ __('inquiry.sendLoading') }}" autocomplete="off">{{ __('inquiry.sendButton') }}</button>
+                                            </span>
                                             </div>
                                         </div>
                                     </div>

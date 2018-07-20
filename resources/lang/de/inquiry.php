@@ -22,4 +22,13 @@ return [
     'errorTwo'                      => 'Ändern Sie ein paar Dinge und versuchen Sie es erneut.',
     'alertChooseGreater'            => 'Sie können im Auswahlfeld größere Werte auswählen.',
 
+    /* Chat message popup translations */
+    'noChats'                       => 'keine Nachricht vorhanden',
+    'enterYourAnswer'               => 'Bitte Antwort hier eingeben...',
+    'sendButton'                    => 'Senden',
+    'sendLoading'                   => 'Senden...',
+    'msgSendFailed'                 => 'Irgendwas ist schief gelaufen.  Bitte probieren Sie es erneut.',
+    'messageRequired'               => 'Bitte tragen Sie Ihre Nachricht ein.',
+    'messageMax'                    => 'Es sind maximal :max Zeichen erlaubt.',
+
 ];

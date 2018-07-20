@@ -12,6 +12,7 @@ use App\Order;
 use App\Ordernumber;
 use App\PrivateMessage;
 use App\Http\Requests\InquiryRequest;
+use App\Http\Requests\ChatMessageRequest;
 use Carbon\Carbon;
 use DateTime;
 use DatePeriod;
@@ -90,6 +91,83 @@ class InquiryController extends Controller
     public function create()
     {
         //
+    }
+
+    /**
+     * Return cabin details when injection occur.
+     *
+     * @param  string  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function message($id)
+    {
+        $readPrivateMessages = PrivateMessage::where('booking_id', new \MongoDB\BSON\ObjectID($id))
+            ->latest()
+            ->take(10)
+            ->get();
+
+        return $readPrivateMessages->reverse();
+    }
+
+    /**
+     * Update the specified resource in message.
+     *
+     * @param  \App\Http\Requests\ChatMessageRequest  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function sendMessage(ChatMessageRequest $request)
+    {
+       //dd($request->message);
+        /*$request->validate([
+            "message"    => "required",
+            "message.*"  => "required|string|max:350",
+        ]);*/
+
+        $bookingData            = Booking::select('cabinname', 'invoice_number')
+            ->where('status', '7')
+            ->where('inquirystatus', 0)
+            ->where('typeofbooking', 1)
+            ->where('is_delete', 0)
+            ->where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
+            ->find($request->chatBookId);
+
+        if(!empty($bookingData)) {
+            $cabin = Cabin::select('cabin_owner')
+                ->where('is_delete', 0)
+                ->where('other_cabin', "0")
+                ->where('name', $bookingData->cabinname)
+                ->first();
+
+            if(!empty($cabin)) {
+
+                $user = Userlist::select('_id')
+                    ->where('usrActive', '1')
+                    ->where('is_delete', 0)
+                    ->find(new \MongoDB\BSON\ObjectID($cabin->cabin_owner));
+
+                if(!empty($user)) {
+                    $privateMessage              = new PrivateMessage;
+                    $privateMessage->sender_id   = new \MongoDB\BSON\ObjectID(Auth::user()->_id);
+                    $privateMessage->receiver_id = new \MongoDB\BSON\ObjectID($user->_id);
+                    $privateMessage->booking_id  = new \MongoDB\BSON\ObjectID($request->chatBookId);
+                    $privateMessage->subject     = $bookingData->invoice_number;
+                    $privateMessage->text        = $request->message;
+                    $privateMessage->read        = 0;
+                    $privateMessage->save();
+
+                    return response()->json(['status' => 'success'], 201);
+                }
+                else {
+                    return response()->json(['error' => __('inquiry.msgSendFailed')], 422);
+                }
+            }
+            else {
+                return response()->json(['error' => __('inquiry.msgSendFailed')], 422);
+            }
+        }
+        else {
+            return response()->json(['error' => __('inquiry.msgSendFailed')], 422);
+        }
     }
 
     /**
