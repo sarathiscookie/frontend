@@ -33,13 +33,13 @@
 
                                     <div class="row" style="float:none; text-align:right;">
                                         <div class="col-sm-12">
-                                            @if($result->interior)
+                                            {{--@if($result->interior)
                                                 @foreach($result->interior as $interior)
                                                     <button type="button" class="btn btn-default btn-sm btn-space facility-btn" data-toggle="tooltip" data-placement="bottom" title="{{ $service->interiorLabel($interior) }}">
                                                         <span @if($interior === 'Food à la carte') class="glyphicon glyphicon-credit-card" @elseif($interior === 'breakfast') class="glyphicon glyphicon-glass" @else class="glyphicon glyphicon-home" @endif aria-hidden="true"></span>
                                                     </button>
                                                 @endforeach
-                                            @endif
+                                            @endif--}}
                                         </div>
                                     </div>
                                 </div>
