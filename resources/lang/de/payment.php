@@ -46,7 +46,7 @@ return[
     'step2Title'                                       => 'Sie sind auf dem zweiten von zwei Schritten, um eine Hüttenübernachtung zu buchen.',
     'payByBillTitle'                                   => 'Sie können nur bis mindestens zwei Wochen vor der Anreise per Rechnung bezahlen.',
     'paymentErrorHeading'                              => 'Buchung fehlgeschlagen!',
-    'bookingSuccessHeading'                            => 'Gebucht!',
+    'bookingSuccessHeading'                            => 'Rechnung!',
     'yourAmount'                                       => 'Ihr Guthaben',
     'redeemNow'                                        => 'Jetzt einlösen!',
     'redeemAmount'                                     => 'Bisheriges Guthaben',

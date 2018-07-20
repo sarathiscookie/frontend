@@ -7,7 +7,7 @@
         <div class="col-md-2 col-md-2-booking3"></div>
         <div class="col-md-8 col-md-8-booking3" id="list-filter-booking3">
             <nav class="navbar navbar-default navbar-default-booking3">
-                <h2 class="cabin-head-booking3">{{ __('payment.bookingSuccessHeading') }}</h2><h2 class="cabin-head-booking3">{{ __('payment.step3') }}</h2>
+                <h2 class="cabin-head-booking3">{{ __('payment.bookingSuccessHeading') }}</h2>
             </nav>
         </div>
         <div class="col-md-2 col-md-2-booking3"></div>
@@ -34,7 +34,7 @@
                         <div class="panel-heading panel-heading-bill">
                             <div class="row">
                                 <div class="col-sm-12">
-                                    <h2><strong>{{ __('prepayment.wellDone') }}</strong> {{ __('prepayment.wellDoneMsg') }}</h2>
+                                    <h2><strong>{{ __('prepayment.wellDone') }}</strong></h2>
                                     <h5>{{ session()->get('bookingSuccessStatusPrepayment') }} {{ session()->get('editBookingSuccessStatusPrepayment') }} {{ session()->get('inquiryBookingSuccessStatusPrepayment') }}</h5>
                                     <h5>{{ __('prepayment.thankYouMsgTwo') }}</h5>
                                     <div class="pull-right">
@@ -55,12 +55,6 @@
                                 <div class="col-sm-12">
                                     <div class="list-group bill-list">
                                         <div class="list-group-item">
-                                            <h4 class="list-group-item-heading">{{ __('prepayment.bookingStatus') }}</h4>
-                                            <p class="list-group-item-text">{{ __('prepayment.onProcess') }}</p>
-                                        </div>
-                                    </div>
-                                    <div class="list-group bill-list">
-                                        <div class="list-group-item">
                                             <h4 class="list-group-item-heading">{{ __('prepayment.txnNumber') }}</h4>
                                             <p class="list-group-item-text">{{ $order->txid }}</p>
                                         </div>
@@ -79,7 +73,7 @@
                                     </div>
                                     <div class="list-group bill-list">
                                         <div class="list-group-item">
-                                            <h4 class="list-group-item-heading">Bank Name</h4>
+                                            <h4 class="list-group-item-heading">{{ __('prepayment.bankName') }}</h4>
                                             <p class="list-group-item-text">{{$order->clearing_bankname }}</p>
                                         </div>
                                     </div>
