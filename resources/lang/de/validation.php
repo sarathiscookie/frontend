@@ -163,7 +163,7 @@ return [
         'zipcode' => [
             'required'      => 'Die Postleizahl muss eingegeben werden.',
             'max'           => 'Die Postleizahl dürfen nicht länger als :max Zeichen sein.',
-            'regex'         => 'Die Postleizahl darf nur aus Buchstaben und Zahlen bestehen.'
+            'regex'         => 'Bitte geben Sie eine gültige Postleitzahl ein.'
         ],
         'mobile' => [
             'max'           => 'Die Handy dürfen nicht länger als :max Zeichen sein.',

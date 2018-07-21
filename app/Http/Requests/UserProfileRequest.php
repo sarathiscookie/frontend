@@ -29,7 +29,7 @@ class UserProfileRequest extends FormRequest
             'street'    => 'required|regex:/^[\pL\pM\pN\s]+$/u|max:255',
             'city'      => 'required|regex:/^[\pL\pM\pN\s]+$/u|max:255',
             'country'   => 'required|regex:/^[\pL\pM\pN\s]+$/u|not_in:0',
-            'zipcode'   => 'required|regex:/^[\pL\pM\pN\s]+$/u|max:25',
+            'zipcode'   => 'required|regex:/^[0-9]{5}(\-[0-9]{4})?$/',
             'mobile'    => 'string|max:20',
             'phone'     => 'string|max:20'
         ];
