@@ -626,6 +626,7 @@ class PaymentController extends Controller
      */
     public function paymentGateway($request, $ip, $amount, $order_number)
     {
+        setlocale(LC_ALL, 'de_DE');
         /* Declaring variables */
         $walletType                   = "";
 
@@ -669,30 +670,31 @@ class PaymentController extends Controller
             "encoding"                => env('ENCODING')
         );
 
+        //dd(iconv('UTF-8', 'ASCII//TRANSLIT', Auth::user()->usrAddress));
         /* Personal details */
         $personalData                 = array(
 
-            "salutation"              => Auth::user()->salutation,
+            "salutation"              => iconv('UTF-8', 'ASCII//TRANSLIT', Auth::user()->salutation),
 
-            "title"                   => Auth::user()->title,
+            "title"                   => iconv('UTF-8', 'ASCII//TRANSLIT', Auth::user()->title),
 
-            "firstname"               => Auth::user()->usrFirstname,
+            "firstname"               => iconv('UTF-8', 'ASCII//TRANSLIT', Auth::user()->usrFirstname),
 
-            "lastname"                => Auth::user()->usrLastname,
+            "lastname"                => iconv('UTF-8', 'ASCII//TRANSLIT', Auth::user()->usrLastname),
 
-            "company"                 => Auth::user()->company,
+            "company"                 => iconv('UTF-8', 'ASCII//TRANSLIT', Auth::user()->company),
 
-            "street"                  => Auth::user()->usrAddress,
+            "street"                  => iconv('UTF-8', 'ASCII//TRANSLIT', Auth::user()->usrAddress),
 
-            "zip"                     => Auth::user()->usrZip,
+            "zip"                     => iconv('UTF-8', 'ASCII//TRANSLIT', Auth::user()->usrZip),
 
-            "city"                    => Auth::user()->usrCity,
+            "city"                    => iconv('UTF-8', 'ASCII//TRANSLIT', Auth::user()->usrCity),
 
             "country"                 => $countryName,
 
-            "email"                   => Auth::user()->usrEmail,
+            "email"                   => iconv('UTF-8', 'ASCII//TRANSLIT', Auth::user()->usrEmail),
 
-            "telephonenumber"         => Auth::user()->usrTelephone,
+            "telephonenumber"         => iconv('UTF-8', 'ASCII//TRANSLIT', Auth::user()->usrTelephone),
 
             "language"                => env('APP_LOCALE'),
 
@@ -793,17 +795,17 @@ class PaymentController extends Controller
 
             "invoiceappendix"         => $order_number, //Dynamic text on the invoice
 
-            "shipping_firstname"      => Auth::user()->usrFirstname,
+            "shipping_firstname"      => iconv('UTF-8', 'ASCII//TRANSLIT', Auth::user()->usrFirstname),
 
-            "shipping_lastname"       => Auth::user()->usrLastname,
+            "shipping_lastname"       => iconv('UTF-8', 'ASCII//TRANSLIT', Auth::user()->usrLastname),
 
-            "shipping_company"        => Auth::user()->company,
+            "shipping_company"        => iconv('UTF-8', 'ASCII//TRANSLIT', Auth::user()->company),
 
-            "shipping_street"         => Auth::user()->usrAddress,
+            "shipping_street"         => iconv('UTF-8', 'ASCII//TRANSLIT', Auth::user()->usrAddress),
 
-            "shipping_zip"            => Auth::user()->usrZip,
+            "shipping_zip"            => iconv('UTF-8', 'ASCII//TRANSLIT', Auth::user()->usrZip),
 
-            "shipping_city"           => Auth::user()->usrCity,
+            "shipping_city"           => iconv('UTF-8', 'ASCII//TRANSLIT', Auth::user()->usrCity),
 
             "shipping_country"        => $countryName,
 

@@ -351,27 +351,27 @@
         }
 
         $country                 = $countryName;
-        $salutation              = Auth::user()->salutation;
-        $title                   = Auth::user()->title;
-        $firstname               = Auth::user()->usrFirstname;
-        $lastname                = Auth::user()->usrLastname;
-        $company                 = Auth::user()->company;
-        $street                  = Auth::user()->usrAddress;
-        $zip                     = Auth::user()->usrZip;
-        $city                    = Auth::user()->usrCity;
-        $email                   = Auth::user()->usrEmail;
-        $telephonenumber         = Auth::user()->usrTelephone;
+        $salutation              = iconv('UTF-8', 'ASCII//TRANSLIT', Auth::user()->salutation);
+        $title                   = iconv('UTF-8', 'ASCII//TRANSLIT', Auth::user()->title);
+        $firstname               = iconv('UTF-8', 'ASCII//TRANSLIT', Auth::user()->usrFirstname);
+        $lastname                = iconv('UTF-8', 'ASCII//TRANSLIT', Auth::user()->usrLastname);
+        $company                 = iconv('UTF-8', 'ASCII//TRANSLIT', Auth::user()->company);
+        $street                  = iconv('UTF-8', 'ASCII//TRANSLIT', Auth::user()->usrAddress);
+        $zip                     = iconv('UTF-8', 'ASCII//TRANSLIT', Auth::user()->usrZip);
+        $city                    = iconv('UTF-8', 'ASCII//TRANSLIT', Auth::user()->usrCity);
+        $email                   = iconv('UTF-8', 'ASCII//TRANSLIT', Auth::user()->usrEmail);
+        $telephonenumber         = iconv('UTF-8', 'ASCII//TRANSLIT', Auth::user()->usrTelephone);
         $gender                  = Auth::user()->gender;
         $language                = env('APP_LOCALE');
         $vatid                   = env('VATID');
 
         /* Parameter ( delivery data ) */
-        $shipping_firstname      = Auth::user()->usrFirstname;
-        $shipping_lastname       = Auth::user()->usrLastname;
-        $shipping_company        = Auth::user()->company;
-        $shipping_street         = Auth::user()->usrAddress;
-        $shipping_zip            = Auth::user()->usrZip;
-        $shipping_city           = Auth::user()->usrCity;
+        $shipping_firstname      = iconv('UTF-8', 'ASCII//TRANSLIT', Auth::user()->usrFirstname);
+        $shipping_lastname       = iconv('UTF-8', 'ASCII//TRANSLIT', Auth::user()->usrLastname);
+        $shipping_company        = iconv('UTF-8', 'ASCII//TRANSLIT', Auth::user()->company);
+        $shipping_street         = iconv('UTF-8', 'ASCII//TRANSLIT', Auth::user()->usrAddress);
+        $shipping_zip            = iconv('UTF-8', 'ASCII//TRANSLIT', Auth::user()->usrZip);
+        $shipping_city           = iconv('UTF-8', 'ASCII//TRANSLIT', Auth::user()->usrCity);
         $shipping_country        = $countryName;
 
         /* Hashing the parameters in sorted order */
