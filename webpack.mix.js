@@ -31,6 +31,7 @@ mix.styles([
     'resources/assets/css/paymentSuccess.css',
     'resources/assets/css/login.css',
     'resources/assets/css/register.css',
+    'resources/assets/css/userProfile.css',
     'resources/assets/css/bookingHistory.css',
     'resources/assets/css/prepayment.css'
 ], 'public/css/all.css').version();

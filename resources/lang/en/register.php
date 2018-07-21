@@ -33,6 +33,13 @@ return [
     'sentActivationCode'                => 'We sent you an activation code. Check your email and click on the link to verify.',
     'emailVerified'                     => 'Your e-mail is verified. You can now login.',
     'emailAlreadyVerified'              => 'Your e-mail is already verified. You can now login.',
-    'verificationWarning'               => 'Sorry your email cannot be identified.'
+    'verificationWarning'               => 'Sorry your email cannot be identified.',
+
+    'salutation'                        => 'Salutation',
+    'salutationChoose'                  => 'Choose Salutation',
+    'salutationOne'                     => 'Male',
+    'salutationTwo'                     => 'Female',
+    'company'                           => 'Company',
+    'companyPlaceholder'                => 'Enter your company name',
 ];
 

@@ -1,0 +1,178 @@
+/* User profile css begin */
+
+/*Icons*/
+.glyphicon-data{
+    position:relative;
+    top:1px;
+    display:inline-block;
+    font-size:20px;
+}
+#amount_button-data{
+    border:none;
+    background-color:#fff;
+    position:absolute;
+    top:30px;
+    padding-top:0 !important;
+    padding-bottom:0 !important;
+    display:block;
+    width:96%;
+    text-align:right;
+}
+.month-opening-data .form-group .col-sm-4 ul{
+    margin-top:0 !important;
+    border-radius:0px;
+}
+.glyphicon-chevron-down:hover{
+    color:#A2C617;
+}
+/*width for most containers*/
+@media (max-width: 767px){.container-fluid-data {
+    padding-right:5px;
+    padding-left:5px;
+}}
+/*Checkboxes*/
+.dropdown-menu-data>li>a{
+    color:#5F6876;
+    font-size:15px;
+}
+/*Checkboxes*/
+.check-it-list-data{
+    white-space:nowrap;
+    padding-right:10px;
+    padding-bottom:5px;
+}
+.check-it-list-data:hover {
+    background-color:#EFEFEF;
+}
+/*Headline under titlepicture*/
+/*kind of opacity background (the text is not opacity with rgba)*/
+.navbar-default-data{
+    background-color: #D1D1D1;
+    border: none;
+    height:75px;
+    text-align:left;
+    padding-left:15px;
+    padding-right:15px;
+}
+@media (max-width:1349px){.col-md-8-data {
+    width:100% !important;
+}}
+@media (min-width:1511px){ div .container-fluid-data{
+    padding-left:0px;
+    padding-right:0px;
+    margin:0;
+}}
+@media (min-width:992px){#list-filter-data{
+    width:80%;
+}}
+#list-filter-data{
+    padding-left:0;
+    padding-right:0;
+}
+.col-md-2-data{width:10% !important
+}
+.cabin-head-data{
+    float:left;
+}
+@media (max-width:424px){.cabin-head-data{
+    float:none;
+}}
+
+/*Main*/
+/*correct sizes for mobile etc. (3 images)*/
+.row-data{
+    width:100%;
+}
+.row-data{
+    margin:0;
+}
+/*Arrival Depature and Persons fields*/
+.col-sm-4-data{
+    padding-right:10px;
+    margin-bottom:10px;
+    width:33.33333333%;
+    padding-left:0;
+}
+@media (max-width:970px){.col-sm-4-data{
+    width:50%;
+}}
+@media (max-width:768px){.col-sm-4-data{
+    float:left;
+}}
+@media (max-width:670px){.col-sm-4-data{
+    width:100%;
+}}
+@media (max-width: 669px){.col-sm-4-data{
+    padding-left:0px;
+    padding-right:0px;
+}}
+/*List*/
+/*Whole list*/
+.panel-body-data{
+    padding:0;
+}
+.panel-data{
+    border:none;
+    border-radius:0px;
+}
+.panel-data{
+    margin-bottom:20px;
+    background-color:#EFEFEF;
+}
+@media (min-width: 768px){.panel-default-data{
+    border:none;
+}}
+/*Middle-boxes*/
+.col-sm-7-data{
+    width:100%;
+}
+@media (max-width: 768px){.col-sm-7-data{
+    padding-left:0px;
+    padding-right:0px;
+}}
+.col-sm-12-data{
+    padding-top:10px;
+    padding-bottom:10px;
+}
+@media (max-width: 767px){.col-sm-12-data{
+    padding-bottom:10px;
+}}
+.month-opening-data h2{
+    padding-left:0;
+    padding-right:0;
+}
+/*inputs*/
+.form-control-data{
+    border:none;
+    border-radius:0px;
+}
+.date_of-data{
+    width:33.33333%;
+    float:left;
+}
+.date_of-data:last-child{
+    float:none;
+}
+#date_of-data{
+    width:100%;
+    display:block;
+}
+/*Buttons on the ground*/
+.btn-default-data{
+    background-color:#A2C617;
+    color:#fff;
+}
+.btn-details-data{
+    border-radius:0px;
+    background-color:#A2C617;
+    border:none;
+    font-weight:normal;
+    color:#fff;
+    height:34px;
+    font-size:16px;
+    padding-left:50px;
+    padding-right:50px;
+}
+#btn-ground-2-data{
+    text-align:right;
+}

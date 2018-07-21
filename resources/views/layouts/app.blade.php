@@ -67,7 +67,7 @@
                     @else
                         <li><a href="#" class="nav-points left-top-nav" data-toggle="dropdown"><span class="glyphicon glyphicon-home"></span> {{ __('app.menuMyHuettenHoliday') }}<span class="caret"></span></a>
                             <ul class="dropdown-menu dropdown-menu-home">
-                                <li class="check-it-list-home"><a href="#" class="dropdown-links"><span class="glyphicon glyphicon-floppy-disk"></span> {{ __('app.menuMyData') }}</a></li>
+                                <li class="check-it-list-home"><a href="/user/profile" class="dropdown-links"><span class="glyphicon glyphicon-floppy-disk"></span> {{ __('app.menuMyData') }}</a></li>
                                 <li class="check-it-list-home"><a href="/booking/history" class="dropdown-links"><span class="glyphicon glyphicon-bed"></span> {{ __('app.menuMyBookingHistory') }}</a></li>
                                 <li class="check-it-list-home">
                                     <a href="{{ route('logout') }}"

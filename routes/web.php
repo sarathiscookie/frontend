@@ -306,6 +306,22 @@ Route::group(['middleware' => ['auth']], function () {
 
     /* Choose payment and store data */
     Route::post('/payment/store', 'PaymentController@store')->name('payment.store');
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | User profile
+    |--------------------------------------------------------------------------
+    |
+    | Route for view user profile, update user profile
+    |
+    */
+    /* View user profile page */
+    Route::get('/user/profile', 'UserProfileController@index')->name('user.profile');
+
+    /* Store user profile data */
+    Route::post('/user/profile/store', 'UserProfileController@store')->name('user.profile.store');
+
 });
 
 /*

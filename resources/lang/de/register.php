@@ -33,6 +33,14 @@ return [
     'sentActivationCode'                => 'Wir haben Ihnen einen Aktivierungscode geschickt. Prüfen Sie bitte Ihr E-Mail Postfach und klicken auf den Bestätigungslink.',
     'emailVerified'                     => 'Ihre E-Mail Adresse ist nun bestätigt. Sie können sich jetzt anmelden.',
     'emailAlreadyVerified'              => 'Ihre E-Mail Adresse ist bereits bestätigt. Sie können sich jetzt anmelden.',
-    'verificationWarning'               => 'Leider wurde Ihre E-Mail Adresse noch noch nicht bestätigt.'
+    'verificationWarning'               => 'Leider wurde Ihre E-Mail Adresse noch noch nicht bestätigt.',
+
+    'salutation'                        => 'Salutation',
+    'salutationChoose'                  => 'Salutation auswählen',
+    'salutationOne'                     => 'Herr',
+    'salutationTwo'                     => 'Frau',
+    'company'                           => 'Firma',
+    'companyPlaceholder'                => 'Firma eingeben',
+    'gender'                            => 'Geschlecht',
 ];
 
