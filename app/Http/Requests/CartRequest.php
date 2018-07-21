@@ -29,8 +29,8 @@ class CartRequest extends FormRequest
             'city'    => 'required|regex:/^[\pL\pM\pN\s]+$/u|max:255',
             'country' => 'required|regex:/^[\pL\pM\pN\s]+$/u|not_in:0',
             'zipcode' => 'required|regex:/^[0-9]{5}(\-[0-9]{4})?$/',
-            'mobile'  => 'string|max:20',
-            'phone'   => 'string|max:20'
+            'mobile'  => 'max:20',
+            'phone'   => 'max:20'
         ];
 
         foreach($this->request->get('guest') as $key => $val){
