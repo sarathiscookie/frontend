@@ -17,7 +17,7 @@
                             <label for="firstName" class="col-md-4 control-label">{{ __('register.firstname') }}</label>
 
                             <div class="col-md-6">
-                                <input id="firstName" type="text" class="form-control" name="firstName" value="{{ old('firstName') }}" placeholder="{{ __('register.firstnamePlaceholder') }}"  autofocus autocomplete="off">
+                                <input id="firstName" type="text" class="form-control" name="firstName" value="{{ old('firstName') }}" placeholder="{{ __('register.firstnamePlaceholder') }}"  autofocus autocomplete="off" maxlength="255">
 
                                 @if ($errors->has('firstName'))
                                     <span class="help-block">
@@ -31,7 +31,7 @@
                             <label for="lastName" class="col-md-4 control-label">{{ __('register.lastname') }}</label>
 
                             <div class="col-md-6">
-                                <input id="lastName" type="text" class="form-control" name="lastName" value="{{ old('lastName') }}" placeholder="{{ __('register.lastnamePlaceholder') }}"  autofocus autocomplete="off">
+                                <input id="lastName" type="text" class="form-control" name="lastName" value="{{ old('lastName') }}" placeholder="{{ __('register.lastnamePlaceholder') }}"  autofocus autocomplete="off" maxlength="255">
 
                                 @if ($errors->has('lastName'))
                                     <span class="help-block">
@@ -45,7 +45,7 @@
                             <label for="email" class="col-md-4 control-label">{{ __('register.email') }}</label>
 
                             <div class="col-md-6">
-                                <input id="email" type="email" class="form-control" name="email" value="{{ old('email') }}" placeholder="{{ __('register.emailPlaceholder') }}" autocomplete="off">
+                                <input id="email" type="email" class="form-control" name="email" value="{{ old('email') }}" placeholder="{{ __('register.emailPlaceholder') }}" autocomplete="off" maxlength="255">
 
                                 @if ($errors->has('email'))
                                     <span class="help-block">
@@ -59,7 +59,7 @@
                             <label for="password" class="col-md-4 control-label">{{ __('register.password') }}</label>
 
                             <div class="col-md-6">
-                                <input id="password" type="password" class="form-control" name="password" placeholder="{{ __('register.passwordPlaceholder') }}" autocomplete="off">
+                                <input id="password" type="password" class="form-control" name="password" placeholder="{{ __('register.passwordPlaceholder') }}" autocomplete="off" maxlength="255">
 
                                 @if ($errors->has('password'))
                                     <span class="help-block">
@@ -73,7 +73,7 @@
                             <label for="password-confirm" class="col-md-4 control-label">{{ __('register.cpassword') }}</label>
 
                             <div class="col-md-6">
-                                <input id="password-confirm" type="password" class="form-control" name="password_confirmation" placeholder="{{ __('register.cpasswordPlaceholder') }}" autocomplete="off">
+                                <input id="password-confirm" type="password" class="form-control" name="password_confirmation" placeholder="{{ __('register.cpasswordPlaceholder') }}" autocomplete="off" maxlength="255">
                             </div>
                         </div>
 

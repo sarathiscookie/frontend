@@ -53,8 +53,8 @@ class RegisterController extends Controller
     protected function validator(array $data)
     {
         return Validator::make($data, [
-            'firstName' => 'required|string|max:255',
-            'lastName' => 'required|string|max:255|min:2',
+            'firstName' => 'required|regex:/^[\pL\pM\pN\s]+$/u|max:255',
+            'lastName' => 'required|regex:/^[\pL\pM\pN\s]+$/u|max:255|min:2',
             'email' => [ 'required', 'string', 'email', 'max:255',
                 Rule::unique('user', 'usrEmail')->where(function($query) {
                     $query->whereIn('usrlId', [1, 2, 5, 6])

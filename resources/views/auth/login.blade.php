@@ -27,7 +27,7 @@
                             <label for="email" class="col-md-4 control-label">{{ __('login.email') }}</label>
 
                             <div class="col-md-6">
-                                <input id="email" type="email" class="form-control" name="email" value="{{ old('email') }}"  autofocus placeholder="{{ __('login.emailPlaceholder') }}">
+                                <input id="email" type="email" class="form-control" name="email" value="{{ old('email') }}"  autofocus placeholder="{{ __('login.emailPlaceholder') }}" autocomplete="off">
 
                                 @if ($errors->has('email'))
                                     <span class="help-block">
@@ -41,7 +41,7 @@
                             <label for="password" class="col-md-4 control-label">{{ __('login.password') }}</label>
 
                             <div class="col-md-6">
-                                <input id="password" type="password" class="form-control" name="password" placeholder="{{ __('login.passwordPlaceholder') }}" >
+                                <input id="password" type="password" class="form-control" name="password" placeholder="{{ __('login.passwordPlaceholder') }}" autocomplete="off">
 
                                 @if ($errors->has('password'))
                                     <span class="help-block">

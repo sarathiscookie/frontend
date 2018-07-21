@@ -122,12 +122,12 @@ return [
         ],
         'firstName' => [
             'required'      => 'Vorname muss angegeben werden.',
-            'string'        => 'Vorname muss eine Zeichenfolge sein.',
+            'regex'         => 'Vorname muss darf nur aus Buchstaben.',
             'max'           => 'Vorname dürfen nicht länger als :max Zeichen sein.'
         ],
         'lastName' => [
             'required'      => 'Nachname muss angegeben werden.',
-            'string'        => 'Nachname muss eine Zeichenfolge sein.',
+            'regex'         => 'Nachname muss darf nur aus Buchstaben.',
             'max'           => 'Nachname dürfen nicht länger als :max Zeichen sein.',
             'min'           => 'Nachname muss länger als :min Zeichen sein',
         ],
