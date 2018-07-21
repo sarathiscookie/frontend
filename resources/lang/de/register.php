@@ -35,8 +35,8 @@ return [
     'emailAlreadyVerified'              => 'Ihre E-Mail Adresse ist bereits bestätigt. Sie können sich jetzt anmelden.',
     'verificationWarning'               => 'Leider wurde Ihre E-Mail Adresse noch noch nicht bestätigt.',
 
-    'salutation'                        => 'Salutation',
-    'salutationChoose'                  => 'Salutation auswählen',
+    'salutation'                        => 'Anrede',
+    'salutationChoose'                  => 'Anrede auswählen',
     'salutationOne'                     => 'Herr',
     'salutationTwo'                     => 'Frau',
     'company'                           => 'Firma',
