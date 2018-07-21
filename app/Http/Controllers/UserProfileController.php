@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Country;
+use App\Userlist;
+use Auth;
 use \App\Http\Requests\UserProfileRequest;
 
 class UserProfileController extends Controller
@@ -16,6 +18,7 @@ class UserProfileController extends Controller
     public function index()
     {
         $country  = Country::select('name')->get();
+
 
         return view('userProfile', ['country' => $country]);
     }
@@ -38,7 +41,33 @@ class UserProfileController extends Controller
      */
     public function store(UserProfileRequest $request)
     {
-        dd($request->all());
+        if($request->has('updateUserProfile')) {
+            $user               = Userlist::where('is_delete', 0)
+                ->where('usrActive', '1')
+                ->find(Auth::user()->_id);
+
+            if(!empty($user)) {
+                $user->salutation   = $request->salutation;
+                $user->company      = $request->company;
+                $user->usrFirstname = $request->firstName;
+                $user->usrLastname  = $request->lastName;
+                $user->usrCountry   = $request->country;
+                $user->usrAddress   = $request->street;
+                $user->usrCity      = $request->city;
+                $user->usrZip       = $request->zipcode;
+                $user->usrMobile    = $request->mobile;
+                $user->usrTelephone = $request->phone;
+                $user->save();
+
+                return redirect()->back()->with('successStatus', __('userProfile.successStatus'));
+            }
+            else {
+                return redirect()->back()->with('failedStatus', __('userProfile.failedStatus'));
+            }
+        }
+        else {
+            return redirect()->back()->with('failedStatus', __('userProfile.failedStatus'));
+        }
     }
 
     /**

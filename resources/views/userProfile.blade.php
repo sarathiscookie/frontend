@@ -25,10 +25,22 @@
     </div>
     <main>
         <div class="container-fluid text-center container-fluid-data">
+            @if (session()->has('failedStatus'))
+                <div class="alert alert-danger alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <strong>Whoops!</strong> {{ session()->get('failedStatus') }}
+                </div>
+            @endif
+
+            @if (session()->has('successStatus'))
+                <div class="alert alert-success alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <strong>{{ __('userProfile.wellDone') }}</strong> {{ session()->get('successStatus') }}
+                </div>
+            @endif
             <div class="panel panel-default text-left panel-data panel-default-data">
                 <div class="panel-body panel-body-data">
                     <div class="col-sm-12 month-opening-data col-sm-12-data">
-
                         <div class="col-md-12">
                             <div class="col-md-8">
                                 <form method="POST" action="{{ route('user.profile.store') }}">
@@ -164,7 +176,7 @@
 
                                     <div class="row">
                                         <div class="col-md-6 pull-right">
-                                            <button type="submit" class="btn btn-default pull-right">{{ __('userProfile.updateButton') }}</button>
+                                            <button type="submit" class="btn btn-default pull-right" name="updateUserProfile" value="updateUserProfile">{{ __('userProfile.updateButton') }}</button>
                                         </div>
                                     </div>
                                 </form>
@@ -172,10 +184,10 @@
 
                             <div class="col-md-4">
                                 <div class="row">
-                                    <span class="label label-default">Money Balance</span> <span class="badge">42</span>
-                                    <button class="btn btn-primary pull-right" type="button">
-                                        Download
-                                    </button>
+                                    <span class="label label-success" style="background-color: #A2C617;">{{ __('userProfile.moneyBalance') }}:
+                                        <span class="badge" style="padding-top: 1px;">{{number_format(Auth::user()->money_balance, 2, ',', '.')}} &euro;</span>
+                                    </span>
+                                    <a href="{{ asset('storage/amountreturn/amountReturn.pdf') }}" class="btn btn-primary pull-right" download="amountReturn.pdf">{{ __('userProfile.downloadAmountReturn') }} <span class="glyphicon glyphicon-question-sign" title="Hier können Sie das Formular für die Rückerstattung Ihres Guthabens herunterladen."></span></a>
                                 </div>
                             </div>
                         </div>

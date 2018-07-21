@@ -15,7 +15,12 @@ return[
      |
      */
 
-    'titleHeading' => 'Your',
-    'dataOverview' => 'Data overview',
-    'updateButton' => 'Update Profile',
+    'titleHeading'                       => 'Your',
+    'dataOverview'                       => 'Data overview',
+    'updateButton'                       => 'Update Profile',
+    'moneyBalance'                       => 'Money Balance',
+    'successStatus'                      => 'Profile updated successfully',
+    'failedStatus'                       => 'Something went wrong please try again',
+    'wellDone'                           => 'Well Done!',
+    'downloadAmountReturn'               => 'Return Credits',
     ];
