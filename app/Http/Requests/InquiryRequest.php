@@ -24,12 +24,12 @@ class InquiryRequest extends FormRequest
     public function rules()
     {
         $rules =  [
-            'street'        => 'required|string|max:255',
-            'city'          => 'required|string|max:255',
-            'country'       => 'required|not_in:0',
-            'zipcode'       => 'required|string|max:25',
-            'mobile'        => 'max:20',
-            'phone'         => 'required|string|max:20',
+            'street'        => 'required|regex:/^[\pL\pM\pN\s]+$/u|max:255',
+            'city'          => 'required|regex:/^[\pL\pM\pN\s]+$/u|max:255',
+            'country'       => 'required|regex:/^[\pL\pM\pN\s]+$/u|not_in:0',
+            'zipcode'       => 'required|regex:/^[\pL\pM\pN\s]+$/u|max:25',
+            'mobile'        => 'string|max:20',
+            'phone'         => 'string|max:20',
             'comments'      => 'max:300'
         ];
         if(session()->get('sleeping_place') === 1) {

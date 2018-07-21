@@ -71,9 +71,7 @@ class InquiryController extends Controller
                 ->where('other_cabin', "0")
                 ->findOrFail(session()->get('cabin_id'));
 
-            $country = Country::select('name')
-                ->where('is_delete', 0)
-                ->get();
+            $country = Country::select('name')->get();
 
             return view('inquiry', ['cabinDetails' => $cabinDetails, 'country' => $country]);
         }

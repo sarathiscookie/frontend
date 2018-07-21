@@ -148,31 +148,28 @@ return [
         'street' => [
             'required'      => 'Die Straße muss eingegeben werden.',
             'max'           => 'Die Straße dürfen nicht länger als :max Zeichen sein.',
-            'alpha_num'     => 'Die Straße darf nur aus Buchstaben und Zahlen bestehen.'
+            'regex'         => 'Die Straße darf nur aus Buchstaben und Zahlen bestehen.'
         ],
         'city' => [
             'required'      => 'Die Stadt muss eingegeben werden.',
             'max'           => 'Die Stadt dürfen nicht länger als :max Zeichen sein.',
-            'alpha_num'     => 'Die Stadt darf nur aus Buchstaben und Zahlen bestehen.'
+            'regex'         => 'Die Stadt darf nur aus Buchstaben und Zahlen bestehen.'
         ],
         'country' => [
             'required'      => 'Das Land muss eingegeben werden.',
+            'regex'         => 'Das Land darf nur aus Buchstaben und Zahlen bestehen.',
             'not_in'        => 'Das ausgewählte Land ist nicht verfügbar.',
         ],
         'zipcode' => [
             'required'      => 'Die Postleizahl muss eingegeben werden.',
             'max'           => 'Die Postleizahl dürfen nicht länger als :max Zeichen sein.',
-            'alpha_num'     => 'Die Postleizahl darf nur aus Buchstaben und Zahlen bestehen.'
+            'regex'         => 'Die Postleizahl darf nur aus Buchstaben und Zahlen bestehen.'
         ],
         'mobile' => [
-            'required'      => 'Die Handy muss eingegeben werden.',
-            'numeric'       => 'Die Handy muss eine Nummer sein.',
-            'digits_between' => 'Die Handy muss zwischen :min und :max Ziffern.',
+            'max'           => 'Die Handy dürfen nicht länger als :max Zeichen sein.',
         ],
         'phone' => [
-            'required'      => 'Die Telefonnummer muss eingegeben werden.',
-            'numeric'       => 'Die Telefonnummer muss eine Nummer sein.',
-            'digits_between' => 'Die Telefonnummer muss zwischen :min und :max Ziffern.',
+            'max'           => 'Die Telefonnummer dürfen nicht länger als :max Zeichen sein.',
         ],
         'payment' => [
             'required'      => 'Es muss ein Zahlungsweg ausgewählt werden.'

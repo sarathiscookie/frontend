@@ -279,7 +279,7 @@
                                                     <div class="row">
                                                         <div class="col-sm-6">
                                                             <div class="form-group {{ $errors->has('mobile') ? ' has-error' : '' }}">
-                                                                <label> {{ __('cart.mobile') }} <span class="required">*</span></label>
+                                                                <label> {{ __('cart.mobile') }}</label>
                                                                 <input type="text" class="form-control" id="mobile" name="mobile" placeholder="{{ __('cart.mobilePlaceholder') }}" maxlength="20" value="{{ old('mobile', Auth::user()->usrMobile) }}">
 
                                                                 @if ($errors->has('mobile'))
@@ -289,7 +289,7 @@
                                                         </div>
                                                         <div class="col-sm-6">
                                                             <div class="form-group {{ $errors->has('phone') ? ' has-error' : '' }}">
-                                                                <label> {{ __('cart.phone') }} <span class="required">*</span></label>
+                                                                <label> {{ __('cart.phone') }}</label>
                                                                 <input type="text" class="form-control" id="phone" name="phone" placeholder="{{ __('cart.phonePlaceholder') }}" maxlength="20" value="{{ old('phone', Auth::user()->usrTelephone) }}">
 
                                                                 @if ($errors->has('phone'))
