@@ -57,8 +57,8 @@
 
             <ul class="nav navbar-nav ">
                 <li><a href="{{ route('search') }}" class="nav-points left-top-nav">{{ __('app.menuCabin') }}</a></li>
-                <li><a href="#" class="nav-points left-top-nav">{{ __('app.menuHikes') }}</a></li>
-                <li><a href="#" class="nav-points left-top-nav">{{ __('app.menuRegions') }}</a></li>
+                <li><a href="/comingsoon" class="nav-points left-top-nav">{{ __('app.menuHikes') }}</a></li>
+                <li><a href="/comingsoon" class="nav-points left-top-nav">{{ __('app.menuRegions') }}</a></li>
                 {{--<li><a href="#" class="nav-points left-top-nav">{{ __('app.menuShop') }}</a></li>--}}
                 <!-- Authentication Links -->
                 @guest

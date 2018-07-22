@@ -6,7 +6,6 @@
     <div class="jumbotron">
         <div class="container text-center">
             <img src="{{ asset('storage/img/sunset.jpg') }}" class="img-responsive titlepicture" alt="titlepicture">
-            {{--<h1 id="headliner-home">Finde deinen<br>Traumjob</h1>--}}
         </div>
     </div>
 
