@@ -20,7 +20,7 @@
                         <div class="panel-body">
                             <div class="row content row-cabinlist">
                                 <div class="col-sm-2">
-                                    <img src="{{ asset('storage/img/huette_cabin_list.jpg') }}" class="img-responsive img-thumbnail" style="width:100%" alt="Image">
+                                    <img src="{{ asset('storage/'.$cabinServices->show($result->_id)) }}" class="img-responsive img-thumbnail" style="width:100%" alt="Image">
                                 </div>
 
                                 <div class="col-sm-7 text-left">

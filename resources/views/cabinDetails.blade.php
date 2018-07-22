@@ -2,10 +2,16 @@
 
 @section('title', 'Cabin Details')
 
+@inject('service', 'App\Http\Controllers\CabinDetailsController')
+
+@inject('cabinServices', 'App\Http\Controllers\SearchController')
+
+@inject('calendarServices', 'App\Http\Controllers\CalendarController')
+
 @section('jumbotron')
     <div class="jumbotron">
         <div class="container text-center">
-            <img src="{{ asset('storage/img/rappenseehuette_titelbild.jpg') }}" class="img-responsive titlepicture" alt="titlepicture">
+            <img src="{{ asset('storage/'.$service->show($cabinDetails->_id)) }}" class="img-responsive titlepicture" alt="titlepicture">
         </div>
     </div>
 
@@ -13,13 +19,6 @@
 @endsection
 
 @section('content')
-
-    @inject('service', 'App\Http\Controllers\CabinDetailsController')
-
-    @inject('cabinServices', 'App\Http\Controllers\SearchController')
-
-    @inject('calendarServices', 'App\Http\Controllers\CalendarController')
-
     @isset($cabinDetails)
         <div class="container-fluid container-fluid-cabin-details bg-3 text-center">
             <div class="col-md-2 col-md-2-cabin-details"></div>
@@ -154,13 +153,13 @@
                                 <div class="details-info-cabin-details more">{{ strip_tags(str_replace("&nbsp;", " ", $cabinDetails->other_details)) }}</div>
                                 <div class="row">
                                     <div class="col-sm-12">
-                                        @if($cabinDetails->interior)
+                                        {{--@if($cabinDetails->interior)
                                             @foreach($cabinDetails->interior as $interior)
                                                 <button type="button" class="btn btn-default btn-sm btn-space pull-right facility-btn-cabin-details btn-default-cabin-details" data-toggle="tooltip" data-placement="bottom" title="{{ $service->interiorLabel($interior) }}">
                                                     <span @if($interior === 'Food à la carte') class="glyphicon glyphicon-credit-card" @elseif($interior === 'breakfast') class="glyphicon glyphicon-glass" @else class="glyphicon glyphicon-home" @endif aria-hidden="true"></span>
                                                 </button>
                                             @endforeach
-                                        @endif
+                                        @endif--}}
                                     </div>
                                 </div>
 
@@ -303,33 +302,11 @@
 
                                 <div class="thumbnail" style="border:none; border-radius:0px; background-color: #EFEFEF;">
                                     <ul id="image-gallery" class="gallery list-unstyled cS-hidden">
-                                        <li data-thumb="{{ asset('storage/img/rappenseehuette_profilbild_1_außenansicht.jpg') }}">
-                                            <img src="{{ asset('storage/img/rappenseehuette_profilbild_1_außenansicht.jpg') }}" class="img-responsive">
-                                        </li>
-                                        <li data-thumb="{{ asset('storage/img/rappenseehuette_profilbild_2_außenansicht.jpg') }}">
-                                            <img src="{{ asset('storage/img/rappenseehuette_profilbild_2_außenansicht.jpg') }}" class="img-responsive">
-                                        </li>
-                                        <li data-thumb="{{ asset('storage/img/rappenseehuette_profilbild_3_außenansicht.jpg') }}">
-                                            <img src="{{ asset('storage/img/rappenseehuette_profilbild_3_außenansicht.jpg') }}" class="img-responsive">
-                                        </li>
-                                        <li data-thumb="{{ asset('storage/img/rappenseehuette_profilbild_4_innenansicht.jpg') }}">
-                                            <img src="{{ asset('storage/img/rappenseehuette_profilbild_4_innenansicht.jpg') }}" class="img-responsive">
-                                        </li>
-                                        <li data-thumb="{{ asset('storage/img/rappenseehuette_profilbild_5_innenansicht.jpg') }}">
-                                            <img src="{{ asset('storage/img/rappenseehuette_profilbild_5_innenansicht.jpg') }}" class="img-responsive">
-                                        </li>
-                                        <li data-thumb="{{ asset('storage/img/rappenseehuette_profilbild_6_innenansicht.jpg') }}">
-                                            <img src="{{ asset('storage/img/rappenseehuette_profilbild_6_innenansicht.jpg') }}" class="img-responsive">
-                                        </li>
-                                        <li data-thumb="{{ asset('storage/img/rappenseehuette_profilbild_7_natur.jpg') }}">
-                                            <img src="{{ asset('storage/img/rappenseehuette_profilbild_7_natur.jpg') }}" class="img-responsive">
-                                        </li>
-                                        <li data-thumb="{{ asset('storage/img/rappenseehuette_profilbild_8_natur.jpg') }}">
-                                            <img src="{{ asset('storage/img/rappenseehuette_profilbild_8_natur.jpg') }}" class="img-responsive">
-                                        </li>
-                                        <li data-thumb="{{ asset('storage/img/rappenseehuette_profilbild_9_natur.jpg') }}">
-                                            <img src="{{ asset('storage/img/rappenseehuette_profilbild_9_natur.jpg') }}" class="img-responsive">
-                                        </li>
+                                        @foreach($service->gallery($cabinDetails->_id) as $galleryPath)
+                                            <li data-thumb="{{ asset('storage/'. $galleryPath) }}">
+                                                <img src="{{ asset('storage/'. $galleryPath) }}" class="img-responsive">
+                                            </li>
+                                        @endforeach
                                     </ul>
                                 </div>
 
