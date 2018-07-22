@@ -6,6 +6,16 @@
 
 @inject('calendarServices', 'App\Http\Controllers\CalendarController')
 
+@section('jumbotron')
+    <div class="jumbotron">
+        <div class="container text-center">
+            <img src="{{ asset('storage/img/sunset.jpg') }}" class="img-responsive titlepicture" alt="titlepicture">
+        </div>
+    </div>
+
+    <div class="clearfix"></div>
+@endsection
+
 @section('content')
     <div class="container-fluid container-fluid-booking1 bg-3 text-center">
         <div class="col-md-2 col-md-2-booking1"></div>

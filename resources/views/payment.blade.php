@@ -49,6 +49,16 @@
     </style>
 @endsection
 
+@section('jumbotron')
+    <div class="jumbotron">
+        <div class="container text-center">
+            <img src="{{ asset('storage/img/sunset.jpg') }}" class="img-responsive titlepicture" alt="titlepicture">
+        </div>
+    </div>
+
+    <div class="clearfix"></div>
+@endsection
+
 @section('content')
     <div class="container-fluid bg-3 text-center container-fluid-booking2">
         <div class="col-md-2 col-md-2-booking2"></div>
