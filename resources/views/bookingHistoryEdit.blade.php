@@ -4,6 +4,8 @@
 
 @inject('calendarServices', 'App\Http\Controllers\CalendarController')
 
+@inject('bookHistoryServices', 'App\Http\Controllers\BookingHistoryController')
+
 @section('content')
     <div class="container-fluid container-fluid-booking1 bg-3 text-center">
         <div class="col-md-2 col-md-2-booking1"></div>
@@ -44,7 +46,7 @@
                         <div class="panel-body panel-body-booking1">
                             <div class="row content row-booking1">
                                 <div class="col-sm-2 col-sm-2-booking1">
-                                    <img src="{{ asset('storage/img/huette.jpg') }}" class="img-responsive img-thumbnail img-thumbnail-booking1" style="width:100%" alt="Image">
+                                    <img src="{{ asset('storage/'.$bookHistoryServices->showImageListBookEdit($cabinDetails->_id)) }}" class="img-responsive img-thumbnail img-thumbnail-booking1" style="width:100%" alt="Image">
                                 </div>
                                 <div class="col-sm-7 text-left col-sm-7-booking1">
 

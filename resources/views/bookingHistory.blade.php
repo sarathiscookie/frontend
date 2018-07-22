@@ -61,7 +61,7 @@
                         <div class="panel-body panel-body-history">
                             <div class="row row-history content">
                                 <div class="col-sm-2 col-sm-2-history">
-                                    <img src="{{ asset('storage/img/huette.jpg') }}" class="img-responsive img-thumbnail img-thumbnail-history" style="width:100%" alt="Image">
+                                    <img src="{{ asset('storage/'.$service->showListImage($booking->cabinname)) }}" class="img-responsive img-thumbnail img-thumbnail-history" style="width:100%" alt="Image">
                                 </div>
                                 <div class="col-sm-7 text-left col-sm-7-history">
                                     <h3 class="headliner-cabinname">{{ $service->cabin($booking->cabinname)->name }} - {{ $service->cabin($booking->cabinname)->region }}</h3>

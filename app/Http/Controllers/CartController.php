@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\CartRequest;
 use App\Cabin;
 use App\Booking;
@@ -1196,12 +1197,29 @@ class CartController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  string  $id
      * @return \Illuminate\Http\Response
      */
     public function show($id)
     {
-        //
+        $list_image_name = '';
+        if(!empty($id)) {
+            $directories = Storage::disk('public')->directories('huetten');
+            foreach ($directories as $directory) {
+                $files = Storage::disk('public')->files($directory);
+                foreach ($files as $file) {
+                    $explode_directory = explode('/', $file);
+                    if($explode_directory[1] == $id && $explode_directory[2] === 'list.jpg') {
+                        $list_image_name = $file;
+                    }
+                }
+            }
+
+            return $list_image_name;
+        }
+        /*else {
+            // comming soon
+        }*/
     }
 
     /**

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\BookingHistoryRequest;
 use App\Http\Requests\PaymentRequest;
 use App\Region;
@@ -143,7 +144,7 @@ class BookingHistoryController extends Controller
                 }
             }
 
-            $cabinDetails = Cabin::select('name', 'region', 'prepayment_amount', 'sleeping_place', 'halfboard', 'halfboard_price')
+            $cabinDetails = Cabin::select('_id', 'name', 'region', 'prepayment_amount', 'sleeping_place', 'halfboard', 'halfboard_price')
                 ->where('is_delete', 0)
                 ->where('other_cabin', "0")
                 ->where('name', $booking->cabinname)
@@ -1225,6 +1226,66 @@ class BookingHistoryController extends Controller
     public function create()
     {
         //
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  string  $name
+     * @return \Illuminate\Http\Response
+     */
+    public function showListImage($name)
+    {
+        $list_image_name = '';
+        if(!empty($name)) {
+            $cabin = Cabin::select('_id')
+                ->where('is_delete', 0)
+                ->where('other_cabin', "0")
+                ->where('name', $name)
+                ->first();
+            $id    = $cabin->_id;
+
+            if(!empty($id)) {
+                $directories = Storage::disk('public')->directories('huetten');
+                foreach ($directories as $directory) {
+                    $files = Storage::disk('public')->files($directory);
+                    foreach ($files as $file) {
+                        $explode_directory = explode('/', $file);
+                        if($explode_directory[1] == $id && $explode_directory[2] === 'list.jpg') {
+                            $list_image_name = $file;
+                        }
+                    }
+                }
+            }
+            /*else {
+            // comming soon
+            }*/
+        }
+        return $list_image_name;
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  string  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function showImageListBookEdit($id)
+    {
+        $list_image_name = '';
+        if(!empty($id)) {
+            $directories = Storage::disk('public')->directories('huetten');
+            foreach ($directories as $directory) {
+                $files = Storage::disk('public')->files($directory);
+                foreach ($files as $file) {
+                    $explode_directory = explode('/', $file);
+                    if($explode_directory[1] === $id && $explode_directory[2] === 'list.jpg') {
+                        $list_image_name = $file;
+                    }
+                }
+            }
+        }
+        return $list_image_name;
     }
 
     /**

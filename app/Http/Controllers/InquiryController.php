@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\PaymentRequest;
 use App\Cabin;
 use App\Country;
@@ -66,7 +67,7 @@ class InquiryController extends Controller
     {
         /* Condition to check session contains inquiry details. If session has inquiry then only guest can send inquiry */
         if(session()->has('cabin_id') && session()->has('cabin_name') && session()->has('checkin_from') && session()->has('reserve_to')) {
-            $cabinDetails = Cabin::select('name', 'region', 'prepayment_amount', 'sleeping_place', 'halfboard', 'halfboard_price')
+            $cabinDetails = Cabin::select('_id', 'name', 'region', 'prepayment_amount', 'sleeping_place', 'halfboard', 'halfboard_price')
                 ->where('is_delete', 0)
                 ->where('other_cabin', "0")
                 ->findOrFail(session()->get('cabin_id'));
@@ -166,6 +167,30 @@ class InquiryController extends Controller
         else {
             return response()->json(['error' => __('inquiry.msgSendFailed')], 422);
         }
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  string  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function showListImageInquiry($id)
+    {
+        $list_image_name = '';
+        if(!empty($id)) {
+            $directories = Storage::disk('public')->directories('huetten');
+            foreach ($directories as $directory) {
+                $files = Storage::disk('public')->files($directory);
+                foreach ($files as $file) {
+                    $explode_directory = explode('/', $file);
+                    if($explode_directory[1] === $id && $explode_directory[2] === 'list.jpg') {
+                        $list_image_name = $file;
+                    }
+                }
+            }
+        }
+        return $list_image_name;
     }
 
     /**

@@ -40,7 +40,7 @@
                     <div class="panel-body panel-body-booking1">
                         <div class="row content row-booking1">
                             <div class="col-sm-2 col-sm-2-booking1">
-                                <img src="{{ asset('storage/img/huette.jpg') }}" class="img-responsive img-thumbnail img-thumbnail-booking1" style="width:100%" alt="Image">
+                                <img src="{{ asset('storage/'.$inquiryServices->showListImageInquiry($cabinDetails->_id)) }}" class="img-responsive img-thumbnail img-thumbnail-booking1" style="width:100%" alt="Image">
                             </div>
                             <div class="col-sm-7 text-left col-sm-7-booking1">
 

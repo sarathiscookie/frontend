@@ -1422,12 +1422,8 @@ class SearchController extends Controller
                     }
                 }
             }
-
-            return $list_image_name;
         }
-        /*else {
-            // comming soon
-        }*/
+        return $list_image_name;
     }
 
     /**

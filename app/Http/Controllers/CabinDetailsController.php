@@ -194,11 +194,12 @@ class CabinDetailsController extends Controller
      * Display the specified resource.
      *
      * @param  string  $id
-     * @return \Illuminate\Http\Response
+     * @return array
      */
     public function gallery($id)
     {
         $list_image_name = [];
+
         if(!empty($id)) {
             $directories = Storage::disk('public')->directories('huetten');
             foreach ($directories as $directory) {
@@ -210,12 +211,9 @@ class CabinDetailsController extends Controller
                     }
                 }
             }
-
-            return $list_image_name;
         }
-        /*else {
-            // comming soon
-        }*/
+
+        return $list_image_name;
     }
 
     /**
