@@ -13,7 +13,7 @@
             </div>
             <div class="row row-home">
                 <div class="col-sm-8 col-sm-8-home">
-                    <a href="#"><img src="{{ asset('storage/img/Waltenbergerhaus.jpg') }}" class="img-responsive" alt="image"></a>
+                    <a href="/comingsoon"><img src="{{ asset('storage/img/Waltenbergerhaus.jpg') }}" class="img-responsive" alt="image"></a>
                     <div class="navbar-picture-home" id="block_nr_1-home"><strong>{{ __('home.imageLabelFavoriteCabin') }}</strong></div>
                 </div>
                 <br>
@@ -22,7 +22,7 @@
                     <div class="navbar-picture-home"><strong>{{ __('home.imageLabelCabinList') }}</strong></div>
                 </div>
                 <div class="col-sm-4 col-sm-4-home col-2 col-2-home" id="region-col4-home">
-                    <a href="#"><img src="{{ asset('storage/img/maps.jpg') }}" class="img-responsive" alt="map"></a>
+                    <a href="/comingsoon"><img src="{{ asset('storage/img/maps.jpg') }}" class="img-responsive" alt="map"></a>
                     <div class="navbar-picture-home"><strong>{{ __('home.imageLabelSearchRegion') }}</strong></div>
                 </div>
             </div>
