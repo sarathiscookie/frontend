@@ -321,14 +321,14 @@
 <br>
 </span><strong>
 
-<span style="font-size:13.5pt;line-height:150%;font-family:&quot;Helvetica&quot;,sans-serif;color:gray">Sie haben eine neue Nachricht
+<span style="font-size:13.5pt;line-height:150%;font-family:&quot;Helvetica&quot;,sans-serif;color:gray">Informationen
 </span></strong>
 
                                                                                                             <span style="font-size:13.5pt;line-height:150%;font-family:&quot;Helvetica&quot;,sans-serif;color:gray">
 <br>
 </span><strong>
 
-<span style="font-size:14.5pt;line-height:150%;font-family:&quot;Helvetica&quot;,sans-serif;color:gray">Informationen zu Ihrer Hüttenbuchung
+<span style="font-size:14.5pt;line-height:150%;font-family:&quot;Helvetica&quot;,sans-serif;color:gray">zu Ihrer Buchung…
 </span></strong>
 
                                                                                                             <span style="font-size:12.0pt;line-height:150%;font-family:&quot;Helvetica&quot;,sans-serif;color:gray"><o:p></o:p>

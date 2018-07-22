@@ -320,14 +320,14 @@
 <br>
 </span><strong>
 
-<span style="font-size:13.5pt;line-height:150%;font-family:&quot;Helvetica&quot;,sans-serif;color:gray">Sie haben eine neue Nachricht
+<span style="font-size:13.5pt;line-height:150%;font-family:&quot;Helvetica&quot;,sans-serif;color:gray">Ihre Registrierung bei
 </span></strong>
 
                                                                                                             <span style="font-size:13.5pt;line-height:150%;font-family:&quot;Helvetica&quot;,sans-serif;color:gray">
 <br>
 </span><strong>
 
-<span style="font-size:14.5pt;line-height:150%;font-family:&quot;Helvetica&quot;,sans-serif;color:gray">Bitte bestätigen Sie Ihre Anmeldung...
+<span style="font-size:14.5pt;line-height:150%;font-family:&quot;Helvetica&quot;,sans-serif;color:gray">Huetten-Holiday.de
 </span></strong>
 
                                                                                                             <span style="font-size:12.0pt;line-height:150%;font-family:&quot;Helvetica&quot;,sans-serif;color:gray"><o:p></o:p>
@@ -393,8 +393,8 @@
 
 <span style="font-size:12.0pt;line-height:150%;font-family:&quot;Helvetica&quot;,sans-serif;color:#5F6876">Sehr geehrter Gast,
 <br>
-<br>Bitte bestätigen Sie Ihre Anmeldung!
-<br>Ihre registrierte E-Mail lautet {{ $user['usrEmail'] }}. Bitte klicken Sie auf den untenstehenden Link um Ihr Konto zu bestätigen.<strong>
+<br>Herzlich willkommen bei Huetten-Holdiay.de.
+<br>Um Ihren Account zu aktivieren, klicken Sie bitte auf den blauen „Aktivieren“ Button.<strong>
 <br>
                                                                                                         <p class="MsoNormal"><o:p>&nbsp;</o:p></p>
                                                                                                         <table class="MsoNormalTable" border="0" cellspacing="0" cellpadding="0" width="100%" style="width:100.0%;border-collapse:collapse;min-width: 100%;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%"><tbody>
@@ -408,9 +408,9 @@
 
                                                                                                                                     <p class="MsoNormal" align="center" style="text-align:center">
 
-<span style="font-size:12.0pt;font-family:&quot;Arial&quot;,sans-serif"><a href="{{url('user/verify', $user['token'])}}" target="_blank" title="Konto bestätigen!"><b>
+<span style="font-size:12.0pt;font-family:&quot;Arial&quot;,sans-serif"><a href="{{url('user/verify', $user['token'])}}" target="_blank" title="Aktivieren"><b>
 
-<span style="color:white;text-decoration:none">Konto bestätigen!
+<span style="color:white;text-decoration:none">Aktivieren
 </span></b></a> <o:p></o:p>
 </span></p>
                                                                                                                                 </td>
