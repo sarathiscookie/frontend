@@ -177,7 +177,7 @@
                                         <strong class="details-underheadline-cabin-details">{{ __('cabinDetails.sleepingPlaces') }}: </strong><p class="inh-cabin-details">{{ $cabinDetails->sleeps }}</p>
                                     @endif
 
-                                    <strong class="details-underheadline-cabin-details">{{ __('cabinDetails.seasonTimes') }}: </strong><button class="btn btn-sm toggleSeasonTime" type="button">{{ __('cabinDetails.clickHere') }}</button> <br>
+                                    <strong class="details-underheadline-cabin-details">{{ __('cabinDetails.seasonTimes') }}: </strong><button class="btn btn-primary btn-sm toggleSeasonTime" type="button">{{ __('cabinDetails.clickHere') }}</button> <br>
                                     <div class="seasonTimes" style="display: none;">
                                         <?php
                                         $firstYear = (int)date('Y');
