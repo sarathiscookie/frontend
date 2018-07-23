@@ -390,13 +390,13 @@ class PaymentController extends Controller
 
                             /* If guest paid using payByBill we need to store bank details. Condition begin */
                             if($request->payment === 'payByBill' && $payByBillPossible === 'yes') {
-                                $order->clearing_bankaccount       = $paymentGateway["clearing_bankaccount"];
-                                $order->clearing_bankcode          = $paymentGateway["clearing_bankcode"];
-                                $order->clearing_bankcountry       = $paymentGateway["clearing_bankcountry"];
-                                $order->clearing_bankname          = $paymentGateway["clearing_bankname"];
-                                $order->clearing_bankaccountholder = $paymentGateway["clearing_bankaccountholder"];
-                                $order->clearing_bankiban          = $paymentGateway["clearing_bankiban"];
-                                $order->clearing_bankbic           = $paymentGateway["clearing_bankbic"];
+                                $order->clearing_bankaccount       = '';
+                                $order->clearing_bankcode          = '';
+                                $order->clearing_bankcountry       = '';
+                                $order->clearing_bankname          = env('BANKNAME');
+                                $order->clearing_bankaccountholder = env('ACCOUNTHOLDER');
+                                $order->clearing_bankiban          = env('IBAN');
+                                $order->clearing_bankbic           = env('BIC');
                             }
                             /* If guest paid using payByBill we need to store bank details. Condition end */
 
@@ -536,13 +536,13 @@ class PaymentController extends Controller
 
                         /* If guest paid using payByBill we need to store bank details. Condition begin */
                         if($request->payment === 'payByBill' && $payByBillPossible === 'yes') {
-                            $order->clearing_bankaccount       = $paymentGateway["clearing_bankaccount"];
-                            $order->clearing_bankcode          = $paymentGateway["clearing_bankcode"];
-                            $order->clearing_bankcountry       = $paymentGateway["clearing_bankcountry"];
-                            $order->clearing_bankname          = $paymentGateway["clearing_bankname"];
-                            $order->clearing_bankaccountholder = $paymentGateway["clearing_bankaccountholder"];
-                            $order->clearing_bankiban          = $paymentGateway["clearing_bankiban"];
-                            $order->clearing_bankbic           = $paymentGateway["clearing_bankbic"];
+                            $order->clearing_bankaccount       = '';
+                            $order->clearing_bankcode          = '';
+                            $order->clearing_bankcountry       = '';
+                            $order->clearing_bankname          = env('BANKNAME');
+                            $order->clearing_bankaccountholder = env('ACCOUNTHOLDER');
+                            $order->clearing_bankiban          = env('IBAN');
+                            $order->clearing_bankbic           = env('BIC');
                         }
                         /* If guest paid using payByBill we need to store bank details. Condition end */
 
