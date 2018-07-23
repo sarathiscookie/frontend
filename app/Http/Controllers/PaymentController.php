@@ -393,10 +393,10 @@ class PaymentController extends Controller
                                 $order->clearing_bankaccount       = '';
                                 $order->clearing_bankcode          = '';
                                 $order->clearing_bankcountry       = '';
-                                $order->clearing_bankname          = env('BANKNAME');
-                                $order->clearing_bankaccountholder = env('ACCOUNTHOLDER');
-                                $order->clearing_bankiban          = env('IBAN');
-                                $order->clearing_bankbic           = env('BIC');
+                                $order->clearing_bankname          = 'Sparkasse Allgäu';
+                                $order->clearing_bankaccountholder = 'Huetten-Holiday.de GmbH';
+                                $order->clearing_bankiban          = 'DE32733500000515492916';
+                                $order->clearing_bankbic           = 'BYLADEM1ALG';
                             }
                             /* If guest paid using payByBill we need to store bank details. Condition end */
 
@@ -539,10 +539,10 @@ class PaymentController extends Controller
                             $order->clearing_bankaccount       = '';
                             $order->clearing_bankcode          = '';
                             $order->clearing_bankcountry       = '';
-                            $order->clearing_bankname          = env('BANKNAME');
-                            $order->clearing_bankaccountholder = env('ACCOUNTHOLDER');
-                            $order->clearing_bankiban          = env('IBAN');
-                            $order->clearing_bankbic           = env('BIC');
+                            $order->clearing_bankname          = 'Sparkasse Allgäu';
+                            $order->clearing_bankaccountholder = 'Huetten-Holiday.de GmbH';
+                            $order->clearing_bankiban          = 'DE32733500000515492916';
+                            $order->clearing_bankbic           = 'BYLADEM1ALG';
                         }
                         /* If guest paid using payByBill we need to store bank details. Condition end */
 
