@@ -18,4 +18,31 @@
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
+
+    Redirect /cabin/index/cabinDetail/prinz-luitpold-haus https://www.huetten-holiday.de/cabin/details/NTc5OWYzYjYwNDlhYzEzODI4MDAwMDM1YUZHUTQ3NVNEc2Rmc2FmMjM0Mg==
+    Redirect /cabin/index/cabinDetail/rappenseehuette https://www.huetten-holiday.de/cabin/details/NTc5OWYyODEwNDlhYzEyNDIyMDAwMDMzYUZHUTQ3NVNEc2Rmc2FmMjM0Mg==
+    Redirect /cabin/index/cabinDetail/kemptner-huette https://www.huetten-holiday.de/cabin/details/NTc5OWYxNWUwNDlhYzEyNDIyMDAwMDMyYUZHUTQ3NVNEc2Rmc2FmMjM0Mg==
+    Redirect /cabin/index/cabinDetail/memminger-huette https://www.huetten-holiday.de/cabin/details/NTg0NjZhM2NkMmFlNjc4ZjExZDI0ZjQ3YUZHUTQ3NVNEc2Rmc2FmMjM0Mg==
+    Redirect /cabin/index/cabinDetail/edmund-probst-haus https://www.huetten-holiday.de/cabin/details/NTg0YTQ3MmZkMmFlNjc1MTQxZDI0ZjQ3YUZHUTQ3NVNEc2Rmc2FmMjM0Mg==
+    Redirect /cabin/index/cabinDetail/matrashaus https://www.huetten-holiday.de/cabin/details/NTg2YjQzYWZkMmFlNjdlMTZlOWIwNDIxYUZHUTQ3NVNEc2Rmc2FmMjM0Mg==
+    Redirect /cabin/index/cabinDetail/waltenbergerhaus https://www.huetten-holiday.de/cabin/details/NTg3MzZjOWFkMmFlNjc5ZjBjNjgzZTNhYUZHUTQ3NVNEc2Rmc2FmMjM0Mg==
+    Redirect /cabin/index/cabinDetail/wasseralm https://www.huetten-holiday.de/cabin/details/NTg5MWUwOTFkMmFlNjc1YTJhZmY4NjkyYUZHUTQ3NVNEc2Rmc2FmMjM0Mg==
+    Redirect /cabin/index/cabinDetail/ostpreussenhuette https://www.huetten-holiday.de/cabin/details/NTljM2I4M2YxMjIzNmM5MDFkNzUyMTNkYUZHUTQ3NVNEc2Rmc2FmMjM0Mg==
+    Redirect /cabin/index/cabinDetail/sonnalm https://www.huetten-holiday.de/cabin/details/NTllODk3MWUxMjIzNmNlYzQyMTE2MGNmYUZHUTQ3NVNEc2Rmc2FmMjM0Mg==
+    Redirect /cabin/index/cabinDetail/bernhardseck-huette https://www.huetten-holiday.de/cabin/details/NTllOTg2MDMxMjIzNmM4MzcwZDM5NDY4YUZHUTQ3NVNEc2Rmc2FmMjM0Mg==
+    Redirect /cabin/index/cabinDetail/alpenrosenhuette https://www.huetten-holiday.de/cabin/details/NWEwYzNhYWYxMjIzNmM3MTVmZDVlMDQ4YUZHUTQ3NVNEc2Rmc2FmMjM0Mg==
+    Redirect /cabin/index/cabinDetail/stoehrhaus https://www.huetten-holiday.de/cabin/details/NWEyZTdkZDAxMjIzNmM3Nzc0MGYzZjY5YUZHUTQ3NVNEc2Rmc2FmMjM0Mg==
+    Redirect /cabin/index/cabinDetail/ansbacher-huette https://www.huetten-holiday.de/cabin/details/NWE1MzJjMDIxMjIzNmMwYjQ0YmY1NmMzYUZHUTQ3NVNEc2Rmc2FmMjM0Mg==
+    Redirect /cabin/index/cabinDetail/gruentenhaus https://www.huetten-holiday.de/cabin/details/NWE2NzUzZTIxMjIzNmM0MTdjMzIxYWM1YUZHUTQ3NVNEc2Rmc2FmMjM0Mg==
+    Redirect /cabin/index/cabinDetail/neue-traunsteiner-huette https://www.huetten-holiday.de/cabin/details/NWE3MDIxNjAxMjIzNmM2MDZlNWM5N2JlYUZHUTQ3NVNEc2Rmc2FmMjM0Mg==
+    Redirect /cabin/index/cabinDetail/furlhuette https://www.huetten-holiday.de/cabin/details/NWI0MzRhYjQxMjIzNmMxMjEwYjYwZWEyYUZHUTQ3NVNEc2Rmc2FmMjM0Mg==
+
+    Redirect /cabin/index/list https://www.huetten-holiday.de/search
+    Redirect /cabin-user/registration/index https://www.huetten-holiday.de/register
+    Redirect /cms/index/faq	 https://www.huetten-holiday.de/contact
+    Redirect /cms/index/jobs https://www.huetten-holiday.de/jobs
+    Redirect /cms/index/media https://www.huetten-holiday.de/media
+    Redirect /cms/index/legal https://www.huetten-holiday.de/impress
+    Redirect /cms/index/policy https://www.huetten-holiday.de/data/protection
+    Redirect /cms/index/terms https://www.huetten-holiday.de/terms
 </IfModule>
