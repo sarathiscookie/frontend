@@ -47,7 +47,7 @@ Route::post('/reset/password', 'Auth\ResetPasswordManuallyController@sendPasswor
 Route::get('/reset/password/{token}', 'Auth\ResetPasswordManuallyController@showPasswordResetForm')->name('reset.password.form');
 
 /* Reset password */
-Route::post('/reset/password/{token}', 'Auth\ResetPasswordManuallyController@resetPassword')->name('reset.password.token');
+Route::post('/reset/password', 'Auth\ResetPasswordManuallyController@resetPassword')->name('reset.password.token');
 
 /*
 |--------------------------------------------------------------------------

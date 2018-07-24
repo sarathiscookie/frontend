@@ -10,8 +10,13 @@
                     <div class="panel-heading">{{ __('passwords.passwordResetHeading') }}</div>
 
                     <div class="panel-body panel-body-log">
+                        @if (session()->has('passwordResetSuccess'))
+                            <div class="alert alert-info">
+                                {{ session()->get('passwordResetSuccess') }}
+                            </div>
+                        @endif
                         <br>
-                        <form class="form-horizontal" method="POST" action="{{ route('password.request') }}">
+                        <form class="form-horizontal" method="POST" action="{{ route('reset.password.token') }}">
                             {{ csrf_field() }}
 
                             <input type="hidden" name="token" value="{{ $token }}">
@@ -20,7 +25,7 @@
                                 <label for="email" class="col-md-4 control-label">{{ __('register.email') }}</label>
 
                                 <div class="col-md-6">
-                                    <input id="email" type="email" class="form-control" name="email" value="{{ $email or old('email') }}" required autofocus>
+                                    <input id="email" type="email" class="form-control" name="email" value="{{ old('email') }}"  autofocus>
 
                                     @if ($errors->has('email'))
                                         <span class="help-block">
@@ -34,7 +39,7 @@
                                 <label for="password" class="col-md-4 control-label">{{ __('register.password') }}</label>
 
                                 <div class="col-md-6">
-                                    <input id="password" type="password" class="form-control" name="password" required>
+                                    <input id="password" type="password" class="form-control" name="password">
 
                                     @if ($errors->has('password'))
                                         <span class="help-block">
@@ -47,7 +52,7 @@
                             <div class="form-group{{ $errors->has('password_confirmation') ? ' has-error' : '' }}">
                                 <label for="password-confirm" class="col-md-4 control-label">{{ __('register.cpassword') }}</label>
                                 <div class="col-md-6">
-                                    <input id="password-confirm" type="password" class="form-control" name="password_confirmation" required>
+                                    <input id="password-confirm" type="password" class="form-control" name="password_confirmation">
 
                                     @if ($errors->has('password_confirmation'))
                                         <span class="help-block">

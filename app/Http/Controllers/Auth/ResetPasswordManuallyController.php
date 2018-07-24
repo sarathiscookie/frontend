@@ -8,6 +8,7 @@ use App\Http\Requests\ResetPasswordManuallyRequest;
 use App\Http\Controllers\Controller;
 use App\User;
 use Mail;
+use Validator;
 use App\Mail\PasswordResetEmail;
 
 class ResetPasswordManuallyController extends Controller
@@ -44,7 +45,6 @@ class ResetPasswordManuallyController extends Controller
             $passwordReset         = new PasswordReset;
             $passwordReset->email  = $user->usrEmail;
             $passwordReset->token  = str_random(60);
-            $passwordReset->status = 0; // 1: Reset, 0: Not reset
             $passwordReset->save();
 
             Mail::to($passwordReset->email)->send(new PasswordResetEmail($passwordReset));
@@ -70,7 +70,48 @@ class ResetPasswordManuallyController extends Controller
             return view('auth.passwords.resetManually', ['token' => $tokenData->token]);
         }
         else {
-            return redirect()->to('/reset/password');
+            return redirect()->to('/reset/password')->with('failedStatus', __('passwords.token'));
+        }
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function resetPassword(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required',
+            'password' => 'required|string|min:6|confirmed',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        $user = User::where('usrEmail', $request->email)
+            ->where('usrActive', '1')
+            ->where('is_delete', 0)
+            ->where('usrlId', 2)
+            ->first();
+
+        if( !empty($user) ) {
+            $verifiedUser = PasswordReset::where('token', $request->token)->where('email', $request->email)->first();
+            if(!empty($verifiedUser)) {
+                $password       = md5(env('MD5_Key'). $request->password . $user->usrPasswordSalt);
+                $user->password = $password;
+                $user->save();
+
+                return redirect()->back()->with('passwordResetSuccess', __('passwords.reset'));
+            }
+            else {
+                return redirect()->back()->withErrors(['user' => __('passwords.user')]);
+            }
+        }
+        else {
+            return redirect()->back()->withErrors(['user' => __('passwords.user')]);
         }
     }
 }

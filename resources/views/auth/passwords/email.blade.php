@@ -8,8 +8,14 @@
                 <div class="panel-heading">{{ __('passwords.passwordResetHeading') }}</div> <br>
 
                 <div class="panel-body panel-body-log">
+                    @if(session()->has('failedStatus'))
+                        <div class="alert alert-danger">
+                            {{ session()->get('failedStatus') }}
+                        </div>
+                    @endif
+
                     @if (session('status'))
-                        <div class="alert alert-success">
+                        <div class="alert alert-info">
                             {{ session('status') }}
                         </div>
                     @endif
