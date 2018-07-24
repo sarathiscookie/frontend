@@ -98,20 +98,20 @@ class ResetPasswordManuallyController extends Controller
             ->first();
 
         if( !empty($user) ) {
-            $verifiedUser = PasswordReset::where('token', $request->token)->where('email', $request->email)->first();
+            $verifiedUser = PasswordReset::where('token', $request->token)->where('email', $user->usrEmail)->first();
             if(!empty($verifiedUser)) {
-                $password       = md5(env('MD5_Key'). $request->password . $user->usrPasswordSalt);
-                $user->password = $password;
+                $password          = md5(env('MD5_Key'). $request->password . $user->usrPasswordSalt);
+                $user->usrPassword = $password;
                 $user->save();
 
                 return redirect()->back()->with('passwordResetSuccess', __('passwords.reset'));
             }
             else {
-                return redirect()->back()->withErrors(['user' => __('passwords.user')]);
+                return redirect()->back()->with('passwordResetFailure', __('passwords.user'));
             }
         }
         else {
-            return redirect()->back()->withErrors(['user' => __('passwords.user')]);
+            return redirect()->back()->with('passwordResetFailure', __('passwords.user'));
         }
     }
 }

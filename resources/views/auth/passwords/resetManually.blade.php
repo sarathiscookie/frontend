@@ -10,11 +10,18 @@
                     <div class="panel-heading">{{ __('passwords.passwordResetHeading') }}</div>
 
                     <div class="panel-body panel-body-log">
+                        @if (session()->has('passwordResetFailure'))
+                            <div class="alert alert-danger">
+                                {{ session()->get('passwordResetFailure') }}
+                            </div>
+                        @endif
+
                         @if (session()->has('passwordResetSuccess'))
-                            <div class="alert alert-info">
+                            <div class="alert alert-success">
                                 {{ session()->get('passwordResetSuccess') }}
                             </div>
                         @endif
+
                         <br>
                         <form class="form-horizontal" method="POST" action="{{ route('reset.password.token') }}">
                             {{ csrf_field() }}

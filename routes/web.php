@@ -43,11 +43,11 @@ Route::get('/reset/password', 'Auth\ResetPasswordManuallyController@showForm')->
 /* Send token to user */
 Route::post('/reset/password', 'Auth\ResetPasswordManuallyController@sendPasswordResetToken')->name('reset.password.manually');
 
+/* Reset password */
+Route::post('/reset/password/success', 'Auth\ResetPasswordManuallyController@resetPassword')->name('reset.password.token');
+
 /* Show password reset form */
 Route::get('/reset/password/{token}', 'Auth\ResetPasswordManuallyController@showPasswordResetForm')->name('reset.password.form');
-
-/* Reset password */
-Route::post('/reset/password', 'Auth\ResetPasswordManuallyController@resetPassword')->name('reset.password.token');
 
 /*
 |--------------------------------------------------------------------------
