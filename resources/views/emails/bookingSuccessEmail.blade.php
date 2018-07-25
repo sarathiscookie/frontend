@@ -395,7 +395,7 @@
 <span style="font-size:12.0pt;line-height:150%;font-family:&quot;Helvetica&quot;,sans-serif;color:#5F6876">Sehr geehrter Gast,
 <br>
 <br>Herzlichen Glückwunsch! Sie haben erfolgreich Ihre Hütte(n) gebucht.
-<br>Sie erhalten Ihre Gutscheine innerhalb der nächsten Stunde.
+<br>Sie erhalten Ihre Gutscheine innerhalb der nächsten Stunde. Diese können Sie auch jederzeit Online in Ihrer Buchungshistorie herunterladen.
 <br>
 <br>Mit freundlichen Grüßen
 <br>Huetten-Holiday.de Team
