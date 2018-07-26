@@ -15,9 +15,47 @@ use App\Mail\BookingListCabin;
 
 class CronJobsController extends Controller
 {
+    /**
+     *
+     * List temp users
+     *
+     * @param  string $id
+     * @return \Illuminate\Http\Response
+     */
+    public function tempUser($id)
+    {
+        $tempUser = Tempuser::select('_id', 'usrFirstname', 'usrLastname', 'usrEmail', 'usrTelephone')
+            ->where('is_delete', 0)
+            ->find($id);
+
+        if(!empty($tempUser)) {
+            return $tempUser;
+        }
+    }
+
+    /**
+     *
+     * List users
+     *
+     * @param  string $id
+     * @return \Illuminate\Http\Response
+     */
+    public function user($id)
+    {
+        $user = Userlist::select('_id', 'usrFirstname', 'usrLastname', 'usrEmail', 'usrTelephone')
+            ->where('usrActive', '1')
+            ->where('is_delete', 0)
+            ->find($id);
+
+        if(!empty($user)) {
+            return $user;
+        }
+    }
+
+    /* Created this function for testing purpose */
     public function cabinOwnerDailyListInvoice()
     {
-        //$test              = '';
+        $test              = '';
         $cabins            = Cabin::select('_id', 'cabin_owner', 'name', 'invoice_code')
             ->where('is_delete', 0)
             ->where('other_cabin', "0")
@@ -46,7 +84,7 @@ class CronJobsController extends Controller
                 ->orderBy('invoice_number', 'asc')
                 ->get();
 
-            /*foreach($msBookings as $booking) {
+            foreach($msBookings as $booking) {
                 $test .= $booking->invoice_number;
                 if(!empty($booking->temp_user_id)){
                     $test .= $this->tempUser($booking->temp_user_id);
@@ -54,43 +92,9 @@ class CronJobsController extends Controller
                 else{
                     $test .= $this->user($booking->user_id);
                 }
-             }*/
+             }
 
-            $html = view('cron.bookingListCabinPDF', ['invoice_code' => $invoice_code, 'cabinname' => $cabin->name, 'bookings' => $bookings, 'msBookings' => $msBookings]);
-
-            PDF::loadHTML($html)->setPaper(array(0,0,1000,781))->setWarnings(false)->save(storage_path("app/public/dailylistbookingforcabin/". $cabin->name . ".pdf"));
-
-            /* Functionality to send message to user begin */
-            Mail::send('emails.bookingListCabin', ['subject' => 'Ihre tägliche Buchungsübersicht'], function ($message) use ($cabinOwner, $cabin) {
-                $message/*->bcc('backup.tageslisten@huetten-holiday.de')*/->to($cabinOwner->usrEmail)->subject('Ihre tägliche Buchungsübersicht')->attach(public_path("/storage/dailylistbookingforcabin/". $cabin->name . ".pdf"), [
-                    'mime' => 'application/pdf',
-                ]);
-            });
-            /* Functionality to send message to user end */
         }
-        //dd($test);
-    }
-
-    public function tempUser($id)
-    {
-        $tempUser = Tempuser::select('_id', 'usrFirstname', 'usrLastname', 'usrEmail', 'usrTelephone')
-            ->where('is_delete', 0)
-            ->find($id);
-
-        if(!empty($tempUser)) {
-            return $tempUser;
-        }
-    }
-
-    public function user($id)
-    {
-        $user = Userlist::select('_id', 'usrFirstname', 'usrLastname', 'usrEmail', 'usrTelephone')
-            ->where('usrActive', '1')
-            ->where('is_delete', 0)
-            ->find($id);
-
-        if(!empty($user)) {
-            return $user;
-        }
+        dd($test);
     }
 }
