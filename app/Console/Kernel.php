@@ -25,7 +25,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $schedule->command('BookingListForCabins:bookinglist')
-            ->everyFiveMinutes();
+            ->dailyAt('20:03');
     }
 
     /**
