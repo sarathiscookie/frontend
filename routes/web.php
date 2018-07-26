@@ -350,4 +350,7 @@ Route::group(['middleware' => ['auth']], function () {
 Route::post('/payment/response', 'PaymentController@response')->name('payment.response');
 
 
-
+/*
+*CronJobsTesting
+*/
+Route::get('/cron/cabin', 'CronJobsController@cabinOwnerDailyListInvoice')->name('cron.cabin');
