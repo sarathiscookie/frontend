@@ -240,7 +240,7 @@
                     $userDetails = $cronServices->user($msBooking->user_id);
 
                     if(!empty($msBooking->check_in) && !empty($msBooking->reserve_to)) {
-                        $daysDifference = round(abs(strtotime(date_format($msBooking->check_in, 'd.m.Y')) - strtotime(date_format($booking->reserve_to, 'd.m.Y'))) / 86400);
+                        $daysDifference = round(abs(strtotime(date_format($msBooking->check_in, 'd.m.Y')) - strtotime(date_format($msBooking->reserve_to, 'd.m.Y'))) / 86400);
                     }
                     else {
                         $daysDifference = 'Not set date';
