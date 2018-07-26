@@ -151,56 +151,54 @@
                 <TD class="tr1 td15"><P class="p6 ft3">Kontakt</P></TD>
             </TR>
             @inject('cronServices', 'App\Http\Controllers\CronJobsController')
-            @if(isset($bookings))
-                @forelse($bookings as $booking)
-                    @php
-                        if(!empty($booking->temp_user_id)){
-                            $userDetails = $cronServices->tempUser($booking->temp_user_id);
-                        }
-                        else {
-                            $userDetails = $cronServices->user($booking->user);
-                        }
+            @forelse($bookings as $booking)
+                @php
+                    if(!empty($booking->temp_user_id)){
+                        $userDetails = $cronServices->tempUser($booking->temp_user_id);
+                    }
+                    else {
+                        $userDetails = $cronServices->user($booking->user);
+                    }
 
-                        if(!empty($booking->checkin_from) && !empty($booking->reserve_to)) {
-                            $daysDifference = round(abs(strtotime(date_format($booking->checkin_from, 'd.m.Y')) - strtotime(date_format($booking->reserve_to, 'd.m.Y'))) / 86400);
-                        }
-                        else {
-                            $daysDifference = 'Not set date';
-                        }
+                    if(!empty($booking->checkin_from) && !empty($booking->reserve_to)) {
+                        $daysDifference = round(abs(strtotime(date_format($booking->checkin_from, 'd.m.Y')) - strtotime(date_format($booking->reserve_to, 'd.m.Y'))) / 86400);
+                    }
+                    else {
+                        $daysDifference = 'Not set date';
+                    }
 
-                    @endphp
-                    <TR>
-                        <TD class="tr2 td16"><P class="p2 ft4">{{ $booking->invoice_number }}</P></TD>
-                        <TD class="tr2 td17"><P class="p7 ft4"></P>{{ $userDetails->usrFirstname }} {{ $userDetails->usrLastname }}</TD>
-                        <TD class="tr2 td18"><P class="p8 ft4">{{ $booking->checkin_from->format('d.m') }} bis {{ $booking->reserve_to->format('d.m') }}</P></TD>
-                        <TD class="tr2 td19"><P class="p9 ft4">{{ $daysDifference }}</P></TD>
-                        <TD class="tr2 td20"><P class="p10 ft4">{{ $booking->guests }}</P></TD>
-                        <TD class="tr2 td21"><P class="p11 ft4">{{ $booking->sleeps }}</P></TD>
-                        <TD class="tr2 td22"><P class="p12 ft4">@if(!empty($booking->halfboard)) {{ $booking->halfboard }} @else ohne @endif</P></TD>
-                        <TD class="tr2 td23"><P class="p13 ft4">{{ number_format($booking->prepayment_amount, 2, ',', '.') }} &euro;</P></TD>
-                        <TD class="tr2 td24"><P class="p14 ft4">{{ $userDetails->usrEmail }}</P></TD>
-                    </TR>
-                    <TR>
-                        <TD colspan=3 class="tr3 td25"><P class="p2 ft5">{{ $booking->comments }}</P></TD>
-                        <TD class="tr3 td19"><P class="p0 ft2">&nbsp;</P></TD>
-                        <TD class="tr3 td20"><P class="p0 ft2">&nbsp;</P></TD>
-                        <TD class="tr3 td21"><P class="p0 ft2">&nbsp;</P></TD>
-                        <TD class="tr3 td22"><P class="p0 ft2">&nbsp;</P></TD>
-                        <TD class="tr3 td23"><P class="p0 ft2">&nbsp;</P></TD>
-                        <TD class="tr3 td24"><P class="p15 ft4">{{ $userDetails->usrTelephone }}</P></TD>
-                    </TR>
-                @empty
-                    <TR>
-                        <TD colspan=3 class="tr3 td25"><P class="p2 ft5"></P></TD>
-                        <TD class="tr3 td19"><P class="p0 ft2">&nbsp;</P></TD>
-                        <TD class="tr3 td20"><P class="p0 ft2">&nbsp;</P></TD>
-                        <TD class="tr3 td21"><P class="p0 ft2">&nbsp;</P>Keine Buchung</TD>
-                        <TD class="tr3 td22"><P class="p0 ft2">&nbsp;</P></TD>
-                        <TD class="tr3 td23"><P class="p0 ft2">&nbsp;</P></TD>
-                        <TD class="tr3 td24"><P class="p15 ft4"></P></TD>
-                    </TR>
-                @endforelse
-            @endif
+                @endphp
+            <TR>
+                <TD class="tr2 td16"><P class="p2 ft4">{{ $booking->invoice_number }}</P></TD>
+                <TD class="tr2 td17"><P class="p7 ft4"></P>{{ $userDetails->usrFirstname }} {{ $userDetails->usrLastname }}</TD>
+                <TD class="tr2 td18"><P class="p8 ft4">{{ $booking->checkin_from->format('d.m') }} bis {{ $booking->reserve_to->format('d.m') }}</P></TD>
+                <TD class="tr2 td19"><P class="p9 ft4">{{ $daysDifference }}</P></TD>
+                <TD class="tr2 td20"><P class="p10 ft4">{{ $booking->guests }}</P></TD>
+                <TD class="tr2 td21"><P class="p11 ft4">{{ $booking->sleeps }}</P></TD>
+                <TD class="tr2 td22"><P class="p12 ft4">@if(!empty($booking->halfboard)) {{ $booking->halfboard }} @else ohne @endif</P></TD>
+                <TD class="tr2 td23"><P class="p13 ft4">{{ number_format($booking->prepayment_amount, 2, ',', '.') }} &euro;</P></TD>
+                <TD class="tr2 td24"><P class="p14 ft4">{{ $userDetails->usrEmail }}</P></TD>
+            </TR>
+            <TR>
+                <TD colspan=3 class="tr3 td25"><P class="p2 ft5">{{ $booking->comments }}</P></TD>
+                <TD class="tr3 td19"><P class="p0 ft2">&nbsp;</P></TD>
+                <TD class="tr3 td20"><P class="p0 ft2">&nbsp;</P></TD>
+                <TD class="tr3 td21"><P class="p0 ft2">&nbsp;</P></TD>
+                <TD class="tr3 td22"><P class="p0 ft2">&nbsp;</P></TD>
+                <TD class="tr3 td23"><P class="p0 ft2">&nbsp;</P></TD>
+                <TD class="tr3 td24"><P class="p15 ft4">{{ $userDetails->usrTelephone }}</P></TD>
+            </TR>
+            @empty
+                <TR>
+                    <TD colspan=3 class="tr3 td25"><P class="p2 ft5"></P></TD>
+                    <TD class="tr3 td19"><P class="p0 ft2">&nbsp;</P></TD>
+                    <TD class="tr3 td20"><P class="p0 ft2">&nbsp;</P></TD>
+                    <TD class="tr3 td21"><P class="p0 ft2">&nbsp;</P>Keine Buchung</TD>
+                    <TD class="tr3 td22"><P class="p0 ft2">&nbsp;</P></TD>
+                    <TD class="tr3 td23"><P class="p0 ft2">&nbsp;</P></TD>
+                    <TD class="tr3 td24"><P class="p15 ft4"></P></TD>
+                </TR>
+            @endforelse
 
             <TR>
                 <TD class="tr5 td36"><P class="p0 ft2">&nbsp;</P></TD>
@@ -237,7 +235,6 @@
                 <TD class="tr1 td15"><P class="p6 ft3">Kontakt</P></TD>
             </TR>
 
-            @isset($msBookings)
             @forelse($msBookings as $msBooking)
                 @php
                     $userDetails = $cronServices->user($msBooking->user_id);
@@ -281,7 +278,6 @@
                     <TD class="tr3 td24"><P class="p15 ft4"></P></TD>
                 </TR>
             @endforelse
-            @endif
             <TR>
                 <TD class="tr7 td36"><P class="p0 ft2">&nbsp;</P></TD>
                 <TD class="tr7 td37"><P class="p0 ft2">&nbsp;</P></TD>

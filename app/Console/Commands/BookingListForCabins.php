@@ -74,7 +74,7 @@ class BookingListForCabins extends Command
                 ->orderBy('invoice_number', 'asc')
                 ->get();
 
-            $html = view('cron.bookingListCabinPDF', ['invoice_code' => $invoice_code, 'cabinname' => $cabin->name, 'bookings' => $bookings, 'msBookings' => $msBookings]);
+            $html = view('cron.bookingListCabinPDF', ['invoice_code' => $invoice_code, 'cabinname' => $cabin->name, 'bookings' => $bookings, 'msBookings' => $msBookings])->render();
 
             PDF::loadHTML($html)->setPaper(array(0,0,1000,781))->setWarnings(false)->save(storage_path("app/public/dailylistbookingforcabin/". $cabin->name . ".pdf"));
 
