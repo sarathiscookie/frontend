@@ -164,7 +164,7 @@
     </TR>
 
     @if(isset($bookings))
-        @foreach($bookings as $booking)
+        @forelse($bookings as $booking)
             @php
                 if($booking->temp_user_id != ''){
                     $userDetails = $cronServices->tempUser($booking->temp_user_id);
@@ -235,7 +235,14 @@
                 @endif
                 <TD class="tr3 td24"><P class="p15 ft4">{{ $phone }}</P></TD>
             </TR>
-        @endforeach
+
+        @empty
+            <TR>
+                <TD colspan=7 class="tr3 td25"><P class="p2 ft5">&nbsp;</P></TD>
+                <TD class="tr3 td23"><P class="p0 ft2">Keine Buchung</P></TD>
+                <TD class="tr3 td24"><P class="p15 ft4">&nbsp;</P></TD>
+            </TR>
+        @endforelse
 
             <TR>
                 <TD class="tr5 td36"><P class="p0 ft2">&nbsp;</P></TD>
@@ -249,12 +256,7 @@
                 <TD class="tr5 td42"><P class="p0 ft2">&nbsp;</P></TD>
                 <TD colspan=2 class="tr5 td43"><P class="p0 ft2">&nbsp;</P></TD>
             </TR>
-    @else
-        <TR>
-            <TD colspan=7 class="tr3 td25"><P class="p2 ft5">&nbsp;</P></TD>
-            <TD class="tr3 td23"><P class="p0 ft2">Keine Buchung</P></TD>
-            <TD class="tr3 td24"><P class="p15 ft4">&nbsp;</P></TD>
-        </TR>
+
     @endif
 
     <TR>
@@ -284,7 +286,7 @@
     </TR>
 
     @if(isset($msBookings))
-        @foreach($msBookings as $msBooking)
+        @forelse($msBookings as $msBooking)
             @php
                 $userDetails = $cronServices->user($msBooking->user_id);
 
@@ -339,8 +341,13 @@
                 @endif
                 <TD class="tr3 td24"><P class="p15 ft4">{{ $phone }}</P></TD>
             </TR>
-
-        @endforeach
+        @empty
+            <TR>
+                <TD colspan=7 class="tr3 td35"><P class="p2 ft5">&nbsp;</P></TD>
+                <TD class="tr3 td33"><P class="p0 ft2">Keine Buchung</P></TD>
+                <TD class="tr3 td34"><P class="p15 ft4">&nbsp;</P></TD>
+            </TR>
+        @endforelse
             <TR>
                 <TD class="tr7 td36"><P class="p0 ft2">&nbsp;</P></TD>
                 <TD class="tr7 td37"><P class="p0 ft2">&nbsp;</P></TD>
@@ -352,12 +359,6 @@
                 <TD class="tr7 td41"><P class="p0 ft2">&nbsp;</P></TD>
                 <TD colspan=3 class="tr7 td46"><P class="p0 ft2">&nbsp;</P></TD>
             </TR>
-    @else
-        <TR>
-            <TD colspan=7 class="tr3 td35"><P class="p2 ft5">&nbsp;</P></TD>
-            <TD class="tr3 td33"><P class="p0 ft2">Keine Buchung</P></TD>
-            <TD class="tr3 td34"><P class="p15 ft4">&nbsp;</P></TD>
-        </TR>
     @endif
 </TABLE>
 </div>
