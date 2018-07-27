@@ -166,7 +166,7 @@
     @if(isset($bookings))
         @forelse($bookings as $booking)
             @php
-                if(!empty($booking->temp_user_id)){
+                if($booking->temp_user_id != ''){
                     $userDetails = $cronServices->tempUser($booking->temp_user_id);
                     if(!empty($userDetails))
                     {
@@ -215,7 +215,7 @@
 
             @endphp
 
-            <TR class="page-break">
+            <TR>
                 <TD class="tr2 td16"><P class="p2 ft4">{{ $booking->invoice_number }}</P></TD>
                 <TD class="tr2 td17"><P class="p7 ft4">{{ $firstName}} {{ $lastName }}</P></TD>
                 <TD class="tr2 td18"><P class="p8 ft4">{{ $booking->checkin_from->format('d.m') }} bis {{ $booking->reserve_to->format('d.m') }}</P></TD>
@@ -321,7 +321,7 @@
                    $msCategory = $msBooking->sleeps;
                 }
             @endphp
-            <TR class="page-break">
+            <TR>
                 <TD class="tr2 td16"><P class="p2 ft4">{{ $msBooking->invoice_number }}</P></TD>
                 <TD class="tr2 td17"><P class="p7 ft4">{{ $firstName }} {{ $lastName }}</P></TD>
                 <TD class="tr2 td18"><P class="p8 ft4">{{ $msBooking->check_in->format('d.m') }} bis {{ $msBooking->reserve_to->format('d.m') }}</P></TD>
