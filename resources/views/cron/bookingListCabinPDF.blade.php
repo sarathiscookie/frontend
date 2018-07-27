@@ -153,19 +153,20 @@
             @inject('cronServices', 'App\Http\Controllers\CronJobsController')
             @forelse($bookings as $booking)
                 @php
-                    if(!empty($booking->temp_user_id)){
-                        $userDetails = $cronServices->tempUser($booking->temp_user_id);
-                    }
-                    else {
-                        $userDetails = $cronServices->user($booking->user);
-                    }
+                    $userDetails = '';
+                        if(!empty($booking->temp_user_id)){
+                            $userDetails = $cronServices->tempUser($booking->temp_user_id);
+                        }
+                        else {
+                            $userDetails = $cronServices->user($booking->user);
+                        }
 
-                    if(!empty($booking->checkin_from) && !empty($booking->reserve_to)) {
-                        $daysDifference = round(abs(strtotime(date_format($booking->checkin_from, 'd.m.Y')) - strtotime(date_format($booking->reserve_to, 'd.m.Y'))) / 86400);
-                    }
-                    else {
-                        $daysDifference = 'Not set date';
-                    }
+                        if(!empty($booking->checkin_from) && !empty($booking->reserve_to)) {
+                            $daysDifference = round(abs(strtotime(date_format($booking->checkin_from, 'd.m.Y')) - strtotime(date_format($booking->reserve_to, 'd.m.Y'))) / 86400);
+                        }
+                        else {
+                            $daysDifference = 'Not set date';
+                        }
 
                 @endphp
             <TR>
