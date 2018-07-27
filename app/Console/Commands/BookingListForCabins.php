@@ -46,7 +46,7 @@ class BookingListForCabins extends Command
     public function handle()
     {
         //$test              = '';
-        $cabins            = Cabin::select('_id', 'cabin_owner', 'name', 'invoice_code')
+        $cabins            = Cabin::select('_id', 'cabin_owner', 'name', 'invoice_code', 'halfboard', 'sleeping_place')
             ->where('is_delete', 0)
             ->where('other_cabin', "0")
             ->get();
@@ -74,7 +74,7 @@ class BookingListForCabins extends Command
                 ->orderBy('invoice_number', 'asc')
                 ->get();
 
-            $html = view('cron.bookingListCabinPDF', ['invoice_code' => $invoice_code, 'cabinname' => $cabin->name, 'bookings' => $bookings, 'msBookings' => $msBookings])->render();
+            $html = view('cron.bookingListCabinPDF', ['invoice_code' => $invoice_code, 'cabinname' => $cabin->name, 'bookings' => $bookings, 'msBookings' => $msBookings, 'cabinHalfboard' => $cabin->halfboard, 'sleepingPlace' => $cabin->sleeping_place])->render();
 
             PDF::loadHTML($html)->setPaper(array(0,0,1000,781))->setWarnings(false)->save(storage_path("app/public/dailylistbookingforcabin/". $cabin->name . ".pdf"));
 
