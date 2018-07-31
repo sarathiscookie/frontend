@@ -22,6 +22,12 @@
         .page-break {
             page-break-after: always;
         }
+        #ctable tr:nth-child(4n), #ctable tr:nth-child(4n-1) {
+            background-color: #DCDDDF;
+        }
+        tr.spaceUnder>td {
+            padding-bottom: 1em;
+        }
     </style>
 
 </head>
@@ -54,8 +60,6 @@
             <td style="width:8%; font-weight: bold;">Gutscheinwert</td>
             <td  style="width:35%; font-weight: bold;" >Kontakt</td>
         </tr>
-
-        <tr style="position: absolute; z-index: -99999999999999; height: 0px; width: 0px;"><td></td></tr>
 
         @forelse($bookings as $booking)
             @php
@@ -136,16 +140,10 @@
         @endforelse
 
     <!-- Mountain School Booking List -->
-        <tr>
-            <td style="width:15%; font-weight: bold;">&nbsp;</td>
-        </tr>
-        <tr>
-            <td colspan="12" style="background-color:#fff; color:#5f6876; width:100%; font-size:17px;"><nobr>Bergschulenübersicht</nobr> vom {{date('d.m')}}</td>
+        <tr style="padding-bottom: 1em;">
+            <td colspan="12" style="background-color:#fff; color:#5f6876; width:100%; font-size:17px; padding-bottom: 1em; padding-top: 1em;"><nobr>Bergschulenübersicht</nobr> vom {{date('d.m')}}</td>
         </tr>
 
-        <tr>
-            <td style="width:15%; font-weight: bold;">&nbsp;</td>
-        </tr>
         <tr style="background:#33b1d2;color:#fff; height: 40px;">
             <td style="width:15%; font-weight: bold;">Buchungs-Nr.</td>
             <td style="width:10%; font-weight: bold;">Name</td>
