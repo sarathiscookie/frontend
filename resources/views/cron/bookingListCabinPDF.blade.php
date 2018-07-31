@@ -57,93 +57,90 @@
 
         <tr style="position: absolute; z-index: -99999999999999; height: 0px; width: 0px;"><td></td></tr>
 
-        @if(isset($bookings) && !empty($bookings))
-            @foreach($bookings as $booking)
-                @php
-                    if($booking->temp_user_id != ''){
-                       $userTempDetails = $cronServices->tempUser($booking->temp_user_id);
-                       if(!empty($userTempDetails))
-                       {
-                        $firstName = $userTempDetails->usrFirstname;
-                        $lastName  = $userTempDetails->usrLastname;
-                        $email     = $userTempDetails->usrEmail;
-                        $phone     = $userTempDetails->usrTelephone;
-                       }
-                    }
-                    else {
-                          $userDetails = $cronServices->user($booking->user);
-                          if(!empty($userDetails))
-                          {
-                           $firstName = $userDetails->usrFirstname;
-                           $lastName  = $userDetails->usrLastname;
-                           $email     = $userDetails->usrEmail;
-                           $phone     = $userDetails->usrTelephone;
-                          }
-                    }
+        @forelse($bookings as $booking)
+            @php
+                if($booking->temp_user_id != ''){
+                   $userTempDetails = $cronServices->tempUser($booking->temp_user_id);
+                   if(!empty($userTempDetails))
+                   {
+                    $firstName = $userTempDetails->usrFirstname;
+                    $lastName  = $userTempDetails->usrLastname;
+                    $email     = $userTempDetails->usrEmail;
+                    $phone     = $userTempDetails->usrTelephone;
+                   }
+                }
+                else {
+                      $userDetails = $cronServices->user($booking->user);
+                      if(!empty($userDetails))
+                      {
+                       $firstName = $userDetails->usrFirstname;
+                       $lastName  = $userDetails->usrLastname;
+                       $email     = $userDetails->usrEmail;
+                       $phone     = $userDetails->usrTelephone;
+                      }
+                }
 
-                    /* Checking condition for date */
-                    if(!empty($booking->checkin_from) && !empty($booking->reserve_to)) {
-                       $daysDifference = round(abs(strtotime(date_format($booking->checkin_from, 'd.m.Y')) - strtotime(date_format($booking->reserve_to, 'd.m.Y'))) / 86400);
-                    }
-                    else {
-                         $daysDifference = 'Date not set';
-                    }
+                /* Checking condition for date */
+                if(!empty($booking->checkin_from) && !empty($booking->reserve_to)) {
+                   $daysDifference = round(abs(strtotime(date_format($booking->checkin_from, 'd.m.Y')) - strtotime(date_format($booking->reserve_to, 'd.m.Y'))) / 86400);
+                }
+                else {
+                     $daysDifference = 'Date not set';
+                }
 
-                    /* Checking halfboard available or not */
-                    if(!empty($booking->halfboard) && $booking->halfboard === '1') {
-                       $halfboard = 'ja';
-                    }
-                    else {
-                       $halfboard = 'Nein';
-                    }
+                /* Checking halfboard available or not */
+                if(!empty($booking->halfboard) && $booking->halfboard === '1') {
+                   $halfboard = 'ja';
+                }
+                else {
+                   $halfboard = 'Nein';
+                }
 
-                    /* Listing beds dorms separately */
-                    if($sleepingPlace != 1) {
-                       $category = $booking->beds .'B '. $booking->dormitory .'M';
-                    }
-                    else {
-                          $category = $booking->sleeps;
-                    }
+                /* Listing beds dorms separately */
+                if($sleepingPlace != 1) {
+                   $category = $booking->beds .'B '. $booking->dormitory .'M';
+                }
+                else {
+                      $category = $booking->sleeps;
+                }
 
-                @endphp
-                <tr>
-                    <td>{{ $booking->invoice_number }}</td>
-                    <td>{{ $firstName}} {{ $lastName }}</td>
-                    <td @if($daysDifference > 1) style="font-weight: bold;" @endif>{{ $booking->checkin_from->format('d.m') }} bis {{ $booking->reserve_to->format('d.m') }}</td>
-                    <td>{{ $daysDifference }}</td>
-                    <td>{{ $booking->sleeps }}</td>
-                    <td>{{ $category }}</td>
-                    @if(isset($cabinHalfboard) && $cabinHalfboard === '1')
-                        <td>{{ $halfboard }}</td>
-                    @endif
-                    <td>{{ number_format($booking->prepayment_amount, 2, ',', '.') }} &euro;</td>
-                    <td>{{ $email }}</td>
-                </tr>
+            @endphp
+            <tr>
+                <td>{{ $booking->invoice_number }}</td>
+                <td>{{ $firstName}} {{ $lastName }}</td>
+                <td @if($daysDifference > 1) style="font-weight: bold;" @endif>{{ $booking->checkin_from->format('d.m') }} bis {{ $booking->reserve_to->format('d.m') }}</td>
+                <td>{{ $daysDifference }}</td>
+                <td>{{ $booking->sleeps }}</td>
+                <td>{{ $category }}</td>
+                @if(isset($cabinHalfboard) && $cabinHalfboard === '1')
+                    <td>{{ $halfboard }}</td>
+                @endif
+                <td>{{ number_format($booking->prepayment_amount, 2, ',', '.') }} &euro;</td>
+                <td>{{ $email }}</td>
+            </tr>
 
-                <tr>
-                    <td>Kommentar:</td>
-                    <td colspan="6" class="comment">{{ $booking->comments }}</td>
-                    @if(isset($cabinHalfboard) && $cabinHalfboard === '1')
-                        <td>&nbsp;</td>
-                    @endif
-                    <td>{{ $phone }}</td>
-                </tr>
-
-            @endforeach
-        @else
+            <tr>
+                <td>Kommentar:</td>
+                <td colspan="6" class="comment">{{ $booking->comments }}</td>
+                @if(isset($cabinHalfboard) && $cabinHalfboard === '1')
+                    <td>&nbsp;</td>
+                @endif
+                <td>{{ $phone }}</td>
+            </tr>
+        @empty
             <tr>
                 <td>&nbsp;</td>
                 <td colspan="7">Keine Buchung</td>
                 <td>&nbsp;</td>
             </tr>
-        @endif
+        @endforelse
 
     <!-- Mountain School Booking List -->
         <tr>
             <td style="width:15%; font-weight: bold;">&nbsp;</td>
         </tr>
         <tr>
-            <td colspan="12" style="background-color:#fff; color:#5f6876; width:100%; font-size:17px;"><nobr>Bergschulenübersicht</nobr> vom 01.07.</td>
+            <td colspan="12" style="background-color:#fff; color:#5f6876; width:100%; font-size:17px;"><nobr>Bergschulenübersicht</nobr> vom {{date('d.m')}}</td>
         </tr>
 
         <tr>
@@ -163,72 +160,68 @@
             <td  style="width:35%; font-weight: bold;" >Kontakt</td>
         </tr>
 
+        @forelse($msBookings as $msBooking)
+            @php
+                $userMsDetails = $cronServices->user($msBooking->user_id);
+                if(!empty($userMsDetails))
+                {
+                   $firstName = $userMsDetails->usrFirstname;
+                   $lastName  = $userMsDetails->usrLastname;
+                   $email     = $userMsDetails->usrEmail;
+                   $phone     = $userMsDetails->usrTelephone;
+                }
 
-        @if(isset($msBookings) && !empty($msBookings))
-            @foreach($msBookings as $msBooking)
-                @php
-                    $userMsDetails = $cronServices->user($msBooking->user_id);
-                    if(!empty($userMsDetails))
-                    {
-                       $firstName = $userMsDetails->usrFirstname;
-                       $lastName  = $userMsDetails->usrLastname;
-                       $email     = $userMsDetails->usrEmail;
-                       $phone     = $userMsDetails->usrTelephone;
-                    }
+                if(!empty($msBooking->check_in) && !empty($msBooking->reserve_to)) {
+                    $daysDifference = round(abs(strtotime(date_format($msBooking->check_in, 'd.m.Y')) - strtotime(date_format($msBooking->reserve_to, 'd.m.Y'))) / 86400);
+                }
+                else {
+                    $daysDifference = 'Date not set';
+                }
 
-                    if(!empty($msBooking->check_in) && !empty($msBooking->reserve_to)) {
-                        $daysDifference = round(abs(strtotime(date_format($msBooking->check_in, 'd.m.Y')) - strtotime(date_format($msBooking->reserve_to, 'd.m.Y'))) / 86400);
-                    }
-                    else {
-                        $daysDifference = 'Date not set';
-                    }
+                /* Checking halfboard available or not */
+                if(!empty($msBooking->half_board) && $msBooking->half_board === '1') {
+                    $msHalfboard = 'ja';
+                }
+                else {
+                    $msHalfboard = 'Nein';
+                }
 
-                    /* Checking halfboard available or not */
-                    if(!empty($msBooking->half_board) && $msBooking->half_board === '1') {
-                        $msHalfboard = 'ja';
-                    }
-                    else {
-                        $msHalfboard = 'Nein';
-                    }
+                /* Listing beds dorms separately */
+                if($sleepingPlace != 1) {
+                   $msCategory = $msBooking->beds .'B '. $msBooking->dormitory .'M';
+                }
+                else {
+                   $msCategory = $msBooking->sleeps;
+                }
+            @endphp
 
-                    /* Listing beds dorms separately */
-                    if($sleepingPlace != 1) {
-                       $msCategory = $msBooking->beds .'B '. $msBooking->dormitory .'M';
-                    }
-                    else {
-                       $msCategory = $msBooking->sleeps;
-                    }
-                @endphp
-
-                <tr>
-                    <td>{{ $msBooking->invoice_number }}</td>
-                    <td>{{ $firstName }} {{ $lastName }}</td>
-                    <td @if($daysDifference > 1) style="font-weight: bold;" @endif>{{ $msBooking->check_in->format('d.m') }} bis {{ $msBooking->reserve_to->format('d.m') }}</td>
-                    <td>{{ $daysDifference }}</td>
-                    <td>{{ $msBooking->sleeps }}</td>
-                    <td>{{ $msCategory }}</td>
-                    @if(isset($cabinHalfboard) && $cabinHalfboard === '1')
-                        <td>{{ $msHalfboard }}</td>
-                    @endif
-                    <td>@if(!empty($msBooking->ind_tour_no)) {{ $msBooking->ind_tour_no }} @endif</td>
-                    <td>{{ $email }}</td>
-                </tr>
-                <tr>
-                    <td>Kommentar:</td>
-                    <td colspan="6" class="comment">{{ $msBooking->comments }}</td>
-                    @if(isset($cabinHalfboard) && $cabinHalfboard === '1')
-                        <td>&nbsp;</td>
-                    @endif
-                    <td>{{ $phone }}</td>
-                </tr>
-
-            @endforeach
-        @else
+            <tr>
+                <td>{{ $msBooking->invoice_number }}</td>
+                <td>{{ $firstName }} {{ $lastName }}</td>
+                <td @if($daysDifference > 1) style="font-weight: bold;" @endif>{{ $msBooking->check_in->format('d.m') }} bis {{ $msBooking->reserve_to->format('d.m') }}</td>
+                <td>{{ $daysDifference }}</td>
+                <td>{{ $msBooking->sleeps }}</td>
+                <td>{{ $msCategory }}</td>
+                @if(isset($cabinHalfboard) && $cabinHalfboard === '1')
+                    <td>{{ $msHalfboard }}</td>
+                @endif
+                <td>@if(!empty($msBooking->ind_tour_no)) {{ $msBooking->ind_tour_no }} @endif</td>
+                <td>{{ $email }}</td>
+            </tr>
+            <tr>
+                <td>Kommentar:</td>
+                <td colspan="6" class="comment">{{ $msBooking->comments }}</td>
+                @if(isset($cabinHalfboard) && $cabinHalfboard === '1')
+                    <td>&nbsp;</td>
+                @endif
+                <td>{{ $phone }}</td>
+            </tr>
+        @empty
             <tr>
                 <td>&nbsp;</td>
                 <td colspan="7">Keine Buchung</td>
                 <td>&nbsp;</td>
             </tr>
-        @endif
+        @endforelse
     </table>
 </div></body></html>
