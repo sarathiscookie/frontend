@@ -7,10 +7,9 @@ use App\Booking;
 use App\MountSchoolBooking;
 use App\Cabin;
 use App\Userlist;
-use App\Tempuser;
+use DateTime;
 use Mail;
 use PDF;
-use Carbon\Carbon;
 
 class BookingListForCabins extends Command
 {
@@ -45,49 +44,64 @@ class BookingListForCabins extends Command
      */
     public function handle()
     {
-        //$test              = '';
-        $cabins            = Cabin::select('_id', 'cabin_owner', 'name', 'invoice_code', 'halfboard', 'sleeping_place')
+        $date             = date('d.m.y');
+
+        $dateFormatChange = DateTime::createFromFormat("d.m.y", $date)->format('Y-m-d');
+        $dateTime         = new DateTime($dateFormatChange);
+        $timeStamp        = $dateTime->getTimestamp();
+        $utcDateTime      = new \MongoDB\BSON\UTCDateTime($timeStamp * 1000);
+
+        $cabins           = Cabin::select('_id', 'cabin_owner', 'name', 'invoice_code', 'halfboard', 'sleeping_place')
             ->where('is_delete', 0)
             ->where('other_cabin', "0")
             ->get();
 
-        foreach($cabins as $key => $cabin) {
-            $invoice_code = $cabin->invoice_code.'-'.date("y").'-';
+        if(!empty($cabins)) {
+            foreach($cabins as $key => $cabin) {
 
-            $cabinOwner   = Userlist::select('_id', 'usrEmail')
-                ->where('usrActive', '1')
-                ->where('is_delete', 0)
-                ->where('usrlId', 5)
-                ->find($cabin->cabin_owner);
+                $invoice_code = $cabin->invoice_code.'-'.date("y").'-';
 
-            $bookings     = Booking::where('is_delete', 0)
-                ->where('status', '1')
-                ->where('checkin_from', Carbon::now()->startOfDay())
-                ->where('cabinname', $cabin->name)
-                ->orderBy('invoice_number', 'asc')
-                ->get();
+                $bookings     = Booking::where('is_delete', 0)
+                    ->where('status', '1')
+                    ->whereRaw(['checkin_from' => array('$lte' => $utcDateTime)])
+                    ->whereRaw(['reserve_to' => array('$gt' => $utcDateTime)])
+                    ->where('cabinname', $cabin->name)
+                    ->orderBy('invoice_number', 'asc')
+                    ->get();
 
-            $msBookings   = MountSchoolBooking::where('is_delete', 0)
-                ->where('status', '1')
-                ->where('check_in', Carbon::now()->startOfDay())
-                ->where('cabin_name', $cabin->name)
-                ->orderBy('invoice_number', 'asc')
-                ->get();
+                $msBookings   = MountSchoolBooking::where('is_delete', 0)
+                    ->where('status', '1')
+                    ->whereRaw(['check_in' => array('$lte' => $utcDateTime)])
+                    ->whereRaw(['reserve_to' => array('$gt' => $utcDateTime)])
+                    ->where('cabin_name', $cabin->name)
+                    ->orderBy('invoice_number', 'asc')
+                    ->get();
 
-            $html = view('cron.bookingListCabinPDF', ['invoice_code' => $invoice_code, 'cabinname' => $cabin->name, 'bookings' => $bookings, 'msBookings' => $msBookings, 'cabinHalfboard' => $cabin->halfboard, 'sleepingPlace' => $cabin->sleeping_place])->render();
+                $html         = view('cron.bookingListCabinPDF', ['invoice_code' => $invoice_code, 'cabinname' => $cabin->name, 'bookings' => $bookings, 'msBookings' => $msBookings, 'cabinHalfboard' => $cabin->halfboard, 'sleepingPlace' => $cabin->sleeping_place])->render();
 
-            PDF::loadHTML($html)->setPaper(array(0,0,1000,781))->setWarnings(false)->save(storage_path("app/public/dailylistbookingforcabin/". $cabin->name . ".pdf"));
+                //setPaper('a4', 'landscape')
+                //setPaper(array(0,0,1000,781))
+                PDF::loadHTML($html)->setPaper('a4', 'landscape')->setWarnings(false)->save(storage_path("app/public/dailylistbookingforcabin/". $cabin->name . ".pdf"));
 
-            /* Functionality to send message to user begin */
-            /*bcc('backup.tageslisten@huetten-holiday.de')->to($cabinOwner->usrEmail)*/
-            /*to('michael@hofer-werbung.de')->bcc('iamsarath1986@gmail.com')->cc('l.linder@huetten-holiday.de')*/
-            /*to('iamsarath1986@gmail.com')*/
-            Mail::send('emails.bookingListCabin', ['subject' => 'Ihre tägliche Buchungsübersicht'], function ($message) use ($cabinOwner, $cabin) {
-                $message->to($cabinOwner->usrEmail)->bcc('backup.tageslisten@huetten-holiday.de')->subject('Ihre tägliche Buchungsübersicht')->attach(public_path("/storage/dailylistbookingforcabin/". $cabin->name . ".pdf"), [
-                    'mime' => 'application/pdf',
-                ]);
-            });
-            /* Functionality to send message to user end */
+                $cabinOwner   = Userlist::select('_id', 'usrEmail')
+                    ->where('usrActive', '1')
+                    ->where('is_delete', 0)
+                    ->where('usrlId', 5)
+                    ->find($cabin->cabin_owner);
+
+                if(!empty($cabinOwner)) {
+                    /* Functionality to send message to user begin */
+                    /*to($cabinOwner->usrEmail)->bcc('backup.tageslisten@huetten-holiday.de')*/
+                    /*to('l.linder@huetten-holiday.de')->bcc('iamsarath1986@gmail.com')*/
+                    /*to('iamsarath1986@gmail.com')*/
+                    Mail::send('emails.bookingListCabin', ['subject' => 'Ihre tägliche Buchungsübersicht'], function ($message) use ($cabinOwner, $cabin) {
+                        $message->to('l.linder@huetten-holiday.de')->bcc('iamsarath1986@gmail.com')->subject('Ihre tägliche Buchungsübersicht')->attach(public_path("/storage/dailylistbookingforcabin/". $cabin->name . ".pdf"), [
+                            'mime' => 'application/pdf',
+                        ]);
+                    });
+                    /* Functionality to send message to user end */
+                }
+            }
         }
     }
 }

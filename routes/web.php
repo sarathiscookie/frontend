@@ -353,4 +353,4 @@ Route::post('/payment/response', 'PaymentController@response')->name('payment.re
 /*
 *CronJobsTesting
 */
-Route::get('/cron/cabin', 'CronJobsController@cabinOwnerDailyListInvoice')->name('cron.cabin');
+/*Route::get('/cron/cabin', 'CronJobsController@cabinOwnerDailyListInvoice')->name('cron.cabin');*/
