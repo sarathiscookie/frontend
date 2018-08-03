@@ -136,17 +136,6 @@
                                                             <input type="hidden" name="book_id" id="book_id" value="{{ $booking->_id }}">
                                                             <button type="submit" class="btn btn-list-history">{{ __('bookingHistory.downloadVoucher') }} <span class="glyphicon glyphicon-cloud-download"></span></button>
                                                         </form>
-
-                                                        {{--<button type="button" class="btn btn-list-history">{{ __('bookingHistory.editBooking') }} <span class="glyphicon glyphicon-wrench"></span></button>--}}
-
-                                                        {{--@if($begin < $end)
-                                                           @if($reservation_cancel <= $dateDifference->days)
-                                                              <button type="button" class="btn btn-list-history cancelMoneyReturn" data-cancel="{{ $booking->_id }}" data-return="yes" data-loading-text="{{ __('bookingHistory.cancelingLoader') }}" autocomplete="off">{{ __('bookingHistory.cancelBooking') }} <span class="glyphicon glyphicon-remove"></span></button>
-                                                           @else
-                                                              <button type="button" class="btn btn-list-history cancelMoneyReturn" data-cancel="{{ $booking->_id }}" data-return="no" data-loading-text="{{ __('bookingHistory.cancelingLoader') }}" autocomplete="off">{{ __('bookingHistory.cancelBooking') }} <span class="glyphicon glyphicon-remove"></span></button>
-                                                           @endif
-                                                        @endif--}}
-
                                                     @endif
 
                                                     @if($booking->status === '5' && $booking->inquirystatus === 1 && $booking->typeofbooking === 1) <!-- 1: Inquiry Approved -->

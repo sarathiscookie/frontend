@@ -1901,7 +1901,10 @@ class BookingHistoryController extends Controller
             ->find($request->delId);
 
         if(!empty($cart)){
-            Booking::destroy($cart->_id);
+            $cart->is_delete  = 1;
+            $cart->deleted_by = 'guest';
+            $cart->deleted_on = date('Y-m-d H:i:s');
+            $cart->save();
             return response()->json(['status' => 'success'] ,201);
         }
         else {
