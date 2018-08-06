@@ -57,6 +57,7 @@
             @if(isset($cabinHalfboard) && $cabinHalfboard === '1')
                 <td style="width:8%; font-weight: bold;">Halbpension</td>
             @endif
+            <td style="width:8%; font-weight: bold;">DAV - Mitglieder</td>
             <td style="width:8%; font-weight: bold;">Gutscheinwert</td>
             <td  style="width:35%; font-weight: bold;" >Kontakt</td>
         </tr>
@@ -119,6 +120,7 @@
                 @if(isset($cabinHalfboard) && $cabinHalfboard === '1')
                     <td>{{ $halfboard }}</td>
                 @endif
+                <td>@if($booking->clubmember) {{ $booking->clubmember }} @else 0 @endif</td>
                 <td>{{ number_format($booking->prepayment_amount, 2, ',', '.') }} &euro;</td>
                 <td>{{ $email }}</td>
             </tr>
@@ -129,12 +131,13 @@
                 @if(isset($cabinHalfboard) && $cabinHalfboard === '1')
                     <td>&nbsp;</td>
                 @endif
+                <td>&nbsp;</td>
                 <td>{{ $phone }}</td>
             </tr>
         @empty
             <tr>
                 <td>&nbsp;</td>
-                <td colspan="7">Keine Buchung</td>
+                <td colspan="8">Keine Buchung</td>
                 <td>&nbsp;</td>
             </tr>
         @endforelse
@@ -154,8 +157,9 @@
             @if(isset($cabinHalfboard) && $cabinHalfboard === '1')
                 <td style="width:10%; font-weight: bold;">Halbpension</td>
             @endif
-            <td style="width:10%; font-weight: bold;">TourNr.</td>
-            <td  style="width:35%; font-weight: bold;" >Kontakt</td>
+            <td>&nbsp;</td>
+            <td style="width:10%; font-weight: bold;">individuelle TourNr.</td>
+            <td  style="width:45%; font-weight: bold;" >Kontakt</td>
         </tr>
 
         @forelse($msBookings as $msBooking)
@@ -203,6 +207,7 @@
                 @if(isset($cabinHalfboard) && $cabinHalfboard === '1')
                     <td>{{ $msHalfboard }}</td>
                 @endif
+                <td>&nbsp;</td>
                 <td>@if(!empty($msBooking->ind_tour_no)) {{ $msBooking->ind_tour_no }} @endif</td>
                 <td>{{ $email }}</td>
             </tr>
@@ -212,12 +217,13 @@
                 @if(isset($cabinHalfboard) && $cabinHalfboard === '1')
                     <td>&nbsp;</td>
                 @endif
+                <td>&nbsp;</td>
                 <td>{{ $phone }}</td>
             </tr>
         @empty
             <tr>
                 <td>&nbsp;</td>
-                <td colspan="7">Keine Buchung</td>
+                <td colspan="8">Keine Buchung</td>
                 <td>&nbsp;</td>
             </tr>
         @endforelse
