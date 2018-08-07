@@ -1260,7 +1260,12 @@ class CartController extends Controller
             ->where('is_delete', 0)
             ->findOrFail($cartId);
 
-        $booking->delete();
+        if(!empty($booking)) {
+            $booking->is_delete       = 1;
+            $booking->deleted_cart_by = 'guest';
+            $booking->deleted_cart_on = date('Y-m-d H:i:s');
+            $booking->save();
+        }
 
         return redirect()->back()->with('deletedBooking', __('cart.bookingDeleted'));
     }
