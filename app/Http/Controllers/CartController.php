@@ -1187,7 +1187,13 @@ class CartController extends Controller
                 $user->usrTelephone = $request->phone;
                 $user->save();
 
-                return redirect()->route('payment')->with('cartAvailableStatus', $available);
+                if($available === "success") {
+                    session()->put('cartAvailableSession', $available);
+                    return redirect()->route('payment')->with('cartAvailableStatus', $available);
+                }
+                else {
+                    return redirect()->back();
+                }
             }
 
         }

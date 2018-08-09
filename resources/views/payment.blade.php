@@ -291,6 +291,7 @@
                             <button type="submit" class="btn btn-default btn-default-booking2 btn-sm btn-details-booking2 nonCreditCardButton">{{ __('payment.bookCabin') }}</button>
                             <button type="button" id="paymentsubmit" class="btn btn-default btn-default-booking2 btn-sm btn-details-booking2" onclick="check();" style="display: none;">{{ __('payment.bookCabin') }}</button>
                         @else
+                            <input type="hidden" name="doPayment" value="doPayment">
                             <button type="submit" class="btn btn-default btn-default-booking2 btn-sm btn-details-booking2 nonCreditCardButton">{{ __('payment.bookCabin') }}</button>
                             <button type="button" id="paymentsubmit" class="btn btn-default btn-default-booking2 btn-sm btn-details-booking2" onclick="check();" style="display: none;">{{ __('payment.bookCabin') }}</button>
                         @endif
