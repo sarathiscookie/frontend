@@ -57,5 +57,6 @@ return[
     'dateToRequired'            => 'Departure date is required',
     'bedsRequired_without'      => 'The beds field is required when dormitory is not present.',
     'dormsRequired_without'     => 'The dormitory field is required when beds is not present.',
-    'sleepsRequired'            => 'The sleeps field is required.'
+    'sleepsRequired'            => 'The sleeps field is required.',
+    'failedStatus'              => 'Something went wrong. Please try it again.',
 ];

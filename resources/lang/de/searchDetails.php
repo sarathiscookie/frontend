@@ -57,5 +57,6 @@ return[
     'dateToRequired'            => 'Das Abreisedatum ist erforderlich',
     'bedsRequired_without'      => 'Betten auswählen, falls kein Lager ausgewählt ist.',
     'dormsRequired_without'     => 'Lager auswählen, falls kein Bett ausgewählt ist.',
-    'sleepsRequired'            => 'Ein Schlafplatz erforderlich'
+    'sleepsRequired'            => 'Ein Schlafplatz erforderlich',
+    'failedStatus'              => 'Irgendwas ist schief gelaufen. Bitte probieren Sie es erneut.',
 ];
