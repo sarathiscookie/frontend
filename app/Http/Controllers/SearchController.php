@@ -1379,6 +1379,7 @@ class SearchController extends Controller
                             $booking->bookingdate             = date('Y-m-d H:i:s');
                             $booking->status                  = "8"; //1=> Fix, 2=> Cancel, 3=> Completed, 4=> Request (Reservation), 5=> Waiting for payment, 6=> Expired, 7=> Inquiry, 8=> Cart
                             $booking->reservation_cancel      = $cabin->reservation_cancel;
+                            $booking->halfboard               = "0";
                             $booking->cart_expiry_date        = date('Y-m-d H:i:s', strtotime('+1 day'));
                             $booking->is_delete               = 0;
                             $booking->save();
