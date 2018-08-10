@@ -993,6 +993,9 @@ class PaymentController extends Controller
                 }
             }
 
+            /* Delete sessions */
+            session()->forget('cartAvailableSession');
+
             return view('paymentSuccess');
         }
         elseif(session()->has('editBookingSuccessStatus')) { // Success condition for edit payment
@@ -1165,6 +1168,8 @@ class PaymentController extends Controller
                     abort(404);
                 }
             }
+
+            session()->forget('cartAvailableSession');
 
             return view('paymentPrepayment');
         }
