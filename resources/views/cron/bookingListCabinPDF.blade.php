@@ -157,7 +157,7 @@
             @if(isset($cabinHalfboard) && $cabinHalfboard === '1')
                 <td style="width:10%; font-weight: bold;">Halbpension</td>
             @endif
-            <td>&nbsp;</td>
+            <td style="width:10%; font-weight: bold;">Anzahl Bergführer</td>
             <td style="width:10%; font-weight: bold;">individuelle TourNr.</td>
             <td  style="width:45%; font-weight: bold;" >Kontakt</td>
         </tr>
@@ -207,7 +207,7 @@
                 @if(isset($cabinHalfboard) && $cabinHalfboard === '1')
                     <td>{{ $msHalfboard }}</td>
                 @endif
-                <td>&nbsp;</td>
+                <td>{{ $msBooking->no_guides }}</td>
                 <td>@if(!empty($msBooking->ind_tour_no)) {{ $msBooking->ind_tour_no }} @endif</td>
                 <td>{{ $email }}</td>
             </tr>
