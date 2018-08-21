@@ -141,21 +141,21 @@
                                                     @endif
 
                                                     <!-- 1: Inquiry Approved -->
-                                                    @if($booking->status === '5' && $booking->inquirystatus === 1 && $booking->typeofbooking === 1)
+                                                    @if($booking->status === '5' && $booking->inquirystatus === 1 && $booking->typeofbooking === 1 && $booking->payment_status === '0')
                                                         <span class="label label-success label-cabinlist">{{ __('bookingHistory.inquiryAcceptedStatus') }}</span> <br>
                                                         <a href="/booking/history/inquiry/{{ $booking->_id }}" class="btn btn-list-history inquiryPayment" name="inquiryPayment" id="inquiryPayment" value="inquiryPayment" data-inquirypayment="{{ $booking->_id }}" data-loading-text="{{ __('bookingHistory.doYourPayment') }}..." autocomplete="off">{{ __('bookingHistory.doYourPayment') }} <span class="glyphicon glyphicon-euro"></span></a>
                                                         <button type="button" class="btn btn-list-history deleteInquiryApprovedBookingHistory" data-delapprovedinquiry="{{ $booking->_id }}" data-loading-text="{{ __('bookingHistory.deleteBookingLoader') }}" autocomplete="off">{{ __('bookingHistory.deleteInquiry') }} <span class="glyphicon glyphicon-trash"></span></button>
                                                     @endif
 
                                                     <!-- Inquiry Waiting for reply -->
-                                                    @if($booking->status === '7' && $booking->inquirystatus === 0 && $booking->typeofbooking === 1)
+                                                    @if($booking->status === '7' && $booking->inquirystatus === 0 && $booking->typeofbooking === 1 && $booking->payment_status === '0')
                                                         <span class="label label-warning label-cabinlist">{{ __('bookingHistory.inquiryWaitingStatus') }}</span> <br>
                                                         <button type="button" class="btn btn-list-history" data-toggle="modal" data-target="#openChat_{{ $booking->_id }}">{{ __('bookingHistory.openChat') }} <span class="glyphicon glyphicon-envelope"></span></button>
                                                         <button type="button" class="btn btn-list-history deleteInquiryWaitingBookingHistory" data-delwaitinginquiry="{{ $booking->_id }}" data-loading-text="{{ __('bookingHistory.deleteBookingLoader') }}" autocomplete="off">{{ __('bookingHistory.deleteInquiry') }} <span class="glyphicon glyphicon-trash"></span></button>
                                                     @endif
 
                                                     <!-- Inquiry Rejected -->
-                                                    @if($booking->status === '7' && $booking->inquirystatus === 2 && $booking->typeofbooking === 1)
+                                                    @if($booking->status === '7' && $booking->inquirystatus === 2 && $booking->typeofbooking === 1 && $booking->payment_status === '0')
                                                         <span class="label label-danger label-cabinlist">{{ __('bookingHistory.inquiryRejectedStatus') }}</span> <br>
                                                         <button type="button" class="btn btn-list-history deleteInquiryRejectedBookingHistory" data-delrejectedinquiry="{{ $booking->_id }}" data-loading-text="{{ __('bookingHistory.deleteBookingLoader') }}" autocomplete="off">{{ __('bookingHistory.deleteInquiry') }} <span class="glyphicon glyphicon-trash"></span></button>
                                                     @endif
