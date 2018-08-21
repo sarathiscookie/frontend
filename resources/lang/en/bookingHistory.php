@@ -33,6 +33,7 @@ return [
     'inquiryWaitingStatus'                                  => 'Waiting for inquiry status',
     'cancelStatus'                                          => 'Canceled your booking',
     'failedStatus'                                          => 'Payment Failed',
+    'onProcessStatus'                                       => 'On Processing',
     'downloadVoucher'                                       => 'Download Voucher',
     'editBooking'                                           => 'Edit booking',
     'cancelBooking'                                         => 'Cancel booking',

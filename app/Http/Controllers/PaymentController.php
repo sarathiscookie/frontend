@@ -867,77 +867,126 @@ class PaymentController extends Controller
     {
         if ($_POST["key"] == hash("md5", env('KEY'))) {
 
-            // If key is valid, TSOK notification is for PAYONE
+            echo "TSOK"; // If key is valid, TSOK notification is for PAYONE
 
             $user  = Userlist::where('is_delete', 0)
                 ->where('usrActive', '1')
                 ->where('userid', $_POST["userid"])
                 ->first();
 
-            if ($_POST["txaction"] === "appointed") {
-                $payment        = new Payment;
-                foreach($_POST as $key => $value) {
-                    if(Schema::hasColumn($payment->getTable(), $key)){
-                        if(is_array($value)) {
-                            $payment->{$key} = $value[1];
-                        } else {
-                            $payment->{$key} = $value;
+            if($user && $_POST["clearingtype"] && $_POST["txaction"]) {
+                $bookings            = Booking::select('_id', 'old_booking_id', 'status', 'payment_status')
+                    ->where('user', new \MongoDB\BSON\ObjectID($user->_id))
+                    ->whereIn('status', ['5', '8', '10', '11'])  //5=>Waiting for payment, 8=>Cart, 10=> Temporary (This status is using in edit booking section), 11=> On processing
+                    ->where('is_delete', 0)
+                    ->where('txid', $_POST["txid"])
+                    ->where('userid', $_POST["userid"])
+                    ->get();
+
+                $order               = Order::where('userid', $_POST["userid"])->where('txid', $_POST["txid"])->first();
+
+                if($bookings) {
+                    if ($_POST["txaction"] === "appointed") {
+                        $payment        = new Payment;
+
+                        foreach($_POST as $key => $value) {
+                            if(Schema::hasColumn($payment->getTable(), $key)){
+                                if(is_array($value)) {
+                                    $payment->{$key} = $value[1];
+                                } else {
+                                    $payment->{$key} = $value;
+                                }
+                            }
+                        }
+                        $payment->save();
+
+                        foreach ($bookings as $bookingData) {
+                            if($bookingData->old_booking_id) {
+                                /* Update status of old booking */
+                                $bookingOld                 = Booking::find($bookingData->old_booking_id);
+                                $bookingOld->booking_update = date('Y-m-d H:i:s');
+                                $bookingOld->status         = "9"; //9 => Old (Booking Updated)
+                                $bookingOld->is_delete      = 1;
+                                $bookingOld->save();
+
+                                /* Update status of old orders */
+                                $orderOld                    = Order::find($bookingOld->order_id);
+                                $orderOld->order_update_date = date('Y-m-d H:i:s');
+                                $orderOld->save();
+                            }
+
+                            $bookingDataUpdate = Booking::find($bookingData->_id);
+                            if($_POST["clearingtype"] === 'vor') {
+                                $bookingDataUpdate->status         = '5'; //Waiting for payment
+                                $bookingDataUpdate->payment_status = '3'; //Prepayment
+                            }
+                            else {
+                                $bookingDataUpdate->status         = '1'; //Fix
+                                $bookingDataUpdate->payment_status = '1'; //Success
+                            }
+                            $bookingDataUpdate->save();
+                        }
+
+                        /* Update order status */
+                        if($order) {
+                            $order->order_delete = 0;
+                            $order->tsok         = 'appointed';
+                            $order->reference    = $_POST["reference"];
+                            $order->clearingtype = $_POST["clearingtype"];
+                            $order->customerid   = $_POST["customerid"];
+                            $order->save();
+
+                            if($order->order_payment_method === 2) { // 1 => Fully paid using money balance, 2 => Partially paid using money balance, 3 => Paid using payment gateway
+                                $user->money_balance = 0.00;
+                                $user->save();
+                            }
+                        }
+
+                        /* Send email to guest after successful booking */
+                        if($_POST["clearingtype"] === 'vor') {
+                            Mail::to($user->usrEmail)->send(new BookingSuccess());
                         }
                     }
-                }
-                $payment->save();
-                echo "TSOK";
+                    else if ($_POST["txaction"] === "paid") {
+                        $payment        = Payment::where('userid', $_POST["userid"])->where('txid', $_POST["txid"])->first();
+                        foreach($_POST as $key => $value) {
+                            if(Schema::hasColumn($payment->getTable(), $key)){
+                                if(is_array($value)) {
+                                    $payment->{$key} = $value[1];
+                                } else {
+                                    $payment->{$key} = $value;
+                                }
+                            }
+                        }
+                        $payment->save();
 
-                $order               = Order::where('userid', $_POST["userid"])->where('txid', $_POST["txid"])->first();
-                $order->tsok         = 'appointed';
-                $order->reference    = $_POST["reference"];
-                $order->clearingtype = $_POST["clearingtype"];
-                $order->customerid   = $_POST["customerid"];
-                $order->save();
+                        /* Update order status */
+                        $order->tsok         = 'paid';
+                        $order->save();
 
-                /* Send email to guest after successful booking */
-                if($_POST["clearingtype"] === 'vor') {
-                    if($user) {
-                        Mail::to($user->usrEmail)->send(new BookingSuccess());
-                    }
-                }
-            }
-            else if ($_POST["txaction"] === "paid") {
-                $payment        = Payment::where('userid', $_POST["userid"])->where('txid', $_POST["txid"])->first();
-                foreach($_POST as $key => $value) {
-                    if(Schema::hasColumn($payment->getTable(), $key)){
-                        if(is_array($value)) {
-                            $payment->{$key} = $value[1];
-                        } else {
-                            $payment->{$key} = $value;
+                        /* Send email to guest after successful booking */
+                        if($user) {
+                            Mail::to($user->usrEmail)->send(new BookingSuccess());
                         }
                     }
-                }
-                $payment->save();
-                echo "TSOK";
+                    else {
+                        /* Payment failure functionality begin */
+                        foreach ($bookings as $booking) {
+                            $bookingUpdate                 = Booking::find($booking->_id);
+                            $bookingUpdate->status         = '5'; //Waiting for payment
+                            $bookingUpdate->payment_status = '0'; //Failed
+                            $bookingUpdate->save();
+                        }
 
-                $order               = Order::where('userid', $_POST["userid"])->where('txid', $_POST["txid"])->first();
-                $order->tsok         = 'paid';
-                $order->reference    = $_POST["reference"];
-                $order->clearingtype = $_POST["clearingtype"];
-                $order->customerid   = $_POST["customerid"];
-                $order->save();
+                        $order->tsok         = ($_POST["txaction"]) ? $_POST["txaction"] : 'failed';
+                        $order->save();
+                        /* Payment failure functionality end */
 
-                /* Send email to guest after successful booking */
-                if($user) {
-                    Mail::to($user->usrEmail)->send(new BookingSuccess());
-                }
-            }
-            else {
-                /* Payment failure functionality begin */
-                $order               = Order::where('userid', $_POST["userid"])->where('txid', $_POST["txid"])->first();
-                $order->tsok         = 'failed';
-                $order->save();
-                /* Payment failure functionality end */
-
-                /* Send notification email to admin if $_POST["txaction"] is not appointed or paid */
-                if($user) {
-                    Mail::to(env('ADMIN_EMAIL'))->send(new BookingFailed($_POST["txid"], $_POST["userid"]));
+                        /* Send notification email to admin if $_POST["txaction"] is not appointed or paid */
+                        if($user) {
+                            Mail::to(env('ADMIN_EMAIL'))->cc(env('BOOKING_FAILED_EMAIL_CC'))->send(new BookingFailed($_POST["txid"], $_POST["userid"]));
+                        }
+                    }
                 }
             }
         }
@@ -955,7 +1004,7 @@ class PaymentController extends Controller
     {
         if(session()->has('bookingSuccessStatus')) {  // Success condition for cart payment
 
-            if(session()->has('txid') && session()->has('userid')) {
+            /*if(session()->has('txid') && session()->has('userid')) {
                 $carts              = Booking::select('_id', 'status', 'payment_status')
                     ->where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
                     ->where('status', "8")
@@ -991,7 +1040,7 @@ class PaymentController extends Controller
                 else {
                     abort(404);
                 }
-            }
+            }*/
 
             /* Delete sessions */
             session()->forget('cartAvailableSession');
@@ -999,7 +1048,7 @@ class PaymentController extends Controller
             return view('paymentSuccess');
         }
         elseif(session()->has('editBookingSuccessStatus')) { // Success condition for edit payment
-            if(session()->has('editTxId') && session()->has('editUserId')) {
+            /*if(session()->has('editTxId') && session()->has('editUserId')) {
 
                 if( session()->has('updateBookingPayment') && session()->get('updateBookingPayment') === 'updateBookingPayment' && session()->has('availableStatus') && session()->get('availableStatus') === 'success' ) {
 
@@ -1010,13 +1059,13 @@ class PaymentController extends Controller
                         ->find(session()->get('bookingIdRequest'));
 
                     if(!empty($bookingOld)) {
-                        /* Update status of old booking */
+                        // Update status of old booking
                         $bookingOld->booking_update = date('Y-m-d H:i:s');
                         $bookingOld->status         = "9"; //9 => Old (Booking Updated)
                         $bookingOld->is_delete      = 1;
                         $bookingOld->save();
 
-                        /* Update status of old orders */
+                        // Update status of old orders
                         $order  = Order::where('auth_user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
                             ->find($bookingOld->order_id);
 
@@ -1025,7 +1074,7 @@ class PaymentController extends Controller
                             $order->save();
                         }
 
-                        /* Update new booking status and payment status */
+                        // Update new booking status and payment status
                         $newBooking = Booking::where('status', '10')
                             ->where('userid', session()->get('editUserId'))
                             ->where('txid', session()->get('editTxId'))
@@ -1036,7 +1085,7 @@ class PaymentController extends Controller
                         $newBooking->payment_status = '1';
                         $newBooking->save();
 
-                        /* Update money balance */
+                        // Update money balance
                         $newOrder = Order::where('userid', session()->get('editUserId'))
                             ->where('txid', session()->get('editTxId'))
                             ->where('auth_user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
@@ -1052,7 +1101,7 @@ class PaymentController extends Controller
                 else {
                     abort(404);
                 }
-            }
+            }*/
 
             /* Delete sessions */
             session()->forget('bookingIdRequest');
@@ -1071,7 +1120,7 @@ class PaymentController extends Controller
         }
         elseif(session()->has('inquiryBookingSuccessStatus')) { // Success condition for inquiry payment
 
-            if(session()->has('inquiryTxId') && session()->has('inquiryUserId')) {
+            /*if(session()->has('inquiryTxId') && session()->has('inquiryUserId')) {
 
                 if( session()->has('updateInquiryPayment') && session()->get('updateInquiryPayment') === 'updateInquiryPayment' && session()->has('newBooking') ) {
 
@@ -1086,12 +1135,12 @@ class PaymentController extends Controller
 
                     if(!empty($bookingData)) {
 
-                        /* Update booking status and payment status */
+                        // Update booking status and payment status
                         $bookingData->status         = '1';
                         $bookingData->payment_status = '1';
                         $bookingData->save();
 
-                        /* Update money balance */
+                        // Update money balance
                         $order = Order::where('userid', session()->get('inquiryUserId'))
                             ->where('txid', session()->get('inquiryTxId'))
                             ->where('auth_user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
@@ -1112,7 +1161,7 @@ class PaymentController extends Controller
                 else {
                     abort(404);
                 }
-            }
+            }*/
 
             return view('paymentSuccess');
         }
@@ -1130,7 +1179,7 @@ class PaymentController extends Controller
     {
         if(session()->has('bookingSuccessStatusPrepayment') && session()->has('order')) { // Success condition for cart prepayment
 
-            if(session()->has('txid') && session()->has('userid') && session()->has('payByBillPossible')) {
+            /*if(session()->has('txid') && session()->has('userid') && session()->has('payByBillPossible')) {
                 $carts              = Booking::select('_id', 'status', 'payment_status')
                     ->where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
                     ->where('status', "8")
@@ -1167,7 +1216,7 @@ class PaymentController extends Controller
                 else {
                     abort(404);
                 }
-            }
+            }*/
 
             session()->forget('cartAvailableSession');
 
@@ -1175,7 +1224,7 @@ class PaymentController extends Controller
         }
         else if(session()->has('editBookingSuccessStatusPrepayment') && session()->has('editBookOrder')) { // Success condition for edit prepayment
 
-            if(session()->has('editTxId') && session()->has('editUserId') && session()->has('editPayByBillPossible') && session()->get('editPayByBillPossible') === 'yes') {
+            /*if(session()->has('editTxId') && session()->has('editUserId') && session()->has('editPayByBillPossible') && session()->get('editPayByBillPossible') === 'yes') {
 
                 if( session()->has('updateBookingPayment') && session()->get('updateBookingPayment') === 'updateBookingPayment' && session()->has('availableStatus') && session()->get('availableStatus') === 'success' ) {
 
@@ -1187,13 +1236,13 @@ class PaymentController extends Controller
 
                     if(!empty($bookingOld)) {
 
-                        /* Update status of old booking */
+                        // Update status of old booking
                         $bookingOld->booking_update = date('Y-m-d H:i:s');
                         $bookingOld->status         = "9"; //9 => Old (Booking Updated)
                         $bookingOld->is_delete      = 1;
                         $bookingOld->save();
 
-                        /* Update status of old orders */
+                        // Update status of old orders
                         $order  = Order::where('auth_user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
                             ->find($bookingOld->order_id);
 
@@ -1202,7 +1251,7 @@ class PaymentController extends Controller
                             $order->save();
                         }
 
-                        /* Update new booking status and payment status */
+                        // Update new booking status and payment status
                         $newBooking = Booking::where('status', '10')
                             ->where('userid', session()->get('editUserId'))
                             ->where('txid', session()->get('editTxId'))
@@ -1213,7 +1262,7 @@ class PaymentController extends Controller
                         $newBooking->payment_status = '3';
                         $newBooking->save();
 
-                        /* Update money balance */
+                        // Update money balance
                         $newOrder = Order::where('userid', session()->get('editUserId'))
                             ->where('txid', session()->get('editTxId'))
                             ->where('auth_user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
@@ -1229,7 +1278,7 @@ class PaymentController extends Controller
                 else {
                     abort(404);
                 }
-            }
+            }*/
 
             /* Delete sessions */
             session()->forget('bookingIdRequest');
@@ -1248,7 +1297,7 @@ class PaymentController extends Controller
         }
         else if(session()->has('inquiryBookingSuccessStatusPrepayment') && session()->has('inquiryBookOrder')) { // Success condition for inquiry prepayment
 
-            if(session()->has('inquiryTxId') && session()->has('inquiryUserId') && session()->has('inquiryPayByBillPossible') && session()->get('inquiryPayByBillPossible') === 'yes') {
+            /*if(session()->has('inquiryTxId') && session()->has('inquiryUserId') && session()->has('inquiryPayByBillPossible') && session()->get('inquiryPayByBillPossible') === 'yes') {
 
                 if( session()->has('updateInquiryPayment') && session()->get('updateInquiryPayment') === 'updateInquiryPayment' && session()->has('newBooking') ) {
 
@@ -1263,7 +1312,7 @@ class PaymentController extends Controller
 
                     if(!empty($bookingData)) {
 
-                        /* Updating new booking status and payment status */
+                        // Updating new booking status and payment status
                         $bookingData->status         = '5';
                         $bookingData->payment_status = '3';
                         $bookingData->typeofbooking  = 0; // 1=> Inquiry, 0=> Not inquiry // Updating inquiry booking to normal booking
@@ -1275,13 +1324,13 @@ class PaymentController extends Controller
                             ->first();
 
                         if(!empty($order)) {
-                            /*Updating order status*/
+                            // Updating order status
                             $order->order_delete = 0;
                             $order->save();
 
                             if($order->order_payment_method === 2) { // 1 => fully paid using money balance, 2 => Partially paid using money balance, 3 => Paid using payment gateway
 
-                                /* Updating money balance */
+                                // Updating money balance
                                 $user = Userlist::where('is_delete', 0)->where('usrActive', '1')->find(Auth::user()->_id);
                                 $user->money_balance = 0.00;
                                 $user->save();
@@ -1292,7 +1341,7 @@ class PaymentController extends Controller
                 else {
                     abort(404);
                 }
-            }
+            }*/
 
             return view('paymentPrepayment');
         }

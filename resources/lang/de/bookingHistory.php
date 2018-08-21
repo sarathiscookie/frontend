@@ -33,6 +33,7 @@ return [
     'inquiryWaitingStatus'                                  => 'Warten auf Nachricht',
     'cancelStatus'                                          => 'Buchung storniert',
     'failedStatus'                                          => 'Fehlerhafte Bezahlung',
+    'onProcessStatus'                                       => 'in Bearbeitung',
     'downloadVoucher'                                       => 'Gutschein herunterladen',
     'editBooking'                                           => 'Buchung bearbeiten',
     'cancelBooking'                                         => 'Buchung stornieren',
