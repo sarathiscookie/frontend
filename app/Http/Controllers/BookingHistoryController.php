@@ -68,7 +68,7 @@ class BookingHistoryController extends Controller
     {
         $bookings = Booking::where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
             ->where('is_delete', 0)
-            ->whereIn('status', ['1', '2', '3', '4', '5', '7']) /* 1=> Fix, 2=> Cancel, 3=> Completed, 4=> Request (Reservation), 5=> Waiting for payment, 7=> Inquiry */
+            ->whereIn('status', ['1', '2', '3', '4', '5', '7', '11']) /* 1=> Fix, 2=> Cancel, 3=> Completed, 4=> Request (Reservation), 5=> Waiting for payment, 7=> Inquiry, 11=> On Processing */
             ->orderBy('bookingdate', 'desc')
             ->simplePaginate(10);
 
