@@ -945,6 +945,7 @@ class InquiryController extends Controller
                                     $order->save();
 
                                     /* Updating booking details */
+                                    $bookingData->status                  = '11';
                                     $bookingData->payment_type            = $request->payment;
                                     $bookingData->txid                    = $paymentGateway["txid"];
                                     $bookingData->userid                  = $paymentGateway["userid"];
@@ -1067,6 +1068,7 @@ class InquiryController extends Controller
                                 $order->save();
 
                                 /* Updating booking details */
+                                $bookingData->status                  = '11';
                                 $bookingData->payment_type            = $request->payment;
                                 $bookingData->txid                    = $paymentGateway["txid"];
                                 $bookingData->userid                  = $paymentGateway["userid"];

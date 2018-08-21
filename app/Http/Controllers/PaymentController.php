@@ -411,6 +411,7 @@ class PaymentController extends Controller
                                             ->where('is_delete', 0)
                                             ->find($cart_id);
                                         $cartUpdate->order_id           = new \MongoDB\BSON\ObjectID($order->_id);
+                                        $cartUpdate->status             = '11';
                                         $cartUpdate->payment_type       = $request->payment;
                                         $cartUpdate->txid               = $paymentGateway["txid"];
                                         $cartUpdate->userid             = $paymentGateway["userid"];
@@ -565,6 +566,7 @@ class PaymentController extends Controller
                                         ->where('is_delete', 0)
                                         ->find($cart_id);
                                     $cartUpdate->order_id          = new \MongoDB\BSON\ObjectID($order->_id);
+                                    $cartUpdate->status            = '11';
                                     $cartUpdate->payment_type      = $request->payment;
                                     $cartUpdate->txid              = $paymentGateway["txid"];
                                     $cartUpdate->userid            = $paymentGateway["userid"];

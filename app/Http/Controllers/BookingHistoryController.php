@@ -1620,7 +1620,8 @@ class BookingHistoryController extends Controller
                                     $newBooking->new_amount              = $total_prepayment_amount;
                                     $newBooking->moneybalance_used       = round($user->money_balance, 2);
                                     $newBooking->bookingdate             = date('Y-m-d H:i:s');
-                                    $newBooking->status                  = '10'; // 10=> Temporary (This status is using in edit booking section)
+                                    //$newBooking->status                  = '10'; // 10=> Temporary (This status is using in edit booking section)
+                                    $newBooking->status                  = '11'; // 11=> On Processing
                                     $newBooking->reservation_cancel      = $cabin->reservation_cancel;
                                     $newBooking->payment_type            = $request->payment;
                                     $newBooking->txid                    = $paymentGateway["txid"];
@@ -1813,7 +1814,8 @@ class BookingHistoryController extends Controller
                                 $newBooking->new_amount              = $total_prepayment_amount;
                                 $newBooking->moneybalance_used       = 0;
                                 $newBooking->bookingdate             = date('Y-m-d H:i:s');
-                                $newBooking->status                  = '10'; // 10=> Temporary (This status is using in edit booking section)
+                                //$newBooking->status                  = '10'; // 10=> Temporary (This status is using in edit booking section)
+                                $newBooking->status                  = '11'; // 11=> On Processing
                                 $newBooking->reservation_cancel      = $cabin->reservation_cancel;
                                 $newBooking->payment_type            = $request->payment;
                                 $newBooking->txid                    = $paymentGateway["txid"];
