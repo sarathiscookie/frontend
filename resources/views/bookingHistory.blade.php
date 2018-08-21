@@ -180,7 +180,7 @@
 
                                                     <!-- On processing -->
                                                     @if($booking->status === '11')
-                                                        <span class="label label-success label-cabinlist">{{ __('bookingHistory.onProcessStatus') }}</span> <br>
+                                                        <span class="label label-info label-cabinlist" style="height: 50px;">{{ __('bookingHistory.onProcessStatus') }} <br> {{ __('bookingHistory.onProcessStatusTwo') }}</span>
                                                     @endif
                                                 </div>
                                             </div>
