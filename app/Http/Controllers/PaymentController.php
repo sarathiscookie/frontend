@@ -1386,15 +1386,14 @@ class PaymentController extends Controller
      */
     public function download(Request $request)
     {
-        $order = Order::where('auth_user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))->where('order_delete', 0)->find($request->order_id);
+        $order = Order::where('auth_user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
+            ->find($request->order_id);
 
         if($order) {
             $carts = Booking::select('invoice_number')
                 ->where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
-                ->where('status', '5')
-                ->where('payment_status', '3')
-                ->where('is_delete', 0)
                 ->where('order_id', new \MongoDB\BSON\ObjectID($order->_id))
+                ->where('is_delete', 0)
                 ->get();
 
             /* Generating PDF */
