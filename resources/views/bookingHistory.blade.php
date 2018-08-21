@@ -174,7 +174,7 @@
                                                     @endif
 
                                                     <!-- Booking Failed -->
-                                                    @if($booking->status === '5' && $booking->payment_status === '0')
+                                                    @if($booking->status === '5' && $booking->payment_status === '0' && $booking->inquirystatus !== 1 && $booking->typeofbooking !== 1)
                                                         <span class="label label-danger label-cabinlist">{{ __('bookingHistory.failedStatus') }}</span> <br>
                                                     @endif
 
