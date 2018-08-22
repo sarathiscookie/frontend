@@ -62,6 +62,13 @@
             <td  style="width:35%; font-weight: bold;" >Kontakt</td>
         </tr>
 
+        @php
+            $firstName = '';
+            $lastName  = '';
+            $email     = '';
+            $phone     = '';
+        @endphp
+
         @forelse($bookings as $booking)
             @php
                 if($booking->temp_user_id != ''){
