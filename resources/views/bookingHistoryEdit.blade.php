@@ -164,7 +164,7 @@
                                                         <div class="form-group">
                                                             <div class="checkbox">
                                                                 <label>
-                                                                    <input type="checkbox" name="halfboard" value="1">
+                                                                    <input type="checkbox" name="halfboard" value="1" @if ($booking->halfboard === '1') checked @endif>
                                                                     {{ __('cart.halfBoard') }}
                                                                 </label>
                                                             </div>

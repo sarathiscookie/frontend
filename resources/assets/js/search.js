@@ -2,7 +2,7 @@
 $(function(){
 
     /* Reset the checkbox on page loads */
-    $('input:checkbox').prop('checked', false);
+    $('.filterCheckbox').prop('checked', false);
 
     /* Typeahead auto complete begin */
     var cabin_names = new Bloodhound({

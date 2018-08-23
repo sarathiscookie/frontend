@@ -33,7 +33,7 @@
                                     <a href="#" class="dropdown-toggle dropdown-toggle-home" data-toggle="dropdown">{{ __('search.country') }} <span class="caret"></span></a>
                                     <ul class="dropdown-menu dropdown-menu-home">
                                         @foreach($services->country() as $land)
-                                            <li class="check-it-list-home"><input type="checkbox" class="check-it-home" name="country[]" value="{{ $land->name }}"> {{ $land->name }}</li>
+                                            <li class="check-it-list-home"><input type="checkbox" class="check-it-home filterCheckbox" name="country[]" value="{{ $land->name }}"> {{ $land->name }}</li>
                                         @endforeach
                                     </ul>
                                 </li>
@@ -45,7 +45,7 @@
                                    <a href="#" class="dropdown-toggle dropdown-toggle-home" data-toggle="dropdown">{{ __('search.region') }}<span class="caret"></span></a>
                                    <ul class="dropdown-menu dropdown-menu-home drop-height">
                                        @foreach($services->regions() as $region)
-                                           <li class="check-it-list-home"><input type="checkbox" name="region[]" value="{{ $region->name }}" class="check-it-home"> {{ $region->name }}
+                                           <li class="check-it-list-home"><input type="checkbox" name="region[]" value="{{ $region->name }}" class="check-it-home filterCheckbox"> {{ $region->name }}
                                                @if($services->cabinCount($region->name))
                                                    <span class="badge">{!! $services->cabinCount($region->name) !!}</span>
                                                 @endif
@@ -61,7 +61,7 @@
                                     <a href="#" class="dropdown-toggle dropdown-toggle-home" data-toggle="dropdown">{{ __('search.facility') }}<span class="caret"></span></a>
                                     <ul class="dropdown-menu dropdown-menu-home drop-height">
                                         @foreach($services->facility() as $facilityKey => $facility)
-                                            <li class="check-it-list-home"><input type="checkbox" name="facility[]" value="{{ $facilityKey }}" class="check-it-home"> {{ $facility }}</li>
+                                            <li class="check-it-list-home"><input type="checkbox" name="facility[]" value="{{ $facilityKey }}" class="check-it-home filterCheckbox"> {{ $facility }}</li>
                                         @endforeach
                                     </ul>
                                 </li>
@@ -73,20 +73,11 @@
                                     <a href="#" class="dropdown-toggle dropdown-toggle-home" data-toggle="dropdown">{{ __('search.openingHours') }}<span class="caret"></span></a>
                                     <ul class="dropdown-menu dropdown-menu-home">
                                         @foreach($services->openSeasons() as $seasonOpen)
-                                            <li  class="check-it-list-home"><input type="checkbox" name="seasons[]" value="open" class="check-it-home"> {{ $seasonOpen }}</li>
+                                            <li  class="check-it-list-home"><input type="checkbox" name="seasons[]" value="open" class="check-it-home filterCheckbox"> {{ $seasonOpen }}</li>
                                         @endforeach
                                     </ul>
                                 </li>
                             @endif
-
-                                {{--<li class="dropdown">
-                                    <a href="#" class="dropdown-toggle dropdown-toggle-home" data-toggle="dropdown">Managed <span class="caret"></span></a>
-                                    <ul class="dropdown-menu dropdown-menu-home">
-                                        <li class="check-it-list-home"><input type="checkbox" name="managed[]" class="check-it-home"> Cabins to sleep</li>
-                                        <li class="check-it-list-home"><input type="checkbox" name="managed[]" class="check-it-home"> Managed</li>
-                                    </ul>
-                                </li>--}}
-
                         </ul>
 
                         <div class="form-group navbar-form navbar-right" id="navbar-right-filter-home">
