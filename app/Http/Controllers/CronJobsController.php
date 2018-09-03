@@ -38,7 +38,6 @@ class CronJobsController extends Controller
     public function user($id)
     {
         $user = Userlist::select('_id', 'usrFirstname', 'usrLastname', 'usrEmail', 'usrTelephone')
-            ->where('usrActive', '1')
             ->where('is_delete', 0)
             ->find($id);
 
