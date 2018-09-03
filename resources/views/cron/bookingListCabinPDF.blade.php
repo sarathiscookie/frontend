@@ -73,17 +73,23 @@
             @php
                 if($booking->temp_user_id != ''){
                    $userTempDetails = $cronServices->tempUser($booking->temp_user_id);
-                   $firstName       = $userTempDetails->usrFirstname;
-                   $lastName        = $userTempDetails->usrLastname;
-                   $email           = $userTempDetails->usrEmail;
-                   $phone           = $userTempDetails->usrTelephone;
+                   if(!empty($userTempDetails))
+                   {
+                    $firstName = $userTempDetails->usrFirstname;
+                    $lastName  = $userTempDetails->usrLastname;
+                    $email     = $userTempDetails->usrEmail;
+                    $phone     = $userTempDetails->usrTelephone;
+                   }
                 }
                 else {
                       $userDetails = $cronServices->user($booking->user);
-                      $firstName   = $userDetails->usrFirstname;
-                      $lastName    = $userDetails->usrLastname;
-                      $email       = $userDetails->usrEmail;
-                      $phone       = $userDetails->usrTelephone;
+                      if(!empty($userDetails))
+                      {
+                       $firstName = $userDetails->usrFirstname;
+                       $lastName  = $userDetails->usrLastname;
+                       $email     = $userDetails->usrEmail;
+                       $phone     = $userDetails->usrTelephone;
+                      }
                 }
 
                 /* Checking condition for date */
