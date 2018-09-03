@@ -20,7 +20,6 @@ class CronJobsController extends Controller
     public function tempUser($id)
     {
         $tempUser = Tempuser::select('_id', 'usrFirstname', 'usrLastname', 'usrEmail', 'usrTelephone')
-            ->where('is_delete', 0)
             ->find($id);
 
         if(!empty($tempUser)) {
@@ -38,7 +37,6 @@ class CronJobsController extends Controller
     public function user($id)
     {
         $user = Userlist::select('_id', 'usrFirstname', 'usrLastname', 'usrEmail', 'usrTelephone')
-            ->where('is_delete', 0)
             ->find($id);
 
         if(!empty($user)) {
