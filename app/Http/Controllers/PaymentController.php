@@ -888,7 +888,7 @@ class PaymentController extends Controller
                 $order               = Order::where('userid', $_POST["userid"])->where('txid', $_POST["txid"])->first();
 
                 if($bookings) {
-                    if ($_POST["txaction"] === "appointed") {
+                    if ($_POST["txaction"] == "appointed") {
                         $payment        = new Payment;
 
                         foreach($_POST as $key => $value) {
@@ -918,7 +918,7 @@ class PaymentController extends Controller
                             }
 
                             $bookingDataUpdate = Booking::find($bookingData->_id);
-                            if($_POST["clearingtype"] === 'vor') {
+                            if($_POST["clearingtype"] == 'vor') {
                                 $bookingDataUpdate->status         = '5'; //Waiting for payment
                                 $bookingDataUpdate->payment_status = '3'; //Prepayment
                             }
@@ -945,11 +945,11 @@ class PaymentController extends Controller
                         }
 
                         /* Send email to guest after successful booking */
-                        if($_POST["clearingtype"] === 'vor') {
+                        if($_POST["clearingtype"] == 'vor') {
                             Mail::to($user->usrEmail)->send(new BookingSuccess());
                         }
                     }
-                    else if ($_POST["txaction"] === "paid") {
+                    else if ($_POST["txaction"] == "paid") {
                         $payment        = Payment::where('userid', $_POST["userid"])->where('txid', $_POST["txid"])->first();
                         foreach($_POST as $key => $value) {
                             if(Schema::hasColumn($payment->getTable(), $key)){
