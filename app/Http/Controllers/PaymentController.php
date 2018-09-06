@@ -868,6 +868,19 @@ class PaymentController extends Controller
      */
     public function response(Request $request)
     {
+        $payment        = new Payment;
+
+        foreach($request->all() as $key => $value) {
+            if(Schema::hasColumn($payment->getTable(), $key)){
+                if(is_array($value)) {
+                    $payment->{$key} = $value[1];
+                } else {
+                    $payment->{$key} = $value;
+                }
+            }
+        }
+        $payment->save();
+
         if ($_POST["key"] == hash("md5", env('KEY'))) {
 
             echo "TSOK"; // If key is valid, TSOK notification is for PAYONE
@@ -997,7 +1010,7 @@ class PaymentController extends Controller
             abort(404);
         }
 
-        Storage::disk('local')->put('payment.log', $request->all());
+
     }
 
     /**
