@@ -21,6 +21,7 @@ use Carbon\Carbon;
 use Mail;
 use App\Mail\SendVoucher;
 use PDF;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Schema;
 
 class PaymentController extends Controller
@@ -867,6 +868,8 @@ class PaymentController extends Controller
      */
     public function response(Request $request)
     {
+        Storage::disk('local')->put('payment.log', $request->all());
+
         if ($_POST["key"] == hash("md5", env('KEY'))) {
 
             echo "TSOK"; // If key is valid, TSOK notification is for PAYONE
