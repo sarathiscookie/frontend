@@ -868,8 +868,6 @@ class PaymentController extends Controller
      */
     public function response(Request $request)
     {
-        Storage::disk('local')->put('payment.log', $request->all());
-
         if ($_POST["key"] == hash("md5", env('KEY'))) {
 
             echo "TSOK"; // If key is valid, TSOK notification is for PAYONE
@@ -998,6 +996,8 @@ class PaymentController extends Controller
         else{
             abort(404);
         }
+
+        Storage::disk('local')->put('payment.log', $request->all());
     }
 
     /**
