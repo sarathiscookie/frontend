@@ -21,7 +21,6 @@ use Carbon\Carbon;
 use Mail;
 use App\Mail\SendVoucher;
 use PDF;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Schema;
 
 class PaymentController extends Controller
@@ -868,19 +867,6 @@ class PaymentController extends Controller
      */
     public function response(Request $request)
     {
-        $payment        = new Payment;
-
-        foreach($request->all() as $key => $value) {
-            if(Schema::hasColumn($payment->getTable(), $key)){
-                if(is_array($value)) {
-                    $payment->{$key} = $value[1];
-                } else {
-                    $payment->{$key} = $value;
-                }
-            }
-        }
-        $payment->save();
-
         if ($_POST["key"] == hash("md5", env('KEY'))) {
 
             echo "TSOK"; // If key is valid, TSOK notification is for PAYONE
@@ -1009,8 +995,6 @@ class PaymentController extends Controller
         else{
             abort(404);
         }
-
-
     }
 
     /**
