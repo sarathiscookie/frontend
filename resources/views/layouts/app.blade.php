@@ -33,7 +33,7 @@
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-40069593-1"></script>
     <script>
         // Set to the same value as the web property used on the site
-        var gaProperty = 'UA-XXXX-Y';
+        var gaProperty = 'UA-40069593-1';
 
         // Disable tracking if the opt-out cookie exists.
         var disableStr = 'ga-disable-' + gaProperty;
