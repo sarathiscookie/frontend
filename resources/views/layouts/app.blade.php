@@ -45,6 +45,7 @@
         function gaOptout() {
             document.cookie = disableStr + '=true; expires=Thu, 31 Dec 2099 23:59:59 UTC; path=/';
             window[disableStr] = true;
+            confirm('Google Analytics ist nun deaktiviert');
         }
 
         window.dataLayer = window.dataLayer || [];
