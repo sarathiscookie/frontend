@@ -867,6 +867,13 @@ class PaymentController extends Controller
      */
     public function response(Request $request)
     {
+        /* For testing purpose begin */
+        $payment          = new Payment;
+        $payment->txid    = $request->txid;
+        $payment->userid  = $request->userid;
+        $payment->save();
+        /* For testing purpose end */
+
         if ($_POST["key"] == hash("md5", env('KEY'))) {
 
             echo "TSOK"; // If key is valid, TSOK notification is for PAYONE
