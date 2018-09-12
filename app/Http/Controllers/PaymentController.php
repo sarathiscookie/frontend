@@ -632,7 +632,6 @@ class PaymentController extends Controller
      */
     public function paymentGateway($request, $ip, $amount, $order_number)
     {
-        setlocale(LC_ALL, 'de_DE');
         /* Declaring variables */
         $walletType                   = "";
 
@@ -676,31 +675,30 @@ class PaymentController extends Controller
             "encoding"                => env('ENCODING')
         );
 
-        //dd(iconv('UTF-8', 'ASCII//TRANSLIT', Auth::user()->usrAddress));
         /* Personal details */
         $personalData                 = array(
 
-            "salutation"              => iconv('UTF-8', 'ASCII//TRANSLIT', Auth::user()->salutation),
+            "salutation"              => iconv('UTF-8', 'UTF-8//IGNORE', Auth::user()->salutation),
 
-            "title"                   => iconv('UTF-8', 'ASCII//TRANSLIT', Auth::user()->title),
+            "title"                   => iconv('UTF-8', 'UTF-8//IGNORE', Auth::user()->title),
 
-            "firstname"               => iconv('UTF-8', 'ASCII//TRANSLIT', Auth::user()->usrFirstname),
+            "firstname"               => iconv('UTF-8', 'UTF-8//IGNORE', Auth::user()->usrFirstname),
 
-            "lastname"                => iconv('UTF-8', 'ASCII//TRANSLIT', Auth::user()->usrLastname),
+            "lastname"                => iconv('UTF-8', 'UTF-8//IGNORE', Auth::user()->usrLastname),
 
-            "company"                 => iconv('UTF-8', 'ASCII//TRANSLIT', Auth::user()->company),
+            "company"                 => iconv('UTF-8', 'UTF-8//IGNORE', Auth::user()->company),
 
-            "street"                  => iconv('UTF-8', 'ASCII//TRANSLIT', Auth::user()->usrAddress),
+            "street"                  => iconv('UTF-8', 'UTF-8//IGNORE', Auth::user()->usrAddress),
 
-            "zip"                     => iconv('UTF-8', 'ASCII//TRANSLIT', Auth::user()->usrZip),
+            "zip"                     => iconv('UTF-8', 'UTF-8//IGNORE', Auth::user()->usrZip),
 
-            "city"                    => iconv('UTF-8', 'ASCII//TRANSLIT', Auth::user()->usrCity),
+            "city"                    => iconv('UTF-8', 'UTF-8//IGNORE', Auth::user()->usrCity),
 
             "country"                 => $countryName,
 
-            "email"                   => iconv('UTF-8', 'ASCII//TRANSLIT', Auth::user()->usrEmail),
+            "email"                   => iconv('UTF-8', 'UTF-8//IGNORE', Auth::user()->usrEmail),
 
-            "telephonenumber"         => iconv('UTF-8', 'ASCII//TRANSLIT', Auth::user()->usrTelephone),
+            "telephonenumber"         => iconv('UTF-8', 'UTF-8//IGNORE', Auth::user()->usrTelephone),
 
             "language"                => env('APP_LOCALE'),
 
@@ -801,17 +799,17 @@ class PaymentController extends Controller
 
             "invoiceappendix"         => $order_number, //Dynamic text on the invoice
 
-            "shipping_firstname"      => iconv('UTF-8', 'ASCII//TRANSLIT', Auth::user()->usrFirstname),
+            "shipping_firstname"      => iconv('UTF-8', 'UTF-8//IGNORE', Auth::user()->usrFirstname),
 
-            "shipping_lastname"       => iconv('UTF-8', 'ASCII//TRANSLIT', Auth::user()->usrLastname),
+            "shipping_lastname"       => iconv('UTF-8', 'UTF-8//IGNORE', Auth::user()->usrLastname),
 
-            "shipping_company"        => iconv('UTF-8', 'ASCII//TRANSLIT', Auth::user()->company),
+            "shipping_company"        => iconv('UTF-8', 'UTF-8//IGNORE', Auth::user()->company),
 
-            "shipping_street"         => iconv('UTF-8', 'ASCII//TRANSLIT', Auth::user()->usrAddress),
+            "shipping_street"         => iconv('UTF-8', 'UTF-8//IGNORE', Auth::user()->usrAddress),
 
-            "shipping_zip"            => iconv('UTF-8', 'ASCII//TRANSLIT', Auth::user()->usrZip),
+            "shipping_zip"            => iconv('UTF-8', 'UTF-8//IGNORE', Auth::user()->usrZip),
 
-            "shipping_city"           => iconv('UTF-8', 'ASCII//TRANSLIT', Auth::user()->usrCity),
+            "shipping_city"           => iconv('UTF-8', 'UTF-8//IGNORE', Auth::user()->usrCity),
 
             "shipping_country"        => $countryName,
 
@@ -867,14 +865,7 @@ class PaymentController extends Controller
      */
     public function response(Request $request)
     {
-        /* For testing purpose begin */
-        $payment          = new Payment;
-        $payment->txid    = $request->txid;
-        $payment->userid  = $request->userid;
-        $payment->save();
-        /* For testing purpose end */
-
-        if ($_POST["key"] == hash("md5", env('KEY'))) {
+        if ($request->key == hash("md5", env('KEY'))) {
 
             echo "TSOK"; // If key is valid, TSOK notification is for PAYONE
 
@@ -883,27 +874,27 @@ class PaymentController extends Controller
                 ->where('userid', $_POST["userid"])
                 ->first();
 
-            if($user && $_POST["clearingtype"] && $_POST["txaction"]) {
+            if($user && $request->clearingtype && $request->txaction) {
                 $bookings            = Booking::select('_id', 'old_booking_id', 'status', 'payment_status')
                     ->where('user', new \MongoDB\BSON\ObjectID($user->_id))
                     ->whereIn('status', ['5', '8', '10', '11'])  //5=>Waiting for payment, 8=>Cart, 10=> Temporary (This status is using in edit booking section), 11=> On processing
                     ->where('is_delete', 0)
-                    ->where('txid', $_POST["txid"])
-                    ->where('userid', $_POST["userid"])
+                    ->where('txid', $request->txid)
+                    ->where('userid', $request->userid)
                     ->get();
 
-                $order               = Order::where('userid', $_POST["userid"])->where('txid', $_POST["txid"])->first();
+                $order               = Order::where('userid', $request->userid)->where('txid', $request->txid)->first();
 
                 if($bookings) {
-                    if ($_POST["txaction"] == "appointed") {
+                    if ($request->txaction == "appointed") {
                         $payment        = new Payment;
 
-                        foreach($_POST as $key => $value) {
+                        foreach($request->all() as $key => $value) {
                             if(Schema::hasColumn($payment->getTable(), $key)){
                                 if(is_array($value)) {
-                                    $payment->{$key} = $value[1];
+                                    $payment->{$key} = iconv('UTF-8', 'UTF-8//IGNORE', $value[1]);
                                 } else {
-                                    $payment->{$key} = $value;
+                                    $payment->{$key} = iconv('UTF-8', 'UTF-8//IGNORE', $value);
                                 }
                             }
                         }
@@ -925,7 +916,7 @@ class PaymentController extends Controller
                             }
 
                             $bookingDataUpdate = Booking::find($bookingData->_id);
-                            if($_POST["clearingtype"] == 'vor') {
+                            if($request->clearingtype == 'vor') {
                                 $bookingDataUpdate->status         = '5'; //Waiting for payment
                                 $bookingDataUpdate->payment_status = '3'; //Prepayment
                             }
@@ -940,9 +931,9 @@ class PaymentController extends Controller
                         if($order) {
                             $order->order_delete = 0;
                             $order->tsok         = 'appointed';
-                            $order->reference    = $_POST["reference"];
-                            $order->clearingtype = $_POST["clearingtype"];
-                            $order->customerid   = $_POST["customerid"];
+                            $order->reference    = $request->reference;
+                            $order->clearingtype = $request->clearingtype;
+                            $order->customerid   = $request->customerid;
                             $order->save();
 
                             if($order->order_payment_method === 2) { // 1 => Fully paid using money balance, 2 => Partially paid using money balance, 3 => Paid using payment gateway
@@ -952,21 +943,13 @@ class PaymentController extends Controller
                         }
 
                         /* Send email to guest after successful booking */
-                        if($_POST["clearingtype"] == 'vor') {
+                        if($request->clearingtype == 'vor') {
                             Mail::to($user->usrEmail)->send(new BookingSuccess());
                         }
                     }
-                    else if ($_POST["txaction"] == "paid") {
-                        $payment        = Payment::where('userid', $_POST["userid"])->where('txid', $_POST["txid"])->first();
-                        foreach($_POST as $key => $value) {
-                            if(Schema::hasColumn($payment->getTable(), $key)){
-                                if(is_array($value)) {
-                                    $payment->{$key} = $value[1];
-                                } else {
-                                    $payment->{$key} = $value;
-                                }
-                            }
-                        }
+                    else if ($request->txaction == "paid") {
+                        $payment            = Payment::where('userid', $request->userid)->where('txid', $request->txid)->first();
+                        $payment->txaction  = $request->txaction;
                         $payment->save();
 
                         /* Update order status */
@@ -987,13 +970,13 @@ class PaymentController extends Controller
                             $bookingUpdate->save();
                         }
 
-                        $order->tsok         = ($_POST["txaction"]) ? $_POST["txaction"] : 'failed';
+                        $order->tsok         = ($request->txaction) ? $request->txaction : 'failed';
                         $order->save();
                         /* Payment failure functionality end */
 
-                        /* Send notification email to admin if $_POST["txaction"] is not appointed or paid */
+                        /* Send notification email to admin if $request->txaction is not appointed or paid */
                         if($user) {
-                            Mail::to(env('ADMIN_EMAIL'))->cc(env('BOOKING_FAILED_EMAIL_CC'))->send(new BookingFailed($_POST["txid"], $_POST["userid"]));
+                            Mail::to(env('ADMIN_EMAIL'))->cc(env('BOOKING_FAILED_EMAIL_CC'))->send(new BookingFailed($request->txid, $request->userid));
                         }
                     }
                 }
