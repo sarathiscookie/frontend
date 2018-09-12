@@ -678,27 +678,27 @@ class PaymentController extends Controller
         /* Personal details */
         $personalData                 = array(
 
-            "salutation"              => iconv('UTF-8', 'UTF-8//IGNORE', Auth::user()->salutation),
+            "salutation"              => Auth::user()->salutation,
 
-            "title"                   => iconv('UTF-8', 'UTF-8//IGNORE', Auth::user()->title),
+            "title"                   => Auth::user()->title,
 
-            "firstname"               => iconv('UTF-8', 'UTF-8//IGNORE', Auth::user()->usrFirstname),
+            "firstname"               => Auth::user()->usrFirstname,
 
-            "lastname"                => iconv('UTF-8', 'UTF-8//IGNORE', Auth::user()->usrLastname),
+            "lastname"                => Auth::user()->usrLastname,
 
-            "company"                 => iconv('UTF-8', 'UTF-8//IGNORE', Auth::user()->company),
+            "company"                 => Auth::user()->company,
 
-            "street"                  => iconv('UTF-8', 'UTF-8//IGNORE', Auth::user()->usrAddress),
+            "street"                  => Auth::user()->usrAddress,
 
-            "zip"                     => iconv('UTF-8', 'UTF-8//IGNORE', Auth::user()->usrZip),
+            "zip"                     => Auth::user()->usrZip,
 
-            "city"                    => iconv('UTF-8', 'UTF-8//IGNORE', Auth::user()->usrCity),
+            "city"                    => Auth::user()->usrCity,
 
             "country"                 => $countryName,
 
-            "email"                   => iconv('UTF-8', 'UTF-8//IGNORE', Auth::user()->usrEmail),
+            "email"                   => Auth::user()->usrEmail,
 
-            "telephonenumber"         => iconv('UTF-8', 'UTF-8//IGNORE', Auth::user()->usrTelephone),
+            "telephonenumber"         => Auth::user()->usrTelephone,
 
             "language"                => env('APP_LOCALE'),
 
@@ -799,17 +799,17 @@ class PaymentController extends Controller
 
             "invoiceappendix"         => $order_number, //Dynamic text on the invoice
 
-            "shipping_firstname"      => iconv('UTF-8', 'UTF-8//IGNORE', Auth::user()->usrFirstname),
+            "shipping_firstname"      => Auth::user()->usrFirstname,
 
-            "shipping_lastname"       => iconv('UTF-8', 'UTF-8//IGNORE', Auth::user()->usrLastname),
+            "shipping_lastname"       => Auth::user()->usrLastname,
 
-            "shipping_company"        => iconv('UTF-8', 'UTF-8//IGNORE', Auth::user()->company),
+            "shipping_company"        => Auth::user()->company,
 
-            "shipping_street"         => iconv('UTF-8', 'UTF-8//IGNORE', Auth::user()->usrAddress),
+            "shipping_street"         => Auth::user()->usrAddress,
 
-            "shipping_zip"            => iconv('UTF-8', 'UTF-8//IGNORE', Auth::user()->usrZip),
+            "shipping_zip"            => Auth::user()->usrZip,
 
-            "shipping_city"           => iconv('UTF-8', 'UTF-8//IGNORE', Auth::user()->usrCity),
+            "shipping_city"           => Auth::user()->usrCity,
 
             "shipping_country"        => $countryName,
 
@@ -892,9 +892,9 @@ class PaymentController extends Controller
                         foreach($request->all() as $key => $value) {
                             if(Schema::hasColumn($payment->getTable(), $key)){
                                 if(is_array($value)) {
-                                    $payment->{$key} = iconv('UTF-8', 'UTF-8//IGNORE', $value[1]);
+                                    $payment->{$key} = $value[1];
                                 } else {
-                                    $payment->{$key} = iconv('UTF-8', 'UTF-8//IGNORE', $value);
+                                    $payment->{$key} = $value;
                                 }
                             }
                         }
