@@ -4,6 +4,9 @@ namespace App\Http\Controllers\Auth;
 
 use Illuminate\Http\Request;
 use App\User;
+use App\Booking;
+use App\Cabin;
+use Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Hash;
@@ -92,6 +95,46 @@ class LoginController extends Controller
                 $updateLoginTime->save();
 
                 $this->guard()->login($user, $request->has('remember'));
+
+                /* Functionality to store bookings in to cart before user login: Begin */
+                if(session()->has('item'))
+                {
+                    $booking                          = new Booking;
+                    $booking->cabinname               = session()->get('item.cabinNameSession');
+                    $booking->cabin_id                = new \MongoDB\BSON\ObjectID(session()->get('item.cabinIdSession'));
+                    $booking->checkin_from            = session()->get('item.checkInFromSession');
+                    $booking->reserve_to              = session()->get('item.reserveToSession');
+                    $booking->user                    = new \MongoDB\BSON\ObjectID(Auth::user()->_id);
+                    $booking->beds                    = session()->get('item.bedsSession');
+                    $booking->dormitory               = session()->get('item.dormitorySession');
+                    $booking->invoice_number          = session()->get('item.invoiceNumberSession');
+                    $booking->sleeps                  = session()->get('item.sleepsSession');
+                    $booking->guests                  = session()->get('item.guestsSession');
+                    $booking->prepayment_amount       = session()->get('item.amountSession');
+                    $booking->total_prepayment_amount = session()->get('item.amountSession');
+                    $booking->bookingdate             = date('Y-m-d H:i:s');
+                    $booking->status                  = "8"; //1=> Fix, 2=> Cancel, 3=> Completed, 4=> Request (Reservation), 5=> Waiting for payment, 6=> Expired, 7=> Inquiry, 8=> Cart
+                    $booking->reservation_cancel      = session()->get('item.reservationCancelSession');
+                    $booking->halfboard               = "0";
+                    $booking->cart_expiry_date        = date('Y-m-d H:i:s', strtotime('+1 day'));
+                    $booking->is_delete               = 0;
+                    $booking->save();
+
+                    /* If booking saved in to cart then update cabin invoice auto generation number begin. */
+                    if($booking) {
+                        /* Update cabin invoice_autonum begin */
+                        Cabin::where('is_delete', 0)
+                            ->where('other_cabin', "0")
+                            ->where('name', session()->get('item.cabinNameSession'))
+                            ->where('_id', new \MongoDB\BSON\ObjectID(session()->get('item.cabinIdSession')))
+                            ->update(['invoice_autonum' => session()->get('item.invoiceNumberSession')]);
+                    }
+                    /* If booking saved in to card then update cabin invoice auto generation number end. */
+
+                    session()->forget('item');
+                }
+                /* Functionality to store bookings in to cart before user login: End */
+
                 return true;
             }
             else {

@@ -340,6 +340,18 @@ Route::group(['middleware' => ['auth']], function () {
 
 /*
  |--------------------------------------------------------------------------
+ | Cabin List: Cookie data to cart
+ |--------------------------------------------------------------------------
+ |
+ | Route for add cookie data to cart
+ |
+*/
+
+/* Cookie data to cart */
+Route::post('/session/data/to/cart', 'CookieController@store')->name('session.data.to.cart');
+
+/*
+ |--------------------------------------------------------------------------
  | Payment response
  |--------------------------------------------------------------------------
  |

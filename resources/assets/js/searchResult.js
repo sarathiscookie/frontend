@@ -79,4 +79,59 @@ $(function() {
                 }
             });
     });
+
+    /* Functionality to cookie to cart */
+    $("body").on("click", ".cookieToCart", function(e) {
+        e.preventDefault();
+        var cookieToCart   = $(this).val();
+        var cabin          = $(this).parent().parent().data("cab");
+        var dateFrom       = $("#dateFrom_"+cabin).val();
+        var dateTo         = $("#dateTo_"+cabin).val();
+        var beds           = $("#beds_"+cabin).val();
+        var dorms          = $("#dorms_"+cabin).val();
+        var sleeps         = $("#sleeps_"+cabin).val();
+        var sleeping_place = $("#sleeping_place_"+cabin).val();
+        var errorsHtml     = '';
+        $.ajax({
+            url: '/session/data/to/cart',
+            dataType: 'JSON',
+            type: 'POST',
+            data: { dateFrom: dateFrom, dateTo: dateTo, beds: beds, dorms: dorms, sleeps: sleeps, cookieToCart: cookieToCart, cabin: cabin, sleeping_place:sleeping_place }
+        })
+            .done(function( data ) {
+                if(data.response === 'success') {
+                    var redirect_url = '/login';
+                    $( "#errors_"+cabin ).hide();
+                    $( "#warning_"+cabin ).hide();
+                    window.location.href = redirect_url;
+                }
+            })
+            .fail(function(data, jqxhr, textStatus, error) {
+                if( data.status === 422 ) {
+                    var errors = data.responseJSON.errors;
+                    if(errors) {
+                        $( "#warning_"+cabin ).hide();
+                        $( "#errors_"+cabin ).show();
+                        errorsHtml = '<div class="alert alert-danger"><ul>';
+                        $.each( errors , function( key, value ) {
+                            errorsHtml += '<li>' + value + '</li>';
+                        });
+                        errorsHtml += '</ul></div>';
+                        $( "#errors_"+cabin ).html( errorsHtml );
+                    }
+                    else {
+                        $( "#errors_"+cabin ).hide();
+                        $( "#warning_"+cabin ).show();
+                        var warning = data.responseJSON;
+                        errorsHtml = '<div class="alert alert-info"><ul>';
+                        $.each( warning , function( key, value ) {
+                            errorsHtml += '<li>' + value + '</li>';
+                        });
+                        errorsHtml += '</ul></div>';
+                        $( "#warning_"+cabin ).html( errorsHtml );
+                    }
+                }
+            });
+    });
+
 });
