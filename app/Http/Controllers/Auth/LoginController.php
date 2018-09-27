@@ -127,7 +127,7 @@ class LoginController extends Controller
                             ->where('other_cabin', "0")
                             ->where('name', session()->get('item.cabinNameSession'))
                             ->where('_id', new \MongoDB\BSON\ObjectID(session()->get('item.cabinIdSession')))
-                            ->update(['invoice_autonum' => session()->get('item.invoiceNumberSession')]);
+                            ->update(['invoice_autonum' => session()->get('item.autoNumberSession')]);
                     }
                     /* If booking saved in to card then update cabin invoice auto generation number end. */
 
