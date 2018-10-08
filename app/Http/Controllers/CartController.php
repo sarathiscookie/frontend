@@ -221,7 +221,7 @@ class CartController extends Controller
                         /* Taking beds, dorms and sleeps depends up on sleeping_place */
                         if($cabin->sleeping_place != 1) {
 
-                            // Reason for subtraction: Eg cabin->beds = 5 cabin->dorms = 5. If guest added 3 beds and 3 dorms to cart, cart data is treated as booked for 1 hour. When guest edit the cart (eg set beds to 4 and dorms to 4) the availability condition will run and shows not available. Because already 3 beds and 3 dorms in booking cart. So we subtract the particular user's cart->beds and cart->dormitory.
+                            // Reason for subtraction: Eg cabin->beds = 5 cabin->dorms = 5. If guest added 3 beds and 3 dorms to cart, cart data will hold for sometime. When guest edit the cart (eg set beds to 4 and dorms to 4) the availability condition will run and shows not available. Because already 3 beds and 3 dorms in booking cart. So we subtract the particular user's cart->beds and cart->dormitory.
                             $totalBeds     = ($beds + $msBeds) - $cart->beds;
                             $totalDorms    = ($dorms + $msDorms) - $cart->dormitory;
 
@@ -731,6 +731,8 @@ class CartController extends Controller
 
                         }
                         else {
+
+                            // Reason for subtraction: Eg cabin->sleeps = 5. If guest added 3 sleeps to cart, cart data will hold for sometime. When guest edit the cart (eg set sleeps to 4) the availability condition will run and shows not available. Because already 3 sleeps in booking cart. So we subtract the particular user's cart->sleeps.
                             $totalSleeps   = ($sleeps + $msSleeps) - $cart->sleeps;
 
                             /* Calculating sleeps for not regular */
