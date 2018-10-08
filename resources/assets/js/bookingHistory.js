@@ -6,10 +6,11 @@ $(function(){
         }
     });
 
-    // Convert date format (d.m.y to mm/dd/yyyy)
+
     function convertDate(dateString){
-        var p = dateString.split(/\D/g);
-        return [p[1],p[0],p[2] ].join("-");
+        var dateSplit = dateString.split('.');
+        var date      = new Date("20"+dateSplit[2], dateSplit[1]-1, dateSplit[0]); //Here 20 hard coded because date posting from form is d.m.y (eg: 03.12.18). Firefox year format is YYYY (eg 03.12.2018). If we didn't hardcoded 20 Firefox will think that year is 1918.
+        return date;
     }
 
     /* Calendar availability check begin */
@@ -48,15 +49,15 @@ $(function(){
             dt2.datepicker('option', 'minDate', minDate);
 
             // Taking date difference and calculating amount while changing dates
-            var dateOne   = new Date(convertDate(date));
-            var dateTwo   = new Date(convertDate(dt2.val()));
+            var dateOne   = convertDate(date);
+            var dateTwo   = convertDate(dt2.val());
             var timeDiff  = Math.abs(dateTwo.getTime() - dateOne.getTime());
             var diffDays  = Math.ceil(timeDiff / (1000 * 3600 * 24));
 
             if(dateOne < dateTwo) {
-                $( ".daysEditBook" ).attr("data-days", diffDays);
-                $( ".replaceNumberOfNights" ).html(diffDays+' Tag(e)');
-                var newDiffDays = $( ".daysEditBook" ).attr("data-days");
+                $(".daysEditBook").attr("data-days", diffDays);
+                $(".replaceNumberOfNights").html(diffDays+' Tag(e)');
+                var newDiffDays = $(".daysEditBook").attr("data-days");
                 calculateAmount(newDiffDays);
             }
             /*else {
@@ -149,17 +150,18 @@ $(function(){
             yearRange: "0:+2"
         });
 
+        // Taking date difference and calculating amount while changing dates
         $this.datepicker("option", "onSelect", function(date) {
             var dt1         = $("#dateFromEditBook_"+dataId);
-            var dateOne     = new Date(convertDate(dt1.val()));
-            var dateTwo     = new Date(convertDate(date));
+            var dateOne     = convertDate(dt1.val());
+            var dateTwo     = convertDate(date);
             var timeDiff    = Math.abs(dateTwo.getTime() - dateOne.getTime());
             var diffDays    = Math.ceil(timeDiff / (1000 * 3600 * 24));
 
             if(dateOne < dateTwo) {
-                $( ".daysEditBook" ).attr("data-days", diffDays);
-                $( ".replaceNumberOfNights" ).html(diffDays+' Tag(e)');
-                var newDiffDays = $( ".daysEditBook" ).attr("data-days");
+                $(".daysEditBook").attr("data-days", diffDays);
+                $(".replaceNumberOfNights").html(diffDays+' Tag(e)');
+                var newDiffDays = $(".daysEditBook").attr("data-days");
                 calculateAmount(newDiffDays);
             }
             /*else {
