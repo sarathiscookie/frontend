@@ -9,7 +9,7 @@ $(function(){
 
     function convertDate(dateString){
         var dateSplit = dateString.split('.');
-        var date      = new Date("20"+dateSplit[2], dateSplit[1]-1, dateSplit[0]); //Here 20 hard coded because date posting from form is d.m.y (eg: 03.12.18). Firefox year format is YYYY (eg 03.12.2018). If we didn't hardcoded 20 Firefox will think that year is 1918.
+        var date      = new Date("20"+dateSplit[2], dateSplit[1]-1, dateSplit[0]); //Here 20 hard coded because date posting from form is d.m.y (eg: 03.12.18). Firefox year format is YYYY (eg 03.12.2018). If we didn't hardcoded 20, Firefox will think that year is 1918.
         return date;
     }
 
@@ -52,7 +52,7 @@ $(function(){
             var dateOne   = convertDate(date);
             var dateTwo   = convertDate(dt2.val());
             var timeDiff  = Math.abs(dateTwo.getTime() - dateOne.getTime());
-            var diffDays  = Math.ceil(timeDiff / (1000 * 3600 * 24));
+            var diffDays  = Math.ceil(Math.round(timeDiff / (1000 * 3600 * 24)));
 
             if(dateOne < dateTwo) {
                 $(".daysEditBook").attr("data-days", diffDays);
@@ -60,10 +60,6 @@ $(function(){
                 var newDiffDays = $(".daysEditBook").attr("data-days");
                 calculateAmount(newDiffDays);
             }
-            /*else {
-                alert('Ankunftsdatum muss vor dem Abreisedatum liegen.')
-            }*/
-
         });
 
         $this.datepicker("option", "onChangeMonthYear", function(year,month,inst) {
@@ -156,7 +152,7 @@ $(function(){
             var dateOne     = convertDate(dt1.val());
             var dateTwo     = convertDate(date);
             var timeDiff    = Math.abs(dateTwo.getTime() - dateOne.getTime());
-            var diffDays    = Math.ceil(timeDiff / (1000 * 3600 * 24));
+            var diffDays    = Math.ceil(Math.round(timeDiff / (1000 * 3600 * 24)));
 
             if(dateOne < dateTwo) {
                 $(".daysEditBook").attr("data-days", diffDays);
@@ -164,10 +160,6 @@ $(function(){
                 var newDiffDays = $(".daysEditBook").attr("data-days");
                 calculateAmount(newDiffDays);
             }
-            /*else {
-                alert('Ankunftsdatum muss vor dem Abreisedatum liegen.')
-            }*/
-
         });
 
         $this.datepicker("option", "onChangeMonthYear", function(year,month,inst) {
@@ -539,13 +531,6 @@ $(function(){
             $( ".replaceEditBookingServiceFee" ).html(serviceTaxEditBooking+' %');
             $( ".replaceEditBookingCompletePayment" ).html(formatter.format(sumPrepayAmountServiceTotal));
         }
-        /*else if(amount === oldVoucherAmount) {
-            $( ".amountGreater" ).show();
-            $( ".voucherGreater" ).hide();
-            $( ".replaceEditBookingCompleteDeposit" ).html(formatter.format(0));
-            $( ".replaceEditBookingServiceFee" ).html(0+' %');
-            $( ".replaceEditBookingCompletePayment" ).html(formatter.format(0));
-        }*/
         else {
             $( ".voucherGreater" ).show();
             $( ".amountGreater" ).hide();
