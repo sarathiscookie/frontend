@@ -363,6 +363,11 @@ class BookingHistoryController extends Controller
                                     /*Availability checking of beds dorms begin*/
                                     $totalBeds           = $beds + $msBeds;
                                     $totalDorms          = $dorms + $msDorms;
+
+                                    /* Extra how many beds & dorms requested */
+                                    $extraBeds  = $bedsRequest - $bookingBeds;
+                                    $extraDorms = $dormsRequest - $bookingDorms;
+
                                     /* Calculating beds & dorms for not regular */
                                     if($cabin->not_regular === 1) {
                                         $not_regular_date_explode = explode(" - ", $cabin->not_regular_date);
@@ -374,41 +379,89 @@ class BookingHistoryController extends Controller
                                         }
 
                                         if(in_array($dates, $not_regular_dates)) {
+
                                             $dates_array[] = $dates;
-                                            if(($totalBeds < $cabin->not_regular_beds) || ($totalDorms < $cabin->not_regular_dorms)) {
-                                                $not_regular_beds_diff              = $cabin->not_regular_beds - $totalBeds;
-                                                $not_regular_dorms_diff             = $cabin->not_regular_dorms - $totalDorms;
 
-                                                /* Available beds and dorms on not regular */
-                                                $not_regular_beds_avail             = ($not_regular_beds_diff >= 0) ? $not_regular_beds_diff : 0;
-                                                $not_regular_dorms_avail            = ($not_regular_dorms_diff >= 0) ? $not_regular_dorms_diff : 0;
-
-                                                if($bedsRequest <= $not_regular_beds_avail) {
+                                            // Condition to check already booked dates matching with new dates
+                                            if( in_array($dates, $from_to_old_dates) ) {
+                                                // Condition to check requested beds and dorms is greater or less than already booked beds and dorms.
+                                                if($bedsRequest <= $bookingBeds && $dormsRequest <= $bookingDorms) {
                                                     $availableStatus[] = 'available';
                                                 }
                                                 else {
-                                                    $availableStatus[] = 'notAvailable';
-                                                    return redirect()->back()->with('bookingAvailableStatus', $bedsRequest.__("searchDetails.bedsNotAvailable").$generateBookingDate->format("d.m"));
-                                                }
+                                                    if(($totalBeds < $cabin->not_regular_beds) || ($totalDorms < $cabin->not_regular_dorms)) {
+                                                        $not_regular_beds_diff   = $cabin->not_regular_beds - $totalBeds;
+                                                        $not_regular_dorms_diff  = $cabin->not_regular_dorms - $totalDorms;
 
-                                                if($dormsRequest <= $not_regular_dorms_avail) {
-                                                    $availableStatus[] = 'available';
-                                                }
-                                                else {
-                                                    $availableStatus[] = 'notAvailable';
-                                                    return redirect()->back()->with('bookingAvailableStatus', $dormsRequest.__("searchDetails.dormsNotAvailable").$generateBookingDate->format("d.m"));
-                                                }
+                                                        // Available beds and dorms on not regular
+                                                        $not_regular_beds_avail  = ($not_regular_beds_diff >= 0) ? $not_regular_beds_diff : 0;
+                                                        $not_regular_dorms_avail = ($not_regular_dorms_diff >= 0) ? $not_regular_dorms_diff : 0;
 
-                                                /* Checking requested beds and dorms sum is greater or equal to inquiry. Cabin inquiry guest is greater than 0 */
-                                                if($cabin->not_regular_inquiry_guest > 0 && $requestBedsSumDorms >= $cabin->not_regular_inquiry_guest) {
-                                                    $availableStatus[] = 'notAvailable';
-                                                    return redirect()->back()->with('bookingAvailableStatus', __("bookingHistory.bookingLimitReached").$generateBookingDate->format("d.m").__("bookingHistory.bookingLimitReachedOne").($cabin->not_regular_inquiry_guest - 1).__("bookingHistory.bookingLimitReachedTwo"));
+                                                        if($extraBeds <= $not_regular_beds_avail) {
+                                                            $availableStatus[] = 'available';
+                                                        }
+                                                        else {
+                                                            $availableStatus[] = 'notAvailable';
+                                                            return redirect()->back()->with('bookingAvailableStatus', $extraBeds.__("searchDetails.bedsNotAvailable").$generateBookingDate->format("d.m"));
+                                                        }
+
+                                                        if($extraDorms <= $not_regular_dorms_avail) {
+                                                            $availableStatus[] = 'available';
+                                                        }
+                                                        else {
+                                                            $availableStatus[] = 'notAvailable';
+                                                            return redirect()->back()->with('bookingAvailableStatus', $extraDorms.__("searchDetails.dormsNotAvailable").$generateBookingDate->format("d.m"));
+                                                        }
+
+                                                        // Checking requested beds and dorms sum is greater or equal to inquiry. Cabin inquiry guest is greater than 0
+                                                        if($cabin->not_regular_inquiry_guest > 0 && $requestBedsSumDorms >= $cabin->not_regular_inquiry_guest) {
+                                                            $availableStatus[] = 'notAvailable';
+                                                            return redirect()->back()->with('bookingAvailableStatus', __("bookingHistory.bookingLimitReached").$generateBookingDate->format("d.m").__("bookingHistory.bookingLimitReachedOne").($cabin->not_regular_inquiry_guest - 1).__("bookingHistory.bookingLimitReachedTwo"));
+                                                        }
+                                                    }
+                                                    else {
+                                                        $availableStatus[] = 'notAvailable';
+                                                        return redirect()->back()->with('bookingAvailableStatus', __("searchDetails.alreadyFilledBedsDorms").$generateBookingDate->format("d.m"));
+                                                    }
                                                 }
                                             }
                                             else {
-                                                $availableStatus[] = 'notAvailable';
-                                                return redirect()->back()->with('bookingAvailableStatus', __("searchDetails.alreadyFilledBedsDorms").$generateBookingDate->format("d.m"));
+                                                if(($totalBeds < $cabin->not_regular_beds) || ($totalDorms < $cabin->not_regular_dorms)) {
+                                                    $not_regular_beds_diff  = $cabin->not_regular_beds - $totalBeds;
+                                                    $not_regular_dorms_diff = $cabin->not_regular_dorms - $totalDorms;
+
+                                                    // Available beds and dorms on not regular
+                                                    $not_regular_beds_avail  = ($not_regular_beds_diff >= 0) ? $not_regular_beds_diff : 0;
+                                                    $not_regular_dorms_avail = ($not_regular_dorms_diff >= 0) ? $not_regular_dorms_diff : 0;
+
+                                                    if($bedsRequest <= $not_regular_beds_avail) {
+                                                        $availableStatus[] = 'available';
+                                                    }
+                                                    else {
+                                                        $availableStatus[] = 'notAvailable';
+                                                        return redirect()->back()->with('bookingAvailableStatus', $bedsRequest.__("searchDetails.bedsNotAvailable").$generateBookingDate->format("d.m"));
+                                                    }
+
+                                                    if($dormsRequest <= $not_regular_dorms_avail) {
+                                                        $availableStatus[] = 'available';
+                                                    }
+                                                    else {
+                                                        $availableStatus[] = 'notAvailable';
+                                                        return redirect()->back()->with('bookingAvailableStatus', $dormsRequest.__("searchDetails.dormsNotAvailable").$generateBookingDate->format("d.m"));
+                                                    }
+
+                                                    // Checking requested beds and dorms sum is greater or equal to inquiry. Cabin inquiry guest is greater than 0
+                                                    if($cabin->not_regular_inquiry_guest > 0 && $requestBedsSumDorms >= $cabin->not_regular_inquiry_guest) {
+                                                        $availableStatus[] = 'notAvailable';
+                                                        return redirect()->back()->with('bookingAvailableStatus', __("bookingHistory.bookingLimitReached").$generateBookingDate->format("d.m").__("bookingHistory.bookingLimitReachedOne").($cabin->not_regular_inquiry_guest - 1).__("bookingHistory.bookingLimitReachedTwo"));
+                                                    }
+                                                }
+                                                else {
+                                                    $availableStatus[] = 'notAvailable';
+                                                    return redirect()->back()->with('bookingAvailableStatus', __("searchDetails.alreadyFilledBedsDorms").$generateBookingDate->format("d.m"));
+                                                }
                                             }
+
                                         }
                                     }
 
@@ -420,40 +473,86 @@ class BookingHistoryController extends Controller
 
                                                 $dates_array[] = $dates;
 
-                                                if(($totalBeds < $cabin->mon_beds) || ($totalDorms < $cabin->mon_dorms)) {
-                                                    $mon_beds_diff              = $cabin->mon_beds - $totalBeds;
-                                                    $mon_dorms_diff             = $cabin->mon_dorms - $totalDorms;
-
-                                                    /* Available beds and dorms on regular monday */
-                                                    $mon_beds_avail             = ($mon_beds_diff >= 0) ? $mon_beds_diff : 0;
-                                                    $mon_dorms_avail            = ($mon_dorms_diff >= 0) ? $mon_dorms_diff : 0;
-
-                                                    if($bedsRequest <= $mon_beds_avail) {
+                                                // Condition to check already booked dates matching with new dates
+                                                if( in_array($dates, $from_to_old_dates) ) {
+                                                    // Condition to check requested beds and dorms is greater or less than already booked beds and dorms.
+                                                    if($bedsRequest <= $bookingBeds && $dormsRequest <= $bookingDorms) {
                                                         $availableStatus[] = 'available';
                                                     }
                                                     else {
-                                                        $availableStatus[] = 'notAvailable';
-                                                        return redirect()->back()->with('bookingAvailableStatus', $bedsRequest.__("searchDetails.bedsNotAvailable").$generateBookingDate->format("d.m"));
-                                                    }
+                                                        if(($totalBeds < $cabin->mon_beds) || ($totalDorms < $cabin->mon_dorms)) {
+                                                            $mon_beds_diff  = $cabin->mon_beds - $totalBeds;
+                                                            $mon_dorms_diff = $cabin->mon_dorms - $totalDorms;
 
-                                                    if($dormsRequest <= $mon_dorms_avail) {
-                                                        $availableStatus[] = 'available';
-                                                    }
-                                                    else {
-                                                        $availableStatus[] = 'notAvailable';
-                                                        return redirect()->back()->with('bookingAvailableStatus', $dormsRequest.__("searchDetails.dormsNotAvailable").$generateBookingDate->format("d.m"));
-                                                    }
+                                                            // Available beds and dorms on regular monday
+                                                            $mon_beds_avail  = ($mon_beds_diff >= 0) ? $mon_beds_diff : 0;
+                                                            $mon_dorms_avail = ($mon_dorms_diff >= 0) ? $mon_dorms_diff : 0;
 
-                                                    /* Checking requested beds and dorms sum is greater or equal to inquiry. Cabin inquiry guest is greater than 0 */
-                                                    if($cabin->mon_inquiry_guest > 0 && $requestBedsSumDorms >= $cabin->mon_inquiry_guest) {
-                                                        $availableStatus[] = 'notAvailable';
-                                                        return redirect()->back()->with('bookingAvailableStatus', __("bookingHistory.bookingLimitReached").$generateBookingDate->format("d.m").__("bookingHistory.bookingLimitReachedOne").($cabin->mon_inquiry_guest - 1).__("bookingHistory.bookingLimitReachedTwo"));
+                                                            if($extraBeds <= $mon_beds_avail) {
+                                                                $availableStatus[] = 'available';
+                                                            }
+                                                            else {
+                                                                $availableStatus[] = 'notAvailable';
+                                                                return redirect()->back()->with('bookingAvailableStatus', $extraBeds.__("searchDetails.bedsNotAvailable").$generateBookingDate->format("d.m"));
+                                                            }
+
+                                                            if($extraDorms <= $mon_dorms_avail) {
+                                                                $availableStatus[] = 'available';
+                                                            }
+                                                            else {
+                                                                $availableStatus[] = 'notAvailable';
+                                                                return redirect()->back()->with('bookingAvailableStatus', $extraDorms.__("searchDetails.dormsNotAvailable").$generateBookingDate->format("d.m"));
+                                                            }
+
+                                                            // Checking requested beds and dorms sum is greater or equal to inquiry. Cabin inquiry guest is greater than 0
+                                                            if($cabin->mon_inquiry_guest > 0 && $requestBedsSumDorms >= $cabin->mon_inquiry_guest) {
+                                                                $availableStatus[] = 'notAvailable';
+                                                                return redirect()->back()->with('bookingAvailableStatus', __("bookingHistory.bookingLimitReached").$generateBookingDate->format("d.m").__("bookingHistory.bookingLimitReachedOne").($cabin->mon_inquiry_guest - 1).__("bookingHistory.bookingLimitReachedTwo"));
+                                                            }
+                                                        }
+                                                        else {
+                                                            $availableStatus[] = 'notAvailable';
+                                                            return redirect()->back()->with('bookingAvailableStatus', __("searchDetails.alreadyFilledBedsDorms").$generateBookingDate->format("d.m"));
+                                                        }
                                                     }
                                                 }
                                                 else {
-                                                    $availableStatus[] = 'notAvailable';
-                                                    return redirect()->back()->with('bookingAvailableStatus', __("searchDetails.alreadyFilledBedsDorms").$generateBookingDate->format("d.m"));
+                                                    if(($totalBeds < $cabin->mon_beds) || ($totalDorms < $cabin->mon_dorms)) {
+                                                        $mon_beds_diff  = $cabin->mon_beds - $totalBeds;
+                                                        $mon_dorms_diff = $cabin->mon_dorms - $totalDorms;
+
+                                                        // Available beds and dorms on regular monday
+                                                        $mon_beds_avail  = ($mon_beds_diff >= 0) ? $mon_beds_diff : 0;
+                                                        $mon_dorms_avail = ($mon_dorms_diff >= 0) ? $mon_dorms_diff : 0;
+
+                                                        if($bedsRequest <= $mon_beds_avail) {
+                                                            $availableStatus[] = 'available';
+                                                        }
+                                                        else {
+                                                            $availableStatus[] = 'notAvailable';
+                                                            return redirect()->back()->with('bookingAvailableStatus', $bedsRequest.__("searchDetails.bedsNotAvailable").$generateBookingDate->format("d.m"));
+                                                        }
+
+                                                        if($dormsRequest <= $mon_dorms_avail) {
+                                                            $availableStatus[] = 'available';
+                                                        }
+                                                        else {
+                                                            $availableStatus[] = 'notAvailable';
+                                                            return redirect()->back()->with('bookingAvailableStatus', $dormsRequest.__("searchDetails.dormsNotAvailable").$generateBookingDate->format("d.m"));
+                                                        }
+
+                                                        // Checking requested beds and dorms sum is greater or equal to inquiry. Cabin inquiry guest is greater than 0
+                                                        if($cabin->mon_inquiry_guest > 0 && $requestBedsSumDorms >= $cabin->mon_inquiry_guest) {
+                                                            $availableStatus[] = 'notAvailable';
+                                                            return redirect()->back()->with('bookingAvailableStatus', __("bookingHistory.bookingLimitReached").$generateBookingDate->format("d.m").__("bookingHistory.bookingLimitReachedOne").($cabin->mon_inquiry_guest - 1).__("bookingHistory.bookingLimitReachedTwo"));
+                                                        }
+                                                    }
+                                                    else {
+                                                        $availableStatus[] = 'notAvailable';
+                                                        return redirect()->back()->with('bookingAvailableStatus', __("searchDetails.alreadyFilledBedsDorms").$generateBookingDate->format("d.m"));
+                                                    }
                                                 }
+
                                             }
                                         }
 
@@ -462,40 +561,86 @@ class BookingHistoryController extends Controller
 
                                                 $dates_array[] = $dates;
 
-                                                if(($totalBeds < $cabin->tue_beds) || ($totalDorms < $cabin->tue_dorms)) {
-                                                    $tue_beds_diff              = $cabin->tue_beds - $totalBeds;
-                                                    $tue_dorms_diff             = $cabin->tue_dorms - $totalDorms;
-
-                                                    /* Available beds and dorms on regular tuesday */
-                                                    $tue_beds_avail             = ($tue_beds_diff >= 0) ? $tue_beds_diff : 0;
-                                                    $tue_dorms_avail            = ($tue_dorms_diff >= 0) ? $tue_dorms_diff : 0;
-
-                                                    if($bedsRequest <= $tue_beds_avail) {
+                                                // Condition to check already booked dates matching with new dates
+                                                if( in_array($dates, $from_to_old_dates) ) {
+                                                    // Condition to check requested beds and dorms is greater or less than already booked beds and dorms.
+                                                    if($bedsRequest <= $bookingBeds && $dormsRequest <= $bookingDorms) {
                                                         $availableStatus[] = 'available';
                                                     }
                                                     else {
-                                                        $availableStatus[] = 'notAvailable';
-                                                        return redirect()->back()->with('bookingAvailableStatus', $bedsRequest.__("searchDetails.bedsNotAvailable").$generateBookingDate->format("d.m"));
-                                                    }
+                                                        if(($totalBeds < $cabin->tue_beds) || ($totalDorms < $cabin->tue_dorms)) {
+                                                            $tue_beds_diff  = $cabin->tue_beds - $totalBeds;
+                                                            $tue_dorms_diff = $cabin->tue_dorms - $totalDorms;
 
-                                                    if($dormsRequest <= $tue_dorms_avail) {
-                                                        $availableStatus[] = 'available';
-                                                    }
-                                                    else {
-                                                        $availableStatus[] = 'notAvailable';
-                                                        return redirect()->back()->with('bookingAvailableStatus', $dormsRequest.__("searchDetails.dormsNotAvailable").$generateBookingDate->format("d.m"));
-                                                    }
+                                                            // Available beds and dorms on regular tuesday
+                                                            $tue_beds_avail  = ($tue_beds_diff >= 0) ? $tue_beds_diff : 0;
+                                                            $tue_dorms_avail = ($tue_dorms_diff >= 0) ? $tue_dorms_diff : 0;
 
-                                                    /* Checking requested beds and dorms sum is greater or equal to inquiry. Cabin inquiry guest is greater than 0 */
-                                                    if($cabin->tue_inquiry_guest > 0 && $requestBedsSumDorms >= $cabin->tue_inquiry_guest) {
-                                                        $availableStatus[] = 'notAvailable';
-                                                        return redirect()->back()->with('bookingAvailableStatus', __("bookingHistory.bookingLimitReached").$generateBookingDate->format("d.m").__("bookingHistory.bookingLimitReachedOne").($cabin->tue_inquiry_guest - 1).__("bookingHistory.bookingLimitReachedTwo"));
+                                                            if($extraBeds <= $tue_beds_avail) {
+                                                                $availableStatus[] = 'available';
+                                                            }
+                                                            else {
+                                                                $availableStatus[] = 'notAvailable';
+                                                                return redirect()->back()->with('bookingAvailableStatus', $extraBeds.__("searchDetails.bedsNotAvailable").$generateBookingDate->format("d.m"));
+                                                            }
+
+                                                            if($extraDorms <= $tue_dorms_avail) {
+                                                                $availableStatus[] = 'available';
+                                                            }
+                                                            else {
+                                                                $availableStatus[] = 'notAvailable';
+                                                                return redirect()->back()->with('bookingAvailableStatus', $extraDorms.__("searchDetails.dormsNotAvailable").$generateBookingDate->format("d.m"));
+                                                            }
+
+                                                            // Checking requested beds and dorms sum is greater or equal to inquiry. Cabin inquiry guest is greater than 0
+                                                            if($cabin->tue_inquiry_guest > 0 && $requestBedsSumDorms >= $cabin->tue_inquiry_guest) {
+                                                                $availableStatus[] = 'notAvailable';
+                                                                return redirect()->back()->with('bookingAvailableStatus', __("bookingHistory.bookingLimitReached").$generateBookingDate->format("d.m").__("bookingHistory.bookingLimitReachedOne").($cabin->tue_inquiry_guest - 1).__("bookingHistory.bookingLimitReachedTwo"));
+                                                            }
+                                                        }
+                                                        else {
+                                                            $availableStatus[] = 'notAvailable';
+                                                            return redirect()->back()->with('bookingAvailableStatus', __("searchDetails.alreadyFilledBedsDorms").$generateBookingDate->format("d.m"));
+                                                        }
                                                     }
                                                 }
                                                 else {
-                                                    $availableStatus[] = 'notAvailable';
-                                                    return redirect()->back()->with('bookingAvailableStatus', __("searchDetails.alreadyFilledBedsDorms").$generateBookingDate->format("d.m"));
+                                                    if(($totalBeds < $cabin->tue_beds) || ($totalDorms < $cabin->tue_dorms)) {
+                                                        $tue_beds_diff  = $cabin->tue_beds - $totalBeds;
+                                                        $tue_dorms_diff = $cabin->tue_dorms - $totalDorms;
+
+                                                        // Available beds and dorms on regular tuesday
+                                                        $tue_beds_avail  = ($tue_beds_diff >= 0) ? $tue_beds_diff : 0;
+                                                        $tue_dorms_avail = ($tue_dorms_diff >= 0) ? $tue_dorms_diff : 0;
+
+                                                        if($bedsRequest <= $tue_beds_avail) {
+                                                            $availableStatus[] = 'available';
+                                                        }
+                                                        else {
+                                                            $availableStatus[] = 'notAvailable';
+                                                            return redirect()->back()->with('bookingAvailableStatus', $bedsRequest.__("searchDetails.bedsNotAvailable").$generateBookingDate->format("d.m"));
+                                                        }
+
+                                                        if($dormsRequest <= $tue_dorms_avail) {
+                                                            $availableStatus[] = 'available';
+                                                        }
+                                                        else {
+                                                            $availableStatus[] = 'notAvailable';
+                                                            return redirect()->back()->with('bookingAvailableStatus', $dormsRequest.__("searchDetails.dormsNotAvailable").$generateBookingDate->format("d.m"));
+                                                        }
+
+                                                        // Checking requested beds and dorms sum is greater or equal to inquiry. Cabin inquiry guest is greater than 0
+                                                        if($cabin->tue_inquiry_guest > 0 && $requestBedsSumDorms >= $cabin->tue_inquiry_guest) {
+                                                            $availableStatus[] = 'notAvailable';
+                                                            return redirect()->back()->with('bookingAvailableStatus', __("bookingHistory.bookingLimitReached").$generateBookingDate->format("d.m").__("bookingHistory.bookingLimitReachedOne").($cabin->tue_inquiry_guest - 1).__("bookingHistory.bookingLimitReachedTwo"));
+                                                        }
+                                                    }
+                                                    else {
+                                                        $availableStatus[] = 'notAvailable';
+                                                        return redirect()->back()->with('bookingAvailableStatus', __("searchDetails.alreadyFilledBedsDorms").$generateBookingDate->format("d.m"));
+                                                    }
                                                 }
+
                                             }
                                         }
 
@@ -505,40 +650,86 @@ class BookingHistoryController extends Controller
 
                                                 $dates_array[] = $dates;
 
-                                                if(($totalBeds < $cabin->wed_beds) || ($totalDorms < $cabin->wed_dorms)) {
-                                                    $wed_beds_diff              = $cabin->wed_beds - $totalBeds;
-                                                    $wed_dorms_diff             = $cabin->wed_dorms - $totalDorms;
-
-                                                    /* Available beds and dorms on regular wednesday */
-                                                    $wed_beds_avail             = ($wed_beds_diff >= 0) ? $wed_beds_diff : 0;
-                                                    $wed_dorms_avail            = ($wed_dorms_diff >= 0) ? $wed_dorms_diff : 0;
-
-                                                    if($bedsRequest <= $wed_beds_avail) {
+                                                // Condition to check already booked dates matching with new dates
+                                                if( in_array($dates, $from_to_old_dates) ) {
+                                                    // Condition to check requested beds and dorms is greater or less than already booked beds and dorms.
+                                                    if($bedsRequest <= $bookingBeds && $dormsRequest <= $bookingDorms) {
                                                         $availableStatus[] = 'available';
                                                     }
                                                     else {
-                                                        $availableStatus[] = 'notAvailable';
-                                                        return redirect()->back()->with('bookingAvailableStatus', $bedsRequest.__("searchDetails.bedsNotAvailable").$generateBookingDate->format("d.m"));
-                                                    }
+                                                        if(($totalBeds < $cabin->wed_beds) || ($totalDorms < $cabin->wed_dorms)) {
+                                                            $wed_beds_diff  = $cabin->wed_beds - $totalBeds;
+                                                            $wed_dorms_diff = $cabin->wed_dorms - $totalDorms;
 
-                                                    if($dormsRequest <= $wed_dorms_avail) {
-                                                        $availableStatus[] = 'available';
-                                                    }
-                                                    else {
-                                                        $availableStatus[] = 'notAvailable';
-                                                        return redirect()->back()->with('bookingAvailableStatus', $dormsRequest.__("searchDetails.dormsNotAvailable").$generateBookingDate->format("d.m"));
-                                                    }
+                                                            // Available beds and dorms on regular wednesday
+                                                            $wed_beds_avail  = ($wed_beds_diff >= 0) ? $wed_beds_diff : 0;
+                                                            $wed_dorms_avail = ($wed_dorms_diff >= 0) ? $wed_dorms_diff : 0;
 
-                                                    /* Checking requested beds and dorms sum is greater or equal to inquiry. Cabin inquiry guest is greater than 0 */
-                                                    if($cabin->wed_inquiry_guest > 0 && $requestBedsSumDorms >= $cabin->wed_inquiry_guest) {
-                                                        $availableStatus[] = 'notAvailable';
-                                                        return redirect()->back()->with('bookingAvailableStatus', __("bookingHistory.bookingLimitReached").$generateBookingDate->format("d.m").__("bookingHistory.bookingLimitReachedOne").($cabin->wed_inquiry_guest - 1).__("bookingHistory.bookingLimitReachedTwo"));
+                                                            if($extraBeds <= $wed_beds_avail) {
+                                                                $availableStatus[] = 'available';
+                                                            }
+                                                            else {
+                                                                $availableStatus[] = 'notAvailable';
+                                                                return redirect()->back()->with('bookingAvailableStatus', $extraBeds.__("searchDetails.bedsNotAvailable").$generateBookingDate->format("d.m"));
+                                                            }
+
+                                                            if($extraDorms <= $wed_dorms_avail) {
+                                                                $availableStatus[] = 'available';
+                                                            }
+                                                            else {
+                                                                $availableStatus[] = 'notAvailable';
+                                                                return redirect()->back()->with('bookingAvailableStatus', $extraDorms.__("searchDetails.dormsNotAvailable").$generateBookingDate->format("d.m"));
+                                                            }
+
+                                                            // Checking requested beds and dorms sum is greater or equal to inquiry. Cabin inquiry guest is greater than 0
+                                                            if($cabin->wed_inquiry_guest > 0 && $requestBedsSumDorms >= $cabin->wed_inquiry_guest) {
+                                                                $availableStatus[] = 'notAvailable';
+                                                                return redirect()->back()->with('bookingAvailableStatus', __("bookingHistory.bookingLimitReached").$generateBookingDate->format("d.m").__("bookingHistory.bookingLimitReachedOne").($cabin->wed_inquiry_guest - 1).__("bookingHistory.bookingLimitReachedTwo"));
+                                                            }
+                                                        }
+                                                        else {
+                                                            $availableStatus[] = 'notAvailable';
+                                                            return redirect()->back()->with('bookingAvailableStatus', __("searchDetails.alreadyFilledBedsDorms").$generateBookingDate->format("d.m"));
+                                                        }
                                                     }
                                                 }
                                                 else {
-                                                    $availableStatus[] = 'notAvailable';
-                                                    return redirect()->back()->with('bookingAvailableStatus', __("searchDetails.alreadyFilledBedsDorms").$generateBookingDate->format("d.m"));
+                                                    if(($totalBeds < $cabin->wed_beds) || ($totalDorms < $cabin->wed_dorms)) {
+                                                        $wed_beds_diff  = $cabin->wed_beds - $totalBeds;
+                                                        $wed_dorms_diff = $cabin->wed_dorms - $totalDorms;
+
+                                                        // Available beds and dorms on regular wednesday
+                                                        $wed_beds_avail  = ($wed_beds_diff >= 0) ? $wed_beds_diff : 0;
+                                                        $wed_dorms_avail = ($wed_dorms_diff >= 0) ? $wed_dorms_diff : 0;
+
+                                                        if($bedsRequest <= $wed_beds_avail) {
+                                                            $availableStatus[] = 'available';
+                                                        }
+                                                        else {
+                                                            $availableStatus[] = 'notAvailable';
+                                                            return redirect()->back()->with('bookingAvailableStatus', $bedsRequest.__("searchDetails.bedsNotAvailable").$generateBookingDate->format("d.m"));
+                                                        }
+
+                                                        if($dormsRequest <= $wed_dorms_avail) {
+                                                            $availableStatus[] = 'available';
+                                                        }
+                                                        else {
+                                                            $availableStatus[] = 'notAvailable';
+                                                            return redirect()->back()->with('bookingAvailableStatus', $dormsRequest.__("searchDetails.dormsNotAvailable").$generateBookingDate->format("d.m"));
+                                                        }
+
+                                                        // Checking requested beds and dorms sum is greater or equal to inquiry. Cabin inquiry guest is greater than 0
+                                                        if($cabin->wed_inquiry_guest > 0 && $requestBedsSumDorms >= $cabin->wed_inquiry_guest) {
+                                                            $availableStatus[] = 'notAvailable';
+                                                            return redirect()->back()->with('bookingAvailableStatus', __("bookingHistory.bookingLimitReached").$generateBookingDate->format("d.m").__("bookingHistory.bookingLimitReachedOne").($cabin->wed_inquiry_guest - 1).__("bookingHistory.bookingLimitReachedTwo"));
+                                                        }
+                                                    }
+                                                    else {
+                                                        $availableStatus[] = 'notAvailable';
+                                                        return redirect()->back()->with('bookingAvailableStatus', __("searchDetails.alreadyFilledBedsDorms").$generateBookingDate->format("d.m"));
+                                                    }
                                                 }
+
                                             }
                                         }
 
@@ -548,40 +739,86 @@ class BookingHistoryController extends Controller
 
                                                 $dates_array[] = $dates;
 
-                                                if(($totalBeds < $cabin->thu_beds) || ($totalDorms < $cabin->thu_dorms)) {
-                                                    $thu_beds_diff              = $cabin->thu_beds - $totalBeds;
-                                                    $thu_dorms_diff             = $cabin->thu_dorms - $totalDorms;
-
-                                                    /* Available beds and dorms on regular thursday */
-                                                    $thu_beds_avail             = ($thu_beds_diff >= 0) ? $thu_beds_diff : 0;
-                                                    $thu_dorms_avail            = ($thu_dorms_diff >= 0) ? $thu_dorms_diff : 0;
-
-                                                    if($bedsRequest <= $thu_beds_avail) {
+                                                // Condition to check already booked dates matching with new dates
+                                                if( in_array($dates, $from_to_old_dates) ) {
+                                                    // Condition to check requested beds and dorms is greater or less than already booked beds and dorms.
+                                                    if($bedsRequest <= $bookingBeds && $dormsRequest <= $bookingDorms) {
                                                         $availableStatus[] = 'available';
                                                     }
                                                     else {
-                                                        $availableStatus[] = 'notAvailable';
-                                                        return redirect()->back()->with('bookingAvailableStatus', $bedsRequest.__("searchDetails.bedsNotAvailable").$generateBookingDate->format("d.m"));
-                                                    }
+                                                        if(($totalBeds < $cabin->thu_beds) || ($totalDorms < $cabin->thu_dorms)) {
+                                                            $thu_beds_diff  = $cabin->thu_beds - $totalBeds;
+                                                            $thu_dorms_diff = $cabin->thu_dorms - $totalDorms;
 
-                                                    if($dormsRequest <= $thu_dorms_avail) {
-                                                        $availableStatus[] = 'available';
-                                                    }
-                                                    else {
-                                                        $availableStatus[] = 'notAvailable';
-                                                        return redirect()->back()->with('bookingAvailableStatus', $dormsRequest.__("searchDetails.dormsNotAvailable").$generateBookingDate->format("d.m"));
-                                                    }
+                                                            // Available beds and dorms on regular thursday
+                                                            $thu_beds_avail  = ($thu_beds_diff >= 0) ? $thu_beds_diff : 0;
+                                                            $thu_dorms_avail = ($thu_dorms_diff >= 0) ? $thu_dorms_diff : 0;
 
-                                                    /* Checking requested beds and dorms sum is greater or equal to inquiry. Cabin inquiry guest is greater than 0 */
-                                                    if($cabin->thu_inquiry_guest > 0 && $requestBedsSumDorms >= $cabin->thu_inquiry_guest) {
-                                                        $availableStatus[] = 'notAvailable';
-                                                        return redirect()->back()->with('bookingAvailableStatus', __("bookingHistory.bookingLimitReached").$generateBookingDate->format("d.m").__("bookingHistory.bookingLimitReachedOne").($cabin->thu_inquiry_guest - 1).__("bookingHistory.bookingLimitReachedTwo"));
+                                                            if($extraBeds <= $thu_beds_avail) {
+                                                                $availableStatus[] = 'available';
+                                                            }
+                                                            else {
+                                                                $availableStatus[] = 'notAvailable';
+                                                                return redirect()->back()->with('bookingAvailableStatus', $extraBeds.__("searchDetails.bedsNotAvailable").$generateBookingDate->format("d.m"));
+                                                            }
+
+                                                            if($extraDorms <= $thu_dorms_avail) {
+                                                                $availableStatus[] = 'available';
+                                                            }
+                                                            else {
+                                                                $availableStatus[] = 'notAvailable';
+                                                                return redirect()->back()->with('bookingAvailableStatus', $extraDorms.__("searchDetails.dormsNotAvailable").$generateBookingDate->format("d.m"));
+                                                            }
+
+                                                            // Checking requested beds and dorms sum is greater or equal to inquiry. Cabin inquiry guest is greater than 0
+                                                            if($cabin->thu_inquiry_guest > 0 && $requestBedsSumDorms >= $cabin->thu_inquiry_guest) {
+                                                                $availableStatus[] = 'notAvailable';
+                                                                return redirect()->back()->with('bookingAvailableStatus', __("bookingHistory.bookingLimitReached").$generateBookingDate->format("d.m").__("bookingHistory.bookingLimitReachedOne").($cabin->thu_inquiry_guest - 1).__("bookingHistory.bookingLimitReachedTwo"));
+                                                            }
+                                                        }
+                                                        else {
+                                                            $availableStatus[] = 'notAvailable';
+                                                            return redirect()->back()->with('bookingAvailableStatus', __("searchDetails.alreadyFilledBedsDorms").$generateBookingDate->format("d.m"));
+                                                        }
                                                     }
                                                 }
                                                 else {
-                                                    $availableStatus[] = 'notAvailable';
-                                                    return redirect()->back()->with('bookingAvailableStatus', __("searchDetails.alreadyFilledBedsDorms").$generateBookingDate->format("d.m"));
+                                                    if(($totalBeds < $cabin->thu_beds) || ($totalDorms < $cabin->thu_dorms)) {
+                                                        $thu_beds_diff  = $cabin->thu_beds - $totalBeds;
+                                                        $thu_dorms_diff = $cabin->thu_dorms - $totalDorms;
+
+                                                        // Available beds and dorms on regular thursday
+                                                        $thu_beds_avail  = ($thu_beds_diff >= 0) ? $thu_beds_diff : 0;
+                                                        $thu_dorms_avail = ($thu_dorms_diff >= 0) ? $thu_dorms_diff : 0;
+
+                                                        if($bedsRequest <= $thu_beds_avail) {
+                                                            $availableStatus[] = 'available';
+                                                        }
+                                                        else {
+                                                            $availableStatus[] = 'notAvailable';
+                                                            return redirect()->back()->with('bookingAvailableStatus', $bedsRequest.__("searchDetails.bedsNotAvailable").$generateBookingDate->format("d.m"));
+                                                        }
+
+                                                        if($dormsRequest <= $thu_dorms_avail) {
+                                                            $availableStatus[] = 'available';
+                                                        }
+                                                        else {
+                                                            $availableStatus[] = 'notAvailable';
+                                                            return redirect()->back()->with('bookingAvailableStatus', $dormsRequest.__("searchDetails.dormsNotAvailable").$generateBookingDate->format("d.m"));
+                                                        }
+
+                                                        // Checking requested beds and dorms sum is greater or equal to inquiry. Cabin inquiry guest is greater than 0
+                                                        if($cabin->thu_inquiry_guest > 0 && $requestBedsSumDorms >= $cabin->thu_inquiry_guest) {
+                                                            $availableStatus[] = 'notAvailable';
+                                                            return redirect()->back()->with('bookingAvailableStatus', __("bookingHistory.bookingLimitReached").$generateBookingDate->format("d.m").__("bookingHistory.bookingLimitReachedOne").($cabin->thu_inquiry_guest - 1).__("bookingHistory.bookingLimitReachedTwo"));
+                                                        }
+                                                    }
+                                                    else {
+                                                        $availableStatus[] = 'notAvailable';
+                                                        return redirect()->back()->with('bookingAvailableStatus', __("searchDetails.alreadyFilledBedsDorms").$generateBookingDate->format("d.m"));
+                                                    }
                                                 }
+
                                             }
                                         }
 
@@ -591,40 +828,86 @@ class BookingHistoryController extends Controller
 
                                                 $dates_array[] = $dates;
 
-                                                if(($totalBeds < $cabin->fri_beds) || ($totalDorms < $cabin->fri_dorms)) {
-                                                    $fri_beds_diff         = $cabin->fri_beds - $totalBeds;
-                                                    $fri_dorms_diff        = $cabin->fri_dorms - $totalDorms;
-
-                                                    /* Available beds and dorms on regular friday */
-                                                    $fri_beds_avail        = ($fri_beds_diff >= 0) ? $fri_beds_diff : 0;
-                                                    $fri_dorms_avail       = ($fri_dorms_diff >= 0) ? $fri_dorms_diff : 0;
-
-                                                    if($bedsRequest <= $fri_beds_avail) {
+                                                // Condition to check already booked dates matching with new dates
+                                                if( in_array($dates, $from_to_old_dates) ) {
+                                                    // Condition to check requested beds and dorms is greater or less than already booked beds and dorms.
+                                                    if($bedsRequest <= $bookingBeds && $dormsRequest <= $bookingDorms) {
                                                         $availableStatus[] = 'available';
                                                     }
                                                     else {
-                                                        $availableStatus[] = 'notAvailable';
-                                                        return redirect()->back()->with('bookingAvailableStatus', $bedsRequest.__("searchDetails.bedsNotAvailable").$generateBookingDate->format("d.m"));
-                                                    }
+                                                        if(($totalBeds < $cabin->fri_beds) || ($totalDorms < $cabin->fri_dorms)) {
+                                                            $fri_beds_diff  = $cabin->fri_beds - $totalBeds;
+                                                            $fri_dorms_diff = $cabin->fri_dorms - $totalDorms;
 
-                                                    if($dormsRequest <= $fri_dorms_avail) {
-                                                        $availableStatus[] = 'available';
-                                                    }
-                                                    else {
-                                                        $availableStatus[] = 'notAvailable';
-                                                        return redirect()->back()->with('bookingAvailableStatus', $dormsRequest.__("searchDetails.dormsNotAvailable").$generateBookingDate->format("d.m"));
-                                                    }
+                                                            // Available beds and dorms on regular friday
+                                                            $fri_beds_avail  = ($fri_beds_diff >= 0) ? $fri_beds_diff : 0;
+                                                            $fri_dorms_avail = ($fri_dorms_diff >= 0) ? $fri_dorms_diff : 0;
 
-                                                    /* Checking requested beds and dorms sum is greater or equal to inquiry. Cabin inquiry guest is greater than 0 */
-                                                    if($cabin->fri_inquiry_guest > 0 && $requestBedsSumDorms >= $cabin->fri_inquiry_guest) {
-                                                        $availableStatus[] = 'notAvailable';
-                                                        return redirect()->back()->with('bookingAvailableStatus',  __("bookingHistory.bookingLimitReached").$generateBookingDate->format("d.m"). __("bookingHistory.bookingLimitReachedOne").($cabin->fri_inquiry_guest - 1). __("bookingHistory.bookingLimitReachedTwo"));
+                                                            if($extraBeds <= $fri_beds_avail) {
+                                                                $availableStatus[] = 'available';
+                                                            }
+                                                            else {
+                                                                $availableStatus[] = 'notAvailable';
+                                                                return redirect()->back()->with('bookingAvailableStatus', $extraBeds.__("searchDetails.bedsNotAvailable").$generateBookingDate->format("d.m"));
+                                                            }
+
+                                                            if($extraDorms <= $fri_dorms_avail) {
+                                                                $availableStatus[] = 'available';
+                                                            }
+                                                            else {
+                                                                $availableStatus[] = 'notAvailable';
+                                                                return redirect()->back()->with('bookingAvailableStatus', $extraDorms.__("searchDetails.dormsNotAvailable").$generateBookingDate->format("d.m"));
+                                                            }
+
+                                                            // Checking requested beds and dorms sum is greater or equal to inquiry. Cabin inquiry guest is greater than 0
+                                                            if($cabin->fri_inquiry_guest > 0 && $requestBedsSumDorms >= $cabin->fri_inquiry_guest) {
+                                                                $availableStatus[] = 'notAvailable';
+                                                                return redirect()->back()->with('bookingAvailableStatus',  __("bookingHistory.bookingLimitReached").$generateBookingDate->format("d.m"). __("bookingHistory.bookingLimitReachedOne").($cabin->fri_inquiry_guest - 1). __("bookingHistory.bookingLimitReachedTwo"));
+                                                            }
+                                                        }
+                                                        else {
+                                                            $availableStatus[] = 'notAvailable';
+                                                            return redirect()->back()->with('bookingAvailableStatus', __("searchDetails.alreadyFilledBedsDorms").$generateBookingDate->format("d.m"));
+                                                        }
                                                     }
                                                 }
                                                 else {
-                                                    $availableStatus[] = 'notAvailable';
-                                                    return redirect()->back()->with('bookingAvailableStatus', __("searchDetails.alreadyFilledBedsDorms").$generateBookingDate->format("d.m"));
+                                                    if(($totalBeds < $cabin->fri_beds) || ($totalDorms < $cabin->fri_dorms)) {
+                                                        $fri_beds_diff  = $cabin->fri_beds - $totalBeds;
+                                                        $fri_dorms_diff = $cabin->fri_dorms - $totalDorms;
+
+                                                        // Available beds and dorms on regular friday
+                                                        $fri_beds_avail  = ($fri_beds_diff >= 0) ? $fri_beds_diff : 0;
+                                                        $fri_dorms_avail = ($fri_dorms_diff >= 0) ? $fri_dorms_diff : 0;
+
+                                                        if($bedsRequest <= $fri_beds_avail) {
+                                                            $availableStatus[] = 'available';
+                                                        }
+                                                        else {
+                                                            $availableStatus[] = 'notAvailable';
+                                                            return redirect()->back()->with('bookingAvailableStatus', $bedsRequest.__("searchDetails.bedsNotAvailable").$generateBookingDate->format("d.m"));
+                                                        }
+
+                                                        if($dormsRequest <= $fri_dorms_avail) {
+                                                            $availableStatus[] = 'available';
+                                                        }
+                                                        else {
+                                                            $availableStatus[] = 'notAvailable';
+                                                            return redirect()->back()->with('bookingAvailableStatus', $dormsRequest.__("searchDetails.dormsNotAvailable").$generateBookingDate->format("d.m"));
+                                                        }
+
+                                                        // Checking requested beds and dorms sum is greater or equal to inquiry. Cabin inquiry guest is greater than 0
+                                                        if($cabin->fri_inquiry_guest > 0 && $requestBedsSumDorms >= $cabin->fri_inquiry_guest) {
+                                                            $availableStatus[] = 'notAvailable';
+                                                            return redirect()->back()->with('bookingAvailableStatus',  __("bookingHistory.bookingLimitReached").$generateBookingDate->format("d.m"). __("bookingHistory.bookingLimitReachedOne").($cabin->fri_inquiry_guest - 1). __("bookingHistory.bookingLimitReachedTwo"));
+                                                        }
+                                                    }
+                                                    else {
+                                                        $availableStatus[] = 'notAvailable';
+                                                        return redirect()->back()->with('bookingAvailableStatus', __("searchDetails.alreadyFilledBedsDorms").$generateBookingDate->format("d.m"));
+                                                    }
                                                 }
+
                                             }
                                         }
 
@@ -634,40 +917,86 @@ class BookingHistoryController extends Controller
 
                                                 $dates_array[] = $dates;
 
-                                                if(($totalBeds < $cabin->sat_beds) || ($totalDorms < $cabin->sat_dorms)) {
-                                                    $sat_beds_diff         = $cabin->sat_beds - $totalBeds;
-                                                    $sat_dorms_diff        = $cabin->sat_dorms - $totalDorms;
-
-                                                    /* Available beds and dorms on regular saturday */
-                                                    $sat_beds_avail        = ($sat_beds_diff >= 0) ? $sat_beds_diff : 0;
-                                                    $sat_dorms_avail       = ($sat_dorms_diff >= 0) ? $sat_dorms_diff : 0;
-
-                                                    if($bedsRequest <= $sat_beds_avail) {
+                                                // Condition to check already booked dates matching with new dates
+                                                if( in_array($dates, $from_to_old_dates) ) {
+                                                    // Condition to check requested beds and dorms is greater or less than already booked beds and dorms.
+                                                    if($bedsRequest <= $bookingBeds && $dormsRequest <= $bookingDorms) {
                                                         $availableStatus[] = 'available';
                                                     }
                                                     else {
-                                                        $availableStatus[] = 'notAvailable';
-                                                        return redirect()->back()->with('bookingAvailableStatus', $bedsRequest.__("searchDetails.bedsNotAvailable").$generateBookingDate->format("d.m"));
-                                                    }
+                                                        if(($totalBeds < $cabin->sat_beds) || ($totalDorms < $cabin->sat_dorms)) {
+                                                            $sat_beds_diff  = $cabin->sat_beds - $totalBeds;
+                                                            $sat_dorms_diff = $cabin->sat_dorms - $totalDorms;
 
-                                                    if($dormsRequest <= $sat_dorms_avail) {
-                                                        $availableStatus[] = 'available';
-                                                    }
-                                                    else {
-                                                        $availableStatus[] = 'notAvailable';
-                                                        return redirect()->back()->with('bookingAvailableStatus', $dormsRequest.__("searchDetails.dormsNotAvailable").$generateBookingDate->format("d.m"));
-                                                    }
+                                                            // Available beds and dorms on regular saturday
+                                                            $sat_beds_avail  = ($sat_beds_diff >= 0) ? $sat_beds_diff : 0;
+                                                            $sat_dorms_avail = ($sat_dorms_diff >= 0) ? $sat_dorms_diff : 0;
 
-                                                    /* Checking requested beds and dorms sum is greater or equal to inquiry. Cabin inquiry guest is greater than 0 */
-                                                    if($cabin->sat_inquiry_guest > 0 && $requestBedsSumDorms >= $cabin->sat_inquiry_guest) {
-                                                        $availableStatus[] = 'notAvailable';
-                                                        return redirect()->back()->with('bookingAvailableStatus',  __("bookingHistory.bookingLimitReached").$generateBookingDate->format("d.m"). __("bookingHistory.bookingLimitReachedOne").($cabin->sat_inquiry_guest - 1). __("bookingHistory.bookingLimitReachedTwo"));
+                                                            if($extraBeds <= $sat_beds_avail) {
+                                                                $availableStatus[] = 'available';
+                                                            }
+                                                            else {
+                                                                $availableStatus[] = 'notAvailable';
+                                                                return redirect()->back()->with('bookingAvailableStatus', $extraBeds.__("searchDetails.bedsNotAvailable").$generateBookingDate->format("d.m"));
+                                                            }
+
+                                                            if($extraDorms <= $sat_dorms_avail) {
+                                                                $availableStatus[] = 'available';
+                                                            }
+                                                            else {
+                                                                $availableStatus[] = 'notAvailable';
+                                                                return redirect()->back()->with('bookingAvailableStatus', $extraDorms.__("searchDetails.dormsNotAvailable").$generateBookingDate->format("d.m"));
+                                                            }
+
+                                                            // Checking requested beds and dorms sum is greater or equal to inquiry. Cabin inquiry guest is greater than 0
+                                                            if($cabin->sat_inquiry_guest > 0 && $requestBedsSumDorms >= $cabin->sat_inquiry_guest) {
+                                                                $availableStatus[] = 'notAvailable';
+                                                                return redirect()->back()->with('bookingAvailableStatus',  __("bookingHistory.bookingLimitReached").$generateBookingDate->format("d.m"). __("bookingHistory.bookingLimitReachedOne").($cabin->sat_inquiry_guest - 1). __("bookingHistory.bookingLimitReachedTwo"));
+                                                            }
+                                                        }
+                                                        else {
+                                                            $availableStatus[] = 'notAvailable';
+                                                            return redirect()->back()->with('bookingAvailableStatus', __("searchDetails.alreadyFilledBedsDorms").$generateBookingDate->format("d.m"));
+                                                        }
                                                     }
                                                 }
                                                 else {
-                                                    $availableStatus[] = 'notAvailable';
-                                                    return redirect()->back()->with('bookingAvailableStatus', __("searchDetails.alreadyFilledBedsDorms").$generateBookingDate->format("d.m"));
+                                                    if(($totalBeds < $cabin->sat_beds) || ($totalDorms < $cabin->sat_dorms)) {
+                                                        $sat_beds_diff  = $cabin->sat_beds - $totalBeds;
+                                                        $sat_dorms_diff = $cabin->sat_dorms - $totalDorms;
+
+                                                        // Available beds and dorms on regular saturday
+                                                        $sat_beds_avail  = ($sat_beds_diff >= 0) ? $sat_beds_diff : 0;
+                                                        $sat_dorms_avail = ($sat_dorms_diff >= 0) ? $sat_dorms_diff : 0;
+
+                                                        if($bedsRequest <= $sat_beds_avail) {
+                                                            $availableStatus[] = 'available';
+                                                        }
+                                                        else {
+                                                            $availableStatus[] = 'notAvailable';
+                                                            return redirect()->back()->with('bookingAvailableStatus', $bedsRequest.__("searchDetails.bedsNotAvailable").$generateBookingDate->format("d.m"));
+                                                        }
+
+                                                        if($dormsRequest <= $sat_dorms_avail) {
+                                                            $availableStatus[] = 'available';
+                                                        }
+                                                        else {
+                                                            $availableStatus[] = 'notAvailable';
+                                                            return redirect()->back()->with('bookingAvailableStatus', $dormsRequest.__("searchDetails.dormsNotAvailable").$generateBookingDate->format("d.m"));
+                                                        }
+
+                                                        // Checking requested beds and dorms sum is greater or equal to inquiry. Cabin inquiry guest is greater than 0
+                                                        if($cabin->sat_inquiry_guest > 0 && $requestBedsSumDorms >= $cabin->sat_inquiry_guest) {
+                                                            $availableStatus[] = 'notAvailable';
+                                                            return redirect()->back()->with('bookingAvailableStatus',  __("bookingHistory.bookingLimitReached").$generateBookingDate->format("d.m"). __("bookingHistory.bookingLimitReachedOne").($cabin->sat_inquiry_guest - 1). __("bookingHistory.bookingLimitReachedTwo"));
+                                                        }
+                                                    }
+                                                    else {
+                                                        $availableStatus[] = 'notAvailable';
+                                                        return redirect()->back()->with('bookingAvailableStatus', __("searchDetails.alreadyFilledBedsDorms").$generateBookingDate->format("d.m"));
+                                                    }
                                                 }
+
                                             }
                                         }
 
@@ -677,40 +1006,86 @@ class BookingHistoryController extends Controller
 
                                                 $dates_array[] = $dates;
 
-                                                if(($totalBeds < $cabin->sun_beds) || ($totalDorms < $cabin->sun_dorms)) {
-                                                    $sun_beds_diff         = $cabin->sun_beds - $totalBeds;
-                                                    $sun_dorms_diff        = $cabin->sun_dorms - $totalDorms;
-
-                                                    /* Available beds and dorms on regular sunday */
-                                                    $sun_beds_avail        = ($sun_beds_diff >= 0) ? $sun_beds_diff : 0;
-                                                    $sun_dorms_avail       = ($sun_dorms_diff >= 0) ? $sun_dorms_diff : 0;
-
-                                                    if($bedsRequest <= $sun_beds_avail) {
+                                                // Condition to check already booked dates matching with new dates
+                                                if( in_array($dates, $from_to_old_dates) ) {
+                                                    // Condition to check requested beds and dorms is greater or less than already booked beds and dorms.
+                                                    if($bedsRequest <= $bookingBeds && $dormsRequest <= $bookingDorms) {
                                                         $availableStatus[] = 'available';
                                                     }
                                                     else {
-                                                        $availableStatus[] = 'notAvailable';
-                                                        return redirect()->back()->with('bookingAvailableStatus', $bedsRequest.__("searchDetails.bedsNotAvailable").$generateBookingDate->format("d.m"));
-                                                    }
+                                                        if(($totalBeds < $cabin->sun_beds) || ($totalDorms < $cabin->sun_dorms)) {
+                                                            $sun_beds_diff  = $cabin->sun_beds - $totalBeds;
+                                                            $sun_dorms_diff = $cabin->sun_dorms - $totalDorms;
 
-                                                    if($dormsRequest <= $sun_dorms_avail) {
-                                                        $availableStatus[] = 'available';
-                                                    }
-                                                    else {
-                                                        $availableStatus[] = 'notAvailable';
-                                                        return redirect()->back()->with('bookingAvailableStatus', $dormsRequest.__("searchDetails.dormsNotAvailable").$generateBookingDate->format("d.m"));
-                                                    }
+                                                            // Available beds and dorms on regular sunday
+                                                            $sun_beds_avail  = ($sun_beds_diff >= 0) ? $sun_beds_diff : 0;
+                                                            $sun_dorms_avail = ($sun_dorms_diff >= 0) ? $sun_dorms_diff : 0;
 
-                                                    /* Checking requested beds and dorms sum is greater or equal to inquiry. Cabin inquiry guest is greater than 0 */
-                                                    if($cabin->sun_inquiry_guest > 0 && $requestBedsSumDorms >= $cabin->sun_inquiry_guest) {
-                                                        $availableStatus[] = 'notAvailable';
-                                                        return redirect()->back()->with('bookingAvailableStatus',  __("bookingHistory.bookingLimitReached").$generateBookingDate->format("d.m"). __("bookingHistory.bookingLimitReachedOne").($cabin->sun_inquiry_guest - 1). __("bookingHistory.bookingLimitReachedTwo"));
+                                                            if($extraBeds <= $sun_beds_avail) {
+                                                                $availableStatus[] = 'available';
+                                                            }
+                                                            else {
+                                                                $availableStatus[] = 'notAvailable';
+                                                                return redirect()->back()->with('bookingAvailableStatus', $extraBeds.__("searchDetails.bedsNotAvailable").$generateBookingDate->format("d.m"));
+                                                            }
+
+                                                            if($extraDorms <= $sun_dorms_avail) {
+                                                                $availableStatus[] = 'available';
+                                                            }
+                                                            else {
+                                                                $availableStatus[] = 'notAvailable';
+                                                                return redirect()->back()->with('bookingAvailableStatus', $extraDorms.__("searchDetails.dormsNotAvailable").$generateBookingDate->format("d.m"));
+                                                            }
+
+                                                            // Checking requested beds and dorms sum is greater or equal to inquiry. Cabin inquiry guest is greater than 0
+                                                            if($cabin->sun_inquiry_guest > 0 && $requestBedsSumDorms >= $cabin->sun_inquiry_guest) {
+                                                                $availableStatus[] = 'notAvailable';
+                                                                return redirect()->back()->with('bookingAvailableStatus',  __("bookingHistory.bookingLimitReached").$generateBookingDate->format("d.m"). __("bookingHistory.bookingLimitReachedOne").($cabin->sun_inquiry_guest - 1). __("bookingHistory.bookingLimitReachedTwo"));
+                                                            }
+                                                        }
+                                                        else {
+                                                            $availableStatus[] = 'notAvailable';
+                                                            return redirect()->back()->with('bookingAvailableStatus',  __("searchDetails.alreadyFilledBedsDorms").$generateBookingDate->format("d.m"));
+                                                        }
                                                     }
                                                 }
                                                 else {
-                                                    $availableStatus[] = 'notAvailable';
-                                                    return redirect()->back()->with('bookingAvailableStatus',  __("searchDetails.alreadyFilledBedsDorms").$generateBookingDate->format("d.m"));
+                                                    if(($totalBeds < $cabin->sun_beds) || ($totalDorms < $cabin->sun_dorms)) {
+                                                        $sun_beds_diff  = $cabin->sun_beds - $totalBeds;
+                                                        $sun_dorms_diff = $cabin->sun_dorms - $totalDorms;
+
+                                                        // Available beds and dorms on regular sunday
+                                                        $sun_beds_avail  = ($sun_beds_diff >= 0) ? $sun_beds_diff : 0;
+                                                        $sun_dorms_avail = ($sun_dorms_diff >= 0) ? $sun_dorms_diff : 0;
+
+                                                        if($bedsRequest <= $sun_beds_avail) {
+                                                            $availableStatus[] = 'available';
+                                                        }
+                                                        else {
+                                                            $availableStatus[] = 'notAvailable';
+                                                            return redirect()->back()->with('bookingAvailableStatus', $bedsRequest.__("searchDetails.bedsNotAvailable").$generateBookingDate->format("d.m"));
+                                                        }
+
+                                                        if($dormsRequest <= $sun_dorms_avail) {
+                                                            $availableStatus[] = 'available';
+                                                        }
+                                                        else {
+                                                            $availableStatus[] = 'notAvailable';
+                                                            return redirect()->back()->with('bookingAvailableStatus', $dormsRequest.__("searchDetails.dormsNotAvailable").$generateBookingDate->format("d.m"));
+                                                        }
+
+                                                        // Checking requested beds and dorms sum is greater or equal to inquiry. Cabin inquiry guest is greater than 0
+                                                        if($cabin->sun_inquiry_guest > 0 && $requestBedsSumDorms >= $cabin->sun_inquiry_guest) {
+                                                            $availableStatus[] = 'notAvailable';
+                                                            return redirect()->back()->with('bookingAvailableStatus',  __("bookingHistory.bookingLimitReached").$generateBookingDate->format("d.m"). __("bookingHistory.bookingLimitReachedOne").($cabin->sun_inquiry_guest - 1). __("bookingHistory.bookingLimitReachedTwo"));
+                                                        }
+                                                    }
+                                                    else {
+                                                        $availableStatus[] = 'notAvailable';
+                                                        return redirect()->back()->with('bookingAvailableStatus',  __("searchDetails.alreadyFilledBedsDorms").$generateBookingDate->format("d.m"));
+                                                    }
                                                 }
+
                                             }
                                         }
                                     }
@@ -725,9 +1100,6 @@ class BookingHistoryController extends Controller
                                                 $availableStatus[] = 'available';
                                             }
                                             else {
-                                                $extraBeds  = $bedsRequest - $bookingBeds;
-                                                $extraDorms = $dormsRequest - $bookingDorms;
-
                                                 if(($totalBeds < $cabin->beds) || ($totalDorms < $cabin->dormitory)) {
 
                                                     $normal_beds_diff              = $cabin->beds - $totalBeds;
@@ -802,6 +1174,7 @@ class BookingHistoryController extends Controller
                                                 return redirect()->back()->with('bookingAvailableStatus',  __("searchDetails.alreadyFilledBedsDorms").$generateBookingDate->format("d.m"));
                                             }
                                         }
+
                                     }
                                     /*Availability checking of beds dorms end*/
                                 }
@@ -813,7 +1186,10 @@ class BookingHistoryController extends Controller
                                 }
                                 else {
                                     /*Availability checking of sleeps begin*/
-                                    $totalSleeps = ($sleeps + $msSleeps);
+                                    $totalSleeps = $sleeps + $msSleeps;
+
+                                    /* Extra how many sleeps requested */
+                                    $extraSleeps = $sleepsRequest - $bookingSleeps;
 
                                     /* Calculating sleeps for not regular */
                                     if($cabin->not_regular === 1) {
@@ -830,29 +1206,64 @@ class BookingHistoryController extends Controller
 
                                             $dates_array[] = $dates;
 
-                                            if(($totalSleeps < $cabin->not_regular_sleeps)) {
-                                                $not_regular_sleeps_diff       = $cabin->not_regular_sleeps - $totalSleeps;
-
-                                                /* Available sleeps on not regular */
-                                                $not_regular_sleeps_avail      = ($not_regular_sleeps_diff >= 0) ? $not_regular_sleeps_diff : 0;
-
-                                                if($sleepsRequest <= $not_regular_sleeps_avail) {
+                                            // Condition to check already booked dates matching with new dates
+                                            if( in_array($dates, $from_to_old_dates) ) {
+                                                // Condition to check request sleeps is greater or less than already booked sleeps.
+                                                if($sleepsRequest <= $bookingSleeps) {
                                                     $availableStatus[] = 'available';
                                                 }
                                                 else {
-                                                    $availableStatus[] = 'notAvailable';
-                                                    return redirect()->back()->with('bookingAvailableStatus', $sleepsRequest.__("searchDetails.sleepsNotAvailable").$generateBookingDate->format("d.m"));
-                                                }
+                                                    if(($totalSleeps < $cabin->not_regular_sleeps)) {
+                                                        $not_regular_sleeps_diff       = $cabin->not_regular_sleeps - $totalSleeps;
 
-                                                /* Checking requested sleeps is greater or equal to inquiry. Cabin inquiry guest is greater than 0 */
-                                                if($cabin->not_regular_inquiry_guest > 0 && $sleepsRequest >= $cabin->not_regular_inquiry_guest) {
-                                                    $availableStatus[] = 'notAvailable';
-                                                    return redirect()->back()->with('bookingAvailableStatus', __("bookingHistory.bookingLimitReached").$generateBookingDate->format("d.m").__("bookingHistory.bookingLimitReachedOne").($cabin->not_regular_inquiry_guest - 1).__("bookingHistory.bookingLimitReachedTwo"));
+                                                        // Available sleeps on not regular
+                                                        $not_regular_sleeps_avail      = ($not_regular_sleeps_diff >= 0) ? $not_regular_sleeps_diff : 0;
+
+                                                        if($extraSleeps <= $not_regular_sleeps_avail) {
+                                                            $availableStatus[] = 'available';
+                                                        }
+                                                        else {
+                                                            $availableStatus[] = 'notAvailable';
+                                                            return redirect()->back()->with('bookingAvailableStatus', $extraSleeps.__("searchDetails.sleepsNotAvailable").$generateBookingDate->format("d.m"));
+                                                        }
+
+                                                        // Checking requested sleeps is greater or equal to inquiry. Cabin inquiry guest is greater than 0
+                                                        if($cabin->not_regular_inquiry_guest > 0 && $sleepsRequest >= $cabin->not_regular_inquiry_guest) {
+                                                            $availableStatus[] = 'notAvailable';
+                                                            return redirect()->back()->with('bookingAvailableStatus', __("bookingHistory.bookingLimitReached").$generateBookingDate->format("d.m").__("bookingHistory.bookingLimitReachedOne").($cabin->not_regular_inquiry_guest - 1).__("bookingHistory.bookingLimitReachedTwo"));
+                                                        }
+                                                    }
+                                                    else {
+                                                        $availableStatus[] = 'notAvailable';
+                                                        return redirect()->back()->with('bookingAvailableStatus', __("searchDetails.alreadyFilledSleeps").$generateBookingDate->format("d.m"));
+                                                    }
                                                 }
                                             }
                                             else {
-                                                $availableStatus[] = 'notAvailable';
-                                                return redirect()->back()->with('bookingAvailableStatus', __("searchDetails.alreadyFilledSleeps").$generateBookingDate->format("d.m"));
+                                                if(($totalSleeps < $cabin->not_regular_sleeps)) {
+                                                    $not_regular_sleeps_diff       = $cabin->not_regular_sleeps - $totalSleeps;
+
+                                                    // Available sleeps on not regular
+                                                    $not_regular_sleeps_avail      = ($not_regular_sleeps_diff >= 0) ? $not_regular_sleeps_diff : 0;
+
+                                                    if($sleepsRequest <= $not_regular_sleeps_avail) {
+                                                        $availableStatus[] = 'available';
+                                                    }
+                                                    else {
+                                                        $availableStatus[] = 'notAvailable';
+                                                        return redirect()->back()->with('bookingAvailableStatus', $sleepsRequest.__("searchDetails.sleepsNotAvailable").$generateBookingDate->format("d.m"));
+                                                    }
+
+                                                    // Checking requested sleeps is greater or equal to inquiry. Cabin inquiry guest is greater than 0
+                                                    if($cabin->not_regular_inquiry_guest > 0 && $sleepsRequest >= $cabin->not_regular_inquiry_guest) {
+                                                        $availableStatus[] = 'notAvailable';
+                                                        return redirect()->back()->with('bookingAvailableStatus', __("bookingHistory.bookingLimitReached").$generateBookingDate->format("d.m").__("bookingHistory.bookingLimitReachedOne").($cabin->not_regular_inquiry_guest - 1).__("bookingHistory.bookingLimitReachedTwo"));
+                                                    }
+                                                }
+                                                else {
+                                                    $availableStatus[] = 'notAvailable';
+                                                    return redirect()->back()->with('bookingAvailableStatus', __("searchDetails.alreadyFilledSleeps").$generateBookingDate->format("d.m"));
+                                                }
                                             }
                                         }
                                     }
@@ -866,29 +1277,64 @@ class BookingHistoryController extends Controller
 
                                                 $dates_array[] = $dates;
 
-                                                if(($totalSleeps < $cabin->mon_sleeps)) {
-                                                    $mon_sleeps_diff       = $cabin->mon_sleeps - $totalSleeps;
-
-                                                    /* Available sleeps on regular monday */
-                                                    $mon_sleeps_avail      = ($mon_sleeps_diff >= 0) ? $mon_sleeps_diff : 0;
-
-                                                    if($sleepsRequest <= $mon_sleeps_avail) {
+                                                // Condition to check already booked dates matching with new dates
+                                                if( in_array($dates, $from_to_old_dates) ) {
+                                                    // Condition to check request sleeps is greater or less than already booked sleeps.
+                                                    if($sleepsRequest <= $bookingSleeps) {
                                                         $availableStatus[] = 'available';
                                                     }
                                                     else {
-                                                        $availableStatus[] = 'notAvailable';
-                                                        return redirect()->back()->with('bookingAvailableStatus', $sleepsRequest.__("searchDetails.sleepsNotAvailable").$generateBookingDate->format("d.m"));
-                                                    }
+                                                        if(($totalSleeps < $cabin->mon_sleeps)) {
+                                                            $mon_sleeps_diff       = $cabin->mon_sleeps - $totalSleeps;
 
-                                                    /* Checking requested sleeps is greater or equal to inquiry. Cabin inquiry guest is greater than 0 */
-                                                    if($cabin->mon_inquiry_guest > 0 && $sleepsRequest >= $cabin->mon_inquiry_guest) {
-                                                        $availableStatus[] = 'notAvailable';
-                                                        return redirect()->back()->with('bookingAvailableStatus', __("bookingHistory.bookingLimitReached").$generateBookingDate->format("d.m").__("bookingHistory.bookingLimitReachedOne").($cabin->mon_inquiry_guest - 1).__("bookingHistory.bookingLimitReachedTwo"));
+                                                            // Available sleeps on regular monday
+                                                            $mon_sleeps_avail      = ($mon_sleeps_diff >= 0) ? $mon_sleeps_diff : 0;
+
+                                                            if($extraSleeps <= $mon_sleeps_avail) {
+                                                                $availableStatus[] = 'available';
+                                                            }
+                                                            else {
+                                                                $availableStatus[] = 'notAvailable';
+                                                                return redirect()->back()->with('bookingAvailableStatus', $extraSleeps.__("searchDetails.sleepsNotAvailable").$generateBookingDate->format("d.m"));
+                                                            }
+
+                                                            // Checking requested sleeps is greater or equal to inquiry. Cabin inquiry guest is greater than 0
+                                                            if($cabin->mon_inquiry_guest > 0 && $sleepsRequest >= $cabin->mon_inquiry_guest) {
+                                                                $availableStatus[] = 'notAvailable';
+                                                                return redirect()->back()->with('bookingAvailableStatus', __("bookingHistory.bookingLimitReached").$generateBookingDate->format("d.m").__("bookingHistory.bookingLimitReachedOne").($cabin->mon_inquiry_guest - 1).__("bookingHistory.bookingLimitReachedTwo"));
+                                                            }
+                                                        }
+                                                        else {
+                                                            $availableStatus[] = 'notAvailable';
+                                                            return redirect()->back()->with('bookingAvailableStatus', __("searchDetails.alreadyFilledSleeps").$generateBookingDate->format("d.m"));
+                                                        }
                                                     }
                                                 }
                                                 else {
-                                                    $availableStatus[] = 'notAvailable';
-                                                    return redirect()->back()->with('bookingAvailableStatus', __("searchDetails.alreadyFilledSleeps").$generateBookingDate->format("d.m"));
+                                                    if(($totalSleeps < $cabin->mon_sleeps)) {
+                                                        $mon_sleeps_diff       = $cabin->mon_sleeps - $totalSleeps;
+
+                                                        // Available sleeps on regular monday
+                                                        $mon_sleeps_avail      = ($mon_sleeps_diff >= 0) ? $mon_sleeps_diff : 0;
+
+                                                        if($sleepsRequest <= $mon_sleeps_avail) {
+                                                            $availableStatus[] = 'available';
+                                                        }
+                                                        else {
+                                                            $availableStatus[] = 'notAvailable';
+                                                            return redirect()->back()->with('bookingAvailableStatus', $sleepsRequest.__("searchDetails.sleepsNotAvailable").$generateBookingDate->format("d.m"));
+                                                        }
+
+                                                        // Checking requested sleeps is greater or equal to inquiry. Cabin inquiry guest is greater than 0
+                                                        if($cabin->mon_inquiry_guest > 0 && $sleepsRequest >= $cabin->mon_inquiry_guest) {
+                                                            $availableStatus[] = 'notAvailable';
+                                                            return redirect()->back()->with('bookingAvailableStatus', __("bookingHistory.bookingLimitReached").$generateBookingDate->format("d.m").__("bookingHistory.bookingLimitReachedOne").($cabin->mon_inquiry_guest - 1).__("bookingHistory.bookingLimitReachedTwo"));
+                                                        }
+                                                    }
+                                                    else {
+                                                        $availableStatus[] = 'notAvailable';
+                                                        return redirect()->back()->with('bookingAvailableStatus', __("searchDetails.alreadyFilledSleeps").$generateBookingDate->format("d.m"));
+                                                    }
                                                 }
                                             }
                                         }
@@ -899,30 +1345,66 @@ class BookingHistoryController extends Controller
 
                                                 $dates_array[] = $dates;
 
-                                                if(($totalSleeps < $cabin->tue_sleeps)) {
-                                                    $tue_sleeps_diff       = $cabin->tue_sleeps - $totalSleeps;
-
-                                                    /* Available sleeps on regular tuesday */
-                                                    $tue_sleeps_avail      = ($tue_sleeps_diff >= 0) ? $tue_sleeps_diff : 0;
-
-                                                    if($sleepsRequest <= $tue_sleeps_avail) {
+                                                // Condition to check already booked dates matching with new dates
+                                                if( in_array($dates, $from_to_old_dates) ) {
+                                                    // Condition to check request sleeps is greater or less than already booked sleeps.
+                                                    if($sleepsRequest <= $bookingSleeps) {
                                                         $availableStatus[] = 'available';
                                                     }
                                                     else {
-                                                        $availableStatus[] = 'notAvailable';
-                                                        return redirect()->back()->with('bookingAvailableStatus', $sleepsRequest.__("searchDetails.sleepsNotAvailable").$generateBookingDate->format("d.m"));
-                                                    }
+                                                        if(($totalSleeps < $cabin->tue_sleeps)) {
+                                                            $tue_sleeps_diff       = $cabin->tue_sleeps - $totalSleeps;
 
-                                                    /* Checking requested sleeps is greater or equal to inquiry. Cabin inquiry guest is greater than 0 */
-                                                    if($cabin->tue_inquiry_guest > 0 && $sleepsRequest >= $cabin->tue_inquiry_guest) {
-                                                        $availableStatus[] = 'notAvailable';
-                                                        return redirect()->back()->with('bookingAvailableStatus', __("bookingHistory.bookingLimitReached").$generateBookingDate->format("d.m").__("bookingHistory.bookingLimitReachedOne").($cabin->tue_inquiry_guest - 1).__("bookingHistory.bookingLimitReachedTwo"));
+                                                            // Available sleeps on regular tuesday
+                                                            $tue_sleeps_avail      = ($tue_sleeps_diff >= 0) ? $tue_sleeps_diff : 0;
+
+                                                            if($extraSleeps <= $tue_sleeps_avail) {
+                                                                $availableStatus[] = 'available';
+                                                            }
+                                                            else {
+                                                                $availableStatus[] = 'notAvailable';
+                                                                return redirect()->back()->with('bookingAvailableStatus', $extraSleeps.__("searchDetails.sleepsNotAvailable").$generateBookingDate->format("d.m"));
+                                                            }
+
+                                                            // Checking requested sleeps is greater or equal to inquiry. Cabin inquiry guest is greater than 0
+                                                            if($cabin->tue_inquiry_guest > 0 && $sleepsRequest >= $cabin->tue_inquiry_guest) {
+                                                                $availableStatus[] = 'notAvailable';
+                                                                return redirect()->back()->with('bookingAvailableStatus', __("bookingHistory.bookingLimitReached").$generateBookingDate->format("d.m").__("bookingHistory.bookingLimitReachedOne").($cabin->tue_inquiry_guest - 1).__("bookingHistory.bookingLimitReachedTwo"));
+                                                            }
+                                                        }
+                                                        else {
+                                                            $availableStatus[] = 'notAvailable';
+                                                            return redirect()->back()->with('bookingAvailableStatus', __("searchDetails.alreadyFilledSleeps").$generateBookingDate->format("d.m"));
+                                                        }
                                                     }
                                                 }
                                                 else {
-                                                    $availableStatus[] = 'notAvailable';
-                                                    return redirect()->back()->with('bookingAvailableStatus', __("searchDetails.alreadyFilledSleeps").$generateBookingDate->format("d.m"));
+                                                    if(($totalSleeps < $cabin->tue_sleeps)) {
+                                                        $tue_sleeps_diff       = $cabin->tue_sleeps - $totalSleeps;
+
+                                                        // Available sleeps on regular tuesday
+                                                        $tue_sleeps_avail      = ($tue_sleeps_diff >= 0) ? $tue_sleeps_diff : 0;
+
+                                                        if($sleepsRequest <= $tue_sleeps_avail) {
+                                                            $availableStatus[] = 'available';
+                                                        }
+                                                        else {
+                                                            $availableStatus[] = 'notAvailable';
+                                                            return redirect()->back()->with('bookingAvailableStatus', $sleepsRequest.__("searchDetails.sleepsNotAvailable").$generateBookingDate->format("d.m"));
+                                                        }
+
+                                                        // Checking requested sleeps is greater or equal to inquiry. Cabin inquiry guest is greater than 0
+                                                        if($cabin->tue_inquiry_guest > 0 && $sleepsRequest >= $cabin->tue_inquiry_guest) {
+                                                            $availableStatus[] = 'notAvailable';
+                                                            return redirect()->back()->with('bookingAvailableStatus', __("bookingHistory.bookingLimitReached").$generateBookingDate->format("d.m").__("bookingHistory.bookingLimitReachedOne").($cabin->tue_inquiry_guest - 1).__("bookingHistory.bookingLimitReachedTwo"));
+                                                        }
+                                                    }
+                                                    else {
+                                                        $availableStatus[] = 'notAvailable';
+                                                        return redirect()->back()->with('bookingAvailableStatus', __("searchDetails.alreadyFilledSleeps").$generateBookingDate->format("d.m"));
+                                                    }
                                                 }
+
                                             }
                                         }
 
@@ -932,29 +1414,64 @@ class BookingHistoryController extends Controller
 
                                                 $dates_array[] = $dates;
 
-                                                if(($totalSleeps < $cabin->wed_sleeps)) {
-                                                    $wed_sleeps_diff       = $cabin->wed_sleeps - $totalSleeps;
-
-                                                    /* Available sleeps on regular wednesday */
-                                                    $wed_sleeps_avail      = ($wed_sleeps_diff >= 0) ? $wed_sleeps_diff : 0;
-
-                                                    if($sleepsRequest <= $wed_sleeps_avail) {
+                                                // Condition to check already booked dates matching with new dates
+                                                if( in_array($dates, $from_to_old_dates) ) {
+                                                    // Condition to check request sleeps is greater or less than already booked sleeps.
+                                                    if($sleepsRequest <= $bookingSleeps) {
                                                         $availableStatus[] = 'available';
                                                     }
                                                     else {
-                                                        $availableStatus[] = 'notAvailable';
-                                                        return redirect()->back()->with('bookingAvailableStatus', $sleepsRequest.__("searchDetails.sleepsNotAvailable").$generateBookingDate->format("d.m"));
-                                                    }
+                                                        if(($totalSleeps < $cabin->wed_sleeps)) {
+                                                            $wed_sleeps_diff       = $cabin->wed_sleeps - $totalSleeps;
 
-                                                    /* Checking requested sleeps is greater or equal to inquiry. Cabin inquiry guest is greater than 0 */
-                                                    if($cabin->wed_inquiry_guest > 0 && $sleepsRequest >= $cabin->wed_inquiry_guest) {
-                                                        $availableStatus[] = 'notAvailable';
-                                                        return redirect()->back()->with('bookingAvailableStatus', __("bookingHistory.bookingLimitReached").$generateBookingDate->format("d.m").__("bookingHistory.bookingLimitReachedOne").($cabin->wed_inquiry_guest - 1).__("bookingHistory.bookingLimitReachedTwo"));
+                                                            // Available sleeps on regular wednesday
+                                                            $wed_sleeps_avail      = ($wed_sleeps_diff >= 0) ? $wed_sleeps_diff : 0;
+
+                                                            if($extraSleeps <= $wed_sleeps_avail) {
+                                                                $availableStatus[] = 'available';
+                                                            }
+                                                            else {
+                                                                $availableStatus[] = 'notAvailable';
+                                                                return redirect()->back()->with('bookingAvailableStatus', $extraSleeps.__("searchDetails.sleepsNotAvailable").$generateBookingDate->format("d.m"));
+                                                            }
+
+                                                            // Checking requested sleeps is greater or equal to inquiry. Cabin inquiry guest is greater than 0
+                                                            if($cabin->wed_inquiry_guest > 0 && $sleepsRequest >= $cabin->wed_inquiry_guest) {
+                                                                $availableStatus[] = 'notAvailable';
+                                                                return redirect()->back()->with('bookingAvailableStatus', __("bookingHistory.bookingLimitReached").$generateBookingDate->format("d.m").__("bookingHistory.bookingLimitReachedOne").($cabin->wed_inquiry_guest - 1).__("bookingHistory.bookingLimitReachedTwo"));
+                                                            }
+                                                        }
+                                                        else {
+                                                            $availableStatus[] = 'notAvailable';
+                                                            return redirect()->back()->with('bookingAvailableStatus', __("searchDetails.alreadyFilledSleeps").$generateBookingDate->format("d.m"));
+                                                        }
                                                     }
                                                 }
                                                 else {
-                                                    $availableStatus[] = 'notAvailable';
-                                                    return redirect()->back()->with('bookingAvailableStatus', __("searchDetails.alreadyFilledSleeps").$generateBookingDate->format("d.m"));
+                                                    if(($totalSleeps < $cabin->wed_sleeps)) {
+                                                        $wed_sleeps_diff       = $cabin->wed_sleeps - $totalSleeps;
+
+                                                        // Available sleeps on regular wednesday
+                                                        $wed_sleeps_avail      = ($wed_sleeps_diff >= 0) ? $wed_sleeps_diff : 0;
+
+                                                        if($sleepsRequest <= $wed_sleeps_avail) {
+                                                            $availableStatus[] = 'available';
+                                                        }
+                                                        else {
+                                                            $availableStatus[] = 'notAvailable';
+                                                            return redirect()->back()->with('bookingAvailableStatus', $sleepsRequest.__("searchDetails.sleepsNotAvailable").$generateBookingDate->format("d.m"));
+                                                        }
+
+                                                        // Checking requested sleeps is greater or equal to inquiry. Cabin inquiry guest is greater than 0
+                                                        if($cabin->wed_inquiry_guest > 0 && $sleepsRequest >= $cabin->wed_inquiry_guest) {
+                                                            $availableStatus[] = 'notAvailable';
+                                                            return redirect()->back()->with('bookingAvailableStatus', __("bookingHistory.bookingLimitReached").$generateBookingDate->format("d.m").__("bookingHistory.bookingLimitReachedOne").($cabin->wed_inquiry_guest - 1).__("bookingHistory.bookingLimitReachedTwo"));
+                                                        }
+                                                    }
+                                                    else {
+                                                        $availableStatus[] = 'notAvailable';
+                                                        return redirect()->back()->with('bookingAvailableStatus', __("searchDetails.alreadyFilledSleeps").$generateBookingDate->format("d.m"));
+                                                    }
                                                 }
                                             }
                                         }
@@ -965,29 +1482,64 @@ class BookingHistoryController extends Controller
 
                                                 $dates_array[] = $dates;
 
-                                                if(($totalSleeps < $cabin->thu_sleeps)) {
-                                                    $thu_sleeps_diff       = $cabin->thu_sleeps - $totalSleeps;
-
-                                                    /* Available sleeps on regular thursday */
-                                                    $thu_sleeps_avail      = ($thu_sleeps_diff >= 0) ? $thu_sleeps_diff : 0;
-
-                                                    if($sleepsRequest <= $thu_sleeps_avail) {
+                                                // Condition to check already booked dates matching with new dates
+                                                if( in_array($dates, $from_to_old_dates) ) {
+                                                    // Condition to check request sleeps is greater or less than already booked sleeps.
+                                                    if($sleepsRequest <= $bookingSleeps) {
                                                         $availableStatus[] = 'available';
                                                     }
                                                     else {
-                                                        $availableStatus[] = 'notAvailable';
-                                                        return redirect()->back()->with('bookingAvailableStatus', $sleepsRequest.__("searchDetails.sleepsNotAvailable").$generateBookingDate->format("d.m"));
-                                                    }
+                                                        if(($totalSleeps < $cabin->thu_sleeps)) {
+                                                            $thu_sleeps_diff       = $cabin->thu_sleeps - $totalSleeps;
 
-                                                    /* Checking requested sleeps is greater or equal to inquiry. Cabin inquiry guest is greater than 0 */
-                                                    if($cabin->thu_inquiry_guest > 0 && $sleepsRequest >= $cabin->thu_inquiry_guest) {
-                                                        $availableStatus[] = 'notAvailable';
-                                                        return redirect()->back()->with('bookingAvailableStatus', __("bookingHistory.bookingLimitReached").$generateBookingDate->format("d.m").__("bookingHistory.bookingLimitReachedOne").($cabin->thu_inquiry_guest - 1).__("bookingHistory.bookingLimitReachedTwo"));
+                                                            // Available sleeps on regular thursday
+                                                            $thu_sleeps_avail      = ($thu_sleeps_diff >= 0) ? $thu_sleeps_diff : 0;
+
+                                                            if($extraSleeps <= $thu_sleeps_avail) {
+                                                                $availableStatus[] = 'available';
+                                                            }
+                                                            else {
+                                                                $availableStatus[] = 'notAvailable';
+                                                                return redirect()->back()->with('bookingAvailableStatus', $extraSleeps.__("searchDetails.sleepsNotAvailable").$generateBookingDate->format("d.m"));
+                                                            }
+
+                                                            // Checking requested sleeps is greater or equal to inquiry. Cabin inquiry guest is greater than 0
+                                                            if($cabin->thu_inquiry_guest > 0 && $sleepsRequest >= $cabin->thu_inquiry_guest) {
+                                                                $availableStatus[] = 'notAvailable';
+                                                                return redirect()->back()->with('bookingAvailableStatus', __("bookingHistory.bookingLimitReached").$generateBookingDate->format("d.m").__("bookingHistory.bookingLimitReachedOne").($cabin->thu_inquiry_guest - 1).__("bookingHistory.bookingLimitReachedTwo"));
+                                                            }
+                                                        }
+                                                        else {
+                                                            $availableStatus[] = 'notAvailable';
+                                                            return redirect()->back()->with('bookingAvailableStatus', __("searchDetails.alreadyFilledSleeps").$generateBookingDate->format("d.m"));
+                                                        }
                                                     }
                                                 }
                                                 else {
-                                                    $availableStatus[] = 'notAvailable';
-                                                    return redirect()->back()->with('bookingAvailableStatus', __("searchDetails.alreadyFilledSleeps").$generateBookingDate->format("d.m"));
+                                                    if(($totalSleeps < $cabin->thu_sleeps)) {
+                                                        $thu_sleeps_diff       = $cabin->thu_sleeps - $totalSleeps;
+
+                                                        // Available sleeps on regular thursday
+                                                        $thu_sleeps_avail      = ($thu_sleeps_diff >= 0) ? $thu_sleeps_diff : 0;
+
+                                                        if($sleepsRequest <= $thu_sleeps_avail) {
+                                                            $availableStatus[] = 'available';
+                                                        }
+                                                        else {
+                                                            $availableStatus[] = 'notAvailable';
+                                                            return redirect()->back()->with('bookingAvailableStatus', $sleepsRequest.__("searchDetails.sleepsNotAvailable").$generateBookingDate->format("d.m"));
+                                                        }
+
+                                                        // Checking requested sleeps is greater or equal to inquiry. Cabin inquiry guest is greater than 0
+                                                        if($cabin->thu_inquiry_guest > 0 && $sleepsRequest >= $cabin->thu_inquiry_guest) {
+                                                            $availableStatus[] = 'notAvailable';
+                                                            return redirect()->back()->with('bookingAvailableStatus', __("bookingHistory.bookingLimitReached").$generateBookingDate->format("d.m").__("bookingHistory.bookingLimitReachedOne").($cabin->thu_inquiry_guest - 1).__("bookingHistory.bookingLimitReachedTwo"));
+                                                        }
+                                                    }
+                                                    else {
+                                                        $availableStatus[] = 'notAvailable';
+                                                        return redirect()->back()->with('bookingAvailableStatus', __("searchDetails.alreadyFilledSleeps").$generateBookingDate->format("d.m"));
+                                                    }
                                                 }
                                             }
                                         }
@@ -998,30 +1550,66 @@ class BookingHistoryController extends Controller
 
                                                 $dates_array[] = $dates;
 
-                                                if(($totalSleeps < $cabin->fri_sleeps)) {
-                                                    $fri_sleeps_diff       = $cabin->fri_sleeps - $totalSleeps;
-
-                                                    /* Available sleeps on regular friday */
-                                                    $fri_sleeps_avail      = ($fri_sleeps_diff >= 0) ? $fri_sleeps_diff : 0;
-
-                                                    if($sleepsRequest <= $fri_sleeps_avail) {
+                                                // Condition to check already booked dates matching with new dates
+                                                if( in_array($dates, $from_to_old_dates) ) {
+                                                    // Condition to check request sleeps is greater or less than already booked sleeps.
+                                                    if($sleepsRequest <= $bookingSleeps) {
                                                         $availableStatus[] = 'available';
                                                     }
                                                     else {
-                                                        $availableStatus[] = 'notAvailable';
-                                                        return redirect()->back()->with('bookingAvailableStatus', $sleepsRequest.__("searchDetails.sleepsNotAvailable").$generateBookingDate->format("d.m"));
-                                                    }
+                                                        if(($totalSleeps < $cabin->fri_sleeps)) {
+                                                            $fri_sleeps_diff       = $cabin->fri_sleeps - $totalSleeps;
 
-                                                    /* Checking requested sleeps is greater or equal to inquiry. Cabin inquiry guest is greater than 0 */
-                                                    if($cabin->fri_inquiry_guest > 0 && $sleepsRequest >= $cabin->fri_inquiry_guest) {
-                                                        $availableStatus[] = 'notAvailable';
-                                                        return redirect()->back()->with('bookingAvailableStatus', __("bookingHistory.bookingLimitReached").$generateBookingDate->format("d.m").__("bookingHistory.bookingLimitReachedOne").($cabin->fri_inquiry_guest - 1).__("bookingHistory.bookingLimitReachedTwo"));
+                                                            // Available sleeps on regular friday
+                                                            $fri_sleeps_avail      = ($fri_sleeps_diff >= 0) ? $fri_sleeps_diff : 0;
+
+                                                            if($extraSleeps <= $fri_sleeps_avail) {
+                                                                $availableStatus[] = 'available';
+                                                            }
+                                                            else {
+                                                                $availableStatus[] = 'notAvailable';
+                                                                return redirect()->back()->with('bookingAvailableStatus', $extraSleeps.__("searchDetails.sleepsNotAvailable").$generateBookingDate->format("d.m"));
+                                                            }
+
+                                                            // Checking requested sleeps is greater or equal to inquiry. Cabin inquiry guest is greater than 0
+                                                            if($cabin->fri_inquiry_guest > 0 && $sleepsRequest >= $cabin->fri_inquiry_guest) {
+                                                                $availableStatus[] = 'notAvailable';
+                                                                return redirect()->back()->with('bookingAvailableStatus', __("bookingHistory.bookingLimitReached").$generateBookingDate->format("d.m").__("bookingHistory.bookingLimitReachedOne").($cabin->fri_inquiry_guest - 1).__("bookingHistory.bookingLimitReachedTwo"));
+                                                            }
+                                                        }
+                                                        else {
+                                                            $availableStatus[] = 'notAvailable';
+                                                            return redirect()->back()->with('bookingAvailableStatus', __("searchDetails.alreadyFilledSleeps").$generateBookingDate->format("d.m"));
+                                                        }
                                                     }
                                                 }
                                                 else {
-                                                    $availableStatus[] = 'notAvailable';
-                                                    return redirect()->back()->with('bookingAvailableStatus', __("searchDetails.alreadyFilledSleeps").$generateBookingDate->format("d.m"));
+                                                    if(($totalSleeps < $cabin->fri_sleeps)) {
+                                                        $fri_sleeps_diff       = $cabin->fri_sleeps - $totalSleeps;
+
+                                                        // Available sleeps on regular friday
+                                                        $fri_sleeps_avail      = ($fri_sleeps_diff >= 0) ? $fri_sleeps_diff : 0;
+
+                                                        if($sleepsRequest <= $fri_sleeps_avail) {
+                                                            $availableStatus[] = 'available';
+                                                        }
+                                                        else {
+                                                            $availableStatus[] = 'notAvailable';
+                                                            return redirect()->back()->with('bookingAvailableStatus', $sleepsRequest.__("searchDetails.sleepsNotAvailable").$generateBookingDate->format("d.m"));
+                                                        }
+
+                                                        // Checking requested sleeps is greater or equal to inquiry. Cabin inquiry guest is greater than 0
+                                                        if($cabin->fri_inquiry_guest > 0 && $sleepsRequest >= $cabin->fri_inquiry_guest) {
+                                                            $availableStatus[] = 'notAvailable';
+                                                            return redirect()->back()->with('bookingAvailableStatus', __("bookingHistory.bookingLimitReached").$generateBookingDate->format("d.m").__("bookingHistory.bookingLimitReachedOne").($cabin->fri_inquiry_guest - 1).__("bookingHistory.bookingLimitReachedTwo"));
+                                                        }
+                                                    }
+                                                    else {
+                                                        $availableStatus[] = 'notAvailable';
+                                                        return redirect()->back()->with('bookingAvailableStatus', __("searchDetails.alreadyFilledSleeps").$generateBookingDate->format("d.m"));
+                                                    }
                                                 }
+
                                             }
                                         }
 
@@ -1031,29 +1619,64 @@ class BookingHistoryController extends Controller
 
                                                 $dates_array[] = $dates;
 
-                                                if(($totalSleeps < $cabin->sat_sleeps)) {
-                                                    $sat_sleeps_diff       = $cabin->sat_sleeps - $totalSleeps;
-
-                                                    /* Available sleeps on regular saturday */
-                                                    $sat_sleeps_avail      = ($sat_sleeps_diff >= 0) ? $sat_sleeps_diff : 0;
-
-                                                    if($sleepsRequest <= $sat_sleeps_avail) {
+                                                // Condition to check already booked dates matching with new dates
+                                                if( in_array($dates, $from_to_old_dates) ) {
+                                                    // Condition to check request sleeps is greater or less than already booked sleeps.
+                                                    if($sleepsRequest <= $bookingSleeps) {
                                                         $availableStatus[] = 'available';
                                                     }
                                                     else {
-                                                        $availableStatus[] = 'notAvailable';
-                                                        return redirect()->back()->with('bookingAvailableStatus', $sleepsRequest.__("searchDetails.sleepsNotAvailable").$generateBookingDate->format("d.m"));
-                                                    }
+                                                        if(($totalSleeps < $cabin->sat_sleeps)) {
+                                                            $sat_sleeps_diff       = $cabin->sat_sleeps - $totalSleeps;
 
-                                                    /* Checking requested sleeps is greater or equal to inquiry. Cabin inquiry guest is greater than 0 */
-                                                    if($cabin->sat_inquiry_guest > 0 && $sleepsRequest >= $cabin->sat_inquiry_guest) {
-                                                        $availableStatus[] = 'notAvailable';
-                                                        return redirect()->back()->with('bookingAvailableStatus', __("bookingHistory.bookingLimitReached").$generateBookingDate->format("d.m").__("bookingHistory.bookingLimitReachedOne").($cabin->sat_inquiry_guest - 1).__("bookingHistory.bookingLimitReachedTwo"));
+                                                            // Available sleeps on regular saturday
+                                                            $sat_sleeps_avail      = ($sat_sleeps_diff >= 0) ? $sat_sleeps_diff : 0;
+
+                                                            if($extraSleeps <= $sat_sleeps_avail) {
+                                                                $availableStatus[] = 'available';
+                                                            }
+                                                            else {
+                                                                $availableStatus[] = 'notAvailable';
+                                                                return redirect()->back()->with('bookingAvailableStatus', $extraSleeps.__("searchDetails.sleepsNotAvailable").$generateBookingDate->format("d.m"));
+                                                            }
+
+                                                            // Checking requested sleeps is greater or equal to inquiry. Cabin inquiry guest is greater than 0
+                                                            if($cabin->sat_inquiry_guest > 0 && $sleepsRequest >= $cabin->sat_inquiry_guest) {
+                                                                $availableStatus[] = 'notAvailable';
+                                                                return redirect()->back()->with('bookingAvailableStatus', __("bookingHistory.bookingLimitReached").$generateBookingDate->format("d.m").__("bookingHistory.bookingLimitReachedOne").($cabin->sat_inquiry_guest - 1).__("bookingHistory.bookingLimitReachedTwo"));
+                                                            }
+                                                        }
+                                                        else {
+                                                            $availableStatus[] = 'notAvailable';
+                                                            return redirect()->back()->with('bookingAvailableStatus', __("searchDetails.alreadyFilledSleeps").$generateBookingDate->format("d.m"));
+                                                        }
                                                     }
                                                 }
                                                 else {
-                                                    $availableStatus[] = 'notAvailable';
-                                                    return redirect()->back()->with('bookingAvailableStatus', __("searchDetails.alreadyFilledSleeps").$generateBookingDate->format("d.m"));
+                                                    if(($totalSleeps < $cabin->sat_sleeps)) {
+                                                        $sat_sleeps_diff       = $cabin->sat_sleeps - $totalSleeps;
+
+                                                        // Available sleeps on regular saturday
+                                                        $sat_sleeps_avail      = ($sat_sleeps_diff >= 0) ? $sat_sleeps_diff : 0;
+
+                                                        if($sleepsRequest <= $sat_sleeps_avail) {
+                                                            $availableStatus[] = 'available';
+                                                        }
+                                                        else {
+                                                            $availableStatus[] = 'notAvailable';
+                                                            return redirect()->back()->with('bookingAvailableStatus', $sleepsRequest.__("searchDetails.sleepsNotAvailable").$generateBookingDate->format("d.m"));
+                                                        }
+
+                                                        // Checking requested sleeps is greater or equal to inquiry. Cabin inquiry guest is greater than 0
+                                                        if($cabin->sat_inquiry_guest > 0 && $sleepsRequest >= $cabin->sat_inquiry_guest) {
+                                                            $availableStatus[] = 'notAvailable';
+                                                            return redirect()->back()->with('bookingAvailableStatus', __("bookingHistory.bookingLimitReached").$generateBookingDate->format("d.m").__("bookingHistory.bookingLimitReachedOne").($cabin->sat_inquiry_guest - 1).__("bookingHistory.bookingLimitReachedTwo"));
+                                                        }
+                                                    }
+                                                    else {
+                                                        $availableStatus[] = 'notAvailable';
+                                                        return redirect()->back()->with('bookingAvailableStatus', __("searchDetails.alreadyFilledSleeps").$generateBookingDate->format("d.m"));
+                                                    }
                                                 }
                                             }
                                         }
@@ -1064,30 +1687,66 @@ class BookingHistoryController extends Controller
 
                                                 $dates_array[] = $dates;
 
-                                                if(($totalSleeps < $cabin->sun_sleeps)) {
-                                                    $sun_sleeps_diff       = $cabin->sun_sleeps - $totalSleeps;
-
-                                                    /* Available sleeps on regular sunday */
-                                                    $sun_sleeps_avail      = ($sun_sleeps_diff >= 0) ? $sun_sleeps_diff : 0;
-
-                                                    if($sleepsRequest <= $sun_sleeps_avail) {
+                                                // Condition to check already booked dates matching with new dates
+                                                if( in_array($dates, $from_to_old_dates) ) {
+                                                    // Condition to check request sleeps is greater or less than already booked sleeps.
+                                                    if($sleepsRequest <= $bookingSleeps) {
                                                         $availableStatus[] = 'available';
                                                     }
                                                     else {
-                                                        $availableStatus[] = 'notAvailable';
-                                                        return redirect()->back()->with('bookingAvailableStatus', $sleepsRequest.__("searchDetails.sleepsNotAvailable").$generateBookingDate->format("d.m"));
-                                                    }
+                                                        if(($totalSleeps < $cabin->sun_sleeps)) {
+                                                            $sun_sleeps_diff       = $cabin->sun_sleeps - $totalSleeps;
 
-                                                    /* Checking requested sleeps is greater or equal to inquiry. Cabin inquiry guest is greater than 0 */
-                                                    if($cabin->sun_inquiry_guest > 0 && $sleepsRequest >= $cabin->sun_inquiry_guest) {
-                                                        $availableStatus[] = 'notAvailable';
-                                                        return redirect()->back()->with('bookingAvailableStatus', __("bookingHistory.bookingLimitReached").$generateBookingDate->format("d.m").__("bookingHistory.bookingLimitReachedOne").($cabin->sun_inquiry_guest - 1).__("bookingHistory.bookingLimitReachedTwo"));
+                                                            // Available sleeps on regular sunday
+                                                            $sun_sleeps_avail      = ($sun_sleeps_diff >= 0) ? $sun_sleeps_diff : 0;
+
+                                                            if($extraSleeps <= $sun_sleeps_avail) {
+                                                                $availableStatus[] = 'available';
+                                                            }
+                                                            else {
+                                                                $availableStatus[] = 'notAvailable';
+                                                                return redirect()->back()->with('bookingAvailableStatus', $extraSleeps.__("searchDetails.sleepsNotAvailable").$generateBookingDate->format("d.m"));
+                                                            }
+
+                                                            // Checking requested sleeps is greater or equal to inquiry. Cabin inquiry guest is greater than 0
+                                                            if($cabin->sun_inquiry_guest > 0 && $sleepsRequest >= $cabin->sun_inquiry_guest) {
+                                                                $availableStatus[] = 'notAvailable';
+                                                                return redirect()->back()->with('bookingAvailableStatus', __("bookingHistory.bookingLimitReached").$generateBookingDate->format("d.m").__("bookingHistory.bookingLimitReachedOne").($cabin->sun_inquiry_guest - 1).__("bookingHistory.bookingLimitReachedTwo"));
+                                                            }
+                                                        }
+                                                        else {
+                                                            $availableStatus[] = 'notAvailable';
+                                                            return redirect()->back()->with('bookingAvailableStatus', __("searchDetails.alreadyFilledSleeps").$generateBookingDate->format("d.m"));
+                                                        }
                                                     }
                                                 }
                                                 else {
-                                                    $availableStatus[] = 'notAvailable';
-                                                    return redirect()->back()->with('bookingAvailableStatus', __("searchDetails.alreadyFilledSleeps").$generateBookingDate->format("d.m"));
+                                                    if(($totalSleeps < $cabin->sun_sleeps)) {
+                                                        $sun_sleeps_diff       = $cabin->sun_sleeps - $totalSleeps;
+
+                                                        // Available sleeps on regular sunday
+                                                        $sun_sleeps_avail      = ($sun_sleeps_diff >= 0) ? $sun_sleeps_diff : 0;
+
+                                                        if($sleepsRequest <= $sun_sleeps_avail) {
+                                                            $availableStatus[] = 'available';
+                                                        }
+                                                        else {
+                                                            $availableStatus[] = 'notAvailable';
+                                                            return redirect()->back()->with('bookingAvailableStatus', $sleepsRequest.__("searchDetails.sleepsNotAvailable").$generateBookingDate->format("d.m"));
+                                                        }
+
+                                                        // Checking requested sleeps is greater or equal to inquiry. Cabin inquiry guest is greater than 0
+                                                        if($cabin->sun_inquiry_guest > 0 && $sleepsRequest >= $cabin->sun_inquiry_guest) {
+                                                            $availableStatus[] = 'notAvailable';
+                                                            return redirect()->back()->with('bookingAvailableStatus', __("bookingHistory.bookingLimitReached").$generateBookingDate->format("d.m").__("bookingHistory.bookingLimitReachedOne").($cabin->sun_inquiry_guest - 1).__("bookingHistory.bookingLimitReachedTwo"));
+                                                        }
+                                                    }
+                                                    else {
+                                                        $availableStatus[] = 'notAvailable';
+                                                        return redirect()->back()->with('bookingAvailableStatus', __("searchDetails.alreadyFilledSleeps").$generateBookingDate->format("d.m"));
+                                                    }
                                                 }
+
                                             }
                                         }
 
@@ -1095,6 +1754,7 @@ class BookingHistoryController extends Controller
 
                                     /* Calculating sleeps for normal */
                                     if(!in_array($dates, $dates_array)) {
+
                                         // Condition to check already booked dates matching with new dates
                                         if( in_array($dates, $from_to_old_dates) ) {
                                             // Condition to check request sleeps is greater or less than already booked sleeps.
@@ -1102,8 +1762,6 @@ class BookingHistoryController extends Controller
                                                 $availableStatus[] = 'available';
                                             }
                                             else {
-                                                $extraSleeps = $sleepsRequest - $bookingSleeps;
-
                                                 if(($totalSleeps < $cabin->sleeps)) {
                                                     $normal_sleeps_diff    = $cabin->sleeps - $totalSleeps;
 
@@ -1119,7 +1777,7 @@ class BookingHistoryController extends Controller
                                                     }
 
                                                     // Checking requested sleeps is greater or equal to inquiry. Cabin inquiry guest is greater than 0
-                                                    if($cabin->inquiry_starts > 0 && $extraSleeps >= $cabin->inquiry_starts) {
+                                                    if($cabin->inquiry_starts > 0 && $sleepsRequest >= $cabin->inquiry_starts) {
                                                         $availableStatus[] = 'notAvailable';
                                                         return redirect()->back()->with('bookingAvailableStatus', __("bookingHistory.bookingLimitReached").$generateBookingDate->format("d.m").__("bookingHistory.bookingLimitReachedOne").($cabin->inquiry_starts - 1).__("bookingHistory.bookingLimitReachedTwo"));
                                                     }
@@ -1164,8 +1822,6 @@ class BookingHistoryController extends Controller
                             }
                             /* Checking bookings available end */
                         }
-
-                        //dd($test);
 
                         if(!in_array('notAvailable', $availableStatus)) {
 
@@ -1262,7 +1918,6 @@ class BookingHistoryController extends Controller
                                 /* Send email with voucher */
                                 Mail::to($user->usrEmail)->send(new SendVoucher($newBooking));
 
-                                //dd('Dont need to go payment page. Just update booking, update money balance, send email'.'New amount: '.$new_amount.' Old: '.$old_amount.' Total: '.$total. ' Amount ' .$amount);
                                 return redirect()->route('booking.history')->with('updateBookingSuccessStatus', __('bookingHistory.updateBookingSuccessTwo'));
                             }
                             else {
