@@ -192,8 +192,6 @@ class BookingHistoryController extends Controller
             $bedsRequest                  = (int)$request->beds;
             $dormsRequest                 = (int)$request->dormitory;
 
-            $test = [];
-
             if($monthBegin < $monthEnd) {
                 if($new_date_diff->days <= 60) {
 
