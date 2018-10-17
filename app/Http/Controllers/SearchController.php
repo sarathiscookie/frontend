@@ -114,7 +114,6 @@ class SearchController extends Controller
         $data  = $request->all();
 
         $cabin = Cabin::select('_id', 'name', 'country', 'region', 'interior', 'sleeping_place', 'height', 'other_details', 'interior')
-            ->where('_id', '!=', new \MongoDB\BSON\ObjectID('5b9b625a8a5da5534c614b65')) // Here cabin (Priener Hütte) ID is hardcoded, because this cabin not needs to show in frontend. But cabin owner need to booking via API.
             ->where('is_delete', 0)
             ->where('other_cabin', "0");
 
@@ -148,7 +147,6 @@ class SearchController extends Controller
     public function cabinName($name)
     {
         $data = Cabin::where('name', 'LIKE', $name.'%')
-            ->where('_id', '!=', new \MongoDB\BSON\ObjectID('5b9b625a8a5da5534c614b65')) // Here cabin (Priener Hütte) ID is hardcoded, because this cabin not needs to show in frontend. But cabin owner need to booking via API.
             ->where('is_delete', 0)
             ->where('other_cabin', "0")
             ->take(10)
