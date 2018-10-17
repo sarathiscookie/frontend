@@ -95,7 +95,7 @@ class BookingListForCabins extends Command
                     /*to('l.linder@huetten-holiday.de')->bcc('iamsarath1986@gmail.com')*/
                     /*to('iamsarath1986@gmail.com')*/
                     Mail::send('emails.bookingListCabin', ['subject' => 'Ihre tägliche Buchungsübersicht'], function ($message) use ($cabinOwner, $cabin) {
-                        $message->to('iamsarath1986@gmail.com')/*to($cabinOwner->usrEmail)->bcc('backup.tageslisten@huetten-holiday.de')*/->subject('Ihre tägliche Buchungsübersicht')->attach(public_path("/storage/dailylistbookingforcabin/". $cabin->name . ".pdf"), [
+                        $message->to($cabinOwner->usrEmail)->bcc('backup.tageslisten@huetten-holiday.de')->subject('Ihre tägliche Buchungsübersicht')->attach(public_path("/storage/dailylistbookingforcabin/". $cabin->name . ".pdf"), [
                             'mime' => 'application/pdf',
                         ]);
                     });
