@@ -2329,13 +2329,13 @@ class BookingHistoryController extends Controller
 
                                 /* If guest paid using payByBill we need to store bank details. Condition begin */
                                 if($request->payment === 'payByBill' && $payByBillPossible === 'yes') {
-                                    $newOrder->clearing_bankaccount       = $paymentGateway["clearing_bankaccount"];
-                                    $newOrder->clearing_bankcode          = $paymentGateway["clearing_bankcode"];
-                                    $newOrder->clearing_bankcountry       = $paymentGateway["clearing_bankcountry"];
-                                    $newOrder->clearing_bankname          = $paymentGateway["clearing_bankname"];
-                                    $newOrder->clearing_bankaccountholder = $paymentGateway["clearing_bankaccountholder"];
-                                    $newOrder->clearing_bankiban          = $paymentGateway["clearing_bankiban"];
-                                    $newOrder->clearing_bankbic           = $paymentGateway["clearing_bankbic"];
+                                    $newOrder->clearing_bankaccount       = '';
+                                    $newOrder->clearing_bankcode          = '';
+                                    $newOrder->clearing_bankcountry       = '';
+                                    $newOrder->clearing_bankname          = 'Sparkasse Allgäu';
+                                    $newOrder->clearing_bankaccountholder = 'Huetten-Holiday.de GmbH';
+                                    $newOrder->clearing_bankiban          = 'DE32733500000515492916';
+                                    $newOrder->clearing_bankbic           = 'BYLADEM1ALG';
                                 }
                                 /* If guest paid using payByBill we need to store bank details. Condition end */
 
@@ -2523,13 +2523,13 @@ class BookingHistoryController extends Controller
 
                             /* If guest paid using payByBill we need to store bank details. Condition begin */
                             if($request->payment === 'payByBill' && $payByBillPossible === 'yes') {
-                                $newOrder->clearing_bankaccount       = $paymentGateway["clearing_bankaccount"];
-                                $newOrder->clearing_bankcode          = $paymentGateway["clearing_bankcode"];
-                                $newOrder->clearing_bankcountry       = $paymentGateway["clearing_bankcountry"];
-                                $newOrder->clearing_bankname          = $paymentGateway["clearing_bankname"];
-                                $newOrder->clearing_bankaccountholder = $paymentGateway["clearing_bankaccountholder"];
-                                $newOrder->clearing_bankiban          = $paymentGateway["clearing_bankiban"];
-                                $newOrder->clearing_bankbic           = $paymentGateway["clearing_bankbic"];
+                                $newOrder->clearing_bankaccount       = '';
+                                $newOrder->clearing_bankcode          = '';
+                                $newOrder->clearing_bankcountry       = '';
+                                $newOrder->clearing_bankname          = 'Sparkasse Allgäu';
+                                $newOrder->clearing_bankaccountholder = 'Huetten-Holiday.de GmbH';
+                                $newOrder->clearing_bankiban          = 'DE32733500000515492916';
+                                $newOrder->clearing_bankbic           = 'BYLADEM1ALG';
                             }
                             /* If guest paid using payByBill we need to store bank details. Condition end */
 
