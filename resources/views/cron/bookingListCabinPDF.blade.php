@@ -4,7 +4,7 @@
 
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Tagesliste</title>
+    <title>{{ __('cronCabinBookingList.pageTitle') }}</title>
 
     <style>
         body {
@@ -44,22 +44,22 @@
 
     <!-- Normal Booking List -->
         <tr>
-            <td colspan="12" style="background-color:#fff; color:#5f6876; padding:30px 0px; width:100%; font-size:17px;"><nobr>Buchungsübersicht</nobr> vom {{date('d.m')}}</td>
+            <td colspan="12" style="background-color:#fff; color:#5f6876; padding:30px 0px; width:100%; font-size:17px;"><nobr>{{ __('cronCabinBookingList.normalBookingListHeading') }}</nobr> {{ __('cronCabinBookingList.from') }} {{date('d.m')}}</td>
         </tr>
 
         <tr style="background:#9ACA3B; color:#fff; height:40px;">
-            <td style="width:16%; font-weight: bold;" >Buchungs-Nr.</td>
-            <td style="width:15%; font-weight: bold;">Name</td>
-            <td style="width:15%; font-weight: bold;">Datum</td>
-            <td style="width:5%; font-weight: bold;">Nächte</td>
-            <td style="width:5%; font-weight: bold;">Anzahl P.</td>
-            <td style="width:8%; font-weight: bold;">Schlafplätze</td>
+            <td style="width:16%; font-weight: bold;" >{{ __('cronCabinBookingList.bookingNumber') }}</td>
+            <td style="width:15%; font-weight: bold;">{{ __('cronCabinBookingList.name') }}</td>
+            <td style="width:15%; font-weight: bold;">{{ __('cronCabinBookingList.date') }}</td>
+            <td style="width:5%; font-weight: bold;">{{ __('cronCabinBookingList.nights') }}</td>
+            <td style="width:5%; font-weight: bold;">{{ __('cronCabinBookingList.numberOfPersons') }}</td>
+            <td style="width:8%; font-weight: bold;">{{ __('cronCabinBookingList.sleeps') }}</td>
             @if(isset($cabinHalfboard) && $cabinHalfboard === '1')
-                <td style="width:8%; font-weight: bold;">Halbpension</td>
+                <td style="width:8%; font-weight: bold;">{{ __('cronCabinBookingList.halfBoard') }}</td>
             @endif
-            <td style="width:8%; font-weight: bold;">DAV - Mitglieder</td>
-            <td style="width:8%; font-weight: bold;">Gutscheinwert</td>
-            <td  style="width:35%; font-weight: bold;" >Kontakt</td>
+            <td style="width:8%; font-weight: bold;">{{ __('cronCabinBookingList.clubMember') }}</td>
+            <td style="width:8%; font-weight: bold;">{{ __('cronCabinBookingList.amount') }}</td>
+            <td  style="width:35%; font-weight: bold;" >{{ __('cronCabinBookingList.contact') }}</td>
         </tr>
 
         @php
@@ -133,7 +133,7 @@
             </tr>
 
             <tr>
-                <td>Kommentar:</td>
+                <td>{{ __('cronCabinBookingList.comment') }}:</td>
                 <td colspan="6" class="comment">{{ $booking->comments }}</td>
                 @if(isset($cabinHalfboard) && $cabinHalfboard === '1')
                     <td>&nbsp;</td>
@@ -144,29 +144,29 @@
         @empty
             <tr>
                 <td>&nbsp;</td>
-                <td colspan="8">Keine Buchung</td>
+                <td colspan="8">{{ __('cronCabinBookingList.noBookings') }}</td>
                 <td>&nbsp;</td>
             </tr>
         @endforelse
 
     <!-- Mountain School Booking List -->
         <tr style="padding-bottom: 1em;">
-            <td colspan="12" style="background-color:#fff; color:#5f6876; width:100%; font-size:17px; padding-bottom: 1em; padding-top: 1em;"><nobr>Bergschulenübersicht</nobr> vom {{date('d.m')}}</td>
+            <td colspan="12" style="background-color:#fff; color:#5f6876; width:100%; font-size:17px; padding-bottom: 1em; padding-top: 1em;"><nobr>{{ __('cronCabinBookingList.mschoolBookingHeading') }}</nobr> {{ __('cronCabinBookingList.from') }} {{date('d.m')}}</td>
         </tr>
 
         <tr style="background:#33b1d2;color:#fff; height: 40px;">
-            <td style="width:15%; font-weight: bold;">Buchungs-Nr.</td>
-            <td style="width:10%; font-weight: bold;">Name</td>
-            <td style="width:15%; font-weight: bold;">Datum</td>
-            <td style="width:5%; font-weight: bold;">Nächte</td>
-            <td style="width:10%; font-weight: bold;">Anzahl P.</td>
-            <td style="width:10%; font-weight: bold;">Schlafplätze</td>
+            <td style="width:15%; font-weight: bold;">{{ __('cronCabinBookingList.bookingNumber') }}</td>
+            <td style="width:10%; font-weight: bold;">{{ __('cronCabinBookingList.name') }}</td>
+            <td style="width:15%; font-weight: bold;">{{ __('cronCabinBookingList.date') }}</td>
+            <td style="width:5%; font-weight: bold;">{{ __('cronCabinBookingList.nights') }}</td>
+            <td style="width:10%; font-weight: bold;">{{ __('cronCabinBookingList.numberOfPersons') }}</td>
+            <td style="width:10%; font-weight: bold;">{{ __('cronCabinBookingList.sleeps') }}</td>
             @if(isset($cabinHalfboard) && $cabinHalfboard === '1')
-                <td style="width:10%; font-weight: bold;">Halbpension</td>
+                <td style="width:10%; font-weight: bold;">{{ __('cronCabinBookingList.halfBoard') }}</td>
             @endif
-            <td style="width:10%; font-weight: bold;">Anzahl Bergführer</td>
-            <td style="width:10%; font-weight: bold;">individuelle TourNr.</td>
-            <td  style="width:45%; font-weight: bold;" >Kontakt</td>
+            <td style="width:10%; font-weight: bold;">{{ __('cronCabinBookingList.guides') }}</td>
+            <td style="width:10%; font-weight: bold;">{{ __('cronCabinBookingList.tourNo') }}</td>
+            <td  style="width:45%; font-weight: bold;" >{{ __('cronCabinBookingList.contact') }}</td>
         </tr>
 
         @forelse($msBookings as $msBooking)
@@ -219,7 +219,7 @@
                 <td>{{ $email }}</td>
             </tr>
             <tr>
-                <td>Kommentar:</td>
+                <td>{{ __('cronCabinBookingList.comment') }}:</td>
                 <td colspan="6" class="comment">{{ $msBooking->comments }}</td>
                 @if(isset($cabinHalfboard) && $cabinHalfboard === '1')
                     <td>&nbsp;</td>
@@ -230,7 +230,7 @@
         @empty
             <tr>
                 <td>&nbsp;</td>
-                <td colspan="8">Keine Buchung</td>
+                <td colspan="8">{{ __('cronCabinBookingList.noBookings') }}</td>
                 <td>&nbsp;</td>
             </tr>
         @endforelse
