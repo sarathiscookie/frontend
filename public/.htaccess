@@ -36,6 +36,7 @@
     Redirect /cabin/index/cabinDetail/gruentenhaus https://www.huetten-holiday.de/cabin/details/NWE2NzUzZTIxMjIzNmM0MTdjMzIxYWM1YUZHUTQ3NVNEc2Rmc2FmMjM0Mg==
     Redirect /cabin/index/cabinDetail/neue-traunsteiner-huette https://www.huetten-holiday.de/cabin/details/NWE3MDIxNjAxMjIzNmM2MDZlNWM5N2JlYUZHUTQ3NVNEc2Rmc2FmMjM0Mg==
     Redirect /cabin/index/cabinDetail/furlhuette https://www.huetten-holiday.de/cabin/details/NWI0MzRhYjQxMjIzNmMxMjEwYjYwZWEyYUZHUTQ3NVNEc2Rmc2FmMjM0Mg==
+    Redirect /cabin/index/cabinDetail/neue-traunsteiner-huette-(berchtesgadener-alpen) https://huetten-holiday.de/cabin/details/NWE3MDIxNjAxMjIzNmM2MDZlNWM5N2JlYUZHUTQ3NVNEc2Rmc2FmMjM0Mg==
 
     Redirect /cabin/index/list https://www.huetten-holiday.de/search
     Redirect /cabin-user/registration/index https://www.huetten-holiday.de/register
