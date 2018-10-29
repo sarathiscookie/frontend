@@ -150,7 +150,7 @@
                             </div>
                             <div class="col-sm-3 text-left main-cabin-details">
                                 <h2 class="details-headline-cabin-details">{{ __('cabinDetails.info') }}</h2>
-                                <div class="details-info-cabin-details more">{{ strip_tags(str_replace("&nbsp;", " ", $cabinDetails->other_details)) }}</div>
+                                <div class="details-info-cabin-details more">{!! str_replace("&nbsp;", " ", $cabinDetails->other_details) !!}</div>
                                 <div class="row">
                                     <div class="col-sm-12">
                                         {{--@if($cabinDetails->interior)
