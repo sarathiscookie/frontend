@@ -22,7 +22,7 @@
         .page-break {
             page-break-after: always;
         }
-        #ctable tr:nth-child(4n), #ctable tr:nth-child(4n-1) {
+        #ctable tr:nth-child(4n-1) {
             background-color: #DCDDDF;
         }
         tr.spaceUnder>td {
@@ -116,6 +116,18 @@
                       $category = $booking->sleeps;
                 }
 
+                /* Fetch and format inquiry message */
+                $message = App\PrivateMessage::where('booking_id', new \MongoDB\BSON\ObjectID($booking->_id))->pluck('text')->first();
+
+                if(!$message) $message = '----';
+
+                /* Format booking notes */
+                if(!$booking->notes) {
+                    $notes = '----';
+                } else {
+                    $notes = $booking->notes;
+                }
+
             @endphp
             <tr>
                 <td>{{ $booking->invoice_number }}</td>
@@ -140,6 +152,16 @@
                 @endif
                 <td>&nbsp;</td>
                 <td>{{ $phone }}</td>
+            </tr>
+
+            <tr>
+                <td>{{ __('cronCabinBookingList.chat') }}:</td>
+                <td colspan="9" class="comment">{{ $message }}</td>
+            </tr>
+
+            <tr>
+                <td>{{ __('cronCabinBookingList.notes') }}:</td>
+                <td colspan="9" class="comment">{{ $notes }}</td>
             </tr>
         @empty
             <tr>
@@ -166,7 +188,7 @@
             @endif
             <td style="width:10%; font-weight: bold;">{{ __('cronCabinBookingList.guides') }}</td>
             <td style="width:10%; font-weight: bold;">{{ __('cronCabinBookingList.tourNo') }}</td>
-            <td  style="width:45%; font-weight: bold;" >{{ __('cronCabinBookingList.contact') }}</td>
+            <td style="width:45%; font-weight: bold;" >{{ __('cronCabinBookingList.contact') }}</td>
         </tr>
 
         @forelse($msBookings as $msBooking)

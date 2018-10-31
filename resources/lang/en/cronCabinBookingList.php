@@ -32,5 +32,7 @@ return [
     'noBookings'                    => 'No Bookings',
     'mschoolBookingHeading'         => 'Mountain School Overview',
     'guides'                        => 'Guides',
+    'chat'                          => 'Chat',
+    'notes'                         => 'Notes',
     'tourNo'                        => 'Tour No.',
     ];

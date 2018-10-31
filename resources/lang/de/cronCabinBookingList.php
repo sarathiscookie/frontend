@@ -32,5 +32,7 @@ return [
     'noBookings'                    => 'Keine Buchung',
     'mschoolBookingHeading'         => 'Bergschulenübersicht',
     'guides'                        => 'Anzahl Bergführer',
+    'chat'                          => 'Chat',
+    'notes'                         => 'Notitzen',
     'tourNo'                        => 'individuelle TourNr.',
     ];
