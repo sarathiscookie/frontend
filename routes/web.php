@@ -174,7 +174,11 @@ Route::get('/image/rights', function(){
 /* Data protection */
 Route::get('/data/protection', function(){
     return view('dataProtection');
-});
+})->name('data.protection');
+
+Route::post('/data/protection/accept', function(){
+    return Session::put('accept_cookies', 1);
+})->name('data.protection.accept');
 
 /*
 |--------------------------------------------------------------------------

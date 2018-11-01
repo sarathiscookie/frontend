@@ -45,7 +45,8 @@ mix.scripts([
     'resources/assets/js/cart.js',
     'resources/assets/js/inquiry.js',
     'resources/assets/js/payment.js',
-    'resources/assets/js/bookingHistory.js'
+    'resources/assets/js/bookingHistory.js',
+    'resources/assets/js/cookies.js'
 ], 'public/js/all.js').version();
 
 /* Js and css for plugins */

@@ -174,6 +174,10 @@
     </ul>
 </footer>
 
+@if (!Session::has('accept_cookies') || Session::get('accept_cookies') == 0)
+    @include('includes.cookie-banner')
+@endif
+
 <!-- Laravel default js -->
 <script src="{{ mix('js/app.js') }}"></script>
 
