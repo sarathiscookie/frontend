@@ -65,6 +65,14 @@ main{
 #button-nav-top {
     margin-top:5%;
 }
+
+/* Buttons */
+
+.btn-outline-default {
+    background: transparent;
+    border: 1px solid #ddd;
+}
+
 /*Navigation Top*/
 /*Dropdown Top*/
 .navbar-collapse{
