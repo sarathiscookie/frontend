@@ -65,6 +65,14 @@ main{
 #button-nav-top {
     margin-top:5%;
 }
+
+/* Buttons */
+
+.btn-outline-default {
+    background: transparent;
+    border: 1px solid #ddd;
+}
+
 /*Navigation Top*/
 /*Dropdown Top*/
 .navbar-collapse{
@@ -196,6 +204,33 @@ main{
     height:552px;
     object-fit: cover;
 }
+
+.cookie-banner {
+    background-color: #ffffff;
+    color: #000000;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 30px;
+    text-align: center;
+    box-shadow: 0px 1px 5px rgba(0, 0, 0, 1);
+    z-index: 100;
+}
+
+.cookie-banner a {
+    color: #000000;
+}
+
+.cookie-banner .cookie-message {
+    max-width: 75%;
+    margin: 0 auto 15px auto;
+}
+
+.cookie-banner .btn-default {
+    font-weight: bold !important;
+}
+
 @media (max-width: 767px){ .jumbotron{
     height:312px !important;
 }}
