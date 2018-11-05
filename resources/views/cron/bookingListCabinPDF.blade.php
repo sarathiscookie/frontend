@@ -22,11 +22,12 @@
         .page-break {
             page-break-after: always;
         }
-        #ctable tr:nth-child(4n-1) {
-            background-color: #DCDDDF;
-        }
         tr.spaceUnder>td {
             padding-bottom: 1em;
+        }
+
+        tr.last-row>td {
+            border-bottom: 2px solid #000;
         }
     </style>
 
@@ -116,17 +117,8 @@
                       $category = $booking->sleeps;
                 }
 
-                /* Fetch and format inquiry message */
+                /* Fetch inquiry message */
                 $message = App\PrivateMessage::where('booking_id', new \MongoDB\BSON\ObjectID($booking->_id))->pluck('text')->first();
-
-                if(!$message) $message = '----';
-
-                /* Format booking notes */
-                if(!$booking->notes) {
-                    $notes = '----';
-                } else {
-                    $notes = $booking->notes;
-                }
 
             @endphp
             <tr>
@@ -144,25 +136,31 @@
                 <td>{{ $email }}</td>
             </tr>
 
-            <tr>
-                <td>{{ __('cronCabinBookingList.comment') }}:</td>
-                <td colspan="6" class="comment">{{ $booking->comments }}</td>
-                @if(isset($cabinHalfboard) && $cabinHalfboard === '1')
+            @if ($booking->comments)
+                <tr @if(!$message && !$booking->notes) class="last-row" @endif>
+                    <td>{{ __('cronCabinBookingList.comment') }}:</td>
+                    <td colspan="6" class="comment">{{ $booking->comments }}</td>
+                    @if(isset($cabinHalfboard) && $cabinHalfboard === '1')
+                        <td>&nbsp;</td>
+                    @endif
                     <td>&nbsp;</td>
-                @endif
-                <td>&nbsp;</td>
-                <td>{{ $phone }}</td>
-            </tr>
+                    <td>{{ $phone }}</td>
+                </tr>
+            @endif
 
-            <tr>
-                <td>{{ __('cronCabinBookingList.chat') }}:</td>
-                <td colspan="9" class="comment">{{ $message }}</td>
-            </tr>
+            @if ($message)
+                <tr @if(!$booking->comments && !$booking->notes) class="last-row" @endif>
+                    <td>{{ __('cronCabinBookingList.chat') }}:</td>
+                    <td colspan="9" class="comment">{{ $message }}</td>
+                </tr>
+            @endif
 
-            <tr>
-                <td>{{ __('cronCabinBookingList.notes') }}:</td>
-                <td colspan="9" class="comment">{{ $notes }}</td>
-            </tr>
+            @if ($booking->notes)
+                <tr @if(!$message && !$booking->comments) class="last-row" @endif>
+                    <td>{{ __('cronCabinBookingList.notes') }}:</td>
+                    <td colspan="9" class="comment">{{ $booking->notes }}</td>
+                </tr>
+            @endif
         @empty
             <tr>
                 <td>&nbsp;</td>

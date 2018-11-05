@@ -16,6 +16,7 @@ use DateTime;
 use DatePeriod;
 use DateInterval;
 use Auth;
+use Illuminate\Support\Facades\Session;
 
 class CartController extends Controller
 {
@@ -65,6 +66,8 @@ class CartController extends Controller
             ->get();
 
         $country  = Country::select('name')->get();
+
+        Session::flash('message', __('cart.bookingCleanupNotice'));
 
         return view('cart', ['carts' => $carts, 'country' => $country]);
     }
