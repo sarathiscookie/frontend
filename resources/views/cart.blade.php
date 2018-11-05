@@ -29,6 +29,11 @@
 
     <main>
         <div class="container-fluid container-fluid-booking1 text-center">
+            @if (Session::has('message'))
+                <div class="alert alert-warning">
+                    {{ \Session::get('message') }}
+                </div>
+            @endif
             @if (session()->has('deletedBooking'))
                 <div id="flash" class="alert alert-success">
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
