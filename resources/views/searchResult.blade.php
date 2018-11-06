@@ -15,8 +15,8 @@
     @isset($cabinSearchResult)
         <main>
             <div class="container-fluid container-fluid-cabinlist text-center">
-                @foreach($cabinSearchResult as $result)
-                    <div class="panel panel-default text-left">
+                @foreach($cabinSearchResult as $index => $result)
+                    <div class="panel panel-default text-left index">
                         <div class="panel-body">
                             <div class="row content row-cabinlist">
                                 <div class="col-sm-2">
@@ -26,7 +26,10 @@
                                 <div class="col-sm-7 text-left">
                                     <h2 class="headliner-cabinname">{{ $result->name }}&nbsp;</h2><h3 class="headliner-cabin">{{ $result->region }} - {{ $result->country }} ({{ number_format($result->height, 0, '', '.') }} m)</h3>
                                     <div class="cabinListMore">
-                                        {!! str_replace("&nbsp;", " ", str_limit($result->other_details, 250)) !!}
+                                        @php
+                                            $cabin_details = $result->other_details;
+                                        @endphp
+                                        {!! str_replace("&nbsp;", " ", str_limit($result->other_details, 290)) !!}
                                     </div>
 
                                     <a href="{{ route('cabin.details', ['id' => base64_encode($result->_id.env('MD5_Key'))]) }}" class="btn btn-default btn-sm btn-details">{{ __('searchDetails.moreDetails') }}</a>
