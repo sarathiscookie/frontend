@@ -6,6 +6,7 @@ function acceptCookies() {
       url: link_to,
       success: function () {
         $('.cookie-banner').remove();
+        $('.overlay').css('display', 'none');
       }
     });
   }

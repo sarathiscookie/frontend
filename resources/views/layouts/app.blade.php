@@ -123,6 +123,10 @@
     </div>
 </nav>
 
+@if (!Session::has('accept_cookies'))
+    <div class="overlay"></div>
+@endif
+
 @hasSection('jumbotron')
     @yield('jumbotron')
 
