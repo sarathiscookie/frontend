@@ -164,7 +164,7 @@ Route::get('/terms', function(){
 /* Impress */
 Route::get('/impress', function(){
     return view('impress');
-});
+})->name('impress');
 
 /* image Rights */
 Route::get('/image/rights', function(){

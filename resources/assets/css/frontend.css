@@ -203,7 +203,7 @@ main{
     padding:0;
     width:100%;
 }
-.jumbotron{
+.jumbotron {
     height:600px !important;
 }
 .titlepicture{
@@ -239,6 +239,18 @@ main{
 
 .cookie-banner a {
     color: #000000;
+}
+
+@media (max-width: 767px) {
+    .cookie-banner {
+        height: 100%;
+        top: 0;
+        width: 100%;
+    }
+
+    .btn-accept-cookies {
+        margin-top: 15px;
+    }
 }
 
 .cookie-banner .cookie-message {

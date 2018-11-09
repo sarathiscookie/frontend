@@ -123,7 +123,7 @@
     </div>
 </nav>
 
-@if (!Session::has('accept_cookies'))
+@if (!Session::has('accept_cookies') && Route::current()->getName() != 'impress' && Route::current()->getName() != 'data.protection')
     <div class="overlay"></div>
 @endif
 
@@ -178,7 +178,7 @@
     </ul>
 </footer>
 
-@if (!Session::has('accept_cookies') || Session::get('accept_cookies') == 0)
+@if (!Session::has('accept_cookies') && Session::get('accept_cookies') == 0 && Route::current()->getName() != 'impress' && Route::current()->getName() != 'data.protection')
     @include('includes.cookie-banner')
 @endif
 
