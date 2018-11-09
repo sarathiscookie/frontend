@@ -9,7 +9,7 @@
     <main>
         <div class="container-fluid container-fluid-home bg-3 text-center">
             <div class="col-sm-4 col-sm-4-home" id="div-advertising-home">
-                <a href="https://www.bockstark.de/" target="_blank"><img src="{{ asset('storage/img/Werbung.jpg') }}" class="img-responsive" id="advertising-home" alt="advertising"></a>
+                <a href="https://www.bockstark.de/pflegeprodukte/" target="_blank"><img src="{{ asset('storage/img/Werbung.jpg') }}" class="img-responsive" id="advertising-home" alt="advertising"></a>
             </div>
             <div class="row row-home">
                 <div class="col-sm-8 col-sm-8-home">
