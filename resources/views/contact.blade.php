@@ -117,7 +117,7 @@
                     <h3 class="accordion">Haben Sie Fragen zu einem anderem Thema?</h3>
                     <br>
                     <p>service@huetten-holiday.de </p>
-                    <p>Telefon: +49 (0) 9001 / 32 99 99<span id="footer_phone">(1,99 €/min aus dem dt. Festnetz, Mobilfunk ggf. abweichend)</span></p>
+                    <p>Telefon: +49 (0) 9001 / 32 89 89<span id="footer_phone">(0,99 €/min aus dem dt. Festnetz, Mobilfunk ggf. abweichend)</span></p>
                     <p> Öffnungszeiten: Mo. bis Do. 8:00 Uhr bis 16:00 Uhr und Fr. bis 13:00 Uhr</p>
                 </article>
             </div>

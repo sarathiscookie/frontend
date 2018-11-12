@@ -16,7 +16,7 @@
                     <p>Huetten-Holiday.de GmbH</p>
                     <p>gesetzlich vertreten durch:</p>
                     <p>Michael Hofer</p>
-                    <p>Tel.:+49(0)9001/329999<br> (1,99 €/min aus dem dt. Festnetz, Mobilfunk ggf. abweichend)</p>
+                    <p>Tel.:+49(0)9001 / 32 89 89<br> (0,99 €/min aus dem dt. Festnetz, Mobilfunk ggf. abweichend)</p>
                     <p>E-Mail: service@huetten-holiday.de&nbsp;</p>
                     <p>Website: <a href="https://huetten-holiday.de">https://huetten-holiday.de</a></p>
                     <p>&nbsp;</p>

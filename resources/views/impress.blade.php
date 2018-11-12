@@ -12,7 +12,7 @@
                     <strong>Vertreten durch:</strong>
                     <p>Geschäftsführer Michael Hofer</p>
                     <strong>Kontakt:</strong>
-                    <p>Telefon: +49 (0) 9001 / 32 99 99<br> <span class="note">(1,99 €/min aus dem dt. Festnetz, Mobilfunk ggf. abweichend)</span><br> Telefax: +49 (0) 83 03 / 32 99 89 -9 <br> E-Mail: <a href="mailto:service@huetten-holiday.de">service@huetten-holiday.de</a></p>
+                    <p>Telefon: +49 (0) 9001 / 32 89 89<br> <span class="note">(0,99 €/min aus dem dt. Festnetz, Mobilfunk ggf. abweichend)</span><br> Telefax: +49 (0) 83 03 / 32 99 89 -9 <br> E-Mail: <a href="mailto:service@huetten-holiday.de">service@huetten-holiday.de</a></p>
                     <strong>Registereintrag:</strong>
                     <p>Eintragung im Handelsregister.<br> Registergericht: Amtsgericht Kempten (Allgäu)<br> Registernummer: HRB 13681</p>
                     <strong>Umsatzsteuer-ID:</strong>
