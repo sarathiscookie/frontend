@@ -2048,13 +2048,22 @@ class BookingHistoryController extends Controller
 
             if(!empty($bookingData)) {
                 $sum_prepayment_amount = session()->get('prepaymentAmountRequest');
-                $serviceTax            = (new PaymentController)->serviceFees($sum_prepayment_amount, $paymentMethod = null);
-                $percentage            = ($serviceTax / 100) * $sum_prepayment_amount;
+                $checkingFrom          = DateTime::createFromFormat('d.m.y', session()->get('dateFromRequest'))->format('Y-m-d');
+
+                /* Deduct days from booked amount begin */
+                $checkingTo            = DateTime::createFromFormat('d.m.y', session()->get('dateToRequest'))->format('Y-m-d');
+                $dateOne               = new DateTime($checkingFrom);
+                $dateTwo               = new DateTime($checkingTo);
+                $dateDiff              = $dateTwo->diff($dateOne);
+                $amountAfterDeductDays = round($sum_prepayment_amount / $dateDiff->days, 2);
+                /* Deduct days from booked amount end */
+
+                $serviceTax            = (new PaymentController)->serviceFees($amountAfterDeductDays, $paymentMethod = null);
+                $percentage            = ($serviceTax / 100) * $amountAfterDeductDays;
                 $prepay_service_total  = $sum_prepayment_amount + $percentage;
 
                 /* Condition to check pay by bill possible begin */
                 // Pay by bill radio button in payment page will show when there is two weeks diff b/w current date and checking from date.
-                $checkingFrom          = DateTime::createFromFormat('d.m.y', session()->get('dateFromRequest'))->format('Y-m-d');
                 $currentDate           = date('Y-m-d');
                 $d1                    = new DateTime($currentDate);
                 $d2                    = new DateTime($checkingFrom);
@@ -2077,7 +2086,7 @@ class BookingHistoryController extends Controller
                 }
                 $order_number          = 'ORDER'.'-'.date('y').'-'.$order_num;
 
-                return view('payment', ['moneyBalance' => Auth::user()->money_balance, 'sumPrepaymentAmount' => $sum_prepayment_amount, 'prepayServiceTotal' => $prepay_service_total, 'serviceTax' => $serviceTax, 'payByBillPossible' => $payByBillPossible, 'order_number' => $order_number, 'editBooking' => $editBooking, 'availableStatus' => session()->get('availableStatus')]);
+                return view('payment', ['moneyBalance' => Auth::user()->money_balance, 'sumPrepaymentAmount' => $sum_prepayment_amount, 'prepayServiceTotal' => $prepay_service_total, 'serviceTax' => $percentage, 'payByBillPossible' => $payByBillPossible, 'order_number' => $order_number, 'editBooking' => $editBooking, 'availableStatus' => session()->get('availableStatus'), 'amountAfterDeductDays' => $amountAfterDeductDays, 'deductedDays' => $dateDiff->days]);
             }
             else {
                 return redirect()->back()->with('updateBookingFailedStatus', __('bookingHistory.errorTwo'));
@@ -2105,7 +2114,6 @@ class BookingHistoryController extends Controller
                 ->find(session()->get('bookingIdRequest'));
 
             if(!empty($bookingOld)) {
-
                 $user                  = Userlist::where('is_delete', 0)->where('usrActive', '1')->find(Auth::user()->_id);
                 $order                 = Order::where('auth_user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))->find($bookingOld->order_id);
                 $cabin                 = Cabin::where('is_delete', 0)->where('other_cabin', "0")->where('name', $bookingOld->cabinname)->first();
@@ -2114,6 +2122,16 @@ class BookingHistoryController extends Controller
 
                 // Pay by bill condition works if there is two weeks diff b/w current date and checking from date.
                 $checkingFrom          = DateTime::createFromFormat('d.m.y', session()->get('dateFromRequest'))->format('Y-m-d');
+
+                /* Deduct days from booked amount begin */
+                $checkingTo            = DateTime::createFromFormat('d.m.y', session()->get('dateToRequest'))->format('Y-m-d');
+                $dateOne               = new DateTime($checkingFrom);
+                $dateTwo               = new DateTime($checkingTo);
+                $dateDiff              = $dateTwo->diff($dateOne);
+                $deductedDays          = $dateDiff->days;
+                $amountAfterDeductDays = round($sum_prepayment_amount / $deductedDays, 2);
+                /* Deduct days from booked amount end */
+
                 $currentDate           = date('Y-m-d');
                 $d1                    = new DateTime($currentDate);
                 $d2                    = new DateTime($checkingFrom);
@@ -2230,9 +2248,10 @@ class BookingHistoryController extends Controller
                     else {
                         if(isset($request->payment)) {
                             /* How much money user have in their account after used money balance */
-                            $afterRedeemAmount = $total_prepayment_amount - $user->money_balance;
-                            $percentage        = ((new PaymentController)->serviceFees($afterRedeemAmount, $request->payment) / 100) * $afterRedeemAmount;
-                            $total             = round($afterRedeemAmount + $percentage, 2);
+                            $afterRedeemAmount            = $total_prepayment_amount - $user->money_balance;
+                            $afterRedeemAmountWithoutDays = round($afterRedeemAmount / $deductedDays, 2);
+                            $percentage                   = ((new PaymentController)->serviceFees($afterRedeemAmountWithoutDays, $request->payment) / 100) * $afterRedeemAmountWithoutDays;
+                            $total                        = round($afterRedeemAmount + $percentage, 2);
 
                             // Function call for payment gateway section
                             $paymentGateway    = (new PaymentController)->paymentGateway($request->all(), $request->ip(), $total, $order_number);
@@ -2430,7 +2449,7 @@ class BookingHistoryController extends Controller
                 }
                 else {
                     if(isset($request->payment)) {
-                        $percentage     = ((new PaymentController)->serviceFees($total_prepayment_amount, $request->payment) / 100) * $total_prepayment_amount;
+                        $percentage     = ((new PaymentController)->serviceFees($amountAfterDeductDays, $request->payment) / 100) * $amountAfterDeductDays;
                         $total          = round($total_prepayment_amount + $percentage, 2);
 
                         // Function call for payment gateway section

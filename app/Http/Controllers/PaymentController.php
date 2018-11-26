@@ -142,6 +142,8 @@ class PaymentController extends Controller
     {
         if (session()->has('cartAvailableSession') && session()->get('cartAvailableSession') === 'success') {
             $prepayment_amount         = [];
+            $prepaymentWithoutDays     = [];
+            $deductedDays              = [];
             $payByBillPossible         = '';
             $carts                     = Booking::where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
                 ->where('status', "8")
@@ -161,6 +163,17 @@ class PaymentController extends Controller
                     $d1                  = new DateTime($currentDate);
                     $d2                  = new DateTime($checkingFrom);
                     $dateDifference      = $d2->diff($d1);
+
+                    /* Deduct days from booked amount begin */
+                    $checkingTo              = $cart->reserve_to->format('Y-m-d');
+                    $dateOne                 = new DateTime($checkingFrom);
+                    $dateTwo                 = new DateTime($checkingTo);
+                    $dateDiff                = $dateTwo->diff($dateOne);
+                    $deductedDays[]          = $dateDiff->days;
+                    $prepaymentWithoutDays[] = round($cart->prepayment_amount / $dateDiff->days, 2);
+                    /* Deduct days from booked amount end */
+
+
                     if($dateDifference->days > 14) {
                         $payByBillPossible = 'yes';
                     }
@@ -181,11 +194,13 @@ class PaymentController extends Controller
 
                 $order_number            = 'ORDER'.'-'.date('y').'-'.$order_num;
                 $sum_prepayment_amount   = array_sum($prepayment_amount);
-                $serviceTax              = $this->serviceFees($sum_prepayment_amount, $paymentMethod = null);
-                $percentage              = ($serviceTax / 100) * $sum_prepayment_amount;
+                $amountAfterDeductDays   = array_sum($prepaymentWithoutDays);
+                $sum_deducted_days       = array_sum($deductedDays);
+                $serviceTax              = $this->serviceFees($amountAfterDeductDays, $paymentMethod = null);
+                $percentage              = ($serviceTax / 100) * $amountAfterDeductDays;
                 $prepay_service_total    = $sum_prepayment_amount + $percentage;
 
-                return view('payment', ['moneyBalance' => Auth::user()->money_balance, 'sumPrepaymentAmount' => $sum_prepayment_amount, 'prepayServiceTotal' => $prepay_service_total, 'serviceTax' => $serviceTax, 'payByBillPossible' => $payByBillPossible, 'order_number' => $order_number]);
+                return view('payment', ['moneyBalance' => Auth::user()->money_balance, 'sumPrepaymentAmount' => $sum_prepayment_amount, 'prepayServiceTotal' => $prepay_service_total, 'serviceTax' => $percentage, 'payByBillPossible' => $payByBillPossible, 'order_number' => $order_number, 'amountAfterDeductDays' => $amountAfterDeductDays, 'deductedDays' => $sum_deducted_days]);
 
             }
             else {
@@ -217,7 +232,9 @@ class PaymentController extends Controller
     {
         if(isset($request->doPayment) && $request->doPayment === 'doPayment' && session()->get('cartAvailableSession') === 'success') {
             $prepayment_amount           = [];
+            $prepaymentWithoutDays       = [];
             $cart_ids                    = [];
+            $deductedDays                = [];
             $payByBillPossible           = '';
             $user                        = Userlist::where('is_delete', 0)->where('usrActive', '1')->find(Auth::user()->_id);
             $carts                       = Booking::where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
@@ -235,6 +252,16 @@ class PaymentController extends Controller
 
                     // Pay by bill condition works if there is two weeks diff b/w current date and checking from date.
                     $checkingFrom        = $cart->checkin_from->format('Y-m-d');
+
+                    /* Deduct days from booked amount begin */
+                    $checkingTo              = $cart->reserve_to->format('Y-m-d');
+                    $dateOne                 = new DateTime($checkingFrom);
+                    $dateTwo                 = new DateTime($checkingTo);
+                    $dateDiff                = $dateTwo->diff($dateOne);
+                    $prepaymentWithoutDays[] = round($cart->prepayment_amount / $dateDiff->days, 2);
+                    $deductedDays[]          = $dateDiff->days;
+                    /* Deduct days from booked amount end */
+
                     $currentDate         = date('Y-m-d');
                     $d1                  = new DateTime($currentDate);
                     $d2                  = new DateTime($checkingFrom);
@@ -259,6 +286,8 @@ class PaymentController extends Controller
 
                 $order_number            = 'ORDER'.'-'.date('y').'-'.$order_num;
                 $sum_prepayment_amount   = array_sum($prepayment_amount);
+                $amountAfterDeductDays   = array_sum($prepaymentWithoutDays);
+                $sum_deducted_days       = array_sum($deductedDays);
                 $total_prepayment_amount = round($sum_prepayment_amount, 2);
 
                 if($request->has('moneyBalance') && $request->moneyBalance === '1') {
@@ -313,13 +342,14 @@ class PaymentController extends Controller
                     else {
                         if(isset($request->payment)) {
                             /* How much money user have in their account after used money balance */
-                            $afterRedeemAmount = $total_prepayment_amount - $user->money_balance;
-                            $percentage        = ($this->serviceFees($afterRedeemAmount, $request->payment) / 100) * $afterRedeemAmount;
-                            $total             = round($afterRedeemAmount + $percentage, 2);
-                            $cartMoneyBalance  = $user->money_balance / $countCarts; // To store how much money balance used for each booking
+                            $afterRedeemAmount            = $total_prepayment_amount - $user->money_balance;
+                            $afterRedeemAmountWithoutDays = round($afterRedeemAmount / $sum_deducted_days, 2);
+                            $percentage                   = ($this->serviceFees($afterRedeemAmountWithoutDays, $request->payment) / 100) * $afterRedeemAmountWithoutDays;
+                            $total                        = round($afterRedeemAmount + $percentage, 2);
+                            $cartMoneyBalance             = $user->money_balance / $countCarts; // To store how much money balance used for each booking
 
                             // Function call for payment gateway section
-                            $paymentGateway    = $this->paymentGateway($request->all(), $request->ip(), $total, $order_number);
+                            $paymentGateway = $this->paymentGateway($request->all(), $request->ip(), $total, $order_number);
 
                             if ($paymentGateway["status"] === "REDIRECT") {
 
@@ -467,7 +497,7 @@ class PaymentController extends Controller
                 }
                 else {
                     if(isset($request->payment)) {
-                        $percentage     = ($this->serviceFees($total_prepayment_amount, $request->payment) / 100) * $total_prepayment_amount;
+                        $percentage     = ($this->serviceFees($amountAfterDeductDays, $request->payment) / 100) * $amountAfterDeductDays;
                         $total          = round($total_prepayment_amount + $percentage, 2);
                         // Function call for payment gateway section
                         $paymentGateway = $this->paymentGateway($request->all(), $request->ip(), $total, $order_number);

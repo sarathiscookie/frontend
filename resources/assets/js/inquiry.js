@@ -31,20 +31,25 @@ $(function(){
     $('.jsCalSleep').change(function() {
 
         // Days multiply with prepayment_amount
-        var amountDays    = $('.amountDays').data('amountdays');
+        var amountDays   = $('.amountDays').data('amountdays');
+
+        // Prepayment amount
+        var prepayAmount = $('.amountDays').data('prepayamountdeductdays');
 
         // Sleeps select box value is null for validation purpose. So value is set as 0
-        var sleeps        = 0;
+        var sleeps = 0;
 
         if($(this).val() !== ''){
-            sleeps    = $(this).val();
+            sleeps = $(this).val();
         }
 
-        var total     = amountDays * sleeps;
+        var total            = amountDays * sleeps;
+        var amountDeductDays = prepayAmount * sleeps;
+
         $( '.replaceInquiryGuest' ).html(sleeps);
         $( '.replaceInquiryDeposit' ).html(formatter.format(total));
 
-        inquiryTotalDepositCalc(total);
+        inquiryTotalDepositCalc(total, amountDeductDays);
     });
 
     // Beds calculation
@@ -52,6 +57,9 @@ $(function(){
 
         // Days multiply with prepayment_amount
         var amountDays = $('.amountDays').data('amountdays');
+
+        // Prepayment amount
+        var prepayAmount = $('.amountDays').data('prepayamountdeductdays');
 
         // Beds & Dorms select box value is null for validation purpose. So value is set as 0
         var dorms      = 0;
@@ -64,13 +72,14 @@ $(function(){
             dorms      = $('.jsCalDorm').val();
         }
 
-        var guest      = parseInt(beds) + parseInt(dorms);
-        var total      = (parseInt(beds) + parseInt(dorms)) * amountDays;
+        var guest            = parseInt(beds) + parseInt(dorms);
+        var total            = (parseInt(beds) + parseInt(dorms)) * amountDays;
+        var amountDeductDays = prepayAmount * guest;
 
         $( '.replaceInquiryGuest' ).html(guest);
         $( '.replaceInquiryDeposit' ).html(formatter.format(total));
 
-        inquiryTotalDepositCalc(total);
+        inquiryTotalDepositCalc(total, amountDeductDays);
     });
 
     // Dorms calculation
@@ -78,6 +87,9 @@ $(function(){
 
         // Days multiply with prepayment_amount
         var amountDays = $('.amountDays').data('amountdays');
+
+        // Prepayment amount
+        var prepayAmount = $('.amountDays').data('prepayamountdeductdays');
 
         // Beds & Dorms select box value is null for validation purpose. So value is set as 0
         var dorms      = 0;
@@ -90,16 +102,17 @@ $(function(){
             beds       = $('.jsCalBed').val();
         }
 
-        var guest      = parseInt(dorms) + parseInt(beds);
-        var total      = (parseInt(dorms) + parseInt(beds)) * amountDays;
+        var guest            = parseInt(dorms) + parseInt(beds);
+        var total            = (parseInt(dorms) + parseInt(beds)) * amountDays;
+        var amountDeductDays = prepayAmount * guest;
 
         $( '.replaceInquiryGuest' ).html(guest);
         $( '.replaceInquiryDeposit' ).html(formatter.format(total));
 
-        inquiryTotalDepositCalc(total);
+        inquiryTotalDepositCalc(total, amountDeductDays);
     });
 
-    function inquiryTotalDepositCalc(total)
+    function inquiryTotalDepositCalc(total, amountDeductDays)
     {
         // Helping object for env variables
         var env = {
@@ -108,25 +121,25 @@ $(function(){
             tax_three: window.environment.service_tax_three
         };
 
-        var serviceTax    = '';
+        var serviceTax = '';
 
-        if(total <= 30) {
+        if(amountDeductDays <= 30) {
             serviceTax = env.tax_one;
         }
 
-        if(total > 30 && total <= 100) {
+        if(amountDeductDays > 30 && amountDeductDays <= 100) {
             serviceTax = env.tax_two;
         }
 
-        if(total > 100) {
+        if(amountDeductDays > 100) {
             serviceTax = env.tax_three;
         }
 
-        var sumPrepaymentAmountPercentage   = (serviceTax / 100) * total;
+        var sumPrepaymentAmountPercentage   = (serviceTax / 100) * amountDeductDays;
         var sumPrepaymentAmountServiceTotal = total + sumPrepaymentAmountPercentage;
 
         $( '.replaceInquiryCompleteDeposit' ).html(formatter.format(total));
-        $( '.replaceInquiryServiceFee' ).html(serviceTax+' %');
+        $( '.replaceInquiryServiceFee' ).html(formatter.format(sumPrepaymentAmountPercentage));
         $( '.replaceInquiryCompletePayment' ).html(formatter.format(sumPrepaymentAmountServiceTotal));
     }
 });

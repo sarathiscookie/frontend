@@ -568,22 +568,22 @@ class InquiryController extends Controller
                     $dateDifference           = $d2->diff($d1);
                     $guestSleepsTypeCondition = ($cabin->sleeping_place === 1) ? $sleepsRequest : $requestBedsSumDorms;
                     $amount                   = ($cabin->prepayment_amount * $dateDifference->days) * $guestSleepsTypeCondition;
-                    $sumPrepaymentAmount      = $amount;
+                    $amountAfterDeductDays    = round($cabin->prepayment_amount * $guestSleepsTypeCondition, 2);
 
-                    if($sumPrepaymentAmount <= 30) {
+                    if($amountAfterDeductDays <= 30) {
                         $serviceTax = env('SERVICE_TAX_ONE');
                     }
 
-                    if($sumPrepaymentAmount > 30 && $sumPrepaymentAmount <= 100) {
+                    if($amountAfterDeductDays > 30 && $amountAfterDeductDays <= 100) {
                         $serviceTax = env('SERVICE_TAX_TWO');
                     }
 
-                    if($sumPrepaymentAmount > 100) {
+                    if($amountAfterDeductDays > 100) {
                         $serviceTax = env('SERVICE_TAX_THREE');
                     }
 
-                    $sumPrepaymentAmountPercentage   = ($serviceTax / 100) * $sumPrepaymentAmount;
-                    $sumPrepaymentAmountServiceTotal = $sumPrepaymentAmount + $sumPrepaymentAmountPercentage;
+                    $sumPrepaymentAmountPercentage   = ($serviceTax / 100) * $amountAfterDeductDays;
+                    $sumPrepaymentAmountServiceTotal = $amount + $sumPrepaymentAmountPercentage;
                     /* Calculation prepayment and total prepayment amount end */
 
                     /* Create invoice number begin */
@@ -619,7 +619,7 @@ class InquiryController extends Controller
                     $inquiry->status                  = '7';
                     $inquiry->reservation_cancel      = $cabin->reservation_cancel;
                     $inquiry->inquirystatus           = 0; //0 = waiting, 1 = Approved, 2 = Rejected
-                    $inquiry->prepayment_amount       = round($sumPrepaymentAmount, 2);
+                    $inquiry->prepayment_amount       = round($amount, 2);
                     $inquiry->total_prepayment_amount = round($sumPrepaymentAmountServiceTotal, 2);
                     $inquiry->payment_status          = "0";
                     $inquiry->is_delete               = 0;
@@ -707,14 +707,23 @@ class InquiryController extends Controller
                 ->find($id);
 
             if(!empty($bookingData)) {
+                $checkingFrom          = $bookingData->checkin_from->format('Y-m-d');
+
+                /* Deduct days from booked amount begin */
+                $checkingTo            = $bookingData->reserve_to->format('Y-m-d');
+                $dateOne               = new DateTime($checkingFrom);
+                $dateTwo               = new DateTime($checkingTo);
+                $dateDiff              = $dateTwo->diff($dateOne);
+                $amountAfterDeductDays = round($bookingData->prepayment_amount / $dateDiff->days, 2);
+                /* Deduct days from booked amount end */
+
                 $sum_prepayment_amount = round($bookingData->prepayment_amount, 2);
-                $serviceTax            = (new PaymentController)->serviceFees($sum_prepayment_amount, $paymentMethod = null);
-                $percentage            = ($serviceTax / 100) * $sum_prepayment_amount;
+                $serviceTax            = (new PaymentController)->serviceFees($amountAfterDeductDays, $paymentMethod = null);
+                $percentage            = ($serviceTax / 100) * $amountAfterDeductDays;
                 $prepay_service_total  = $sum_prepayment_amount + $percentage;
 
                 /* Condition to check pay by bill possible begin */
                 // Pay by bill radio button in payment page will show when there is two weeks diff b/w current date and checking from date.
-                $checkingFrom          = $bookingData->checkin_from->format('Y-m-d');
                 $currentDate           = date('Y-m-d');
                 $d1                    = new DateTime($currentDate);
                 $d2                    = new DateTime($checkingFrom);
@@ -768,7 +777,7 @@ class InquiryController extends Controller
 
                 $order_number_format = 'ORDER'.'-'.date('y').'-'.$order_sum;
 
-                return view('payment', ['moneyBalance' => Auth::user()->money_balance, 'sumPrepaymentAmount' => $sum_prepayment_amount, 'prepayServiceTotal' => $prepay_service_total, 'serviceTax' => $serviceTax, 'payByBillPossible' => $payByBillPossible, 'order_number' => $order_number_format, 'inquiryPayment' => 'inquiryPayment', 'inquiryPaymentId' => $bookingData->_id]);
+                return view('payment', ['moneyBalance' => Auth::user()->money_balance, 'sumPrepaymentAmount' => $sum_prepayment_amount, 'prepayServiceTotal' => $prepay_service_total, 'serviceTax' => $percentage, 'payByBillPossible' => $payByBillPossible, 'order_number' => $order_number_format, 'inquiryPayment' => 'inquiryPayment', 'inquiryPaymentId' => $bookingData->_id, 'amountAfterDeductDays' => $amountAfterDeductDays, 'deductedDays' => $dateDiff->days]);
             }
             else {
                 return redirect()->back()->with('inquiryPaymentStatus', __('bookingHistory.errorTwo'));
@@ -812,6 +821,16 @@ class InquiryController extends Controller
 
                 // Pay by bill condition works if there is two weeks diff b/w current date and checking from date.
                 $checkingFrom          = $bookingData->checkin_from->format('Y-m-d');
+
+                /* Deduct days from booked amount begin */
+                $checkingTo            = $bookingData->reserve_to->format('Y-m-d');
+                $dateOne               = new DateTime($checkingFrom);
+                $dateTwo               = new DateTime($checkingTo);
+                $dateDiff              = $dateTwo->diff($dateOne);
+                $deductedDays          = $dateDiff->days;
+                $amountAfterDeductDays = round($bookingData->prepayment_amount / $deductedDays, 2);
+                /* Deduct days from booked amount end */
+
                 $currentDate           = date('Y-m-d');
                 $d1                    = new DateTime($currentDate);
                 $d2                    = new DateTime($checkingFrom);
@@ -874,12 +893,13 @@ class InquiryController extends Controller
                     else {
                         if(isset($request->payment)) {
                             /* How much money user have in their account after used money balance */
-                            $afterRedeemAmount = $total_prepayment_amount - $user->money_balance;
-                            $percentage        = ((new PaymentController)->serviceFees($afterRedeemAmount, $request->payment) / 100) * $afterRedeemAmount;
-                            $total             = round($afterRedeemAmount + $percentage, 2);
+                            $afterRedeemAmount            = $total_prepayment_amount - $user->money_balance;
+                            $afterRedeemAmountWithoutDays = round($afterRedeemAmount / $deductedDays, 2);
+                            $percentage                   = ((new PaymentController)->serviceFees($afterRedeemAmountWithoutDays, $request->payment) / 100) * $afterRedeemAmountWithoutDays;
+                            $total                        = round($afterRedeemAmount + $percentage, 2);
 
                             // Function call for payment gateway section
-                            $paymentGateway    = (new PaymentController)->paymentGateway($request->all(), $request->ip(), $total, $order_number);
+                            $paymentGateway               = (new PaymentController)->paymentGateway($request->all(), $request->ip(), $total, $order_number);
                             if ($paymentGateway["status"] === "REDIRECT") {
                                 if(!empty($order)) {
                                     /* Update order details */
@@ -1002,7 +1022,7 @@ class InquiryController extends Controller
                 }
                 else {
                     if(isset($request->payment)) {
-                        $percentage     = ((new PaymentController)->serviceFees($total_prepayment_amount, $request->payment) / 100) * $total_prepayment_amount;
+                        $percentage     = ((new PaymentController)->serviceFees($amountAfterDeductDays, $request->payment) / 100) * $amountAfterDeductDays;
                         $total          = round($total_prepayment_amount + $percentage, 2);
 
                         // Function call for payment gateway section
