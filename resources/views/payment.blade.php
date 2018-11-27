@@ -204,7 +204,7 @@
                                             <ul class="payment-options-booking2">
                                                 <li class="li-head-booking2">{{ __('payment.termsConditions') }}</li>
                                                 <li class="check-it-list-booking2{{ $errors->has('confirmThePrivacy') ? ' has-error' : '' }}">
-                                                    <input type="checkbox" name="confirmThePrivacy" class="check-it-booking2"><a href="/data/protection"> {{ __('payment.confirmThePrivacy') }}</a>
+                                                    <input type="checkbox" name="confirmThePrivacy" class="check-it-booking2" @if(old('confirmThePrivacy')) checked @endif><a href="/data/protection"> {{ __('payment.confirmThePrivacy') }}</a>
                                                     @if ($errors->has('confirmThePrivacy'))
                                                         <span class="help-block">
                                                             <strong>{{ $errors->first('confirmThePrivacy') }}</strong>
@@ -212,7 +212,7 @@
                                                     @endif
                                                 </li>
                                                 <li class="check-it-list-booking2{{ $errors->has('confirmTheTerms') ? ' has-error' : '' }}">
-                                                    <input type="checkbox" name="confirmTheTerms" class="check-it-booking2"><a href="/terms"> {{ __('payment.confirmTheTerms') }}</a>
+                                                    <input type="checkbox" name="confirmTheTerms" class="check-it-booking2" @if(old('confirmTheTerms')) checked @endif><a href="/terms"> {{ __('payment.confirmTheTerms') }}</a>
                                                     @if ($errors->has('confirmTheTerms'))
                                                         <span class="help-block">
                                                             <strong>{{ $errors->first('confirmTheTerms') }}</strong>
@@ -241,7 +241,7 @@
                                             <div class="row row-booking2" data-redeem="{{ $moneyBalance }}">
                                                 <div class="col-sm-12 col-sm-12-booking2 month-opening-booking2">
                                                     <h5>{{ __('payment.yourAmount') }}</h5>
-                                                    <span class="label label-info label-cabinlist"><input type="checkbox" class="moneyBalanceCheckbox" name="moneyBalance" value="1"> {{ __('payment.redeemNow') }} {{ number_format($moneyBalance, 2, ',', '.') }}&euro;</span>
+                                                    <span class="label label-info label-cabinlist"><input type="checkbox" class="moneyBalanceCheckbox" name="moneyBalance" value="1" @if(old('moneyBalance')) checked @endif> {{ __('payment.redeemNow') }} {{ number_format($moneyBalance, 2, ',', '.') }}&euro;</span>
                                                 </div>
                                             </div>
                                         @endif
