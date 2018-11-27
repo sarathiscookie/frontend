@@ -108,7 +108,9 @@ $(function() {
     });
 
     // If money balance checkbox property is selected on page load then amount will calculate and show.
-    checkingProperty();
+    if($(".moneyBalanceCheckbox").prop("checked") === true){
+        checkingProperty();
+    }
 
     /* When click on payment method pass amount and calculate service fee. Open hide credit card iframe */
     $("input[name='payment']").on("click", function(){
