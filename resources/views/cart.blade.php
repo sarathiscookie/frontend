@@ -45,26 +45,28 @@
 
             @isset($carts)
                  <form action="{{ route('cart.store') }}" method="post">
+                     {{ csrf_field() }}
 
-                        {{ csrf_field() }}
+                     @php
+                         $prepayment_amount = [];
+                     @endphp
 
-                        @php
-                            $prepayment_amount = [];
-                        @endphp
-
-                        @forelse($carts as $key => $cart)
+                     @forelse($carts as $key => $cart)
 
                          @php
-                             $monthBegin              = $cart->checkin_from->format('Y-m-d');
-                             $monthEnd                = $cart->reserve_to->format('Y-m-d');
-                             $d1                      = new DateTime($monthBegin);
-                             $d2                      = new DateTime($monthEnd);
-                             $dateDifference          = $d2->diff($d1);
-                             $amount                  = round(($cabinDetails->cabin($cart->cabin_id)->prepayment_amount * $dateDifference->days) * $cart->guests, 2);
-                             $prepayment_amount[]     = round(($cabinDetails->cabin($cart->cabin_id)->prepayment_amount * $dateDifference->days) * $cart->guests, 2);
+                             $monthBegin                      = $cart->checkin_from->format('Y-m-d');
+                             $monthEnd                        = $cart->reserve_to->format('Y-m-d');
+                             $d1                              = new DateTime($monthBegin);
+                             $d2                              = new DateTime($monthEnd);
+                             $dateDifference                  = $d2->diff($d1);
+                             $amount                          = round(($cabinDetails->cabin($cart->cabin_id)->prepayment_amount * $dateDifference->days) * $cart->guests, 2);
+                             $prepayment_amount[]             = round(($cabinDetails->cabin($cart->cabin_id)->prepayment_amount * $dateDifference->days) * $cart->guests, 2);
+                             $amountAfterDeductDays           = round($cabinDetails->cabin($cart->cabin_id)->prepayment_amount * $cart->guests, 2);
+                             $prepayment_amount_deduct_days[] = round($cabinDetails->cabin($cart->cabin_id)->prepayment_amount * $cart->guests, 2);
 
                              /* For javascript cal */
                              $amountBookingDays       = round($cabinDetails->cabin($cart->cabin_id)->prepayment_amount * $dateDifference->days, 2);
+                             $cabinPrepayAmount       = round($cabinDetails->cabin($cart->cabin_id)->prepayment_amount, 2);
                              $inputBeds               = 'guest.'.$cart->_id.'.beds';
                              $inputDormitory          = 'guest.'.$cart->_id.'.dormitory';
                              $inputSleeps             = 'guest.'.$cart->_id.'.sleeps';
@@ -73,137 +75,137 @@
                              $notAvailStatus          = 'notAvailable.'.$cart->_id.'.status';
                          @endphp
 
-                            <div class="panel panel-default text-left panel-booking1 panel-default-booking1">
-                                <div class="panel-body panel-body-booking1">
-                                    <div class="row content row-booking1">
-                                        <div class="col-sm-2 col-sm-2-booking1">
-                                            <img src="{{ asset('storage/'.$cabinDetails->show($cart->cabin_id)) }}" class="img-responsive img-thumbnail img-thumbnail-booking1" style="width:100%" alt="Image">
-                                        </div>
-                                        <div class="col-sm-7 text-left col-sm-7-booking1">
+                         <div class="panel panel-default text-left panel-booking1 panel-default-booking1">
+                             <div class="panel-body panel-body-booking1">
+                                 <div class="row content row-booking1">
+                                     <div class="col-sm-2 col-sm-2-booking1">
+                                         <img src="{{ asset('storage/'.$cabinDetails->show($cart->cabin_id)) }}" class="img-responsive img-thumbnail img-thumbnail-booking1" style="width:100%" alt="Image">
+                                     </div>
+                                     <div class="col-sm-7 text-left col-sm-7-booking1">
 
-                                            <h3 class="headliner-cabinname">{{ $cabinDetails->cabin($cart->cabin_id)->name }} - {{ $cabinDetails->cabin($cart->cabin_id)->region }}<span class="glyphicon glyphicon-question-sign" title="{{__('cart.headingThreeTitle')}}"></span></h3>
+                                         <h3 class="headliner-cabinname">{{ $cabinDetails->cabin($cart->cabin_id)->name }} - {{ $cabinDetails->cabin($cart->cabin_id)->region }}<span class="glyphicon glyphicon-question-sign" title="{{__('cart.headingThreeTitle')}}"></span></h3>
 
-                                            @if (session()->has($notAvailStatus))
-                                                <div id="flash" class="alert alert-danger">
-                                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                                        <span aria-hidden="true">&times;</span>
-                                                    </button>
-                                                    {!! session()->get($notAvailStatus) !!}
-                                                </div>
-                                            @endif
+                                         @if (session()->has($notAvailStatus))
+                                             <div id="flash" class="alert alert-danger">
+                                                 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                                     <span aria-hidden="true">&times;</span>
+                                                 </button>
+                                                 {!! session()->get($notAvailStatus) !!}
+                                             </div>
+                                         @endif
 
-                                            <div class="row row-booking1">
-                                                <div class="col-sm-12 col-sm-12-booking1 month-opening-booking1">
-                                                    <div class="form-group row row-booking1 forComments" data-cartid="{{ $cart->_id }}">
+                                         <div class="row row-booking1">
+                                             <div class="col-sm-12 col-sm-12-booking1 month-opening-booking1">
+                                                 <div class="form-group row row-booking1 forComments" data-cartid="{{ $cart->_id }}">
 
-                                                        <div class="amountBookingDays_{{ $cart->_id }}" data-amountbookingdays="{{ $amountBookingDays }}"></div>
+                                                     <div class="amountBookingDays_{{ $cart->_id }}" data-amountbookingdays="{{ $amountBookingDays }}" data-cabinprepayamount="{{ $cabinPrepayAmount }}"></div>
 
-                                                        <div class="col-sm-4 col-sm-4-booking1">
-                                                            <div class="form-group">
-                                                                <input type="text" class="form-control form-control-booking1" value="{{ $cart->checkin_from->format('d.m.y') }}"  readonly>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-sm-4 col-sm-4-booking1">
-                                                            <div class="form-group">
-                                                                <input type="text" class="form-control form-control-booking1" value="{{ $cart->reserve_to->format('d.m.y') }}"  readonly>
-                                                            </div>
-                                                        </div>
+                                                     <div class="col-sm-4 col-sm-4-booking1">
+                                                         <div class="form-group">
+                                                             <input type="text" class="form-control form-control-booking1" value="{{ $cart->checkin_from->format('d.m.y') }}"  readonly>
+                                                         </div>
+                                                     </div>
+                                                     <div class="col-sm-4 col-sm-4-booking1">
+                                                         <div class="form-group">
+                                                             <input type="text" class="form-control form-control-booking1" value="{{ $cart->reserve_to->format('d.m.y') }}"  readonly>
+                                                         </div>
+                                                     </div>
 
-                                                        @if($cabinDetails->cabin($cart->cabin_id)->sleeping_place != 1)
-                                                            <div class="col-sm-4 col-sm-4-f-booking1 col-sm-4-booking1 form-group {{ $errors->has($inputBeds) ? ' has-error' : '' }}">
-                                                                <select class="form-control form-control-booking1 jsBookCalBeds" name="guest[{{ $cart->_id }}][beds]" id="beds_{{ $cart->_id }}">
-                                                                    <option value="">{{__('cart.chooseBeds')}}</option>
-                                                                    @for($i = 1; $i <= 30; $i++)
-                                                                        <option value="{{ $i }}" @if($i == $cart->beds) selected @endif>{{ $i }}</option>
-                                                                    @endfor
-                                                                </select>
+                                                     @if($cabinDetails->cabin($cart->cabin_id)->sleeping_place != 1)
+                                                         <div class="col-sm-4 col-sm-4-f-booking1 col-sm-4-booking1 form-group {{ $errors->has($inputBeds) ? ' has-error' : '' }}">
+                                                             <select class="form-control form-control-booking1 jsBookCalBeds" name="guest[{{ $cart->_id }}][beds]" id="beds_{{ $cart->_id }}">
+                                                                 <option value="">{{__('cart.chooseBeds')}}</option>
+                                                                 @for($i = 1; $i <= 30; $i++)
+                                                                     <option value="{{ $i }}" @if($i == $cart->beds) selected @endif>{{ $i }}</option>
+                                                                 @endfor
+                                                             </select>
 
-                                                                @if ($errors->has($inputBeds))
-                                                                    <span class="help-block"><strong>{{ $errors->first($inputBeds) }}</strong></span>
-                                                                @endif
-                                                            </div>
+                                                             @if ($errors->has($inputBeds))
+                                                                 <span class="help-block"><strong>{{ $errors->first($inputBeds) }}</strong></span>
+                                                             @endif
+                                                         </div>
 
-                                                            <div class="col-sm-4 col-sm-4-booking1 form-group {{ $errors->has($inputDormitory) ? ' has-error' : '' }}">
-                                                                <select class="form-control form-control-booking1 jsBookCalDormitory" name="guest[{{ $cart->_id }}][dormitory]" id="dormitory_{{ $cart->_id }}">
-                                                                    <option value="">{{__('cart.chooseDorms')}}</option>
-                                                                    @for($i = 1; $i <= 30; $i++)
-                                                                        <option value="{{ $i }}" @if($i == $cart->dormitory) selected @endif>{{ $i }}</option>
-                                                                    @endfor
-                                                                </select>
+                                                         <div class="col-sm-4 col-sm-4-booking1 form-group {{ $errors->has($inputDormitory) ? ' has-error' : '' }}">
+                                                             <select class="form-control form-control-booking1 jsBookCalDormitory" name="guest[{{ $cart->_id }}][dormitory]" id="dormitory_{{ $cart->_id }}">
+                                                                 <option value="">{{__('cart.chooseDorms')}}</option>
+                                                                 @for($i = 1; $i <= 30; $i++)
+                                                                     <option value="{{ $i }}" @if($i == $cart->dormitory) selected @endif>{{ $i }}</option>
+                                                                 @endfor
+                                                             </select>
 
-                                                                @if ($errors->has($inputDormitory))
-                                                                    <span class="help-block"><strong>{{ $errors->first($inputDormitory) }}</strong></span>
-                                                                @endif
-                                                            </div>
-                                                        @else
-                                                            <div class="col-sm-4 col-sm-4-booking1 form-group {{ $errors->has($inputSleeps) ? ' has-error' : '' }}">
-                                                                <select class="form-control form-control-booking1 jsBookCalSleep"  name="guest[{{ $cart->_id }}][sleeps]" id="sleeps_{{ $cart->_id }}">
-                                                                    <option value="">{{__('cart.chooseSleeps')}}</option>
-                                                                    @for($i = 1; $i <= 30; $i++)
-                                                                        <option value="{{ $i }}" @if($i == $cart->sleeps) selected @endif>{{ $i }}</option>
-                                                                    @endfor
-                                                                </select>
+                                                             @if ($errors->has($inputDormitory))
+                                                                 <span class="help-block"><strong>{{ $errors->first($inputDormitory) }}</strong></span>
+                                                             @endif
+                                                         </div>
+                                                     @else
+                                                         <div class="col-sm-4 col-sm-4-booking1 form-group {{ $errors->has($inputSleeps) ? ' has-error' : '' }}">
+                                                             <select class="form-control form-control-booking1 jsBookCalSleep"  name="guest[{{ $cart->_id }}][sleeps]" id="sleeps_{{ $cart->_id }}">
+                                                                 <option value="">{{__('cart.chooseSleeps')}}</option>
+                                                                 @for($i = 1; $i <= 30; $i++)
+                                                                     <option value="{{ $i }}" @if($i == $cart->sleeps) selected @endif>{{ $i }}</option>
+                                                                 @endfor
+                                                             </select>
 
-                                                                @if ($errors->has($inputSleeps))
-                                                                    <span class="help-block"><strong>{{ $errors->first($inputSleeps) }}</strong></span>
-                                                                @endif
-                                                            </div>
-                                                        @endif
+                                                             @if ($errors->has($inputSleeps))
+                                                                 <span class="help-block"><strong>{{ $errors->first($inputSleeps) }}</strong></span>
+                                                             @endif
+                                                         </div>
+                                                     @endif
 
-                                                        <input type="hidden" name="guest[{{ $cart->_id }}][sleeping_place]" value="{{ $cabinDetails->cabin($cart->cabin_id)->sleeping_place }}">
+                                                     <input type="hidden" name="guest[{{ $cart->_id }}][sleeping_place]" value="{{ $cabinDetails->cabin($cart->cabin_id)->sleeping_place }}">
 
-                                                        @if($cabinDetails->cabin($cart->cabin_id)->halfboard == '1' && $cabinDetails->cabin($cart->cabin_id)->halfboard_price != '')
-                                                            <div class="col-sm-4 halfboard-checkbox">
-                                                                <div class="form-group">
-                                                                    <div class="checkbox">
-                                                                        <label>
-                                                                            <input type="checkbox" id="halfboard_{{ $cart->_id }}" name="guest[{{ $cart->_id }}][halfboard]" value="1" @if (old($halfBoard) === "1") checked @endif>
-                                                                            {{__('cart.halfBoard')}}
-                                                                        </label>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        @endif
+                                                     @if($cabinDetails->cabin($cart->cabin_id)->halfboard == '1' && $cabinDetails->cabin($cart->cabin_id)->halfboard_price != '')
+                                                         <div class="col-sm-4 halfboard-checkbox">
+                                                             <div class="form-group">
+                                                                 <div class="checkbox">
+                                                                     <label>
+                                                                         <input type="checkbox" id="halfboard_{{ $cart->_id }}" name="guest[{{ $cart->_id }}][halfboard]" value="1" @if (old($halfBoard) === "1") checked @endif>
+                                                                         {{__('cart.halfBoard')}}
+                                                                     </label>
+                                                                 </div>
+                                                             </div>
+                                                         </div>
+                                                     @endif
 
-                                                        <div class="col-sm-4 col-sm-4-f-booking1 comment-booking1 col-sm-4-booking1">
-                                                            <div class="form-group {{ $errors->has($inputComments) ? ' has-error' : '' }}">
-                                                                <textarea id="comments_{{ $cart->_id }}" name="guest[{{ $cart->_id }}][comments]" class="form-control" rows="3" maxlength="300" placeholder="{{__('cart.comment')}}">{{ old($inputComments, $cart->comments) }}</textarea>
+                                                     <div class="col-sm-4 col-sm-4-f-booking1 comment-booking1 col-sm-4-booking1">
+                                                         <div class="form-group {{ $errors->has($inputComments) ? ' has-error' : '' }}">
+                                                             <textarea id="comments_{{ $cart->_id }}" name="guest[{{ $cart->_id }}][comments]" class="form-control" rows="3" maxlength="300" placeholder="{{__('cart.comment')}}">{{ old($inputComments, $cart->comments) }}</textarea>
 
-                                                                @if ($errors->has($inputComments))
-                                                                    <span class="help-block"><strong>{{ $errors->first($inputComments) }}</strong></span>
-                                                                @endif
-                                                                <div id="textarea_feedback_{{ $cart->_id }}"></div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-3 col-sm-3-booking1">
-                                            <div class="panel panel-default booking-box-booking1 panel-booking1 panel-default-booking1">
-                                                <div class="panel-body panel-body-booking1">
-                                                    <div class="row row-booking1">
-                                                        <div class="col-sm-12 col-sm-12-booking1 month-opening-booking1">
-                                                            <h5>{{__('cart.depositForCabin')}} <a href="/cart/delete/{{ $cart->cabin_id }}/{{ $cart->_id }}" class="pull-right"><span class="glyphicon glyphicon-trash" title="{{__('cart.deleteButtonTitle')}}"></span></a></h5>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row row-booking1">
-                                                        <div class="col-sm-12 col-sm-12-booking1 col-sm-12-extra-booking1">
-                                                            <p class="info-listing-booking1">{{__('cart.guests')}}:</p><p class="info-listing-price-booking1 replaceBookingGuest_{{ $cart->_id }}">{{ $cart->guests }}</p>
-                                                            <p class="info-listing-booking1">{{__('cart.numberOfNights')}}:</p><p class="info-listing-price-booking1">{{ date_diff(date_create($cart->checkin_from->format('Y-m-d')), date_create($cart->reserve_to->format('Y-m-d')))->format('%R%a '.__("cart.days")) }}</p>
-                                                        </div>
-                                                    </div><br />
-                                                    <div class="row row-booking1">
-                                                        <div class="col-sm-12 col-sm-12-booking1 col-sm-12-extra-booking1 depsit-booking1">
-                                                            <p class="info-listing-booking1">{{__('cart.deposit')}}:</p><p class="info-listing-price-booking1 bookingDeposit replaceBookingDeposit_{{ $cart->_id }}">{{ number_format($amount, 2, ',', '.') }} &euro;</p>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                                                             @if ($errors->has($inputComments))
+                                                                 <span class="help-block"><strong>{{ $errors->first($inputComments) }}</strong></span>
+                                                             @endif
+                                                             <div id="textarea_feedback_{{ $cart->_id }}"></div>
+                                                         </div>
+                                                     </div>
+                                                 </div>
+                                             </div>
+                                         </div>
+                                     </div>
+                                     <div class="col-sm-3 col-sm-3-booking1">
+                                         <div class="panel panel-default booking-box-booking1 panel-booking1 panel-default-booking1">
+                                             <div class="panel-body panel-body-booking1">
+                                                 <div class="row row-booking1">
+                                                     <div class="col-sm-12 col-sm-12-booking1 month-opening-booking1">
+                                                         <h5>{{__('cart.depositForCabin')}} <a href="/cart/delete/{{ $cart->cabin_id }}/{{ $cart->_id }}" class="pull-right"><span class="glyphicon glyphicon-trash" title="{{__('cart.deleteButtonTitle')}}"></span></a></h5>
+                                                     </div>
+                                                 </div>
+                                                 <div class="row row-booking1">
+                                                     <div class="col-sm-12 col-sm-12-booking1 col-sm-12-extra-booking1">
+                                                         <p class="info-listing-booking1">{{__('cart.guests')}}:</p><p class="info-listing-price-booking1 replaceBookingGuest_{{ $cart->_id }}">{{ $cart->guests }}</p>
+                                                         <p class="info-listing-booking1">{{__('cart.numberOfNights')}}:</p><p class="info-listing-price-booking1">{{ date_diff(date_create($cart->checkin_from->format('Y-m-d')), date_create($cart->reserve_to->format('Y-m-d')))->format('%R%a '.__("cart.days")) }}</p>
+                                                     </div>
+                                                 </div><br />
+                                                 <div class="row row-booking1">
+                                                     <div class="col-sm-12 col-sm-12-booking1 col-sm-12-extra-booking1 depsit-booking1">
+                                                         <p class="info-listing-booking1">{{__('cart.deposit')}}:</p><p class="info-listing-price-booking1 bookingDeposit replaceBookingDeposit_{{ $cart->_id }}" data-amountdaysdeduct="{{ $amountAfterDeductDays }}">{{ number_format($amount, 2, ',', '.') }} &euro;</p>
+                                                     </div>
+                                                 </div>
+                                             </div>
+                                         </div>
+                                     </div>
+                                 </div>
+                             </div>
+                         </div>
 
                         @empty
                             <p>{{ __('cart.noBookingsCart') }}</p>
@@ -213,21 +215,22 @@
                         @if(array_sum($prepayment_amount) > 0 )
 
                             @php
-                                $sumPrepaymentAmount = array_sum($prepayment_amount);
+                                $sumPrepaymentAmount           = array_sum($prepayment_amount);
+                                $sumPrepaymentAmountDeductDays = array_sum($prepayment_amount_deduct_days);
 
-                                if($sumPrepaymentAmount <= 30) {
+                                if($sumPrepaymentAmountDeductDays <= 30) {
                                    $serviceTax = env('SERVICE_TAX_ONE');
                                 }
 
-                                if($sumPrepaymentAmount > 30 && $sumPrepaymentAmount <= 100) {
+                                if($sumPrepaymentAmountDeductDays > 30 && $sumPrepaymentAmountDeductDays <= 100) {
                                    $serviceTax = env('SERVICE_TAX_TWO');
                                 }
 
-                                if($sumPrepaymentAmount > 100) {
+                                if($sumPrepaymentAmountDeductDays > 100) {
                                    $serviceTax = env('SERVICE_TAX_THREE');
                                 }
 
-                                $sumPrepaymentAmountPercentage   = ($serviceTax / 100) * $sumPrepaymentAmount;
+                                $sumPrepaymentAmountPercentage   = ($serviceTax / 100) * $sumPrepaymentAmountDeductDays;
                                 $sumPrepaymentAmountServiceTotal = $sumPrepaymentAmount + $sumPrepaymentAmountPercentage;
                             @endphp
 
@@ -331,7 +334,7 @@
                                             <div class="row row-booking1">
                                                 <div class="col-sm-12 col-sm-12-booking1 col-sm-12-extra-booking1">
                                                     <p class="info-listing-booking1">{{ __('cart.deposit') }}:</p><p class="info-listing-price-booking1 replaceBookingCompleteDeposit">{{ number_format($sumPrepaymentAmount, 2, ',', '.') }} &euro;</p>
-                                                    <p class="info-listing-booking1">{{ __('cart.serviceFee') }}:</p><p class="info-listing-price-booking1 replaceBookingServiceFee">{{ $serviceTax }} %</p>
+                                                    <p class="info-listing-booking1">{{ __('cart.serviceFee') }}:</p><p class="info-listing-price-booking1 replaceBookingServiceFee">{{ number_format($sumPrepaymentAmountPercentage, 2, ',', '.') }} &euro;</p>
                                                 </div>
                                             </div>
 

@@ -247,7 +247,7 @@
                                         @endif
 
                                         @isset($sumPrepaymentAmount)
-                                            <div class="row row-booking2 sumPrepayAmount" data-sumprepayamount="{{ $sumPrepaymentAmount }}">
+                                            <div class="row row-booking2 sumPrepayAmount" data-sumprepayamount="{{ $sumPrepaymentAmount }}" data-amountafterdeductdays="{{ $amountAfterDeductDays }}" data-deducteddays="{{ $deductedDays }}">
                                                 <div class="col-sm-12 month-opening-booking2 col-sm-12-booking2">
                                                     <h5>{{ __('payment.completePayment') }}<span class="glyphicon glyphicon-booking2 glyphicon-question-sign" title="{{ __('cart.amountTitle') }}"></span></h5>
                                                 </div>
@@ -262,7 +262,7 @@
                                                     </div>
 
                                                     <div class="serviceFee">
-                                                        <p class="info-listing-booking2">{{ __('payment.serviceFee') }}:</p><p class="info-listing-price-booking2">{{ $serviceTax }} %</p>
+                                                        <p class="info-listing-booking2">{{ __('payment.serviceFee') }}:</p><p class="info-listing-price-booking2">{{ number_format($serviceTax, 2, ',', '.') }} &euro;</p>
                                                     </div>
                                                 </div>
                                             </div>

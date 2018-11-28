@@ -44,7 +44,8 @@ $(function() {
         return envBook;
     }
 
-    var paymentChoosePassAmount = $( ".sumPrepayAmount" ).data('sumprepayamount'); // If click on any payment method, pass amount to function to calculate service fee.
+    var paymentChoosePassAmount           = $( ".sumPrepayAmount" ).data('sumprepayamount'); // If click on any payment method, pass amount to function to calculate service fee.
+    var paymentChoosePassAmountDeductDays = $( ".sumPrepayAmount" ).data('amountafterdeductdays'); // If click on any payment method, pass amount to function to calculate service fee.
 
     $(".moneyBalanceCheckbox").click(function(){
 
@@ -65,32 +66,37 @@ $(function() {
             }
             else {
                 $( ".serviceFee" ).show();
-                var afterRedeemAmount     = sumPrepayAmount - redeemAmount;
-                var paymentMethod         = $( ".serviceFee" ).attr('data-paymentmethod');
-                var serviceTaxBook        = serviceFees(afterRedeemAmount, paymentMethod);
-                paymentChoosePassAmount   = afterRedeemAmount; // If click on any payment method, pass amount to function to calculate service fee.
-                var sumPrepayPercentage   = (serviceTaxBook / 100) * afterRedeemAmount;
-                var sumPrepayServiceTotal = afterRedeemAmount + sumPrepayPercentage;
+                var afterRedeemAmount             = sumPrepayAmount - redeemAmount;
+                var deductedDays                  = $( ".sumPrepayAmount" ).data('deducteddays');
+                var afterRedeemAmountWithoutDays  = afterRedeemAmount / deductedDays;
+                var paymentMethod                 = $( ".serviceFee" ).attr('data-paymentmethod');
+                var serviceTaxBook                = serviceFees(afterRedeemAmountWithoutDays, paymentMethod);
+                paymentChoosePassAmount           = afterRedeemAmount; // If click on any payment method, pass amount to function to calculate service fee.
+                paymentChoosePassAmountDeductDays = afterRedeemAmountWithoutDays; // If click on any payment method, pass amount to function to calculate service fee.
+                var sumPrepayPercentage           = (serviceTaxBook / 100) * afterRedeemAmountWithoutDays;
+                var sumPrepayServiceTotal         = afterRedeemAmount + sumPrepayPercentage;
                 $( ".redeemAmount" ).html('<p class="info-listing-booking2">'+variables().redeemedAmountPayment+':</p><p class="info-listing-price-booking2">'+formatterPayment.format(redeemAmount)+'</p>');
                 $( ".moneyBalance" ).html();
                 $( ".afterRedeemAmount" ).html('<p class="info-listing-booking2">'+variables().amountPayment+':</p><p class="info-listing-price-booking2">'+formatterPayment.format(afterRedeemAmount)+'</p>');
                 $( ".sumPrepayServiceTotal" ).html(formatterPayment.format(sumPrepayServiceTotal));
-                $( ".serviceFee" ).html('<p class="info-listing-booking2">'+variables().serviceFeePayment+':</p><p class="info-listing-price-booking2">'+serviceTaxBook+' %</p>');
+                $( ".serviceFee" ).html('<p class="info-listing-booking2">'+variables().serviceFeePayment+':</p><p class="info-listing-price-booking2">'+formatterPayment.format(sumPrepayPercentage)+'</p>');
                 $( ".totalPrepayAmount" ).show();
             }
         }
         else {
             $( ".afterRedeem" ).hide();
             $( ".serviceFee" ).show();
-            var sumPrepaymentAmount    = $( ".sumPrepayAmount" ).data('sumprepayamount');
-            var paymentMethod         = $( ".serviceFee" ).attr('data-paymentmethod');
-            var serviceFee             = serviceFees(sumPrepaymentAmount, paymentMethod);
-            paymentChoosePassAmount    = sumPrepaymentAmount; // If click on any payment method, pass amount to function to calculate service fee.
-            var sumPrepaymentPerc      = (serviceFee / 100) * sumPrepaymentAmount;
-            var sumPrepaymentServTotal = sumPrepaymentAmount + sumPrepaymentPerc;
+            var sumPrepaymentAmount           = $( ".sumPrepayAmount" ).data('sumprepayamount');
+            var amountAfterDeductDays         = $( ".sumPrepayAmount" ).data('amountafterdeductdays');
+            var paymentMethod                 = $( ".serviceFee" ).attr('data-paymentmethod');
+            var serviceFee                    = serviceFees(amountAfterDeductDays, paymentMethod);
+            paymentChoosePassAmount           = sumPrepaymentAmount; // If click on any payment method, pass amount to function to calculate service fee.
+            paymentChoosePassAmountDeductDays = amountAfterDeductDays; // If click on any payment method, pass amount to function to calculate service fee.
+            var sumPrepaymentPerc             = (serviceFee / 100) * amountAfterDeductDays;
+            var sumPrepaymentServTotal        = sumPrepaymentAmount + sumPrepaymentPerc;
 
             $( ".sumPrepayServiceTotal" ).html(formatterPayment.format(sumPrepaymentServTotal));
-            $( ".serviceFee" ).html('<p class="info-listing-booking2">'+variables().serviceFeePayment+':</p><p class="info-listing-price-booking2">'+serviceFee+' %</p>');
+            $( ".serviceFee" ).html('<p class="info-listing-booking2">'+variables().serviceFeePayment+':</p><p class="info-listing-price-booking2">'+formatterPayment.format(sumPrepaymentPerc)+'</p>');
             $( ".totalPrepayAmount" ).show();
         }
 
@@ -108,10 +114,10 @@ $(function() {
             $("#creditcard").hide();
         }
 
-        var serviceFeePayMethod   = serviceFees(paymentChoosePassAmount, $(this).val());
-        var sumPayMethodPerc      = (serviceFeePayMethod / 100) * paymentChoosePassAmount;
+        var serviceFeePayMethod   = serviceFees(paymentChoosePassAmountDeductDays, $(this).val());
+        var sumPayMethodPerc      = (serviceFeePayMethod / 100) * paymentChoosePassAmountDeductDays;
         var sumPayMethodServTotal = paymentChoosePassAmount + sumPayMethodPerc;
-        $( ".serviceFee" ).html('<p class="info-listing-booking2">'+variables().serviceFeePayment+':</p><p class="info-listing-price-booking2">'+serviceFeePayMethod+' %</p>');
+        $( ".serviceFee" ).html('<p class="info-listing-booking2">'+variables().serviceFeePayment+':</p><p class="info-listing-price-booking2">'+formatterPayment.format(sumPayMethodPerc)+'</p>');
         $( ".sumPrepayServiceTotal" ).html(formatterPayment.format(sumPayMethodServTotal));
     });
 

@@ -230,7 +230,7 @@
                                         <div class="row row-booking1">
                                             <div class="col-sm-12 col-sm-12-booking1 col-sm-12-extra-booking1">
                                                 <p class="info-listing-booking1">{{ __('bookingHistory.newVoucherAmount') }}:</p><p class="info-listing-price-booking1 replaceEditBookingCompleteDeposit">0,00 &euro;</p>
-                                                <p class="info-listing-booking1">{{ __('cart.serviceFee') }}:</p><p class="info-listing-price-booking1 replaceEditBookingServiceFee">0 %</p>
+                                                <p class="info-listing-booking1">{{ __('cart.serviceFee') }}:</p><p class="info-listing-price-booking1 replaceEditBookingServiceFee">0 &euro;</p>
                                             </div>
                                         </div>
 
