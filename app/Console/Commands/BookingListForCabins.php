@@ -81,8 +81,6 @@ class BookingListForCabins extends Command
 
                 $html         = view('cron.bookingListCabinPDF', ['invoice_code' => $invoice_code, 'cabinname' => $cabin->name, 'bookings' => $bookings, 'msBookings' => $msBookings, 'cabinHalfboard' => $cabin->halfboard, 'sleepingPlace' => $cabin->sleeping_place])->render();
 
-                //setPaper('a4', 'landscape')
-                //setPaper(array(0,0,1000,781))
                 PDF::loadHTML($html)->setPaper('a4', 'landscape')->setWarnings(false)->save(storage_path("app/public/dailylistbookingforcabin/". $cabin->name . ".pdf"));
 
                 $cabinOwner   = Userlist::select('_id', 'usrEmail')
@@ -98,14 +96,14 @@ class BookingListForCabins extends Command
                 foreach ($seasons as $season) {
                     // Check if cabin is open in summer
                     if ($season->summerSeasonStatus == 'open') {
-                        if ($season->latest_summer_close >= Carbon::now()) {
+                        if ($season->latest_summer_close >= Carbon::now() && $season->earliest_summer_open <= Carbon::now()) {
                             $cabinOpen = true;
                         }
                     }
 
                     // Check if cabin is open in winter
                     if ($season->winterWinterStatus == 'open') {
-                        if ($season->latest_winter_close >= Carbon::now()) {
+                        if ($season->latest_winter_close >= Carbon::now() && $season->earliest_winter_open <= Carbon::now()) {
                             $cabinOpen = true;
                         }
                     }
