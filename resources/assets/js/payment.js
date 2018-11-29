@@ -118,7 +118,7 @@ $(function() {
     });
 
     // If payment type radio button property is selected on page load then amount will calculate and show.
-    if($("input[name='payment']:checked").val() !== ''){
+    if($("input[name='payment']:checked").val()){
         checkingPropertyRadiobutton($("input[name='payment']:checked").val())
     }
 
