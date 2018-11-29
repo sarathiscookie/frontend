@@ -122,11 +122,11 @@
                                                 <li class="li-head-booking2">{{ __('payment.kindOfPayment') }}</li>
 
                                                 <li class="check-it-list-booking2 check-it-list-spe-booking2 line-col-booking2" id="bill-booking2">
-                                                    <input type="radio" name="payment" class="check-it-booking2 radio-payment" value="payByBill" @if($payByBillPossible === 'no') disabled @endif> {{ __('payment.payByBill') }} <span class="glyphicon glyphicon-booking2 glyphicon-question-sign" title="{{ __('payment.payByBillTitle') }}"></span>
+                                                    <input type="radio" name="payment" class="check-it-booking2 radio-payment" value="payByBill" @if($payByBillPossible === 'no') disabled @endif @if(old('payment') === 'payByBill') checked @endif> {{ __('payment.payByBill') }} <span class="glyphicon glyphicon-booking2 glyphicon-question-sign" title="{{ __('payment.payByBillTitle') }}"></span>
                                                 </li>
 
                                                 <li class="check-it-list-booking2 check-it-list-spe-booking2">
-                                                    <input type="radio" name="payment" class="check-it-booking2 radio-payment" value="sofort"> Klarna
+                                                    <input type="radio" name="payment" class="check-it-booking2 radio-payment" value="sofort" @if(old('payment') === 'sofort') checked @endif> Klarna
                                                 </li>
 
                                                 <li class="pay-logo-booking2">
@@ -134,7 +134,7 @@
                                                 </li>
 
                                                 <li class="check-it-list-booking2 check-it-list-spe-booking2 line-col-booking2">
-                                                    <input type="radio" name="payment" class="check-it-booking2 radio-payment" value="payDirect"> Paydirekt
+                                                    <input type="radio" name="payment" class="check-it-booking2 radio-payment" value="payDirect" @if(old('payment') === 'payDirect') checked @endif> Paydirekt
                                                 </li>
 
                                                 <li class="pay-logo-booking2 line-col-booking2">
@@ -142,7 +142,7 @@
                                                 </li>
 
                                                 <li class="check-it-list-booking2 check-it-list-spe-booking2">
-                                                    <input type="radio" name="payment" class="check-it-booking2 radio-payment" value="payPal"> PayPal
+                                                    <input type="radio" name="payment" class="check-it-booking2 radio-payment" value="payPal" @if(old('payment') === 'payPal') checked @endif> PayPal
                                                 </li>
 
                                                 <li class="pay-logo-booking2">
@@ -150,7 +150,7 @@
                                                 </li>
 
                                                 <li class="check-it-list-booking2 check-it-list-spe-booking2 line-col-booking2">
-                                                    <input type="radio" name="payment" class="check-it-booking2 radio-payment" id="creditCard" value="creditCard"> {{ __('payment.creditcard') }}
+                                                    <input type="radio" name="payment" class="check-it-booking2 radio-payment" id="creditCard" value="creditCard" @if(old('payment') === 'creditCard') checked @endif> {{ __('payment.creditcard') }}
                                                 </li>
 
                                                 <li class="pay-logo-booking2 line-col-booking2">

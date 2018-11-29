@@ -47,8 +47,8 @@ $(function() {
     var paymentChoosePassAmount           = $( ".sumPrepayAmount" ).data('sumprepayamount'); // If click on any payment method, pass amount to function to calculate service fee.
     var paymentChoosePassAmountDeductDays = $( ".sumPrepayAmount" ).data('amountafterdeductdays'); // If click on any payment method, pass amount to function to calculate service fee.
 
-    // When money balance checkbox clicked then amount will calculate and show
-    function checkingProperty()
+    // Function for calculating amount after click or property true of money balance checkbox
+    function checkingPropertyCheckbox()
     {
         if($(".moneyBalanceCheckbox").is(":checked")) {
             $( ".afterRedeem" ).show();
@@ -104,32 +104,42 @@ $(function() {
 
     // Redeem amount functionality works when user clicked on checkbox
     $(".moneyBalanceCheckbox").click(function(){
-        checkingProperty();
+        checkingPropertyCheckbox();
     });
 
     // If money balance checkbox property is selected on page load then amount will calculate and show.
     if($(".moneyBalanceCheckbox").prop("checked") === true){
-        checkingProperty();
+        checkingPropertyCheckbox();
     }
 
     /* When click on payment method pass amount and calculate service fee. Open hide credit card iframe */
     $("input[name='payment']").on("click", function(){
+        checkingPropertyRadiobutton($(this).val())
+    });
 
-        $( ".serviceFee" ).attr('data-paymentmethod', $(this).val());
+    // If payment type radio button property is selected on page load then amount will calculate and show.
+    if($("input[name='payment']:checked").val() !== ''){
+        checkingPropertyRadiobutton($("input[name='payment']:checked").val())
+    }
 
-        if($(this).val() === 'creditCard') {
+    // Function for calculating amount after click or property true of payment type radio button
+    function checkingPropertyRadiobutton(val)
+    {
+        $( ".serviceFee" ).attr('data-paymentmethod', val);
+
+        if(val === 'creditCard') {
             $("#creditcard").show();
         }
         else {
             $("#creditcard").hide();
         }
 
-        var serviceFeePayMethod   = serviceFees(paymentChoosePassAmountDeductDays, $(this).val());
+        var serviceFeePayMethod   = serviceFees(paymentChoosePassAmountDeductDays, val);
         var sumPayMethodPerc      = (serviceFeePayMethod / 100) * paymentChoosePassAmountDeductDays;
         var sumPayMethodServTotal = paymentChoosePassAmount + sumPayMethodPerc;
         $( ".serviceFee" ).html('<p class="info-listing-booking2">'+variables().serviceFeePayment+':</p><p class="info-listing-price-booking2">'+formatterPayment.format(sumPayMethodPerc)+'</p>');
         $( ".sumPrepayServiceTotal" ).html(formatterPayment.format(sumPayMethodServTotal));
-    });
+    }
 
     /* Function to service tax calculation */
     function serviceFees(sumPrepayAmount, paymentMethod)
