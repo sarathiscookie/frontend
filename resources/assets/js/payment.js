@@ -47,13 +47,12 @@ $(function() {
     var paymentChoosePassAmount           = $( ".sumPrepayAmount" ).data('sumprepayamount'); // If click on any payment method, pass amount to function to calculate service fee.
     var paymentChoosePassAmountDeductDays = $( ".sumPrepayAmount" ).data('amountafterdeductdays'); // If click on any payment method, pass amount to function to calculate service fee.
 
-    // When money balance checkbox clicked then amount will calculate and show
-    function checkingProperty()
-    {
-        if($(".moneyBalanceCheckbox").is(":checked")) {
+    $(".moneyBalanceCheckbox").click(function(){
+
+        if($(this).is(":checked")) {
             $( ".afterRedeem" ).show();
 
-            var redeemAmount              = $(".moneyBalanceCheckbox").parents().eq(2).data('redeem'); // We can use parent().parent().parent() also but it is slower.
+            var redeemAmount              = $(this).parents().eq(2).data('redeem'); // We can use parent().parent().parent() also but it is slower.
             var sumPrepayAmount           = $( ".sumPrepayAmount" ).data('sumprepayamount');
 
             if (redeemAmount >= sumPrepayAmount) {
@@ -100,17 +99,8 @@ $(function() {
             $( ".serviceFee" ).html('<p class="info-listing-booking2">'+variables().serviceFeePayment+':</p><p class="info-listing-price-booking2">'+formatterPayment.format(sumPrepaymentPerc)+'</p>');
             $( ".totalPrepayAmount" ).show();
         }
-    }
 
-    // Redeem amount functionality works when user clicked on checkbox
-    $(".moneyBalanceCheckbox").click(function(){
-        checkingProperty();
     });
-
-    // If money balance checkbox property is selected on page load then amount will calculate and show.
-    if($(".moneyBalanceCheckbox").prop("checked") === true){
-        checkingProperty();
-    }
 
     /* When click on payment method pass amount and calculate service fee. Open hide credit card iframe */
     $("input[name='payment']").on("click", function(){
