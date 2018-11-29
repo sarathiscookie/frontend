@@ -54,6 +54,9 @@ $(function() {
             })
             .fail(function(data, jqxhr, textStatus, error) {
                 if( data.status === 422 ) {
+                    $("#beds_"+cabin).val("");
+                    $("#dorms_"+cabin).val("");
+
                     var errors = data.responseJSON.errors;
                     if(errors) {
                         $( "#warning_"+cabin ).hide();
@@ -92,6 +95,7 @@ $(function() {
         var sleeps         = $("#sleeps_"+cabin).val();
         var sleeping_place = $("#sleeping_place_"+cabin).val();
         var errorsHtml     = '';
+
         $.ajax({
             url: '/session/data/to/cart',
             dataType: 'JSON',
@@ -108,6 +112,9 @@ $(function() {
             })
             .fail(function(data, jqxhr, textStatus, error) {
                 if( data.status === 422 ) {
+                    $("#beds_"+cabin).val("");
+                    $("#dorms_"+cabin).val("");
+
                     var errors = data.responseJSON.errors;
                     if(errors) {
                         $( "#warning_"+cabin ).hide();

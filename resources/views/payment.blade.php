@@ -122,11 +122,11 @@
                                                 <li class="li-head-booking2">{{ __('payment.kindOfPayment') }}</li>
 
                                                 <li class="check-it-list-booking2 check-it-list-spe-booking2 line-col-booking2" id="bill-booking2">
-                                                    <input type="radio" name="payment" class="check-it-booking2 radio-payment" value="payByBill" @if($payByBillPossible === 'no') disabled @endif> {{ __('payment.payByBill') }} <span class="glyphicon glyphicon-booking2 glyphicon-question-sign" title="{{ __('payment.payByBillTitle') }}"></span>
+                                                    <input type="radio" name="payment" class="check-it-booking2 radio-payment" value="payByBill" @if($payByBillPossible === 'no') disabled @endif @if(old('payment') === 'payByBill') checked @endif> {{ __('payment.payByBill') }} <span class="glyphicon glyphicon-booking2 glyphicon-question-sign" title="{{ __('payment.payByBillTitle') }}"></span>
                                                 </li>
 
                                                 <li class="check-it-list-booking2 check-it-list-spe-booking2">
-                                                    <input type="radio" name="payment" class="check-it-booking2 radio-payment" value="sofort"> Klarna
+                                                    <input type="radio" name="payment" class="check-it-booking2 radio-payment" value="sofort" @if(old('payment') === 'sofort') checked @endif> Klarna
                                                 </li>
 
                                                 <li class="pay-logo-booking2">
@@ -134,7 +134,7 @@
                                                 </li>
 
                                                 <li class="check-it-list-booking2 check-it-list-spe-booking2 line-col-booking2">
-                                                    <input type="radio" name="payment" class="check-it-booking2 radio-payment" value="payDirect"> Paydirekt
+                                                    <input type="radio" name="payment" class="check-it-booking2 radio-payment" value="payDirect" @if(old('payment') === 'payDirect') checked @endif> Paydirekt
                                                 </li>
 
                                                 <li class="pay-logo-booking2 line-col-booking2">
@@ -142,7 +142,7 @@
                                                 </li>
 
                                                 <li class="check-it-list-booking2 check-it-list-spe-booking2">
-                                                    <input type="radio" name="payment" class="check-it-booking2 radio-payment" value="payPal"> PayPal
+                                                    <input type="radio" name="payment" class="check-it-booking2 radio-payment" value="payPal" @if(old('payment') === 'payPal') checked @endif> PayPal
                                                 </li>
 
                                                 <li class="pay-logo-booking2">
@@ -150,7 +150,7 @@
                                                 </li>
 
                                                 <li class="check-it-list-booking2 check-it-list-spe-booking2 line-col-booking2">
-                                                    <input type="radio" name="payment" class="check-it-booking2 radio-payment" id="creditCard" value="creditCard"> {{ __('payment.creditcard') }}
+                                                    <input type="radio" name="payment" class="check-it-booking2 radio-payment" id="creditCard" value="creditCard" @if(old('payment') === 'creditCard') checked @endif> {{ __('payment.creditcard') }}
                                                 </li>
 
                                                 <li class="pay-logo-booking2 line-col-booking2">
@@ -204,7 +204,7 @@
                                             <ul class="payment-options-booking2">
                                                 <li class="li-head-booking2">{{ __('payment.termsConditions') }}</li>
                                                 <li class="check-it-list-booking2{{ $errors->has('confirmThePrivacy') ? ' has-error' : '' }}">
-                                                    <input type="checkbox" name="confirmThePrivacy" class="check-it-booking2"><a href="/data/protection"> {{ __('payment.confirmThePrivacy') }}</a>
+                                                    <input type="checkbox" name="confirmThePrivacy" class="check-it-booking2" @if(old('confirmThePrivacy')) checked @endif><a href="/data/protection"> {{ __('payment.confirmThePrivacy') }}</a>
                                                     @if ($errors->has('confirmThePrivacy'))
                                                         <span class="help-block">
                                                             <strong>{{ $errors->first('confirmThePrivacy') }}</strong>
@@ -212,7 +212,7 @@
                                                     @endif
                                                 </li>
                                                 <li class="check-it-list-booking2{{ $errors->has('confirmTheTerms') ? ' has-error' : '' }}">
-                                                    <input type="checkbox" name="confirmTheTerms" class="check-it-booking2"><a href="/terms"> {{ __('payment.confirmTheTerms') }}</a>
+                                                    <input type="checkbox" name="confirmTheTerms" class="check-it-booking2" @if(old('confirmTheTerms')) checked @endif><a href="/terms"> {{ __('payment.confirmTheTerms') }}</a>
                                                     @if ($errors->has('confirmTheTerms'))
                                                         <span class="help-block">
                                                             <strong>{{ $errors->first('confirmTheTerms') }}</strong>
@@ -241,7 +241,7 @@
                                             <div class="row row-booking2" data-redeem="{{ $moneyBalance }}">
                                                 <div class="col-sm-12 col-sm-12-booking2 month-opening-booking2">
                                                     <h5>{{ __('payment.yourAmount') }}</h5>
-                                                    <span class="label label-info label-cabinlist"><input type="checkbox" class="moneyBalanceCheckbox" name="moneyBalance" value="1"> {{ __('payment.redeemNow') }} {{ number_format($moneyBalance, 2, ',', '.') }}&euro;</span>
+                                                    <span class="label label-info label-cabinlist"><input type="checkbox" class="moneyBalanceCheckbox" name="moneyBalance" value="1" @if(old('moneyBalance')) checked @endif> {{ __('payment.redeemNow') }} {{ number_format($moneyBalance, 2, ',', '.') }}&euro;</span>
                                                 </div>
                                             </div>
                                         @endif
