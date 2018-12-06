@@ -29,7 +29,7 @@ return [
     'search'                       => 'Search',
     'searchPlaceholder'            => 'Search...',
     'menuPhone'                    => 'Phone',
-    'menuContact'                  => 'Contact',
+    'menuContact'                  => 'FAQ | Contact',
     'imageHeadline1'               => 'The summer season 2019',
     'imageHeadline2'               => 'is bookable from December',
     'footerInformation'            => 'Information',

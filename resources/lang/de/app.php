@@ -29,7 +29,7 @@ return [
     'search'                       => 'Suchen',
     'searchPlaceholder'            => 'Suchen...',
     'menuPhone'                    => 'Telefon',
-    'menuContact'                  => 'Kontakt',
+    'menuContact'                  => 'FAQ | Kontakt',
     'imageHeadline1'               => 'Die Sommersaison 2019',
     'imageHeadline2'               => 'ist ab Dezember buchbar',
     'footerInformation'            => 'Wissenswertes',
