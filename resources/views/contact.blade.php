@@ -25,8 +25,10 @@
                         <p>Prüfen Sie in Ihrer Buchungsübersicht ob Sie die Buchung nicht versehentlich doppelt getätigt haben.</p>
                     </div>
                 </article>
+
                 <article>
                     <h3 class="accordion">Wie kann ich zwischen Bett und Matratzenlager wählen?</h3>
+
                     <div class="panel">
                         <p>Die Betten beziehungsweise Lager Vergabe erfolgt vom Hüttenwirt selbst auf der Hütte. Sprich wer zuerst
                             ankommt hat noch die freie Auswahl. Sie können Ihren Wunsch allerdings in Form eines Kommentars in der
@@ -35,24 +37,24 @@
                 </article>
 
                 <article>
-
                     <h3 class="accordion">Was passiert mit meiner Anzahlung, wenn ich Storniere?</h3>
+
                     <div class="panel">
                         <p>Wenn Sie innerhalb der Stornierungsfrist Stornieren, bekommen Sie die Anzahlung auf Ihren Account gutgeschrieben. Dieses Guthaben können Sie später für weitere Buchungen vornehmen. Gerne Zahlen wir Ihnen das Geld aber auch aus. Weitere Infos über die Stornierungsfristen finden Sie in unseren AGB. </p>
                     </div>
                 </article>
 
                 <article>
-
                     <h3 class="accordion">Wann erhalte ich meinen Wertgutschein?</h3>
+
                     <div class="panel">
                         <p>Den Wertgutschein erhalten Sie sobald die Anzahlung für Ihre Buchung bei uns eingegangen ist</p>
                     </div>
                 </article>
 
                 <article>
-
                     <h3 class="accordion">Warum muss ich eine Anzahlung leisten?</h3>
+
                     <div class="panel">
                         <p>Die Moral, Reservierungen einzuhalten bzw. zumindest rechtzeitig zu stornieren, war in den letzten Jahren
                             leider sehr schlecht. Weswegen sich viele Hüttenwirte eine Anzahlung wünschten, welche bei nicht
@@ -64,8 +66,8 @@
                 </article>
 
                 <article>
-
                     <h3 class="accordion">Warum muss ich eine Service-Gebühr bezahlen?</h3>
+
                     <div class="panel">
                         <p>Beim Zahlungsverkehr im Internet entstehen je nach Zahlungsart (PayPal, Kreditkarte, Sofortüberweisung)
                             Gebühren. Mit der Servicegebühr werden diese Gebühren gedeckt. Außerdem hilft uns dies unsere Plattform
@@ -74,8 +76,8 @@
                 </article>
 
                 <article>
-
                     <h3 class="accordion">Was muss ich für die Übernachtung auf einer Hütte dabei haben?</h3>
+
                     <div class="panel">
                         <p>Generell möchten wir Sie hier auf die Detailseiten der jeweiligen Hütte bzw. auf deren eigenen Webseiten
                             verweisen. Eine pauschale Aussage unsererseits ist nicht möglich.</p>
@@ -83,8 +85,8 @@
                 </article>
 
                 <article>
-
                     <h3 class="accordion">Ich möchte den Hüttenwirt kontaktieren finde jedoch keine Kontaktmöglichkeit</h3>
+
                     <div class="panel">
                         <p>Viele Hütten haben kein Telefon oder nur Satellitentelefone für den Notfall. Sollten Sie noch eine Frage
                             zur Übernachtung, Verpflegung oder Sonstiges haben, können Sie dies bei Ihrer Buchung in das
@@ -93,17 +95,18 @@
                             halten Sie sich daher kurz und beschränken sich auf das Wesentliche.</p>
                     </div>
                 </article>
-                <article>
 
+                <article>
                     <h3 class="accordion">Wie sehe ich ob eine Hütte ausgebucht ist?</h3>
+
                     <div class="panel">
                         <p>Jede der Hütten hat einen eigenen Kalender. Auf diesem sehen Sie ob noch frei Plätze verfügbar sind. Rot=kein freier Platz | Orange=wenige freie Plätze | Grün=einige freie Plätze. </p>
                     </div>
                 </article>
 
                 <article>
-
                     <h3 class="accordion">Warum kann ich die Huetten-Holiday.de nur über eine 0900-Nummer erreichen?</h3>
+
                     <div class="panel">
                         <p>Zuletzt wurden wir mit anrufen überhäuft. Das ist prinzipiell kein Problem für uns und wir helfen Ihnen
                             jederzeit gerne weiter! </p>
@@ -113,8 +116,18 @@
                             soll. Auskünfte über Wege oder Wetterberichte können bzw. dürfen wir nicht machen.</p>
                     </div>
                 </article>
+
+                <article>
+                    <h3 class="accordion">Mit unserem Reservierungssystem sparen Sie wertvolle Recherche Arbeit und können sich auf den nächsten Bergurlaub freuen.</h3>
+
+                    <div class="panel" style="">
+                        <p>Zuerst müssen Sie sich auf <a href="{{ env('APP_URL') }}/register">www.huetten-holiday.de/register</a> kostenlos registrieren und sich einen persönlichen Account anlegen.</p>
+                    </div>
+                </article>
+
                 <article>
                     <h3 class="accordion">Haben Sie Fragen zu einem anderem Thema?</h3>
+
                     <br>
                     <p>service@huetten-holiday.de </p>
                     <p>Telefon: +49 (0) 9001 / 32 89 89<span id="footer_phone">(0,99 €/min aus dem dt. Festnetz, Mobilfunk ggf. abweichend)</span></p>
