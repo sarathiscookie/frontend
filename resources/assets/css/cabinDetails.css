@@ -367,11 +367,21 @@
 /* Cabin details main css end */
 
 /* More content section */
-.morecontent span {
-    display: none;
+.less {
+    overflow: hidden;
+    height: 90px;
 }
-.morelink {
-    display: block;
+
+.more {
+    height: auto;
+}
+
+#btn-more-details {
+    margin-top: 15px;
+}
+
+.detail-points-cabin-details {
+    margin-top: 15px;
 }
 
 /* Adding margin for Beds dorms and sleeps dropdown begin */

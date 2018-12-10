@@ -83,5 +83,8 @@ return [
     'tour'                                   => 'Touren',
     'hikes'                                  => 'Routen',
     'reachableFrom'                          => 'Erreichbar von',
-    'neighbourCabin'                         => 'Nachbarhütten'
+    'neighbourCabin'                         => 'Nachbarhütten',
+
+    // Buttons
+    'buttons.more_details'                   => 'Mehr anzeigen'
 ];

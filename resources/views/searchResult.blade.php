@@ -29,7 +29,7 @@
                                         @php
                                             $cabin_details = $result->other_details;
                                         @endphp
-                                        {!! str_replace("&nbsp;", " ", str_limit($result->other_details, 290)) !!}
+                                        {!! str_replace("&nbsp;", " ", str_limit($cabin_details, 290)) !!}
                                     </div>
 
                                     <a href="{{ route('cabin.details', ['id' => base64_encode($result->_id.env('MD5_Key'))]) }}" class="btn btn-default btn-sm btn-details">{{ __('searchDetails.moreDetails') }}</a>

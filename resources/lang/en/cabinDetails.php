@@ -83,5 +83,8 @@ return [
     'tour'                                   => 'Tour',
     'hikes'                                  => 'Hikes',
     'reachableFrom'                          => 'Reachable from',
-    'neighbourCabin'                         => 'Neighbour Cabins'
+    'neighbourCabin'                         => 'Neighbour Cabins',
+
+    // Buttons
+    'buttons.more_details'                   => 'More Details'
 ];

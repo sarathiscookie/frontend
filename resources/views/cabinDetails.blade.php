@@ -150,18 +150,21 @@
                             </div>
                             <div class="col-sm-3 text-left main-cabin-details">
                                 <h2 class="details-headline-cabin-details">{{ __('cabinDetails.info') }}</h2>
-                                <div class="details-info-cabin-details more">{!! str_replace("&nbsp;", " ", $cabinDetails->other_details) !!}</div>
-                                <div class="row">
+                                <div class="details-info-cabin-details less">
+                                    {!! str_replace("&nbsp;", " ", $cabinDetails->other_details) !!}
+                                </div>
+                                <button class="btn btn-primary" id="btn-more-details">{{ __('cabinDetails.buttons.more_details') }}</button>
+                                {{-- <div class="row">
                                     <div class="col-sm-12">
-                                        {{--@if($cabinDetails->interior)
+                                        @if($cabinDetails->interior)
                                             @foreach($cabinDetails->interior as $interior)
                                                 <button type="button" class="btn btn-default btn-sm btn-space pull-right facility-btn-cabin-details btn-default-cabin-details" data-toggle="tooltip" data-placement="bottom" title="{{ $service->interiorLabel($interior) }}">
                                                     <span @if($interior === 'Food à la carte') class="glyphicon glyphicon-credit-card" @elseif($interior === 'breakfast') class="glyphicon glyphicon-glass" @else class="glyphicon glyphicon-home" @endif aria-hidden="true"></span>
                                                 </button>
                                             @endforeach
-                                        @endif--}}
+                                        @endif
                                     </div>
-                                </div>
+                                </div> --}}
 
                                 <div class="detail-points-cabin-details">
                                     @if($service->userDetails($cabinDetails->cabin_owner))
