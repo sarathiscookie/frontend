@@ -440,8 +440,17 @@ class PaymentController extends Controller
                                             ->where('status', "8")
                                             ->where('is_delete', 0)
                                             ->find($cart_id);
+
                                         $cartUpdate->order_id           = new \MongoDB\BSON\ObjectID($order->_id);
-                                        $cartUpdate->status             = '11';
+
+                                        if($request->payment === 'payByBill' && $payByBillPossible === 'yes') {
+                                            $cartUpdate->status         = '5'; //Waiting for payment
+                                            $cartUpdate->payment_status = '3'; //Prepayment
+                                        }
+                                        else {
+                                            $cartUpdate->status         = '11'; // On processing
+                                        }
+
                                         $cartUpdate->payment_type       = $request->payment;
                                         $cartUpdate->txid               = $paymentGateway["txid"];
                                         $cartUpdate->userid             = $paymentGateway["userid"];
@@ -450,7 +459,13 @@ class PaymentController extends Controller
                                     }
 
                                     /* Storing userid in user collection */
-                                    $user->userid        = $paymentGateway["userid"];
+
+                                    // 1 => Fully paid using money balance, 2 => Partially paid using money balance, 3 => Paid using payment gateway
+                                    if($order->order_payment_method === 2 && $request->payment === 'payByBill' && $payByBillPossible === 'yes') {
+                                        $user->money_balance = 0.00;
+                                    }
+
+                                    $user->userid = $paymentGateway["userid"];
                                     $user->save();
 
                                     /* Updating order number in ordernumber collection */
@@ -591,12 +606,21 @@ class PaymentController extends Controller
 
                                 /* Updating booking details */
                                 foreach ($cart_ids as $cart_id) {
-                                    $cartUpdate               = Booking::where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
+                                    $cartUpdate  = Booking::where('user', new \MongoDB\BSON\ObjectID(Auth::user()->_id))
                                         ->where('status', "8")
                                         ->where('is_delete', 0)
                                         ->find($cart_id);
+
                                     $cartUpdate->order_id          = new \MongoDB\BSON\ObjectID($order->_id);
-                                    $cartUpdate->status            = '11';
+
+                                    if($request->payment === 'payByBill' && $payByBillPossible === 'yes') {
+                                        $cartUpdate->status         = '5'; //Waiting for payment
+                                        $cartUpdate->payment_status = '3'; //Prepayment
+                                    }
+                                    else {
+                                        $cartUpdate->status        = '11'; // On processing
+                                    }
+
                                     $cartUpdate->payment_type      = $request->payment;
                                     $cartUpdate->txid              = $paymentGateway["txid"];
                                     $cartUpdate->userid            = $paymentGateway["userid"];

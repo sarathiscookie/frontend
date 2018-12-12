@@ -965,15 +965,27 @@ class InquiryController extends Controller
                                     $order->save();
 
                                     /* Updating booking details */
-                                    $bookingData->status                  = '11';
-                                    $bookingData->payment_type            = $request->payment;
-                                    $bookingData->txid                    = $paymentGateway["txid"];
-                                    $bookingData->userid                  = $paymentGateway["userid"];
-                                    $bookingData->moneybalance_used       = round($user->money_balance, 2);
+                                    if($request->payment === 'payByBill' && $payByBillPossible === 'yes') {
+                                        $bookingData->status         = '5'; //Waiting for payment
+                                        $bookingData->payment_status = '3'; //Prepayment
+                                    }
+                                    else {
+                                        $bookingData->status = '11'; // On processing
+                                    }
+
+                                    $bookingData->payment_type       = $request->payment;
+                                    $bookingData->txid               = $paymentGateway["txid"];
+                                    $bookingData->userid             = $paymentGateway["userid"];
+                                    $bookingData->moneybalance_used  = round($user->money_balance, 2);
                                     $bookingData->save();
 
-                                    /* Storing new userid in user collection */
-                                    $user->userid                         = $paymentGateway["userid"];
+                                    /* Storing new userid and update money balance in user collection */
+                                    // 1 => Fully paid using money balance, 2 => Partially paid using money balance, 3 => Paid using payment gateway
+                                    if($order->order_payment_method === 2 && $request->payment === 'payByBill' && $payByBillPossible === 'yes') {
+                                        $user->money_balance = 0.00;
+                                    }
+
+                                    $user->userid  = $paymentGateway["userid"];
                                     $user->save();
 
                                     /* If guest paid using payByBill it will redirect to bank details listing page. Condition begin*/
@@ -1088,15 +1100,22 @@ class InquiryController extends Controller
                                 $order->save();
 
                                 /* Updating booking details */
-                                $bookingData->status                  = '11';
-                                $bookingData->payment_type            = $request->payment;
-                                $bookingData->txid                    = $paymentGateway["txid"];
-                                $bookingData->userid                  = $paymentGateway["userid"];
-                                $bookingData->moneybalance_used       = 0;
+                                if($request->payment === 'payByBill' && $payByBillPossible === 'yes') {
+                                    $bookingData->status         = '5'; //Waiting for payment
+                                    $bookingData->payment_status = '3'; //Prepayment
+                                }
+                                else {
+                                    $bookingData->status = '11'; // On processing
+                                }
+
+                                $bookingData->payment_type       = $request->payment;
+                                $bookingData->txid               = $paymentGateway["txid"];
+                                $bookingData->userid             = $paymentGateway["userid"];
+                                $bookingData->moneybalance_used  = 0;
                                 $bookingData->save();
 
                                 /* Storing new userid in user collection */
-                                $user->userid                         = $paymentGateway["userid"];
+                                $user->userid = $paymentGateway["userid"];
                                 $user->save();
 
                                 /* If guest paid using payByBill it will redirect to bank details listing page. Condition begin*/
