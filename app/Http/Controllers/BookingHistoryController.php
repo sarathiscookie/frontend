@@ -2382,8 +2382,15 @@ class BookingHistoryController extends Controller
                                     $newBooking->new_amount              = $total_prepayment_amount;
                                     $newBooking->moneybalance_used       = round($user->money_balance, 2);
                                     $newBooking->bookingdate             = date('Y-m-d H:i:s');
-                                    //$newBooking->status                  = '10'; // 10=> Temporary (This status is using in edit booking section)
-                                    $newBooking->status                  = '11'; // 11=> On Processing
+
+                                    if($request->payment === 'payByBill' && $payByBillPossible === 'yes') {
+                                        $newBooking->status              = '5'; //Waiting for payment
+                                        $newBooking->payment_status      = '3'; //Prepayment
+                                    }
+                                    else {
+                                        $newBooking->status              = '11'; // On Processing
+                                    }
+
                                     $newBooking->reservation_cancel      = $cabin->reservation_cancel;
                                     $newBooking->payment_type            = $request->payment;
                                     $newBooking->txid                    = $paymentGateway["txid"];
@@ -2394,7 +2401,11 @@ class BookingHistoryController extends Controller
                                     $newBooking->save();
                                     /* Create new booking end */
 
-                                    /* Storing new userid, old userid and updating invoice auto number tree in user collection */
+                                    /* Storing new userid, old userid and updating invoice auto number tree, money balance in user collection */
+                                    // 1 => Fully paid using money balance, 2 => Partially paid using money balance, 3 => Paid using payment gateway
+                                    if($newOrder->order_payment_method === 2 && $request->payment === 'payByBill' && $payByBillPossible === 'yes') {
+                                        $user->money_balance = 0.00;
+                                    }
                                     $user->userid               = $paymentGateway["userid"];
                                     $user->invoice_autonum_tree = $autoNumberTree;
                                     $user->save();
@@ -2406,6 +2417,19 @@ class BookingHistoryController extends Controller
                                     /* If guest paid using payByBill it will redirect to bank details listing page. Condition begin*/
                                     if($request->payment === 'payByBill') {
                                         if($payByBillPossible === 'yes') {
+
+                                            /* Update status of old booking */
+                                            $bookingOldUpdate                 = Booking::find($newBooking->old_booking_id);
+                                            $bookingOldUpdate->booking_update = date('Y-m-d H:i:s');
+                                            $bookingOldUpdate->status         = "9"; //9 => Old (Booking Updated)
+                                            $bookingOldUpdate->is_delete      = 1;
+                                            $bookingOldUpdate->save();
+
+                                            /* Update status of old orders */
+                                            $orderOldUpdate                    = Order::find($bookingOldUpdate->order_id);
+                                            $orderOldUpdate->order_update_date = date('Y-m-d H:i:s');
+                                            $orderOldUpdate->save();
+
                                             $request->session()->flash('updateBookingPayment', $request->updateBookingPayment);
                                             $request->session()->flash('newBooking', $newBooking->_id);
                                             $request->session()->flash('editTxId', $paymentGateway["txid"]);
@@ -2576,8 +2600,15 @@ class BookingHistoryController extends Controller
                                 $newBooking->new_amount              = $total_prepayment_amount;
                                 $newBooking->moneybalance_used       = 0;
                                 $newBooking->bookingdate             = date('Y-m-d H:i:s');
-                                //$newBooking->status                  = '10'; // 10=> Temporary (This status is using in edit booking section)
-                                $newBooking->status                  = '11'; // 11=> On Processing
+
+                                if($request->payment === 'payByBill' && $payByBillPossible === 'yes') {
+                                    $newBooking->status              = '5'; //Waiting for payment
+                                    $newBooking->payment_status      = '3'; //Prepayment
+                                }
+                                else {
+                                    $newBooking->status              = '11'; // 11=> On Processing
+                                }
+
                                 $newBooking->reservation_cancel      = $cabin->reservation_cancel;
                                 $newBooking->payment_type            = $request->payment;
                                 $newBooking->txid                    = $paymentGateway["txid"];
@@ -2600,6 +2631,19 @@ class BookingHistoryController extends Controller
                                 /* If guest paid using payByBill it will redirect to bank details listing page. Condition begin*/
                                 if($request->payment === 'payByBill') {
                                     if($payByBillPossible === 'yes') {
+
+                                        /* Update status of old booking */
+                                        $bookingOldUpdate                 = Booking::find($newBooking->old_booking_id);
+                                        $bookingOldUpdate->booking_update = date('Y-m-d H:i:s');
+                                        $bookingOldUpdate->status         = "9"; //9 => Old (Booking Updated)
+                                        $bookingOldUpdate->is_delete      = 1;
+                                        $bookingOldUpdate->save();
+
+                                        /* Update status of old orders */
+                                        $orderOldUpdate                    = Order::find($bookingOldUpdate->order_id);
+                                        $orderOldUpdate->order_update_date = date('Y-m-d H:i:s');
+                                        $orderOldUpdate->save();
+
                                         $request->session()->flash('updateBookingPayment', $request->updateBookingPayment);
                                         $request->session()->flash('newBooking', $newBooking->_id);
                                         $request->session()->flash('editTxId', $paymentGateway["txid"]);
