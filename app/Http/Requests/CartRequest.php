@@ -25,10 +25,10 @@ class CartRequest extends FormRequest
     {
         $rules = [
             'guest'   => 'array',
-            'street'  => 'required|regex:/^[\pL\pM\pN\s]+$/u|max:255',
+            'street'  => 'required|regex:/^\s*\S+(?:\s+\S+){2}/|max:255',
             'city'    => 'required|regex:/^[\pL\pM\pN\s]+$/u|max:255',
             'country' => 'required|regex:/^[\pL\pM\pN\s]+$/u|not_in:0',
-            'zipcode' => 'required|regex:/^[0-9]{3,7}$/',
+            'zipcode' => 'required|regex:/^[AC-FHKNPRTV-Y]\d[0-9W][ -]?[0-9AC-FHKNPRTV-Y]{4}$/',
             'mobile'  => 'max:20',
             'phone'   => 'max:20'
         ];
