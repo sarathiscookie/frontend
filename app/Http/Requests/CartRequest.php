@@ -25,9 +25,9 @@ class CartRequest extends FormRequest
     {
         $rules = [
             'guest'   => 'array',
-            'street'  => 'required|max:255',
-            'city'    => 'required|max:255',
-            'country' => 'required|not_in:0',
+            'street'  => 'required|regex:/^[\pL\pM\pN\s ,.]+$/|max:255',
+            'city'    => 'required|regex:/^[\pL\pM\pN\s]+$/|max:255',
+            'country' => 'required|regex:/^[\pL\pM\pN\s]+$/|not_in:0',
             'zipcode' => 'required|regex:/^[A-Z0-9 -]{3,9}$/',
             'mobile'  => 'max:20',
             'phone'   => 'max:20'
