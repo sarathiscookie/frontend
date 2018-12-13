@@ -1362,6 +1362,12 @@ hr {
 .cabinListMoreLink {
     display: block;
 }
+
+.cabinListMore {
+    height: 110px;
+    overflow: hidden;
+    margin-bottom: 15px;
+}
 /* Show more when button click in Search result page end */
 
 /* Adding margin for Beds dorms and sleeps dropdown begin */

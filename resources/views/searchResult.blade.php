@@ -26,10 +26,7 @@
                                 <div class="col-sm-7 text-left">
                                     <h2 class="headliner-cabinname">{{ $result->name }}&nbsp;</h2><h3 class="headliner-cabin">{{ $result->region }} - {{ $result->country }} ({{ number_format($result->height, 0, '', '.') }} m)</h3>
                                     <div class="cabinListMore">
-                                        @php
-                                            $cabin_details = $result->other_details;
-                                        @endphp
-                                        {!! str_replace("&nbsp;", " ", str_limit($cabin_details, 290)) !!}
+                                        {!! str_replace("&nbsp;", " ", $result->other_details) !!}
                                     </div>
 
                                     <a href="{{ route('cabin.details', ['id' => base64_encode($result->_id.env('MD5_Key'))]) }}" class="btn btn-default btn-sm btn-details">{{ __('searchDetails.moreDetails') }}</a>
