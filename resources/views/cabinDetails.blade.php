@@ -325,3 +325,11 @@
     @endisset
 
 @endsection
+@push('scripts')
+    <script>
+        window.environment = {
+            more_details: '<?php echo __('cabinDetails.buttons.more_details'); ?>',
+            less_details: '<?php echo __('cabinDetails.buttons.less_details'); ?>',
+        }
+    </script>
+@endpush

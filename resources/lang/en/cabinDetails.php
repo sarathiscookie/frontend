@@ -86,5 +86,6 @@ return [
     'neighbourCabin'                         => 'Neighbour Cabins',
 
     // Buttons
-    'buttons.more_details'                   => 'More Details'
+    'buttons.more_details'                   => 'More Details',
+    'buttons.less_details'                   => 'Less Details'
 ];

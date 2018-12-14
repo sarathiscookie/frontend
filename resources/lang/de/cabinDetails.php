@@ -86,5 +86,6 @@ return [
     'neighbourCabin'                         => 'Nachbarhütten',
 
     // Buttons
-    'buttons.more_details'                   => 'Mehr anzeigen'
+    'buttons.more_details'                   => 'Mehr anzeigen',
+    'buttons.less_details'                   => 'Weniger anzeigen'
 ];
