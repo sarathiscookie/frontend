@@ -217,7 +217,7 @@
                                         ?>
                                     </div>
 
-                                    <strong class="details-underheadline-cabin-details">{{ __('cabinDetails.website') }}: </strong><p class="inh-cabin-details"><a href="http://{{$cabinDetails->website}}" target="_blank">{{ $cabinDetails->website }}</a></p>
+                                    <strong class="details-underheadline-cabin-details">{{ __('cabinDetails.website') }}: </strong><p class="inh-cabin-details"><a href="//{{$cabinDetails->website}}" target="_blank">{{ $cabinDetails->website }}</a></p>
 
                                     <strong class="details-underheadline-cabin-details">{{ __('cabinDetails.payment') }}: </strong>
                                     @foreach($service->paymentType() as $paymentTypeKey => $paymentType)
