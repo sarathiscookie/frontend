@@ -56,132 +56,135 @@
                         $d2                 = new DateTime($end);
                         $dateDifference     = $d2->diff($d1);
                         $reservation_cancel = (int)$booking->reservation_cancel;
+                        $cabin              = $service->cabin($booking->cabinname);
                     @endphp
-                    <div class="panel panel-default text-left panel-history panel-default-history">
-                        <div class="panel-body panel-body-history">
-                            <div class="row row-history content">
-                                <div class="col-sm-2 col-sm-2-history">
-                                    <img src="{{ asset('storage/'.$service->showListImage($booking->cabinname)) }}" class="img-responsive img-thumbnail img-thumbnail-history" style="width:100%" alt="Image">
-                                </div>
-                                <div class="col-sm-7 text-left col-sm-7-history">
-                                    <h3 class="headliner-cabinname">{{ $service->cabin($booking->cabinname)->name }} - {{ $service->cabin($booking->cabinname)->region }}</h3>
-                                    <div class="row row-history">
-                                        <div class="responseCancelMessage_{{ $booking->_id }}"></div>
-                                        <div class="col-sm-12 col-sm-12-history">
-                                            <div class="form-group row row-history">
-                                                <ul class="payment-options">
-                                                    <li class="check-it-list-spe-history">{{ __('bookingHistory.bookingNumber') }}:</li><li class="check-it-list-spe-history in-info-history">{{ $booking->invoice_number }}</li>
-                                                    <li class="check-it-list-spe-history">{{ __('bookingHistory.arrival') }}:</li><li class="check-it-list-spe-history in-info-history">{{ $booking->checkin_from->format('d.m.y') }}</li>
-                                                    <li class="check-it-list-spe-history">{{ __('bookingHistory.departure') }}:</li><li class="check-it-list-spe-history in-info-history">{{ $booking->reserve_to->format('d.m.y') }}</li>
-                                                    @if($service->cabin($booking->cabinname)->sleeping_place != 1)
-                                                        <li class="check-it-list-spe-history">{{ __('bookingHistory.beds') }}:</li><li class="check-it-list-spe-history in-info-history">{{ $booking->beds }}</li>
-                                                        <li class="check-it-list-spe-history">{{ __('bookingHistory.dorms') }}:</li><li class="check-it-list-spe-history in-info-history">{{ $booking->dormitory }}</li>
-                                                    @else
-                                                        <li class="check-it-list-spe-history">{{ __('bookingHistory.sleeps') }}:</li><li class="check-it-list-spe-history in-info-history">{{ $booking->sleeps }}</li>
-                                                    @endif
-                                                </ul>
+                    @if ($cabin)
+                        <div class="panel panel-default text-left panel-history panel-default-history">
+                            <div class="panel-body panel-body-history">
+                                <div class="row row-history content">
+                                    <div class="col-sm-2 col-sm-2-history">
+                                        <img src="{{ asset('storage/'.$service->showListImage($booking->cabinname)) }}" class="img-responsive img-thumbnail img-thumbnail-history" style="width:100%" alt="Image">
+                                    </div>
+                                    <div class="col-sm-7 text-left col-sm-7-history">
+                                        <h3 class="headliner-cabinname">{{ $cabin->name }} - {{ $cabin->region }}</h3>
+                                        <div class="row row-history">
+                                            <div class="responseCancelMessage_{{ $booking->_id }}"></div>
+                                            <div class="col-sm-12 col-sm-12-history">
+                                                <div class="form-group row row-history">
+                                                    <ul class="payment-options">
+                                                        <li class="check-it-list-spe-history">{{ __('bookingHistory.bookingNumber') }}:</li><li class="check-it-list-spe-history in-info-history">{{ $booking->invoice_number }}</li>
+                                                        <li class="check-it-list-spe-history">{{ __('bookingHistory.arrival') }}:</li><li class="check-it-list-spe-history in-info-history">{{ $booking->checkin_from->format('d.m.y') }}</li>
+                                                        <li class="check-it-list-spe-history">{{ __('bookingHistory.departure') }}:</li><li class="check-it-list-spe-history in-info-history">{{ $booking->reserve_to->format('d.m.y') }}</li>
+                                                        @if($cabin->sleeping_place != 1)
+                                                            <li class="check-it-list-spe-history">{{ __('bookingHistory.beds') }}:</li><li class="check-it-list-spe-history in-info-history">{{ $booking->beds }}</li>
+                                                            <li class="check-it-list-spe-history">{{ __('bookingHistory.dorms') }}:</li><li class="check-it-list-spe-history in-info-history">{{ $booking->dormitory }}</li>
+                                                        @else
+                                                            <li class="check-it-list-spe-history">{{ __('bookingHistory.sleeps') }}:</li><li class="check-it-list-spe-history in-info-history">{{ $booking->sleeps }}</li>
+                                                        @endif
+                                                    </ul>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="col-sm-3 col-sm-3-history">
-                                    <div class="panel panel-default booking-box-history panel-history panel-default-history">
+                                    <div class="col-sm-3 col-sm-3-history">
+                                        <div class="panel panel-default booking-box-history panel-history panel-default-history">
 
-                                        <div class="panel-body panel-body-history">
-                                            <div class="row row-history">
-                                                <div class="col-sm-12 col-sm-12-history month-opening">
-                                                    <h5>{{ __('bookingHistory.bookingStatusHeading') }}</h5>
-                                                    <br>
+                                            <div class="panel-body panel-body-history">
+                                                <div class="row row-history">
+                                                    <div class="col-sm-12 col-sm-12-history month-opening">
+                                                        <h5>{{ __('bookingHistory.bookingStatusHeading') }}</h5>
+                                                        <br>
 
-                                                    <!-- Fix -->
-                                                    @if($booking->status === '1' && $booking->payment_status === '1')
-                                                        <span class="label label-success label-cabinlist">{{ __('bookingHistory.successStatus') }}</span> <br>
+                                                        <!-- Fix -->
+                                                        @if($booking->status === '1' && $booking->payment_status === '1')
+                                                            <span class="label label-success label-cabinlist">{{ __('bookingHistory.successStatus') }}</span> <br>
 
-                                                        <form action="{{route('booking.history.voucher.download')}}" method="POST">
-                                                            {{ csrf_field() }}
-                                                            <input type="hidden" name="book_id" id="book_id" value="{{ $booking->_id }}">
-                                                            <button type="submit" class="btn btn-list-history">{{ __('bookingHistory.downloadVoucher') }} <span class="glyphicon glyphicon-cloud-download"></span></button>
-                                                        </form>
+                                                            <form action="{{route('booking.history.voucher.download')}}" method="POST">
+                                                                {{ csrf_field() }}
+                                                                <input type="hidden" name="book_id" id="book_id" value="{{ $booking->_id }}">
+                                                                <button type="submit" class="btn btn-list-history">{{ __('bookingHistory.downloadVoucher') }} <span class="glyphicon glyphicon-cloud-download"></span></button>
+                                                            </form>
 
-                                                        @if($begin < $end)
-                                                            <a href="{{ route('edit.booking.history', $booking->_id) }}" class="btn btn-list-history" style="color: inherit;">{{ __('bookingHistory.editBooking') }} <span class="glyphicon glyphicon-wrench"></span></a>
-                                                            @if($reservation_cancel <= $dateDifference->days)
-                                                                <button type="button" class="btn btn-list-history cancelMoneyReturn" data-cancel="{{ $booking->_id }}" data-return="yes" data-loading-text="{{ __('bookingHistory.cancelingLoader') }}" autocomplete="off">{{ __('bookingHistory.cancelBooking') }} <span class="glyphicon glyphicon-remove"></span></button>
-                                                            @else
-                                                                <button type="button" class="btn btn-list-history cancelMoneyReturn" data-cancel="{{ $booking->_id }}" data-return="no" data-loading-text="{{ __('bookingHistory.cancelingLoader') }}" autocomplete="off">{{ __('bookingHistory.cancelBooking') }} <span class="glyphicon glyphicon-remove"></span></button>
+                                                            @if($begin < $end)
+                                                                <a href="{{ route('edit.booking.history', $booking->_id) }}" class="btn btn-list-history" style="color: inherit;">{{ __('bookingHistory.editBooking') }} <span class="glyphicon glyphicon-wrench"></span></a>
+                                                                @if($reservation_cancel <= $dateDifference->days)
+                                                                    <button type="button" class="btn btn-list-history cancelMoneyReturn" data-cancel="{{ $booking->_id }}" data-return="yes" data-loading-text="{{ __('bookingHistory.cancelingLoader') }}" autocomplete="off">{{ __('bookingHistory.cancelBooking') }} <span class="glyphicon glyphicon-remove"></span></button>
+                                                                @else
+                                                                    <button type="button" class="btn btn-list-history cancelMoneyReturn" data-cancel="{{ $booking->_id }}" data-return="no" data-loading-text="{{ __('bookingHistory.cancelingLoader') }}" autocomplete="off">{{ __('bookingHistory.cancelBooking') }} <span class="glyphicon glyphicon-remove"></span></button>
+                                                                @endif
                                                             @endif
                                                         @endif
-                                                    @endif
 
-                                                    <!-- Completed -->
-                                                    @if($booking->status === '3')
-                                                        <span class="label label-success label-cabinlist">{{ __('bookingHistory.successStatus') }}</span> <br>
+                                                        <!-- Completed -->
+                                                        @if($booking->status === '3')
+                                                            <span class="label label-success label-cabinlist">{{ __('bookingHistory.successStatus') }}</span> <br>
 
-                                                        <form action="{{route('booking.history.voucher.download')}}" method="POST">
-                                                            {{ csrf_field() }}
-                                                            <input type="hidden" name="book_id" id="book_id" value="{{ $booking->_id }}">
-                                                            <button type="submit" class="btn btn-list-history">{{ __('bookingHistory.downloadVoucher') }} <span class="glyphicon glyphicon-cloud-download"></span></button>
-                                                        </form>
-                                                    @endif
-
-                                                    <!-- Cancel -->
-                                                    @if($booking->status === '2')
-                                                        <span class="label label-danger label-cabinlist">{{ __('bookingHistory.cancelStatus') }}</span> <br>
-                                                        <button type="button" class="btn btn-list-history deleteCancelledBookingHistory" data-del="{{ $booking->_id }}" data-loading-text="{{ __('bookingHistory.deleteBookingLoader') }}" autocomplete="off">{{ __('bookingHistory.deleteBooking') }} <span class="glyphicon glyphicon-trash"></span></button>
-                                                    @endif
-
-                                                    <!-- Reservation -->
-                                                    @if($booking->status === '4' && $booking->payment_status === '2')
-                                                        <span class="label label-info label-cabinlist">{{ __('bookingHistory.reservationStatus') }}</span> <br>
-                                                        <form action="{{route('booking.history.voucher.download')}}" method="POST">
-                                                            {{ csrf_field() }}
-                                                            <input type="hidden" name="book_id" id="book_id" value="{{ $booking->_id }}">
-                                                            <button type="submit" class="btn btn-list-history">{{ __('bookingHistory.downloadVoucher') }} <span class="glyphicon glyphicon-cloud-download"></span></button>
-                                                        </form>
-                                                    @endif
-
-                                                    <!-- 1: Inquiry Approved -->
-                                                    @if($booking->status === '5' && $booking->inquirystatus === 1 && $booking->typeofbooking === 1 && $booking->payment_status === '0')
-                                                        <span class="label label-success label-cabinlist">{{ __('bookingHistory.inquiryAcceptedStatus') }}</span> <br>
-                                                        <a href="/booking/history/inquiry/{{ $booking->_id }}" class="btn btn-list-history inquiryPayment" name="inquiryPayment" id="inquiryPayment" value="inquiryPayment" data-inquirypayment="{{ $booking->_id }}" data-loading-text="{{ __('bookingHistory.doYourPayment') }}..." autocomplete="off">{{ __('bookingHistory.doYourPayment') }} <span class="glyphicon glyphicon-euro"></span></a>
-                                                        <button type="button" class="btn btn-list-history deleteInquiryApprovedBookingHistory" data-delapprovedinquiry="{{ $booking->_id }}" data-loading-text="{{ __('bookingHistory.deleteBookingLoader') }}" autocomplete="off">{{ __('bookingHistory.deleteInquiry') }} <span class="glyphicon glyphicon-trash"></span></button>
-                                                    @endif
-
-                                                    <!-- Inquiry Waiting for reply -->
-                                                    @if($booking->status === '7' && $booking->inquirystatus === 0 && $booking->typeofbooking === 1 && $booking->payment_status === '0')
-                                                        <span class="label label-warning label-cabinlist">{{ __('bookingHistory.inquiryWaitingStatus') }}</span> <br>
-                                                        <button type="button" class="btn btn-list-history" data-toggle="modal" data-target="#openChat_{{ $booking->_id }}">{{ __('bookingHistory.openChat') }} <span class="glyphicon glyphicon-envelope"></span></button>
-                                                        <button type="button" class="btn btn-list-history deleteInquiryWaitingBookingHistory" data-delwaitinginquiry="{{ $booking->_id }}" data-loading-text="{{ __('bookingHistory.deleteBookingLoader') }}" autocomplete="off">{{ __('bookingHistory.deleteInquiry') }} <span class="glyphicon glyphicon-trash"></span></button>
-                                                    @endif
-
-                                                    <!-- Inquiry Rejected -->
-                                                    @if($booking->status === '7' && $booking->inquirystatus === 2 && $booking->typeofbooking === 1 && $booking->payment_status === '0')
-                                                        <span class="label label-danger label-cabinlist">{{ __('bookingHistory.inquiryRejectedStatus') }}</span> <br>
-                                                        <button type="button" class="btn btn-list-history deleteInquiryRejectedBookingHistory" data-delrejectedinquiry="{{ $booking->_id }}" data-loading-text="{{ __('bookingHistory.deleteBookingLoader') }}" autocomplete="off">{{ __('bookingHistory.deleteInquiry') }} <span class="glyphicon glyphicon-trash"></span></button>
-                                                    @endif
-
-                                                    <!-- Waiting for payment (prepayment)-->
-                                                    @if($booking->status === '5' && $booking->payment_status === '3')
-                                                        <span class="label label-warning label-cabinlist">{{ __('bookingHistory.waitingStatus') }}</span> <br>
-                                                        @if(!empty($booking->order_id))
-                                                            <form action="{{route('payment.prepayment.download')}}" method="POST">
+                                                            <form action="{{route('booking.history.voucher.download')}}" method="POST">
                                                                 {{ csrf_field() }}
-                                                                <input type="hidden" name="order_id" id="order_id" value="{{ $booking->order_id }}">
-                                                                <button type="submit" class="btn btn-list-history">{{ __('bookingHistory.downloadBill') }} <span class="glyphicon glyphicon-cloud-download"></span></button>
+                                                                <input type="hidden" name="book_id" id="book_id" value="{{ $booking->_id }}">
+                                                                <button type="submit" class="btn btn-list-history">{{ __('bookingHistory.downloadVoucher') }} <span class="glyphicon glyphicon-cloud-download"></span></button>
                                                             </form>
                                                         @endif
-                                                        <button type="button" class="btn btn-list-history deleteWaitingPrepaymentBookingHistory" data-delwaitingprepay="{{ $booking->_id }}" data-loading-text="{{ __('bookingHistory.deleteBookingLoader') }}" autocomplete="off">{{ __('bookingHistory.deleteBooking') }} <span class="glyphicon glyphicon-trash"></span></button>
-                                                    @endif
 
-                                                    <!-- Booking Failed -->
-                                                    @if($booking->status === '5' && $booking->payment_status === '0' && $booking->inquirystatus !== 1 && $booking->typeofbooking !== 1)
-                                                        <span class="label label-danger label-cabinlist">{{ __('bookingHistory.failedStatus') }}</span> <br>
-                                                    @endif
+                                                        <!-- Cancel -->
+                                                        @if($booking->status === '2')
+                                                            <span class="label label-danger label-cabinlist">{{ __('bookingHistory.cancelStatus') }}</span> <br>
+                                                            <button type="button" class="btn btn-list-history deleteCancelledBookingHistory" data-del="{{ $booking->_id }}" data-loading-text="{{ __('bookingHistory.deleteBookingLoader') }}" autocomplete="off">{{ __('bookingHistory.deleteBooking') }} <span class="glyphicon glyphicon-trash"></span></button>
+                                                        @endif
 
-                                                    <!-- On processing -->
-                                                    @if($booking->status === '11')
-                                                        <span class="label label-info label-cabinlist" style="height: 50px;">{{ __('bookingHistory.onProcessStatus') }} <br> {{ __('bookingHistory.onProcessStatusTwo') }}</span>
-                                                    @endif
+                                                        <!-- Reservation -->
+                                                        @if($booking->status === '4' && $booking->payment_status === '2')
+                                                            <span class="label label-info label-cabinlist">{{ __('bookingHistory.reservationStatus') }}</span> <br>
+                                                            <form action="{{route('booking.history.voucher.download')}}" method="POST">
+                                                                {{ csrf_field() }}
+                                                                <input type="hidden" name="book_id" id="book_id" value="{{ $booking->_id }}">
+                                                                <button type="submit" class="btn btn-list-history">{{ __('bookingHistory.downloadVoucher') }} <span class="glyphicon glyphicon-cloud-download"></span></button>
+                                                            </form>
+                                                        @endif
+
+                                                        <!-- 1: Inquiry Approved -->
+                                                        @if($booking->status === '5' && $booking->inquirystatus === 1 && $booking->typeofbooking === 1 && $booking->payment_status === '0')
+                                                            <span class="label label-success label-cabinlist">{{ __('bookingHistory.inquiryAcceptedStatus') }}</span> <br>
+                                                            <a href="/booking/history/inquiry/{{ $booking->_id }}" class="btn btn-list-history inquiryPayment" name="inquiryPayment" id="inquiryPayment" value="inquiryPayment" data-inquirypayment="{{ $booking->_id }}" data-loading-text="{{ __('bookingHistory.doYourPayment') }}..." autocomplete="off">{{ __('bookingHistory.doYourPayment') }} <span class="glyphicon glyphicon-euro"></span></a>
+                                                            <button type="button" class="btn btn-list-history deleteInquiryApprovedBookingHistory" data-delapprovedinquiry="{{ $booking->_id }}" data-loading-text="{{ __('bookingHistory.deleteBookingLoader') }}" autocomplete="off">{{ __('bookingHistory.deleteInquiry') }} <span class="glyphicon glyphicon-trash"></span></button>
+                                                        @endif
+
+                                                        <!-- Inquiry Waiting for reply -->
+                                                        @if($booking->status === '7' && $booking->inquirystatus === 0 && $booking->typeofbooking === 1 && $booking->payment_status === '0')
+                                                            <span class="label label-warning label-cabinlist">{{ __('bookingHistory.inquiryWaitingStatus') }}</span> <br>
+                                                            <button type="button" class="btn btn-list-history" data-toggle="modal" data-target="#openChat_{{ $booking->_id }}">{{ __('bookingHistory.openChat') }} <span class="glyphicon glyphicon-envelope"></span></button>
+                                                            <button type="button" class="btn btn-list-history deleteInquiryWaitingBookingHistory" data-delwaitinginquiry="{{ $booking->_id }}" data-loading-text="{{ __('bookingHistory.deleteBookingLoader') }}" autocomplete="off">{{ __('bookingHistory.deleteInquiry') }} <span class="glyphicon glyphicon-trash"></span></button>
+                                                        @endif
+
+                                                        <!-- Inquiry Rejected -->
+                                                        @if($booking->status === '7' && $booking->inquirystatus === 2 && $booking->typeofbooking === 1 && $booking->payment_status === '0')
+                                                            <span class="label label-danger label-cabinlist">{{ __('bookingHistory.inquiryRejectedStatus') }}</span> <br>
+                                                            <button type="button" class="btn btn-list-history deleteInquiryRejectedBookingHistory" data-delrejectedinquiry="{{ $booking->_id }}" data-loading-text="{{ __('bookingHistory.deleteBookingLoader') }}" autocomplete="off">{{ __('bookingHistory.deleteInquiry') }} <span class="glyphicon glyphicon-trash"></span></button>
+                                                        @endif
+
+                                                        <!-- Waiting for payment (prepayment)-->
+                                                        @if($booking->status === '5' && $booking->payment_status === '3')
+                                                            <span class="label label-warning label-cabinlist">{{ __('bookingHistory.waitingStatus') }}</span> <br>
+                                                            @if(!empty($booking->order_id))
+                                                                <form action="{{route('payment.prepayment.download')}}" method="POST">
+                                                                    {{ csrf_field() }}
+                                                                    <input type="hidden" name="order_id" id="order_id" value="{{ $booking->order_id }}">
+                                                                    <button type="submit" class="btn btn-list-history">{{ __('bookingHistory.downloadBill') }} <span class="glyphicon glyphicon-cloud-download"></span></button>
+                                                                </form>
+                                                            @endif
+                                                            <button type="button" class="btn btn-list-history deleteWaitingPrepaymentBookingHistory" data-delwaitingprepay="{{ $booking->_id }}" data-loading-text="{{ __('bookingHistory.deleteBookingLoader') }}" autocomplete="off">{{ __('bookingHistory.deleteBooking') }} <span class="glyphicon glyphicon-trash"></span></button>
+                                                        @endif
+
+                                                        <!-- Booking Failed -->
+                                                        @if($booking->status === '5' && $booking->payment_status === '0' && $booking->inquirystatus !== 1 && $booking->typeofbooking !== 1)
+                                                            <span class="label label-danger label-cabinlist">{{ __('bookingHistory.failedStatus') }}</span> <br>
+                                                        @endif
+
+                                                        <!-- On processing -->
+                                                        @if($booking->status === '11')
+                                                            <span class="label label-info label-cabinlist" style="height: 50px;">{{ __('bookingHistory.onProcessStatus') }} <br> {{ __('bookingHistory.onProcessStatusTwo') }}</span>
+                                                        @endif
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -189,7 +192,7 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    @endif
 
                     <!-- Modal for chat -->
                     <div class="col-md-12">

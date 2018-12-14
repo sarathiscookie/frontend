@@ -84,6 +84,7 @@ class BookingHistoryController extends Controller
     public function cabin($name)
     {
         $cabin     = '';
+
         if($name) {
             $cabin = Cabin::select('name', 'region', 'sleeping_place')
                 ->where('is_delete', 0)
@@ -91,6 +92,7 @@ class BookingHistoryController extends Controller
                 ->where('name', $name)
                 ->first();
         }
+
         return $cabin;
     }
 
@@ -1986,15 +1988,14 @@ class BookingHistoryController extends Controller
                 ->where('other_cabin', "0")
                 ->where('name', $name)
                 ->first();
-            $id    = $cabin->_id;
 
-            if(!empty($id)) {
+            if(!empty($cabin->_id)) {
                 $directories = Storage::disk('public')->directories('huetten');
                 foreach ($directories as $directory) {
                     $files = Storage::disk('public')->files($directory);
                     foreach ($files as $file) {
                         $explode_directory = explode('/', $file);
-                        if($explode_directory[1] == $id && $explode_directory[2] === 'list.jpg') {
+                        if($explode_directory[1] == $cabin->_id && $explode_directory[2] === 'list.jpg') {
                             $list_image_name = $file;
                         }
                     }
