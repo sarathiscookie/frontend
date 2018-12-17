@@ -64,8 +64,8 @@ class SearchController extends Controller
     public function openSeasons()
     {
         $seasonOpens = array(
-            'Open on winter season'   => __("search.winterSeasonOpen"),
-            'Open on summer season'   => __("search.summerSeasonOpen")
+            '1'   => __("search.winterSeasonOpen"),
+            '2'   => __("search.summerSeasonOpen")
         );
 
         return $seasonOpens;
@@ -117,20 +117,51 @@ class SearchController extends Controller
             ->where('is_delete', 0)
             ->where('other_cabin', "0");
 
-        if(isset($request->cabinname)){
+        if(isset($request->cabinname)) {
             $cabin->where('name', $request->cabinname);
         }
 
-        if(isset($request->country)){
+        if(isset($request->country)) {
             $cabin->whereIn('country', $data['country']);
         }
 
-        if(isset($request->region)){
+        if(isset($request->region)) {
             $cabin->whereIn('region', $data['region']);
         }
 
-        if(isset($request->facility)){
+        if(isset($request->facility)) {
             $cabin->whereIn('interior', $data['facility']);
+        }
+
+        if(isset($request->winterSeason) && $request->winterSeason === 'open') {
+            $winterSeasonId = [];
+            $winterSeasons  = Season::where('winterSeasonStatus', $request->winterSeason)
+                ->where('winterSeason', 1)
+                ->get();
+
+            if(!empty($winterSeasons)) {
+                foreach($winterSeasons as $winterSeason) {
+                    $winterSeasonId[] = $winterSeason->cabin_id;
+                }
+
+                $cabin->whereIn('_id', $winterSeasonId);
+            }
+
+        }
+
+        if(isset($request->summerSeason) && $request->summerSeason === 'open') {
+            $summerSeasonId = [];
+            $summerSeasons  = Season::where('summerSeasonStatus', $request->summerSeason)
+                ->where('summerSeason', 1)
+                ->get();
+
+            if(!empty($summerSeasons)) {
+                foreach($summerSeasons as $summerSeason) {
+                    $summerSeasonId[] = $summerSeason->cabin_id;
+                }
+
+                $cabin->whereIn('_id', $summerSeasonId);
+            }
         }
 
         $cabinSearchResult = $cabin->simplePaginate(5);
