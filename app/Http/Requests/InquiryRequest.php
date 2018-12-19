@@ -24,10 +24,10 @@ class InquiryRequest extends FormRequest
     public function rules()
     {
         $rules =  [
-            'street'        => 'required|regex:/^[\pL\pM\pN\s]+$/u|max:255',
-            'city'          => 'required|regex:/^[\pL\pM\pN\s]+$/u|max:255',
-            'country'       => 'required|regex:/^[\pL\pM\pN\s]+$/u|not_in:0',
-            'zipcode'       => 'required|regex:/^[0-9]{3,7}$/',
+            'street'  => 'required|regex:/^[\pL\pM\pN\s ,. -äöüÄÖÜß]+$/|max:255',
+            'city'    => 'required|regex:/^[\pL\pM\pN\s]+$/|max:255',
+            'country' => 'required|regex:/^[\pL\pM\pN\s]+$/|not_in:0',
+            'zipcode' => 'required|regex:/^[A-Z0-9 -]{3,9}$/',
             'mobile'        => 'max:20',
             'phone'         => 'max:20',
             'comments'      => 'max:300'
