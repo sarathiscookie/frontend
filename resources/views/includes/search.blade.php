@@ -72,9 +72,8 @@
                                     <!-- Dropdown in Filter -->
                                     <a href="#" class="dropdown-toggle dropdown-toggle-home" data-toggle="dropdown">{{ __('search.openingHours') }}<span class="caret"></span></a>
                                     <ul class="dropdown-menu dropdown-menu-home">
-                                        @foreach($services->openSeasons() as $seasonOpen)
-                                            <li  class="check-it-list-home"><input type="checkbox" name="seasons[]" value="open" class="check-it-home filterCheckbox"> {{ $seasonOpen }}</li>
-                                        @endforeach
+                                        <li  class="check-it-list-home"><input type="checkbox" name="winterSeason" value="open" class="check-it-home filterCheckbox"> {{ __("search.winterSeasonOpen") }}</li>
+                                        <li  class="check-it-list-home"><input type="checkbox" name="summerSeason" value="open" class="check-it-home filterCheckbox"> {{ __("search.summerSeasonOpen") }}</li>
                                     </ul>
                                 </li>
                             @endif
