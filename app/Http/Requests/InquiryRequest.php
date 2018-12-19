@@ -25,7 +25,7 @@ class InquiryRequest extends FormRequest
     {
         $rules =  [
             'street'  => 'required|regex:/^[\pL\pM\pN\s ,. -äöüÄÖÜß]+$/|max:255',
-            'city'    => 'required|regex:/^[\pL\pM\pN\s]+$/|max:255',
+            'city'    => 'required|regex:/^[\pL\pM\pN\s-]+$/|max:255',
             'country' => 'required|regex:/^[\pL\pM\pN\s]+$/|not_in:0',
             'zipcode' => 'required|regex:/^[A-Z0-9 -]{3,9}$/',
             'mobile'        => 'max:20',
