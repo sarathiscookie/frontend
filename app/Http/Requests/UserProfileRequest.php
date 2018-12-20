@@ -27,7 +27,7 @@ class UserProfileRequest extends FormRequest
             'firstName' => 'required|regex:/^[\pL\pM\pN\s]+$/u|max:255',
             'lastName'  => 'required|regex:/^[\pL\pM\pN\s]+$/u|max:255|min:2',
             'street'    => 'required|regex:/^[\pL\pM\pN\s ,. -äöüÄÖÜß]+$/|max:255',
-            'city'      => 'required|regex:/^[\pL\pM\pN\s-]+$/|max:255',
+            'city'      => 'required|regex:/^[\pL\pM\pN\s-äöüÄÖÜß]+$/|max:255',
             'country'   => 'required|regex:/^[\pL\pM\pN\s]+$/|not_in:0',
             'zipcode'   => 'required|regex:/^[A-Z0-9 -]{3,9}$/',
             'mobile'    => 'max:20',
